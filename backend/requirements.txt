@@ -1,0 +1,16 @@
+Django
+djangorestframework
+psycopg2
+python-dotenv
+djangorestframework-simplejwt
+
+# django-taggit
+# django-s3direct
+# requests
+# Pillow
+# django-storages
+# boto3
+# django-ckeditor
+# celery
+# redis
+# django-cors-headers
