@@ -1,9 +1,10 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { login } from '../reducer/index';
+import { login, getallroom } from '../reducer/index';
 import thunkMiddleware from 'redux-thunk';
 
 const AppReduces = combineReducers({
   login,
+  getallroom,
 });
 
 const rootReducer = (state, action) => {
