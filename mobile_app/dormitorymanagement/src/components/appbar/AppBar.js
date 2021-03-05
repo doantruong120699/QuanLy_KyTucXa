@@ -20,13 +20,20 @@ export default AppBar;
 
 const styles = StyleSheet.create({
     container: {
+        width: '90%',
+        // height: '50%',
         justifyContent: 'center',
         flex: 1,
         alignItems: 'center',
         flexDirection: 'row',
+        backgroundColor: 'white',
+        borderRadius: 15,
+        marginTop: 5,
+        marginBottom: 5,
+        elevation: 7,
     },
     bars: {
-        marginRight: 280,
+        marginRight: '70%',
         justifyContent: 'center',
         alignItems: 'center',
         // borderRadius: 25,

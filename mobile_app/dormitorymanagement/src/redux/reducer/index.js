@@ -1,3 +1,4 @@
 import { login } from './login';
+import { getallroom } from './getallroom';
 
-export { login };
+export { login, getallroom };
