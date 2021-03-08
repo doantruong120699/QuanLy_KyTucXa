@@ -9,12 +9,11 @@ const Drawer = createDrawerNavigator();
 class HomePage extends Component {
     render() {
         return(
-            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props}/>}>
+            <Drawer.Navigator drawerContent={props => <DrawerContent {...props}/>}>
                 <Drawer.Screen name="Login" component={Login}/>
                 <Drawer.Screen name="ChangePassword" component={ChangePassword}/>
                 <Drawer.Screen name="ForgotPassword" component={ForgotPassword}/>
-                <Drawer.Screen name="ShowAllRoom" component={ShowAllRoom}
-            />
+                <Drawer.Screen name="ShowAllRoom" component={ShowAllRoom}/>
             </Drawer.Navigator>
         )
     }

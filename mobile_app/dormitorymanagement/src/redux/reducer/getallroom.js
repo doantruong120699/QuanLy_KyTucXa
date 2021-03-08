@@ -4,18 +4,66 @@ const {GET_ALL_ROOM, GET_ALL_ROOM_SUCCESS, GET_ALL_ROOM_FAIL} = actionType;
 const initialState = {
     msg: '',
     data: [
-        {
-          id: "bd7acbea-c1b1-46c2-aed5-3ad53abb28ba",
-          title: "First Item",
-        },
-        {
-          id: "3ac68afc-c605-48d3-a4f8-fbd91aa97f63",
-          title: "Second Item",
-        },
-        {
-          id: "58694a0f-3da1-471f-bd96-145571e29d72",
-          title: "Third Item",
-        },
+      {
+        title: "Khu A",
+        data: [
+          {
+            room: "A101",
+            status: true,
+            numbers: 5,
+          },
+          {
+            room: "A102",
+            status: false,
+            numbers: 2,
+          },
+          {
+            room: "A103",
+            status: true,
+            numbers: 3,
+          },
+        ],
+      },
+      {
+        title: "Khu B",
+        data: [
+          {
+            room: "B202",
+            status: true,
+            numbers: 8,
+          },
+          {
+            room: "B203",
+            status: false,
+            numbers: 0,
+          },
+          {
+            room: "B204",
+            status: false,
+            numbers: 7,
+          },
+        ],
+      },
+      {
+        title: "Khu C",
+        data: [
+          {
+            room: "C101",
+            status: true,
+            numbers: 1,
+          },
+          {
+            room: "C102",
+            status: true,
+            numbers: 2,
+          },
+          {
+            room: "C103",
+            status: true,
+            numbers: 3,
+          },
+        ],
+      },
     ],
     filter_status: 'SHOW_ALL',
 };
