@@ -3,24 +3,20 @@ import { StyleSheet, View, Text, TouchableOpacity, Button, Alert, TextInput } fr
 import { connect } from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { searchroom } from '../../redux/actions/searchroom';
+import { Avatar } from '../index';
 
 const openDrawer = (navigation) => {
     navigation.openDrawer();
 }
 const alert = (navigation) => {
     Alert.alert(
-        "Alert Title",
-        "My Alert Msg",
+        "Quang",
+        "Sinh viên",
         [
-          {
-            text: "Home",
-            onPress: () => navigation.navigate("Login"),
-            style: "cancel"
-          },
-          { text: "ChangeInfo", onPress: () => navigation.navigate("ForgotPassword")},
-          { text: "ChangePassword", onPress: () => navigation.navigate("ChangePassword") }
+          { text: "Profile", onPress: () => navigation.navigate("ProfileSV")},
+          { text: "Cancel", onPress: () => {} }
         ],
-        { cancelable: false },
+        { cancelable: true },
         
       );
 }

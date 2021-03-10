@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { ForgotPassword, Login } from './src/components/index';
 import { Provider } from 'react-redux';
 import { store } from './src/redux/store';
 import 'react-native-gesture-handler';
 import {View} from 'react-native';
-import HomePage from './src/components/home/HomePage';
+import { Login, HomePage, ProfileSV } from './src/components/index';
 
 const Stack = createStackNavigator();
 class App extends Component {
@@ -21,7 +20,8 @@ class App extends Component {
             }}>
             <Stack.Screen name="HomePage" component={HomePage} />
             {/* <Stack.Screen name="Login" component={Login} /> */}
-            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="ProfileSV" component={ProfileSV} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

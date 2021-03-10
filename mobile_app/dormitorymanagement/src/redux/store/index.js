@@ -1,11 +1,12 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { login, getallroom, searchroom } from '../reducer/index';
+import { login, getallroom, searchroom, mainmenu } from '../reducer/index';
 import thunkMiddleware from 'redux-thunk';
 
 const AppReduces = combineReducers({
   login,
   getallroom,
   searchroom,
+  mainmenu,
 });
 
 const rootReducer = (state, action) => {
