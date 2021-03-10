@@ -4,7 +4,7 @@ import {storeData, getData} from '../../utils/asyncStorage';
 import {apiUrl} from '../../api/api';
 
 const {GET_ALL_ROOM, GET_ALL_ROOM_SUCCESS, GET_ALL_ROOM_FAIL} = actionType;
-export const getallroom = () => {
+export const getallroom = () => async (dispatch) => {
     let result;
     dispatch({
         type: GET_ALL_ROOM_SUCCESS,

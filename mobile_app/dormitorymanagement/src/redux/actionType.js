@@ -23,5 +23,7 @@ export const actionType = {
     SEARCH_ROOM: 'SEARCH_ROOM',
     SEARCH_ROOM_SUCCESS: 'SEARCH_ROOM_SUCCESS',
     SEARCH_ROOM_FAIL: 'SEARCH_ROOM_FAIL',
+    /*..Main_menu..*/
+    STATUS_MAIN_MENU: 'STATUS_MAIN_MENU',
   };
   

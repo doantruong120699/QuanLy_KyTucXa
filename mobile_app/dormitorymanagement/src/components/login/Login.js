@@ -1,37 +1,53 @@
 import React, { Component, useState } from 'react';
-import { ImageBackground, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { ImageBackground, StyleSheet, View, Text, TouchableOpacity, ToastAndroid } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { login } from '../../redux/actions/login';
 import { AppBar } from '../index';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { getData } from '../../utils/asyncStorage';
 
 class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: '',
-            password: '',
+            username: 'it1@gmail.com',
+            password: '123456',
             icon: 'eye-slash',
             isShow: true,
         };
     };
-    changTextUsername = (text) => {
+    changeTextUsername = (text) => {
         this.setState({username: text});
     };
-    changTextPassword = (text) => {
+    changeTextPassword = (text) => {
         this.setState({password: text});
     };
+    validateData = () => {
+        const { username, password } = this.state;
+        if (!username || !password) 
+            return false;
+        return true;
+    };
+    showToast = (msg) => {
+        ToastAndroid.show(msg, ToastAndroid.LONG);
+    };
     loginSuccess = async () => {
-        const data = {email: this.state.email, password: this.state.password};
-        // await this.props.login(data);
-        const token = '';
+        if (!this.validateData()) {
+            this.showToast('Email or password is empty!');
+            return;
+        }
+        const data = {"email": this.state.username, "password": this.state.password};
+        await this.props.login(data);
+        const token = await getData('token');
         // const role = await getData('role');
         if (token === null || token === undefined || token === '') {
-            this.props.navigation.navigate("HomePage");
+            this.showToast('Email or password incorrect!');
+            this.props.navigation.navigate("Login");
         }
         else {
-            // this.props.navigation.navigate("HomePage");
+            this.showToast('Success');
+            this.props.navigation.navigate("HomePage");
         }
     };
     forgotPassword = () => {
@@ -56,6 +72,7 @@ class Login extends Component {
                                 <TextInput
                                     underlineColorAndroid="transparent"
                                     onChangeText={this.changeTextUsername}
+                                    value='it1@gmail.com'
                                     style={styles.inputText}
                                     placeholder="Tài khoản"
                                     placeholderTextColor="#808080"
@@ -64,8 +81,9 @@ class Login extends Component {
                             <View style={styles.inputViewPassword}>
                                 <TextInput
                                     underlineColorAndroid='#FFF'
-                                    onChangeText={this.changeTextPass}
+                                    onChangeText={this.changeTextPassword}
                                     style={styles.inputTextPassword}
+                                    value='123456'
                                     placeholder="Mật khẩu"
                                     placeholderTextColor="#808080"
                                     secureTextEntry={this.state.isShow}
