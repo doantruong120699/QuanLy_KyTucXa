@@ -21,4 +21,9 @@ urlpatterns = [
     # path('auth/active-account/', active_account_view),
     # path('auth/create-access-token/', create_access_token_view),
     # path('auth/reset-password/', reset_password_view),
+
+    # user
+    # path('account/get-user-profile/', get_profile_view),
+    # path('account/update-user-profile/', update_user_profile_view),
+    path('account/change-password/', change_password_view),
 ]
