@@ -27,7 +27,19 @@ class GroupSerializer(serializers.ModelSerializer):
         model = Group
         fields = ('name', 'permissions', )    
 
+# API Login -> Create token
 class MySimpleJWTSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        # Mac dinh la co id
+        token = super().get_token(user)
+        user_obj = User.objects.get(username=user)
+        token['username'] = user_obj.username
+        token['email'] = user_obj.first_name
+        token['first_name'] = user_obj.first_name
+        token['last_name'] = user_obj.last_name
+        return token
+
     def validate(self, attrs):
         credentials = {
             'username': '',
@@ -42,3 +54,50 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MySimpleJWTSerializer
+
+# API Change Password
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True)
+    old_password = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True) 
+
+    password = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True)
+     
+    confirm_password = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True)    
+
+    class Meta:
+        model = User
+        fields = ['email', 'password', 'old_password', 'confirm_password']
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'old_password': {'write_only': True},
+            'confirm_password': {'write_only': True},
+            'email': {'validators': [EmailValidator]},
+        }
+
+    def validate(self, data):
+        if len(data['old_password']) < 5:
+            raise serializers.ValidationError({'message': 'Password must be at least 5 characters.'}) 
+        if len(data['password']) < 5:
+            raise serializers.ValidationError({'message': 'Password must be at least 5 characters.'})
+        return data    
+
+    def old_password_validate(self):
+        user = User.objects.get(email=self.validated_data['email'])
+        if not user.check_password(self.validated_data['old_password']):
+            return False
+        return True  
+
+    def confirm_password_validate(self):
+        if (self.validated_data['password'] != self.validated_data['confirm_password']):
+            return False
+        return True     
+
+    def update(self):
+        user = User.objects.get(email=self.validated_data['email'])
+        password = self.validated_data['password']  
+        user.set_password(password)
+        user.save()
+        return user 
