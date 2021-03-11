@@ -1,0 +1,30 @@
+.style-sidebarContainer {
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  display: inline-block;
+  width: 20%;
+  height: 100vw;
+  background-color: #f9f9f9;
+}
+.style-logo {
+  display: flex;
+  align-items: center;
+  padding: 8px 0 9px 15px;
+}
+.style-nameApp {
+  font-weight: 700;
+  font-size: 30px;
+  text-transform: lowercase;
+  color: #333 !important;
+}
+.style-nameSchool {
+  font-size: 15px;
+  color: #333 !important;
+}
+
+.style-titleNav {
+  font-weight: 700;
+  padding: 15px 0 20px 25px;
+  background-color: #d9d9d9;
+}

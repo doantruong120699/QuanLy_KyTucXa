@@ -1,0 +1,28 @@
+.header-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 30px;
+  width: 80%;
+  background-color: #f9f9f9;
+}
+.title-box {
+  display: inline-block;
+  padding-top: 11px;
+  text-align: left;
+}
+.title-custome {
+  display: inline-block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: #333;
+}
+.icon-custome {
+  padding-right: 20px;
+  font-size: 20px;
+  text-shadow: 0px 1px, 1px 0px, 1px 1px;
+  color: #7b8191;
+}
