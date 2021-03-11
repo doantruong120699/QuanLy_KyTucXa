@@ -78,3 +78,23 @@ def get_profile_view(request):
         #
         return Response(data, status=status.HTTP_200_OK)            
     return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)  
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, ])
+def update_user_profile_view(request):
+    if request.method == 'POST':
+        # update current user by email
+        request.data['email'] = request.user.email
+        serializer = UpdateProfileSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                data['email'] = request.data['email']
+                data['message'] = 'Update profile successfully'
+                return Response(data, status=status.HTTP_200_OK)
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
