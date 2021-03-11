@@ -38,6 +38,10 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
         token['email'] = user_obj.first_name
         token['first_name'] = user_obj.first_name
         token['last_name'] = user_obj.last_name
+        gr = []
+        for g in user_obj.groups.all():
+            gr.append(g.name)
+        token['group'] = gr
         return token
 
     def validate(self, attrs):
@@ -101,3 +105,37 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user 
+
+
+# API get profile user
+class FacultySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Faculty
+        fields = [ "id", "name"]
+
+class PositionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = [ "id", "name"]
+
+class AreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Area
+        fields = [ "id", "name"]
+class ProfileSerializer(serializers.ModelSerializer):
+    faculty = FacultySerializer(required=False)
+    position = PositionSerializer(required=False)
+    area = AreaSerializer(required=False)
+    class Meta:
+        model = Profile
+        fields = [
+            'birthday',
+            'address',
+            'identify_card',
+            'gender',
+            'address',
+            'created_at',
+            'faculty',
+            'position',
+            'area',
+        ]

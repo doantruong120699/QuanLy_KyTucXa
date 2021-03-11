@@ -13,11 +13,29 @@ class VietNamProvince(models.Model):
 class Faculty(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
 
+    class Meta:
+        ordering = ('id',)
+    
+    def __str__(self):
+        return self.name
+
 class Position(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
 
+    class Meta:
+        ordering = ('id',)
+    
+    def __str__(self):
+        return self.name
+
 class Area(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
+
+    class Meta:
+        ordering = ('id',)
+    
+    def __str__(self):
+        return self.name
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
@@ -30,3 +48,9 @@ class Profile(models.Model):
     faculty = models.ForeignKey(Faculty, related_name = 'faculty_profile', on_delete=models.SET_NULL, blank=True, null=True)
     position = models.ForeignKey(Faculty, related_name = 'position_profile', on_delete=models.SET_NULL, blank=True, null=True)
     area = models.ForeignKey(Faculty, related_name = 'area_profile', on_delete=models.SET_NULL, blank=True, null=True)
+
+    class Meta:
+        ordering = ('user',)
+    
+    def __str__(self):
+        return self.user.username
