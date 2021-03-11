@@ -4,6 +4,7 @@ psycopg2
 python-dotenv
 djangorestframework-simplejwt
 vietnam-provinces
+django-cors-headers
 
 # django-taggit
 # django-s3direct
