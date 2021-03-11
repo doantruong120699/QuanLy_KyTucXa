@@ -24,6 +24,6 @@ urlpatterns = [
 
     # user
     path('account/get-user-profile/', get_profile_view),
-    # path('account/update-user-profile/', update_user_profile_view),
+    path('account/update-user-profile/', update_user_profile_view),
     path('account/change-password/', change_password_view),
 ]
