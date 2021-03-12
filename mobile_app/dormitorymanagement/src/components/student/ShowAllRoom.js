@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Text, SectionList, ImageBackground } from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet, FlatList, TouchableOpacity, Text, SectionList, ImageBackground} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { connect } from 'react-redux';
 import { getallroom } from '../../redux/actions/getallroom';
@@ -32,23 +32,6 @@ class ShowAllRoom extends Component {
       )
     }
     render() {
-      for (let i=0; i<this.props.data.length; i++) {
-        for (let j=0; j<this.props.data[i].data.length; j++) {
-          if(this.props.textSearch !== ''){
-            if(this.props.textSearch !== this.props.data[i].data[j].room){
-              this.setState({data: this.state.data.splice(i, 1)});
-              // console.log(this.state.data);
-              console.log("C");
-            }
-            else {
-              console.log("A");
-            }
-          }
-          else {
-            console.log("B");
-          }
-        }
-      }
       // console.log(this.state.data);
         return (
             <View style={styles.container}>
