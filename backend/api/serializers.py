@@ -38,6 +38,10 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
         token['email'] = user_obj.first_name
         token['first_name'] = user_obj.first_name
         token['last_name'] = user_obj.last_name
+        gr = []
+        for g in user_obj.groups.all():
+            gr.append(g.name)
+        token['group'] = gr
         return token
 
     def validate(self, attrs):
@@ -100,4 +104,80 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         password = self.validated_data['password']  
         user.set_password(password)
         user.save()
+        return user 
+
+
+# API get profile user
+class FacultySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Faculty
+        fields = [ "id", "name"]
+
+class PositionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = [ "id", "name"]
+
+class AreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Area
+        fields = [ "id", "name"]
+class ProfileSerializer(serializers.ModelSerializer):
+    faculty = FacultySerializer(required=False)
+    position = PositionSerializer(required=False)
+    area = AreaSerializer(required=False)
+    class Meta:
+        model = Profile
+        fields = [
+            'birthday',
+            'address',
+            'identify_card',
+            'gender',
+            'address',
+            'created_at',
+            'faculty',
+            'position',
+            'area',
+        ]
+
+#  API Update Profile
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    profile = ProfileSerializer()
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'profile'] 
+        extra_kwargs = {
+            'email': {'validators': [EmailValidator]},
+        }
+
+    def save(self):
+        user = User.objects.get(email=self.validated_data['email'])
+
+        try:
+            # update user
+            user.first_name = self.validated_data['first_name']
+            user.last_name = self.validated_data['last_name']
+            user.save()
+            # update profile
+            try:
+                profile_data = self.validated_data['profile']
+                profile = Profile.objects.get(user=user)
+                profile.birthday=profile_data['birthday']
+                profile.gender=profile_data['gender']
+                profile.address=profile_data['address']
+                profile.identify_card=profile_data['identify_card']
+                
+                profile.faculty=profile_data['faculty']
+                profile.position=profile_data['position']
+                profile.area=profile_data['area']
+                profile.save()
+            except:
+                pass
+
+        except:
+            pass
         return user 
