@@ -42,3 +42,59 @@ def change_password_view(request):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, ])
+def get_profile_view(request):
+    if request.method == 'GET':
+        data = {}        
+        data['email'] = request.user.email
+        user = User.objects.get(email=request.user.email)
+        data['first_name'] = user.first_name
+        data['last_name'] = user.last_name
+        data['id'] = user.id
+        groups = Group.objects.filter(user=request.user).all()
+        groups_ = []
+        for g in groups:
+            groups_.append(g.name) ## += g.name + ';'
+        data['groups'] = groups_   
+        # 
+        permissions = Permission.objects.filter(Q(user=user) | Q(group__user=user)).all()
+        permissions_user = []
+        for p in permissions:            
+            permissions_user.append(p.name)
+        data['permissions'] = permissions_user
+        # 
+        # groups_all = Group.objects.all()
+        # serializer_group_all = GroupSerializer(groups_all, many=True)
+        # data['groups_with_permissions'] = serializer_group_all.data
+        # 
+        profile = {}
+        try:
+            profile = ProfileSerializer(user.profile).data
+        except:
+            pass
+        data['profile'] = profile
+        #
+        return Response(data, status=status.HTTP_200_OK)            
+    return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)  
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, ])
+def update_user_profile_view(request):
+    if request.method == 'POST':
+        # update current user by email
+        request.data['email'] = request.user.email
+        serializer = UpdateProfileSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                data['email'] = request.data['email']
+                data['message'] = 'Update profile successfully'
+                return Response(data, status=status.HTTP_200_OK)
+            except:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
