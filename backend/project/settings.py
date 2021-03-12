@@ -158,3 +158,5 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(minutes=1000),
 }
 
+CORS_ORIGIN_ALLOW_ALL = True
+
