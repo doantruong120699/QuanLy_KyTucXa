@@ -1,0 +1,42 @@
+.style-checkroom {
+  height: 100vh;
+  padding: 20px;
+  background: url('../../assets//images/backgrounds/background.jpg')
+    center/cover no-repeat;
+}
+.style-areaBox {
+  margin-bottom: 15px;
+  box-shadow: rgba(71, 71, 71, 0.2) 0px 0px 15px;
+  border-radius: 20px;
+  padding: 20px;
+  background-color: #fff;
+  color: #333;
+}
+.style-areaBox > p {
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.style-roomOfArea {
+  border-radius: 10px;
+  margin: 10px;
+  padding: 8px;
+  background-color: #fe6276;
+  color: #fff;
+}
+.style-roomOfArea > p {
+  margin: 0 0 10px 10px;
+  font-size: larger;
+  font-weight: 700;
+}
+.style-student {
+  margin: 5px;
+  border-radius: 5px;
+  padding: 5px;
+  text-align: center;
+  background-color: #09bd3d;
+}
+.style-student:hover {
+  border: 1px solid #099030;
+  margin: 4px;
+}
