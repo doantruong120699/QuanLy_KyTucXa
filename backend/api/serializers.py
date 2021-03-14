@@ -134,6 +134,23 @@ class ProfileSerializer(serializers.ModelSerializer):
             'identify_card',
             'gender',
             'address',
+            'phone',
+            'created_at',
+            'faculty',
+            'position',
+            'area',
+        ]
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = [
+            'birthday',
+            'address',
+            'identify_card',
+            'gender',
+            'address',
+            'phone',
             'created_at',
             'faculty',
             'position',
@@ -145,7 +162,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
-    profile = ProfileSerializer()
+    profile = ProfileUpdateSerializer()
 
     class Meta:
         model = User
@@ -156,7 +173,6 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 
     def save(self):
         user = User.objects.get(email=self.validated_data['email'])
-
         try:
             # update user
             user.first_name = self.validated_data['first_name']
@@ -170,12 +186,14 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
                 profile.gender=profile_data['gender']
                 profile.address=profile_data['address']
                 profile.identify_card=profile_data['identify_card']
-                
+                profile.phone=profile_data['phone']
+
                 profile.faculty=profile_data['faculty']
                 profile.position=profile_data['position']
                 profile.area=profile_data['area']
                 profile.save()
-            except:
+            except Exception as e:
+                print(e)
                 pass
 
         except:
