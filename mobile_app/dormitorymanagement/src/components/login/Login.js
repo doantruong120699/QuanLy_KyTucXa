@@ -37,7 +37,7 @@ class Login extends Component {
             this.showToast('Email or password is empty!');
             return;
         }
-        const data = {"username": "quang1@gmail.com", "password": "123456"};
+        const data = {"username": "asdquang111@gmail.com", "password": "quang1999"};
         await this.props.login(data);
         const token = await getData('token');
         // const role = await getData('role');
