@@ -8,7 +8,9 @@ const initialState = {
 export const changepassword = (state = initialState, actions) => {
     switch(actions.type) {
         case CHANGE_PASSWORD_SUCCESS: 
-            return {...state};
+            return {...state, msg: actions.msg};
+        case CHANGE_PASSWORD_FAIL: 
+            return {...state, msg: actions.msg};
         default: 
             return state;
     }
