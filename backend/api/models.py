@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from vietnam_provinces import Province, District, Ward
 from vietnam_provinces.enums import ProvinceEnum
+import uuid
 
 # ==============================
 # === Custom cities_light model ===
@@ -36,9 +37,9 @@ class Area(models.Model):
     
     def __str__(self):
         return self.name
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    public_id = models.UUIDField(default=uuid.uuid4, editable=False)
     birthday = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
     identify_card = models.CharField(max_length=200, null=True, blank=True)
@@ -53,6 +54,6 @@ class Profile(models.Model):
 
     class Meta:
         ordering = ('user',)
-    
+
     def __str__(self):
-        return self.user.username
+        return self.user.email
