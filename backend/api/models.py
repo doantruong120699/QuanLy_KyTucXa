@@ -43,11 +43,13 @@ class Profile(models.Model):
     address = models.CharField(max_length=200, null=True, blank=True)
     identify_card = models.CharField(max_length=200, null=True, blank=True)
     gender = models.BooleanField(default=True, blank=True, null=True)
+    phone = models.CharField(max_length=50, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     faculty = models.ForeignKey(Faculty, related_name = 'faculty_profile', on_delete=models.SET_NULL, blank=True, null=True)
-    position = models.ForeignKey(Faculty, related_name = 'position_profile', on_delete=models.SET_NULL, blank=True, null=True)
-    area = models.ForeignKey(Faculty, related_name = 'area_profile', on_delete=models.SET_NULL, blank=True, null=True)
+    position = models.ForeignKey(Position, related_name = 'position_profile', on_delete=models.SET_NULL, blank=True, null=True)
+    area = models.ForeignKey(Area, related_name = 'area_profile', on_delete=models.SET_NULL, blank=True, null=True)
+    token = models.CharField(max_length=100, null=True)
 
     class Meta:
         ordering = ('user',)
