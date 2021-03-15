@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from vietnam_provinces import Province, District, Ward
 from vietnam_provinces.enums import ProvinceEnum
 import uuid
+from model_utils import Choices
+from django.utils.translation import ugettext_lazy as _
 
 # ==============================
 # === Custom cities_light model ===
@@ -67,3 +69,35 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.email
+
+# =====================================
+
+class TypeRoom(models.Model):
+    name = models.CharField(max_length=200, null=True, blank=True)
+    price = models.PositiveIntegerField(default=0)  
+    number_max = models.PositiveIntegerField(default=8)  
+
+    class Meta:
+        ordering = ('id',)
+
+    def __str__(self):
+        return self.name
+class Room(models.Model):
+    STATUS = Choices(
+        ('A', _('Available')),
+        ('F', _('Full')),
+        ('UA', _('Unavailable')),
+    )
+    name = models.CharField(max_length=200, null=True, blank=True)
+    number_now = models.PositiveIntegerField(default=0)  
+    typeroom = models.ForeignKey(TypeRoom, related_name = 'type_room', on_delete=models.SET_NULL, blank=True, null=True)
+    area = models.ForeignKey(Area, related_name = 'area_room', on_delete=models.SET_NULL, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    status = models.CharField(choices=STATUS, max_length=10, null=True, blank=True)
+
+    class Meta:
+        ordering = ('id',)
+
+    def __str__(self):
+        return self.name

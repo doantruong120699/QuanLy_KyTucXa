@@ -5,6 +5,7 @@ python-dotenv
 djangorestframework-simplejwt
 vietnam-provinces
 django-cors-headers
+django-model-utils
 
 # django-taggit
 # django-s3direct
