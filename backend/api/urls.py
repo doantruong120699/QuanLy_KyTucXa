@@ -26,4 +26,8 @@ urlpatterns = [
     path('account/get-user-profile/', get_profile_view),
     path('account/update-user-profile/', update_user_profile_view),
     path('account/change-password/', change_password_view),
+    
+    path('', include('api.sinhvien.urls')), 
+    # path('', include('api.lessons.urls')), 
+    # path('', include('api.students_of_coach.urls')),
 ]
