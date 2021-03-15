@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 from api.models import *
-from api.serializers import FacultySerializer
+from api.serializers import FacultySerializer, ClassSerializer
 
 class StringListField(serializers.ListField): # get from http://www.django-rest-framework.org/api-guide/fields/#listfield
     child = serializers.CharField()
@@ -13,6 +13,7 @@ class StringListField(serializers.ListField): # get from http://www.django-rest-
 
 class ProfileInListSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
+    my_class = ClassSerializer(required=False)
     class Meta:
         model = Profile
         fields = [
@@ -20,6 +21,7 @@ class ProfileInListSerializer(serializers.ModelSerializer):
             'phone',
             'public_id',
             'faculty',
+            'my_class',
         ]
 
 class SinhVienListSerializer(serializers.ModelSerializer):
