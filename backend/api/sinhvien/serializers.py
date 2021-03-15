@@ -21,7 +21,7 @@ class ProfileInListSerializer(serializers.ModelSerializer):
             'phone',
             'public_id',
             'faculty',
-            'my_class',
+            'my_class'
         ]
 
 class SinhVienListSerializer(serializers.ModelSerializer):
