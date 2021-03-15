@@ -10,7 +10,6 @@ from collections import OrderedDict
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets
-from django.shortcuts import get_object_or_404
 
 from api.models import *
 from .serializers import *
