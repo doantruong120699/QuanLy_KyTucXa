@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 from api.models import *
-from api.serializers import FacultySerializer, ClassSerializer
+from api.serializers import PositionSerializer, AreaSerializer
 
 class StringListField(serializers.ListField): # get from http://www.django-rest-framework.org/api-guide/fields/#listfield
     child = serializers.CharField()
@@ -12,23 +12,23 @@ class StringListField(serializers.ListField): # get from http://www.django-rest-
         return data.values_list('name', flat=True)
 
 class ProfileInListSerializer(serializers.ModelSerializer):
-    faculty = FacultySerializer(required=False)
-    my_class = ClassSerializer(required=False)
+    position = PositionSerializer(required=False)
+    area = AreaSerializer(required=False)
     class Meta:
         model = Profile
         fields = [
             'gender',
             'phone',
             'public_id',
-            'faculty',
-            'my_class'
+            'position',
+            'area'
         ]
 
-class ProfileSinhVienSerializer(serializers.ModelSerializer):
-    faculty = FacultySerializer(required=False)
-    # position = PositionSerializer(required=False)
-    # area = AreaSerializer(required=False)
-    my_class = ClassSerializer(required=False)
+class ProfileNhanVienSerializer(serializers.ModelSerializer):
+    # faculty = FacultySerializer(required=False)
+    position = PositionSerializer(required=False)
+    area = AreaSerializer(required=False)
+    # my_class = ClassSerializer(required=False)
     class Meta:
         model = Profile
         fields = [
@@ -38,12 +38,13 @@ class ProfileSinhVienSerializer(serializers.ModelSerializer):
             'gender',
             'phone',
             'created_at',
-            'faculty',
-            'my_class',
-            # 'position',
-            # 'area',
+            # 'faculty',
+            # 'my_class',
+            'position',
+            'area',
         ]
-class SinhVienListSerializer(serializers.ModelSerializer):
+
+class NhanVienListSerializer(serializers.ModelSerializer):
     profile = ProfileInListSerializer()
     class Meta:
         model = User

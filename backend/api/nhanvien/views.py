@@ -16,11 +16,11 @@ from .serializers import *
 from api.serializers import *
 from api import status_http
 from api.permissions import *
-sinhvien_group = 'sinhvien_group'
+nhanvien_group = 'nhanvien_group'
 
-class SinhVienViewSet(viewsets.ModelViewSet):
+class NhanVienViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
-    serializer_class = SinhVienListSerializer
+    serializer_class = NhanVienListSerializer
     # permission_classes = [IsAuthenticated]
     permission_classes = []
     lookup_field = 'public_id'
@@ -30,7 +30,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
         return Profile.objects.filter(public_id__public_id=public_id).order_by('id')
 
     def list(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=sinhvien_group).order_by('id')
+        queryset = User.objects.filter(groups__name=nhanvien_group).order_by('id')
                    
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -53,7 +53,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
 
             profile = {}
             try:
-                profile = ProfileSinhVienSerializer(queryset).data
+                profile = ProfileNhanVienSerializer(queryset).data
             except:
                 pass
             data['profile'] = profile
@@ -66,10 +66,10 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Profile Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-    # get list all sinhvien ( filter by user_id)
-    @action(methods=["GET"], detail=False, url_path="get_all_sinhvien", url_name="get_all_sinhvien")
-    def get_all_sinhvien(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=sinhvien_group).order_by('id')
+    # get list all nhanvien 
+    @action(methods=["GET"], detail=False, url_path="get_all_nhanvien", url_name="get_all_nhanvien")
+    def get_all_nhanvien(self, request, *args, **kwargs):
+        queryset = User.objects.filter(groups__name=nhanvien_group).order_by('id')
 
         page = self.paginate_queryset(queryset)
         if page is not None:

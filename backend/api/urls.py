@@ -28,6 +28,6 @@ urlpatterns = [
     path('account/change-password/', change_password_view),
     
     path('', include('api.sinhvien.urls')), 
-    # path('', include('api.lessons.urls')), 
+    path('', include('api.nhanvien.urls')), 
     # path('', include('api.students_of_coach.urls')),
 ]
