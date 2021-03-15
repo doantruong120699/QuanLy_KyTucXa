@@ -20,6 +20,15 @@ class Faculty(models.Model):
     def __str__(self):
         return self.name
 
+class Class(models.Model):
+    name = models.CharField(max_length=200, null=True, blank=True)
+
+    class Meta:
+        ordering = ('id',)
+    
+    def __str__(self):
+        return self.name
+
 class Position(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
 
@@ -48,6 +57,7 @@ class Profile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     faculty = models.ForeignKey(Faculty, related_name = 'faculty_profile', on_delete=models.SET_NULL, blank=True, null=True)
+    my_class = models.ForeignKey(Class, related_name = 'class_profile', on_delete=models.SET_NULL, blank=True, null=True)
     position = models.ForeignKey(Position, related_name = 'position_profile', on_delete=models.SET_NULL, blank=True, null=True)
     area = models.ForeignKey(Area, related_name = 'area_profile', on_delete=models.SET_NULL, blank=True, null=True)
     token = models.CharField(max_length=100, null=True)
