@@ -29,5 +29,6 @@ urlpatterns = [
     
     path('', include('api.sinhvien.urls')), 
     path('', include('api.nhanvien.urls')), 
+    path('', include('api.room.urls')), 
     # path('', include('api.students_of_coach.urls')),
 ]
