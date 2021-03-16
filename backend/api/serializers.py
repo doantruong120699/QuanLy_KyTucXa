@@ -1,4 +1,3 @@
-
 from django.contrib.auth.models import User, Group, Permission
 from django.core.validators import EmailValidator
 from django.utils.crypto import get_random_string
@@ -113,6 +112,11 @@ class FacultySerializer(serializers.ModelSerializer):
         model = Faculty
         fields = [ "id", "name"]
 
+class ClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = [ "id", "name"]
+
 class PositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Position
@@ -126,6 +130,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
     position = PositionSerializer(required=False)
     area = AreaSerializer(required=False)
+    my_class = ClassSerializer(required=False)
     class Meta:
         model = Profile
         fields = [
@@ -133,10 +138,10 @@ class ProfileSerializer(serializers.ModelSerializer):
             'address',
             'identify_card',
             'gender',
-            'address',
             'phone',
             'created_at',
             'faculty',
+            'my_class',
             'position',
             'area',
         ]
@@ -149,10 +154,10 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             'address',
             'identify_card',
             'gender',
-            'address',
             'phone',
             'created_at',
             'faculty',
+            'my_class',
             'position',
             'area',
         ]
