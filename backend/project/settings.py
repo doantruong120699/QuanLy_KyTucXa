@@ -126,11 +126,13 @@ USE_L10N = True
 USE_TZ = True
 
 
-# GROUP_NAME = {
-#     'ADMIN': 'admin_group',
-#     'STAFF': 'staff_group',
-#     'user': 'user_group'
-# }
+GROUP_NAME = {
+    'ADMIN': 'admin_group',
+    'NHANVIEN': 'nhanvien_group',
+    'SINHVIEN': 'sinhvien_group',
+    'QUANLYNHANSU':'quanlynhansu_group',
+    'QUANLYTAICHINH':'quanlytaichinh_group',
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
