@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { login } from '../../redux/actions/login';
+import { changepassword } from '../../redux/actions/changepassword';
 import { AppBar } from '../index';
+import { getData } from '../../utils/asyncStorage';
 
 class ChangePassword extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            old_password: '',
-            new_password: '',
-            repeat_new_password: '',
+            email: 'asdquang111@gmail.com',
+            old_password: 'quang1999',
+            new_password: 'quang301199',
+            repeat_new_password: 'quang301199',
         };
     };
     changTextOldPassword = (text) => {
@@ -23,8 +25,24 @@ class ChangePassword extends Component {
     changTextRepeatNewPassword = (text) => {
         this.setState({repeat_new_password: text});
     };
-    loginSuccess = () => {
-        const data = {email: this.state.email, password: this.state.password};
+    changePassword = async () => {
+        const data = {
+            "email": this.state.email, 
+            "old_password": this.state.old_password, 
+            "password": this.state.new_password, 
+            "confirm_password": this.state.repeat_new_password
+        };
+        await this.props.changepassword(data);
+        const token = await getData('token');
+        // const role = await getData('role');
+        if (this.props.msg!=='Success') {
+            this.showToast('Đổi mật khẩu không thành công');
+            // this.props.navigation.navigate("Login");
+        }
+        else {
+            this.showToast('Đổi mật khẩu thành công');
+            // this.props.navigation.navigate("HomePage");
+        }
     }
     render() {
         return (
@@ -54,7 +72,7 @@ class ChangePassword extends Component {
                             </View>
                             <View style={styles.inputView}>
                                 <TextInput
-                                    onChangeText={this.changTextRepeatNewPassworde}
+                                    onChangeText={this.changTextRepeatNewPassword}
                                     style={styles.inputText}
                                     placeholder="Xác thực mật khẩu"
                                     placeholderTextColor="#808080"
@@ -75,12 +93,11 @@ class ChangePassword extends Component {
 }
 
 const mapDispatchToProps = {
-    login,
+    changepassword,
 };
 function mapStateToProps(state) {
     return {
-        msg: state.login.msg,
-        isLoggedIn: state.login.isLoggedIn,
+        msg: state.changepassword.msg,
     };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ChangePassword);

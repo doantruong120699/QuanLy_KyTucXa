@@ -154,13 +154,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.custom_pagination.CustomPagination',
     'PAGE_SIZE': 10,    
 }
-
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000'
-] # If this is used, then not need to use `CORS_ORIGIN_ALLOW_ALL = True`
-CORS_ORIGIN_REGEX_WHITELIST = [
-    'http://localhost:3000'
-]
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = [
+#     'http://127.0.0.1:8081',
+#     'http://127.0.0.1:8000'
+# ] # If this is used, then not need to use `CORS_ORIGIN_ALLOW_ALL = True`
+# CORS_ORIGIN_REGEX_WHITELIST = [
+#     'http://127.0.0.1:8081',
+#     'http://127.0.0.1:8000'
+# ]
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=600),
