@@ -1,0 +1,35 @@
+.style-myProfile-container {
+  height: 100vh;
+  padding: 20px;
+  background: url('../../assets/images/backgrounds/background.jpg') center/cover
+    no-repeat;
+}
+.style-avatar {
+  position: relative;
+  border-radius: 50%;
+  border: 2px solid #7b8191;
+  margin: auto;
+  width: 234px;
+  height: 234px;
+  background: url('../../assets/images/user/default-user.png') center/cover
+    no-repeat;
+  background-color: aqua;
+}
+.style-editAvatar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  border-radius: 50%;
+  border: 2px solid #7b8191;
+  height: 40px;
+  padding-top: 5px;
+  width: 40px;
+  font-size: 25px;
+  text-align: center;
+  color: #7b8191;
+  background: #fff;
+}
+.style-editAvatar:hover i {
+  cursor: pointer;
+  opacity: 0.6;
+}

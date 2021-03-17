@@ -1,9 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { useHistory } from "react-router";
+import * as TitileList from "../../utilities/constants/titles";
+import * as route from "../../utilities/constants/router";
+import { actFetchTitleNavigation } from "../../redux/actions/dashboard";
 
 const User = () => {
+  const history = useHistory();
+
+  const dispatch = useDispatch();
+
   const [isShown, setIsShown] = useState(false);
 
   const logoutWrapper = useRef(null);
+
+  const logout = () => {
+    localStorage.removeItem("user");
+    history.push(route.ROUTE_LOGIN);
+  };
 
   const useClickOutside = (ref) => {
     useEffect(() => {
@@ -19,6 +33,10 @@ const User = () => {
     }, [ref]);
   };
 
+  const gotoMyProfile = (title) => {
+    history.push(TitileList.MY_PROFILE_TITLE.path);
+    dispatch(actFetchTitleNavigation(title));
+  };
   var styleIcon = isShown ? "fi-rr-caret-up" : "fi-rr-caret-down";
   useClickOutside(logoutWrapper);
   return (
@@ -35,11 +53,14 @@ const User = () => {
       </div>
       {isShown && (
         <div className="style-dropdownContainer">
-          <div className="style-dropdownItem">
+          <div
+            className="style-dropdownItem"
+            onClick={() => gotoMyProfile(TitileList.MY_PROFILE_TITLE.title)}
+          >
             <i class="fi-sr-user" />
             <span>Trang cá nhân</span>
           </div>
-          <div className="style-dropdownItem">
+          <div className="style-dropdownItem" onClick={logout}>
             <i class="fi-sr-sign-out" />
             <span className="">Đăng xuất</span>
           </div>

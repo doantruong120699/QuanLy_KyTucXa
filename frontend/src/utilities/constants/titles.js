@@ -20,3 +20,7 @@ export const NAVIGATION_TITLE = [
     path: "./",
   },
 ];
+export const MY_PROFILE_TITLE = {
+  title: "Trang cá nhân",
+  path: "/myProfile",
+};

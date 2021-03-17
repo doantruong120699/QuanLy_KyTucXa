@@ -35,6 +35,7 @@
   color: #7b8191;
 }
 .style-dropdownContainer {
+  z-index: 9999;
   position: absolute;
   top: 80px;
   right: 48px;

@@ -4,6 +4,27 @@
   box-sizing: border-box;
   font-family: Quicksand;
 }
+.pt-24 {
+  padding-top: 24px;
+}
+.pt-8px {
+  padding-top: 8px;
+}
+.pb-8 {
+  padding-bottom: 8px;
+}
+.pr-8 {
+  padding-right: 8px;
+}
+.pr-12 {
+  padding-right: 12px;
+}
+.pl-12 {
+  padding-left: 12px;
+}
+.mt-8 {
+  margin-top: 8px;
+}
 .mb-16 {
   margin-bottom: 16px;
 }
@@ -24,4 +45,14 @@
 }
 .col-5 {
   width: 20%;
+}
+.col-two-third {
+  width: 66.67%;
+}
+.justify-content-sb {
+  display: flex;
+  justify-content: space-between;
+}
+.align-items-center {
+  align-items: center;
 }
