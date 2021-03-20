@@ -22,7 +22,7 @@ class Dashboard extends Component {
                                     <Text style={styles.total}>Total Students</Text>
                                     <Text style={styles.last}>+0,5% than last month</Text>
                                 </View>
-                                <FontAwesome5 style={styles.icon} name="user-friends"/>
+                                <FontAwesome5 style={styles.icon} name="graduation-cap"/>
                             </View>
                         </View>
                         <View style={styles.teachers}>
@@ -32,7 +32,7 @@ class Dashboard extends Component {
                                     <Text style={styles.total}>Total Teachers</Text>
                                     <Text style={styles.last}>+0,5% than last month</Text>
                                 </View>
-                                <FontAwesome5 style={styles.icon} name="graduation-cap"/>
+                                <FontAwesome5 style={styles.icon} name="user-friends"/>
                             </View>
                         </View>
                         <View style={styles.rooms}>
