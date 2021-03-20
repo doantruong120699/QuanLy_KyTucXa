@@ -58,7 +58,7 @@ class Area(models.Model):
     def __str__(self):
         return self.name
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(User,related_name = 'user_profile', on_delete=models.CASCADE, primary_key=True)
     public_id = models.UUIDField(default=uuid.uuid4, editable=False)
     birthday = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
@@ -118,3 +118,34 @@ class Room(models.Model):
         if not self.slug:
             self.slug = unique_slugify(self, slugify(self.name))
         super().save(*args, **kwargs)
+
+# =========================================
+
+class PaymentMethod(models.Model):
+    name = models.CharField(max_length=200, null=True, blank=True)
+    bank_number = models.CharField(max_length=200, null=True, blank=True)
+    class Meta:
+        ordering = ('id',)
+
+    def __str__(self):
+        return self.name
+
+class Contract(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name = 'contract_created_by', on_delete=models.CASCADE, blank=True, null=True)
+    updated_by = models.ForeignKey(User, related_name = 'contract_updated_by', on_delete=models.CASCADE, blank=True, null=True)
+    start_at = models.DateField(null=True, blank=True)
+    end_at = models.DateField(null=True, blank=True)
+    payment_method = models.ForeignKey(PaymentMethod, related_name = 'contract_payment_method', on_delete=models.SET_NULL, blank=True, null=True)
+    room = models.ForeignKey(Room, related_name = 'contract_room', on_delete=models.SET_NULL, blank=True, null=True)
+    profile = models.ForeignKey(Profile, related_name = 'contract_profile', on_delete=models.SET_NULL, blank=True, null=True)
+    status = models.BooleanField(default=False)
+    
+    class Meta:
+        ordering = ('created_at',)
+
+    def __str__(self):
+        return self.profile.user.username + ' - ' + self.room.name
+
+
