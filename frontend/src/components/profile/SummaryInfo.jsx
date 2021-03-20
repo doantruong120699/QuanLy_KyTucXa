@@ -17,27 +17,27 @@ const SummaryInfo = (props) => {
           <span className="style-firstname">{firstname}</span>
           <span>{username}</span>
         </div>
-        <i class="fi-rr-edit"></i>
+        <i className="fi-rr-edit"></i>
       </div>
       <div className="col col-full mt-8">
-        <i class="fi-rr-marker" />
+        <i className="fi-rr-marker" />
         <span>{address}</span>
       </div>
       <div className="col col-full  mt-8">
-        <i class="fi-rr-envelope" />
+        <i className="fi-rr-envelope" />
         <span>{email}</span>
       </div>{" "}
       <div className="col col-full mt-8">
-        <i class="fi-sr-bold" />
+        <i className="fi-sr-bold" />
         <span>{birthday}</span>
       </div>
       <div className="col col-full mt-8">
-        <i class="fi-rr-heart" />
+        <i className="fi-rr-heart" />
         <span>{gender}</span>
       </div>
       <div className="col col-full mt-8">
         <div>
-          <i class="fi-rr-fingerprint" />
+          <i className="fi-rr-fingerprint" />
           <span>{identifyCard}</span>
         </div>
         <div className="style-buttonProfile">

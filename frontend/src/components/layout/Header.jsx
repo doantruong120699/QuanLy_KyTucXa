@@ -7,7 +7,7 @@ const Header = () => {
     <div className="">
       <div className="header-bar">
         <div className="title-box">
-          <i class="fi-sr-list icon-custome" />
+          <i className="fi-sr-list icon-custome" />
           <h2 className="title-custome">{title}</h2>
         </div>
         <User />

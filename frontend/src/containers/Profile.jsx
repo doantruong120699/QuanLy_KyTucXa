@@ -15,21 +15,22 @@ const Profile = () => {
       address: "60 Ngô Sĩ Liên - Kí túc xá Bách Khoa",
       identifyCard: "123456789",
       gender: "Nam",
-      faculty: {
-        id: 1,
-        name: "Công nghệ thông tin",
+      faculty: null,
+      position: {
+        id: 5,
+        name: "Trưởng khu",
       },
-      position: null,
       area: {
         id: 8,
         name: "C",
       },
     },
   };
+
   var user = JSON.parse(localStorage.getItem("user"));
   return (
     <div className="style-myProfile-container">
-      <div>
+      <div className="col col-full">
         <div className="col col-third align-items-center pr-16">
           <Avatar />
         </div>
@@ -46,42 +47,64 @@ const Profile = () => {
           />
         </div>
       </div>
-      <div>
-        <div className="col col-half pt-24 pr-12">
-          <div className="col col-full pd-24 style-summaryInfo">
+      {info.profile.faculty !== null ? (
+        <div className=" col col-full pt-24">
+          <div className="col col-half pt-24 pr-12">
+            <div className="col col-full pd-24 style-summaryInfo">
+              <div className="col col-full">
+                <span className="style-notiTitle">Phòng thuê</span>
+              </div>
+              <div className="col col-full mt-8">
+                <i className="fi-rr-building"></i>
+                <span>Khu </span>
+                <span>A</span>
+              </div>
+              <div className="col col-full mt-8">
+                <i className="fi-rr-home"></i>
+                <span>Phòng </span>
+                <span>A102</span>
+              </div>
+            </div>
+          </div>
+          <div className="col col-half pt-24 pl-12">
+            <div className="col col-full pd-24 style-summaryInfo">
+              <div className="col col-full">
+                <span className="style-notiTitle">Thông tin học tập</span>
+              </div>
+              <div className="col col-full mt-8">
+                <i className="fi-rr-backpack"></i>
+                <span>Lớp </span>
+                <span>17T1</span>
+              </div>
+              <div className="col col-full mt-8">
+                <i className="fi-rr-star"></i>
+                <span>{info.profile.faculty.name}</span>
+              </div>
+              <div className="col col-full mt-8">
+                <i className="fi-rr-school"></i>
+                <span>Trường ĐHBK</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="col col-full pt-48">
+          <div className="col col-full style-summaryInfo">
             <div className="col col-full">
-              <span className="style-notiTitle">Phòng thuê</span>
+              <span className="style-notiTitle">Thông tin làm việc</span>
             </div>
             <div className="col col-full mt-8">
-              <i class="fi-rr-building"></i>
+              <i className="fi-rr-star"></i>
+              <span>Chức vụ {info.profile.position.name}</span>
+            </div>
+            <div className="col col-full mt-8">
+              <i className="fi-rr-building"></i>
               <span>Khu </span>
               <span>A</span>
             </div>
-            <div className="col col-full mt-8">
-              <i class="fi-rr-home"></i>
-              <span>Phòng </span>
-              <span>A102</span>
-            </div>
           </div>
         </div>
-        <div className="col col-half pt-24 pl-12">
-          <div className="col col-full pd-24 style-summaryInfo">
-            <div className="col col-full">
-              <span className="style-notiTitle">Thông tin học tập</span>
-            </div>
-            <div className="col col-full mt-8">
-              <i class="fi-rr-backpack"></i>
-              <span>Lớp </span>
-              <span>17T1</span>
-            </div>
-            <div className="col col-full mt-8">
-              <i class="fi-rr-school"></i>
-              <span>Trường THPT Nguyễn Sinh Cung</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div></div>
+      )}
     </div>
   );
 };

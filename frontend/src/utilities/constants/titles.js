@@ -13,7 +13,7 @@ export const NAVIGATION_TITLE = [
   },
   {
     title: "Nhân viên",
-    path: "./",
+    path: "./employees",
   },
   {
     title: "Dịch vụ",

@@ -1,13 +1,14 @@
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { Route, Router, Switch } from "react-router-dom";
 import { createBrowserHistory as history } from "history";
 import withAuth from "./components/layout/withAuth";
 import Dashboard from "./containers/Dashboard";
 import Login from "./containers/Login";
 import ForgotPassword from "./containers/ForgotPassword";
 import ResetPassword from "./containers/ResetPassword";
-import Checkroom from "./components/checkroom/Checkroom";
 import Profile from "./containers/Profile";
 import * as ROUTE from "./utilities/constants/router";
+import Checkroom from "./containers/Checkroom";
+import EmployeePage from "./containers/EmployeePage";
 function App() {
   return (
     <Router history={history()}>
@@ -32,6 +33,11 @@ function App() {
         <Route
           path={ROUTE.ROUTE_MY_PROFILE}
           component={withAuth(Profile)}
+          exact
+        />
+        <Route
+          path={ROUTE.ROUTE_EMPLOYEES}
+          component={withAuth(EmployeePage)}
           exact
         />
       </Switch>

@@ -6,7 +6,7 @@ import { Redirect } from "react-router";
 const withAuth = (Component) => (props) => {
   return (
     <div>
-      {getAuth() ? (
+      {getAuth() && getAuth().jti ? (
         <div>
           <SideBar />
           <Header />

@@ -1,0 +1,11 @@
+
+.style-areaBox {
+  margin-bottom: 15px;
+  background-color: #fff;
+  color: #333;
+}
+.style-areaBox > p {
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 700;
+}

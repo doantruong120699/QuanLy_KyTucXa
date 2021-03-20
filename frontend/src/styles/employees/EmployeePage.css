@@ -1,0 +1,21 @@
+.style-employeesBox {
+  background-color: #fbfbfb;
+}
+.style-avatarEmployee {
+  display: inline-block;
+  border-radius: 5px;
+  width: 75px;
+  min-width: 75px;
+  height: 75px;
+}
+.style-nameEmployee {
+  font-weight: 700;
+}
+.style-subject {
+  font-size: 12px;
+  font-weight: 700;
+  color: #717479;
+}
+.style-contactInfo i {
+  color: #fe6276;
+}
