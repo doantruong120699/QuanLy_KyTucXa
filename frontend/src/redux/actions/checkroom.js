@@ -11,7 +11,7 @@ export async function getRoomsList(resolve = () => {}) {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(),
     });
     const data_1 = await response.json();
     resolve(data_1);
