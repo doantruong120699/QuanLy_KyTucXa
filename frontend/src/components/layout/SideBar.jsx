@@ -27,7 +27,7 @@ const SideBar = () => {
   return (
     <div className="style-sidebarContainer">
       <Link
-        to="/dashboard"
+        to={TitleList.NAVIGATION_TITLE[0].path}
         style={{ textDecoration: "none" }}
         onClick={() =>
           dispatch(actFetchTitleNavigation(TitleList.NAVIGATION_TITLE[0].title))
