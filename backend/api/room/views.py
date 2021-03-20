@@ -10,7 +10,6 @@ from collections import OrderedDict
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets
-
 from api.models import *
 from api.custom_pagination import LibraryCustomPagination
 from .serializers import *
@@ -19,7 +18,7 @@ from api.permissions import *
 
 class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomListSerializer
-    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+    # permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
     lookup_field = 'slug'
 
     def get_queryset(self):
@@ -53,9 +52,23 @@ class RoomViewSet(viewsets.ModelViewSet):
     # get list all lesson 
     @action(methods=["GET"], detail=False, url_path="get_all_room", url_name="get_all_room")
     def get_all_room(self, request, *args, **kwargs):
-        queryset = Room.objects.all().order_by('-created_at')
+        member_room = {}        
+        # data['public_id'] = request.user.user_profile
+        # data['email'] = request.user.email
+        # data['first_name'] = request.user.first_name
+        # data['last_name'] = request.user.last_name
 
-        page = self.paginate_queryset(queryset)
+        # profile = {}
+        # try:
+        #     profile = ProfileSinhVienSerializer(queryset).data
+        # except:
+        #     pass
+        # data['profile'] = profile
+
+
+        queryset = Room.objects.all().order_by('-created_at')
+        print(queryset)
+        page = self.paginate_queryset(member_room)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
