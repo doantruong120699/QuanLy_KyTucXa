@@ -14,5 +14,7 @@
 @import './styles/login/Login.css';
 @import './styles/common/HomePage.css';
 @import './styles/common/Box.css';
+@import './styles/profile/Profile.css';
+@import './styles/profile/SummaryInfo.css';
 @import './assets/icons/uicons-solid-rounded/css/uicons-solid-rounded.css';
 @import './assets/icons/uicons-regular-rounded/css/uicons-regular-rounded.css';
