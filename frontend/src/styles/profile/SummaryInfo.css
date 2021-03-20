@@ -1,0 +1,29 @@
+.style-summaryInfo {
+  z-index: 1;
+  position: relative;
+  box-shadow: rgba(140, 140, 140, 0.8) 0px 0px 20px;
+  border-radius: 20px;
+  padding: 24px;
+  font-size: 1em;
+  color: #7b8191;
+  background-color: #fff;
+}
+.style-summaryInfo i {
+  margin: 0 10px;
+  color: #7b8191 !important;
+}
+.style-firstname {
+  margin-right: 15px;
+  font-size: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #5e5ce6;
+  background: linear-gradient(90deg, #5b70f6, #8658f3);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.style-buttonProfile {
+  position: absolute;
+  top: 175px;
+  right: 34px;
+}
