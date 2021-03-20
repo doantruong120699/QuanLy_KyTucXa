@@ -1,9 +1,6 @@
 .style-infoContainer {
-  box-shadow: rgba(140, 140, 140, 0.8) 0px 0px 20px;
-  border-radius: 20px;
   margin-bottom: 20px;
   width: 230px;
-  padding: 15px;
   color: #fff;
 }
 .style-valueInfo {
@@ -27,4 +24,3 @@
   padding: 20px 0 11px 25px;
   font-size: 50px;
 }
-

@@ -13,10 +13,14 @@ export const NAVIGATION_TITLE = [
   },
   {
     title: "Nhân viên",
-    path: "./",
+    path: "./employees",
   },
   {
     title: "Dịch vụ",
     path: "./",
   },
 ];
+export const MY_PROFILE_TITLE = {
+  title: "Trang cá nhân",
+  path: "/myProfile",
+};

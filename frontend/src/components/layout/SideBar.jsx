@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import logo from "../../assets/images/logo/logo.jpg";
 import Footer from "./Footer";
 import NavLink from "./NavLink";
@@ -8,15 +8,16 @@ import { useDispatch } from "react-redux";
 import { actFetchTitleNavigation } from "../../redux/actions/dashboard";
 const SideBar = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
-  const [activeState, setActiveState] = useState({
-    active: 0,
-  });
+  const [activeState, setActiveState] = useState(0);
 
-  const setActive = (index, title) => {
+  const setActive = (index, title, path) => {
+    setActiveState(index);
     dispatch(actFetchTitleNavigation(title));
-    setActiveState({ ...activeState, active: index });
+    history.push(path);
   };
+
   const iconStyle = [
     "fi-sr-apps",
     "fi-sr-eye",
@@ -51,10 +52,10 @@ const SideBar = () => {
               <NavLink
                 key={index}
                 title={titleNav.title}
-                path={titleNav.path}
                 iconStyle={iconStyle[index]}
-                active={activeState.active === index}
-                onClick={() => setActive(index, titleNav.title)}
+                path={titleNav.path}
+                active={activeState === index}
+                onClick={() => setActive(index, titleNav.title, titleNav.path)}
               />
             );
           })}

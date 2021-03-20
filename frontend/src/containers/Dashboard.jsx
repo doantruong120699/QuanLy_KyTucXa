@@ -20,7 +20,7 @@ const Dashboard = () => {
     },
   ];
   return (
-    <div className="style-dashboardContainer">
+    <div className="style-background">
       <div className="col col-half">
         <div className="col col-full">
           <div className="col col-half">
@@ -63,10 +63,10 @@ const Dashboard = () => {
         <div></div>
       </div>
       <div className="col col-half">
-        <div className="notificationsContainer">
+        <div className="notificationsContainer style-box">
           <p className="style-notiTitle">
             <span>
-              <i class="fi-sr-bell"></i>
+              <i className="fi-sr-bell"></i>
             </span>
             Notification
           </p>

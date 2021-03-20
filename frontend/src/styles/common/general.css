@@ -4,8 +4,14 @@
   box-sizing: border-box;
   font-family: Quicksand;
 }
+.mt-8 {
+  margin-top: 8px;
+}
 .mb-16 {
   margin-bottom: 16px;
+}
+.mt-16 {
+  margin-top: 16px;
 }
 .col {
   float: left;
@@ -24,4 +30,35 @@
 }
 .col-5 {
   width: 20%;
+}
+.col-two-third {
+  width: 66.67%;
+}
+.justify-content-sb {
+  display: flex;
+  justify-content: space-between;
+}
+.text-center {
+  text-align: center;
+}
+.pr-12 {
+  padding-right: 12px;
+}
+.pl-12 {
+  padding-left: 12px;
+}
+.pt-12 {
+  padding-top: 12px;
+}
+.pt-24 {
+  padding-top: 24px;
+}
+.pt-48 {
+  padding-top: 48px;
+}
+.pd-8 {
+  padding: 8px;
+}
+.pd-4 {
+  padding: 4px;
 }
