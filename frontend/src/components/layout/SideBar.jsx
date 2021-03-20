@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import logo from "../../assets/images/logo/logo.jpg";
 import Footer from "./Footer";
@@ -10,13 +10,16 @@ const SideBar = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const [activeState, setActiveState] = useState(0);
+  const [activeState, setActiveState] = useState("/dashboard");
 
-  const setActive = (index, title, path) => {
-    setActiveState(index);
+  const setActive = (title, path) => {
     dispatch(actFetchTitleNavigation(title));
     history.push(path);
   };
+
+  useEffect(() => {
+    setActiveState(history.location.pathname);
+  }, [history.location.pathname]);
 
   const iconStyle = [
     "fi-sr-apps",
@@ -54,8 +57,8 @@ const SideBar = () => {
                 title={titleNav.title}
                 iconStyle={iconStyle[index]}
                 path={titleNav.path}
-                active={activeState === index}
-                onClick={() => setActive(index, titleNav.title, titleNav.path)}
+                active={activeState.startsWith(titleNav.path)}
+                onClick={() => setActive(titleNav.title, titleNav.path)}
               />
             );
           })}

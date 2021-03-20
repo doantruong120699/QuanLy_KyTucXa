@@ -1,23 +1,23 @@
 export const NAVIGATION_TITLE = [
   {
     title: "Dashboard",
-    path: "./dashboard",
+    path: "/dashboard",
   },
   {
     title: "Xem phòng",
-    path: "./room",
+    path: "/room",
   },
   {
     title: "Sinh viên",
-    path: "./",
+    path: "/student",
   },
   {
     title: "Nhân viên",
-    path: "./employees",
+    path: "/employees",
   },
   {
     title: "Dịch vụ",
-    path: "./",
+    path: "/service",
   },
 ];
 export const MY_PROFILE_TITLE = {
