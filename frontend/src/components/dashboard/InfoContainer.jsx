@@ -1,9 +1,8 @@
-
 const InfoContainer = (props) => {
   const { number, title, iconStyle, color, increasedPercent } = props;
   return (
     <div
-      className="style-infoContainer"
+      className="style-infoContainer style-lg-box"
       style={{ backgroundColor: `${color}` }}
     >
       <div className="style-valueInfo">

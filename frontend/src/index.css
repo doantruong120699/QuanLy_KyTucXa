@@ -10,7 +10,9 @@
 @import './styles/dashboard/InfoContainer.css';
 @import './styles/dashboard/Notification.css';
 @import './styles/dashboard/Dashboard.css';
-@import './styles/dashboard/Checkroom.css';
+@import './styles/checkroom/Checkroom.css';
 @import './styles/login/Login.css';
 @import './styles/common/HomePage.css';
+@import './styles/common/Box.css';
 @import './assets/icons/uicons-solid-rounded/css/uicons-solid-rounded.css';
+@import './assets/icons/uicons-regular-rounded/css/uicons-regular-rounded.css';

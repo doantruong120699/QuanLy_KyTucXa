@@ -30,13 +30,13 @@ const User = () => {
           <span className="style-roleUser">Student</span>
         </div>
         <div className="icon-custome">
-          <i class={styleIcon} />
+          <i className={styleIcon} />
         </div>
       </div>
       {isShown && (
         <div className="style-dropdownContainer">
           <div className="style-dropdownItem">
-            <i class="fi-sr-user" />
+            <i className="fi-sr-user" />
             <span>Trang cá nhân</span>
           </div>
           <div className="style-dropdownItem">
