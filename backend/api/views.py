@@ -9,11 +9,13 @@ from django.db.models import Q
 from .models import *
 from collections import OrderedDict
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from rest_framework import viewsets
 from .serializers import *
 # from api.lessons.serializers import LessonListSerializer
 
 from . import status_http
+
+
 
 # Create your views here.
 @api_view(['POST'])
@@ -71,7 +73,7 @@ def get_profile_view(request):
         # 
         profile = {}
         try:
-            profile = ProfileSerializer(user.profile).data
+            profile = ProfileSerializer(user.user_profile).data
         except:
             pass
         data['profile'] = profile
@@ -98,3 +100,37 @@ def update_user_profile_view(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
+# API get static data
+class FacultyViewSet(viewsets.ModelViewSet):
+    queryset = Faculty.objects.all()
+    serializer_class = FacultySerializer
+
+    def get_queryset(self):
+        return Faculty.objects.all().order_by('id')
+
+    def list(self, request, *args, **kwargs):
+        queryset = Faculty.objects.all().order_by('id')
+        serializer = FacultySerializer(queryset)
+        return Response(serializer.data)
+
+class ClassViewSet(viewsets.ModelViewSet):
+    queryset = Class.objects.all()
+    serializer_class = ClassSerializer
+
+    def get_queryset(self):
+        return Class.objects.all().order_by('id')
+
+
+class PositionViewSet(viewsets.ModelViewSet):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+    def get_queryset(self):
+        return Position.objects.all().order_by('id')
+
+
+class AreaViewSet(viewsets.ModelViewSet):
+    queryset = Area.objects.all()
+    serializer_class = AreaSerializer
+
+    def get_queryset(self):
+        return Area.objects.all().order_by('id')
