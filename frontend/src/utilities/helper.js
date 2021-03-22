@@ -1,8 +1,10 @@
+import jwt from "jsonwebtoken";
 export const getAuth = () => {
   const auth = localStorage.getItem("user");
-  console.log(auth);
-  return typeof auth === "string" ? JSON.stringify(auth) : null;
+  return typeof auth === "string" ? JSON.parse(auth) : null;
 };
-export const setAuth = (user) => {
+export const setAuth = (token) => {
+  const user = jwt.decode(token);
+  localStorage.setItem("token", JSON.stringify(token));
   localStorage.setItem("user", JSON.stringify(user));
 };

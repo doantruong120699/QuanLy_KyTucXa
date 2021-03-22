@@ -14,7 +14,7 @@ const Checkroom = () => {
                   return (
                     <div className="col col-4">
                       <div className="style-student">
-                        <i class="fi-sr-user"></i>
+                        <i className="fi-sr-user"></i>
                       </div>
                     </div>
                   );

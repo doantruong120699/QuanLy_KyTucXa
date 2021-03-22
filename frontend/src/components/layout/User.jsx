@@ -1,10 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
+import { profile as GetProfile } from "../../redux/actions/profile";
 
 const User = () => {
   const [isShown, setIsShown] = useState(false);
 
   const logoutWrapper = useRef(null);
-
+  const GetProfileUser = () => {
+    var token = localStorage.getItem("token");
+    GetProfile(token, (output) => {
+      if (output) {
+        console.log(output);
+      }
+    });
+  };
   const useClickOutside = (ref) => {
     useEffect(() => {
       function handleClickOutside(event) {
@@ -35,12 +43,17 @@ const User = () => {
       </div>
       {isShown && (
         <div className="style-dropdownContainer">
-          <div className="style-dropdownItem">
+          <div
+            className="style-dropdownItem"
+            onClick={() => {
+              GetProfileUser();
+            }}
+          >
             <i className="fi-sr-user" />
             <span>Trang cá nhân</span>
           </div>
           <div className="style-dropdownItem">
-            <i class="fi-sr-sign-out" />
+            <i className="fi-sr-sign-out" />
             <span className="">Đăng xuất</span>
           </div>
         </div>
