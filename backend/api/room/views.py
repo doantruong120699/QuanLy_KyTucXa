@@ -30,15 +30,9 @@ class RoomViewSet(viewsets.ModelViewSet):
     #     return [IsAuthenticated(), IsQuanLyNhanSu(),]
 
     def list(self, request, *args, **kwargs):
-        queryset = Room.objects.all().order_by('-created_at')
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
+        snippets = Snippet.objects.all()
+        serializer = SnippetSerializer(snippets, many=True)
+        return JsonResponse(serializer.data, safe=False)
 
     def retrieve(self, request, **kwargs):
         try:
