@@ -66,7 +66,7 @@ const Dashboard = () => {
         <div className="notificationsContainer style-lg-box">
           <p className="style-notiTitle">
             <span>
-              <i class="fi-sr-bell"></i>
+              <i className="fi-sr-bell"></i>
             </span>
             Notification
           </p>

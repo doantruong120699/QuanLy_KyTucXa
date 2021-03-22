@@ -13,7 +13,7 @@ const InfoContainer = (props) => {
         </p>
       </div>
       <div className="style-iconInfo">
-        <i class={iconStyle} />
+        <i className={iconStyle} />
       </div>
     </div>
   );
