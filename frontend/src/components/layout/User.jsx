@@ -6,9 +6,8 @@ import { getAuth } from "../../utilities/helper";
 const User = () => {
   const [isShown, setIsShown] = useState(false);
 
-  const logoutWrapper = useRef(null);
-
   const history = useHistory();
+  const logoutWrapper = useRef(null);
 
   const useClickOutside = (ref) => {
     useEffect(() => {
