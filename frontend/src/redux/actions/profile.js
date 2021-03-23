@@ -1,7 +1,6 @@
 import * as types from "../constants";
 import store from "../store";
 export async function profile(token, resolve = () => {}) {
-  console.log(token);
   store.dispatch({
     type: types.GET_PROFILE_API,
   });

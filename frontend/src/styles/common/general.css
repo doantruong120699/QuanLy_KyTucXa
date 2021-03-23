@@ -235,3 +235,27 @@
 .col-5 {
   width: 20%;
 }
+.justify-content-sb {
+  display: flex;
+  justify-content: space-between;
+}
+.justify-content-ct {
+  display: flex;
+  justify-content: center;
+}
+.text-is-purple-gradient {
+  color: #5e5ce6;
+  background: linear-gradient(90deg, #5b70f6, #8658f3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.text-is-gray {
+  color: #535353;
+}
+.align-item-ct {
+  align-items: center;
+}
+.text-is-bold {
+  font-weight: 700;
+}

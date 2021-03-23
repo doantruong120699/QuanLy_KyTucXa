@@ -1,18 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
-import { profile as GetProfile } from "../../redux/actions/profile";
+import { useHistory } from "react-router-dom";
+import * as ROUTER from "../../utilities/constants/router";
+import { getAuth } from "../../utilities/helper";
 
 const User = () => {
   const [isShown, setIsShown] = useState(false);
 
   const logoutWrapper = useRef(null);
-  const GetProfileUser = () => {
-    var token = localStorage.getItem("token");
-    GetProfile(token, (output) => {
-      if (output) {
-        console.log(output);
-      }
-    });
-  };
+
+  const history = useHistory();
+
   const useClickOutside = (ref) => {
     useEffect(() => {
       function handleClickOutside(event) {
@@ -27,15 +24,24 @@ const User = () => {
     }, [ref]);
   };
 
+  const logout = () => {
+    localStorage.clear();
+    history.push(ROUTER.ROUTE_LOGIN);
+  };
+
   var styleIcon = isShown ? "fi-rr-caret-up" : "fi-rr-caret-down";
   useClickOutside(logoutWrapper);
+
+  const user = getAuth();
   return (
     <div ref={logoutWrapper} className="style-userContainer">
       <div className="style-userInfor" onClick={() => setIsShown(!isShown)}>
         <div className="style-avatarContainer"></div>
         <div className="infor-box">
-          <span className="style-nameUser">Jerry Smith</span>
-          <span className="style-roleUser">Student</span>
+          <span className="style-nameUser">
+            {user.first_name} {user.last_name}
+          </span>
+          <span className="style-roleUser">Sinh viên</span>
         </div>
         <div className="icon-custome">
           <i className={styleIcon} />
@@ -46,13 +52,13 @@ const User = () => {
           <div
             className="style-dropdownItem"
             onClick={() => {
-              GetProfileUser();
+              history.push(ROUTER.ROUTE_MY_PROFILE);
             }}
           >
             <i className="fi-sr-user" />
             <span>Trang cá nhân</span>
           </div>
-          <div className="style-dropdownItem">
+          <div className="style-dropdownItem" onClick={() => logout()}>
             <i className="fi-sr-sign-out" />
             <span className="">Đăng xuất</span>
           </div>
