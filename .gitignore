@@ -61,5 +61,6 @@ backend/management/migrations/
 backend/*/migrations/
 backend/project/__pycache__/
 backend/api/__pycache__/
+backend/api/*/__pycache__/
 # frontend
 frontend/node_modules/
