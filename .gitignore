@@ -51,16 +51,16 @@ Thumbs.db
 # ================================================================
 
 # backend
-backend_env/
-backend/env/
-backend/.env
-backend/static
-backend/media
-backend/api/migrations/
-backend/management/migrations/
-backend/*/migrations/
-backend/project/__pycache__/
-backend/api/__pycache__/
-backend/api/*/__pycache__/
+# backend_env/
+# backend/env/
+# backend/.env
+# backend/static
+# backend/media
+# backend/api/migrations/
+# backend/management/migrations/
+# backend/*/migrations/
+# backend/project/__pycache__/
+# backend/api/__pycache__/
+# backend/api/*/__pycache__/
 # frontend
 frontend/node_modules/
