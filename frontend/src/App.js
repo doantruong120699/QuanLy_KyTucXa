@@ -1,4 +1,4 @@
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
+import { Route, Router, Switch } from "react-router-dom";
 import { createBrowserHistory as history } from "history";
 import withAuth from "./components/layout/withAuth";
 import Dashboard from "./containers/Dashboard";
@@ -7,6 +7,7 @@ import ForgotPassword from "./containers/ForgotPassword";
 import ResetPassword from "./containers/ResetPassword";
 import Checkroom from "./components/checkroom/Checkroom";
 import * as ROUTER from "./utilities/constants/router";
+import Profile from "./containers/Profile";
 function App() {
   return (
     <Router history={history()}>
@@ -30,6 +31,11 @@ function App() {
         <Route
           path={ROUTER.ROUTE_CHECKROOM}
           component={withAuth(Checkroom)}
+          exact
+        />
+        <Route
+          path={ROUTER.ROUTE_MY_PROFILE}
+          component={withAuth(Profile)}
           exact
         />
       </Switch>
