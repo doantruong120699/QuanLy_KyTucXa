@@ -45,6 +45,7 @@ class AppBar extends Component {
                         style={styles.inputText}
                         placeholder="Tìm kiếm"
                         placeholderTextColor="#808080"
+                        onChangeText = {this.props.onChangeText}
                     />
                     <TouchableOpacity 
                         style={styles.buttonSearch} 
