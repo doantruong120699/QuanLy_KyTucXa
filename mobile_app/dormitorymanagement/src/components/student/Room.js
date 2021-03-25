@@ -22,8 +22,8 @@ class Room extends Component {
     const { status } = this.props.myRoom;
     const icon = this.props.myRoom.numbers !== 8 ? 'check-circle' : 'ban';
     return (
-      <View>
-        <TouchableOpacity>
+      <View >
+        <TouchableOpacity onPress={this.props.onClick}>
           <View style={styles.item}>
             <FontAwesome5 style={styles.iconItem} name={icon} />
             <View style={styles.viewData}>
