@@ -6,3 +6,4 @@ export const EMAIL_UNAVAILABLE = "Email không đúng!";
 export const NONE_MESSAGE = "";
 export const PASSWORD_INVALID = "Mật khẩu từ 8 kí tự bao gồm chữ và số!";
 export const PASSWORD_DIFFERENT = "Mật khẩu không khớp!";
+export const WRONG_CURRENT_PASSWORD = "Mật khẩu hiện tại không đúng!";
