@@ -26,8 +26,6 @@ class ProfileInListSerializer(serializers.ModelSerializer):
 
 class ProfileSinhVienSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
-    # position = PositionSerializer(required=False)
-    # area = AreaSerializer(required=False)
     my_class = ClassSerializer(required=False)
     class Meta:
         model = Profile
@@ -44,7 +42,7 @@ class ProfileSinhVienSerializer(serializers.ModelSerializer):
             # 'area',
         ]
 class SinhVienListSerializer(serializers.ModelSerializer):
-    profile = ProfileInListSerializer()
+    profile = ProfileInListSerializer(source='user_profile')
     class Meta:
         model = User
         fields = [
