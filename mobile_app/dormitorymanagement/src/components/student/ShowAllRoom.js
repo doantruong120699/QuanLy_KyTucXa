@@ -22,13 +22,14 @@ import { useEffect } from 'react';
 // };
 const ShowAllRoom = (props) => {
   const { data, navigation } = props;
-  const handleClickItem = () => {
-    console.log("Clicked");
+  handleClickItem = (item) => {
+    console.log("Clicked", item);
+    navigation.navigate("RoomDetail", { item });
   }
   const renderItem = ({ item }) => {
     let result;
     return (
-      <Room myRoom={item} onClick={handleClickItem} />
+      <Room myRoom={item} onClick={() => this.handleClickItem(item)} />
     )
   }
   const [selectedValue, setSelectedValue] = useState("All");

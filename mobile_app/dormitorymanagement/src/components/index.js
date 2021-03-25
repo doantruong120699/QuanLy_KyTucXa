@@ -7,5 +7,6 @@ import Dashboard from './dashboard/Dashboard';
 import Avatar from './avatar/Avatar';
 import HomePage from './home/HomePage';
 import ProfileSV from './student/ProfileSV';
+import RoomDetail from './student/RoomDetail';
 
-export { Login, ChangePassword, ForgotPassword, AppBar, ShowAllRoom, Dashboard, Avatar, HomePage, ProfileSV };
+export { Login, ChangePassword, ForgotPassword, AppBar, ShowAllRoom, Dashboard, Avatar, HomePage, ProfileSV, RoomDetail };
