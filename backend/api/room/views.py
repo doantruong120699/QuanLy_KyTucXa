@@ -15,7 +15,7 @@ from api.custom_pagination import LibraryCustomPagination
 from .serializers import *
 from api import status_http
 from api.permissions import *
-
+from django.http import JsonResponse
 class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomListSerializer
     # permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
@@ -46,23 +46,8 @@ class RoomViewSet(viewsets.ModelViewSet):
     # get list all lesson 
     @action(methods=["GET"], detail=False, url_path="get_all_room", url_name="get_all_room")
     def get_all_room(self, request, *args, **kwargs):
-        member_room = {}        
-        # data['public_id'] = request.user.user_profile
-        # data['email'] = request.user.email
-        # data['first_name'] = request.user.first_name
-        # data['last_name'] = request.user.last_name
-
-        # profile = {}
-        # try:
-        #     profile = ProfileSinhVienSerializer(queryset).data
-        # except:
-        #     pass
-        # data['profile'] = profile
-
-
-        queryset = Room.objects.all().order_by('-created_at')
-        print(queryset)
-        page = self.paginate_queryset(member_room)
+        list_room = list(Room.objects.values())
+        page = self.paginate_queryset(list_room)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
@@ -71,18 +56,27 @@ class RoomViewSet(viewsets.ModelViewSet):
         return self.get_paginated_response(serializer.data)
 
     # get list post room
-    @action(methods=["GET"], detail=False, url_path="get_room_post", url_name="get_room_post")
-    def get_room_post(self, request, *args, **kwargs):
-        queryset = Room.objects.all().order_by('-created_at')
-        if 'slug' in kwargs:
-            queryset = queryset.filter(area__slug=kwargs['slug'])
+    @action(methods=["GET"], detail=False, url_path="get_list_user_in_room", url_name="get_list_user_in_room")
+    def get_list_user_in_room(self, request, *args, **kwargs):
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        room = Room.objects.get(slug=kwargs['slug'])
+        _sv = Profile.objects.filter(contract_profile__room=room)
+        list_sv = list(_sv.values())
+        for i in range(len(list_sv)):
+            list_sv[i].pop('token', None)
+            list_sv[i].pop('area_id', None)
+            list_sv[i].pop('position_id', None)
+            list_sv[i].pop('identify_card', None)
+            list_sv[i].pop('created_at', None)
+            list_sv[i].pop('last_update', None)
+            user = User.objects.get(pk=list_sv[i]['user_id'])
+            list_sv[i]['username'] = user.username
+            list_sv[i]['first_name'] = user.first_name
+            list_sv[i]['last_name'] = user.last_name
+            list_sv[i]['faculty_id'] = user.user_profile.faculty.name
+            list_sv[i]['my_class_id'] = user.user_profile.my_class.name
+        return JsonResponse(list_sv, safe=False, status=status.HTTP_200_OK)
 
-        serializer = self.get_serializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
+
 
 
