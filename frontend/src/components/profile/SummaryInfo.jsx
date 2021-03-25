@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import Popup from "reactjs-popup";
 import Button from "../common/Button";
-import InputField from "../common/InputField";
 import EditProfile from "./EditProfile";
 import * as AlertMessage from "../../utilities/constants/AlertMessage";
-import FormError from "../common/FormError";
 import { changePass } from "../../redux/actions/changePass";
+import ChangePass from "./ChangePass";
 const SummaryInfo = (props) => {
   const {
     name,
@@ -78,7 +76,7 @@ const SummaryInfo = (props) => {
       changePass(data, token, (output) => {
         if (output) {
           console.log(output);
-          closeModal();
+          closeChangePassModal();
         } else {
           const curPassState = { ...errorState.newPass };
           curPassState.isInputValid = false;
@@ -116,8 +114,8 @@ const SummaryInfo = (props) => {
     });
   };
 
-  const [open, setOpen] = useState(false);
-  const closeModal = () => {
+  const [openChangePass, setOpenChangePass] = useState(false);
+  const closeChangePassModal = () => {
     setError({
       curPass: {
         isHidden: true,
@@ -133,9 +131,15 @@ const SummaryInfo = (props) => {
       },
     });
 
-    setOpen(false);
+    setOpenChangePass(false);
   };
-  const openModal = () => setOpen(true);
+  const openChangePassModal = () => setOpenChangePass(true);
+
+  const [openEdit, setOpenEdit] = useState(false);
+  const closeEditModal = () => {
+    setOpenEdit(false);
+  };
+  const openEditModal = () => setOpenEdit(true);
 
   return (
     <div className="col col-full  pd-24 style-lg-box bg-color-white style-summaryinfo">
@@ -146,7 +150,7 @@ const SummaryInfo = (props) => {
           </span>
           <span>{username}</span>
         </div>
-        <i className="fi-rr-edit"></i>
+        <i className="fi-rr-edit" onClick={openEditModal}></i>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-heart"></i>
@@ -177,62 +181,16 @@ const SummaryInfo = (props) => {
           type="normal-ubg"
           content="Đổi mật khẩu"
           isDisable={false}
-          onClick={openModal}
+          onClick={openChangePassModal}
         />
-        <Popup open={open} closeOnDocumentClick onClose={closeModal}>
-          <div className="col modal style-lg-box bg-color-white text-align-ct">
-            <h2 className="pt-12">Nhập mật khẩu mới</h2>
-            <div className="col col-full pd-24">
-              <div className="col col-full mt-24">
-                <FormError
-                  isHidden={errorState.curPass.isHidden}
-                  errorMessage={errorState.curPass.errorMessage}
-                />
-                <InputField
-                  name="curPass"
-                  isValid={errorState.curPass.isInputValid}
-                  type="text"
-                  placeholder="Mật khẩu hiện tại"
-                  onChange={handleInput}
-                  autocomplete="off"
-                />
-              </div>
-              <div className="col col-full mt-24">
-                <FormError
-                  isHidden={errorState.newPass.isHidden}
-                  errorMessage={errorState.newPass.errorMessage}
-                />
-                <InputField
-                  name="newPass"
-                  isValid={errorState.newPass.isInputValid}
-                  type="text"
-                  placeholder="Mật khẩu mới"
-                  onChange={handleInput}
-                  autocomplete="off"
-                />
-              </div>
-              <div className="col col-full mt-24">
-                <div className="col col-half">
-                  <Button
-                    type="normal-red"
-                    content="HỦY"
-                    isDisable={false}
-                    onClick={closeModal}
-                  />
-                </div>
-                <div className="col col-half">
-                  <Button
-                    type="normal-ubg"
-                    content="LƯU"
-                    isDisable={false}
-                    onClick={savePass}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </Popup>
-        <EditProfile />
+        <ChangePass
+          open={openChangePass}
+          closeModal={closeChangePassModal}
+          errorState={errorState}
+          handleInput={handleInput}
+          savePass={savePass}
+        />
+        <EditProfile open={openEdit} onClose={closeEditModal} />
       </div>
     </div>
   );
