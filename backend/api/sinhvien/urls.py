@@ -10,10 +10,6 @@ sinhvien_list = SinhVienViewSet.as_view({
     'get': 'list', # Get lists
 })
 
-sinhvien_list_all = SinhVienViewSet.as_view({
-    'get': 'get_all_sinhvien'
-})
-
 sinhvien_detail = SinhVienViewSet.as_view({
     'get': 'retrieve' # get detail
 })
