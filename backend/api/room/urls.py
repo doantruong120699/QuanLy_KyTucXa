@@ -28,13 +28,13 @@ room_detail = RoomViewSet.as_view({
     # 'patch': 'partial_update',
     'delete': 'destroy'
 })
-
+list_user_in_room = RoomViewSet.as_view({
+    'get' : 'get_list_user_in_room',
+})
 
 urlpatterns = [
     # ========== room
-    path('rooms/', room_list, name='room_list'),
-    path('rooms/get-post/', room_get_post, name = 'room_get_post'),
-    path('rooms/get-post/<slug:slug>/', room_get_post, name = 'room_get_post'),
     path('rooms/get-all/', room_get_all, name = 'room_get_all'),
     path('rooms/<slug:slug>/', room_detail, name = 'room_detail_slug'),
+    path('rooms/user/<slug:slug>/', list_user_in_room, name = 'list_user_in_room'),
 ]
