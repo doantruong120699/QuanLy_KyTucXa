@@ -15,23 +15,15 @@
   font-weight: 700;
 }
 .style-roomOfArea {
-  margin: 10px;
-  background-color: #fe6276;
+  background-color: #ffaa2b;
   color: #fff;
 }
-.style-roomOfArea > p {
-  margin: 0 0 10px 10px;
-  font-size: larger;
-  font-weight: 700;
+.style-roomOfArea i:hover {
+  color: #717479;
 }
 .style-student {
   margin: 5px;
   border-radius: 5px;
   padding: 5px;
   text-align: center;
-  background-color: #09bd3d;
-}
-.style-student:hover {
-  border: 1px solid #099030;
-  margin: 4px;
 }
