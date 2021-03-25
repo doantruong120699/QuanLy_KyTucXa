@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Popup from "reactjs-popup";
 import Button from "../common/Button";
 import InputField from "../common/InputField";
+import EditProfile from "./EditProfile";
 import * as AlertMessage from "../../utilities/constants/AlertMessage";
 import FormError from "../common/FormError";
 import { changePass } from "../../redux/actions/changePass";
@@ -180,7 +181,7 @@ const SummaryInfo = (props) => {
         />
         <Popup open={open} closeOnDocumentClick onClose={closeModal}>
           <div className="col modal style-lg-box bg-color-white text-align-ct">
-            <h2>Nhập mật khẩu mới</h2>
+            <h2 className="pt-12">Nhập mật khẩu mới</h2>
             <div className="col col-full pd-24">
               <div className="col col-full mt-24">
                 <FormError
@@ -231,6 +232,7 @@ const SummaryInfo = (props) => {
             </div>
           </div>
         </Popup>
+        <EditProfile />
       </div>
     </div>
   );
