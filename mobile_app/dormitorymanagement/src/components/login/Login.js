@@ -11,8 +11,8 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: 'it1@gmail.com',
-            password: '123456',
+            username: 'asdquang111@gmail.com',
+            password: 'quang1999',
             icon: 'eye-slash',
             isShow: true,
         };
@@ -72,7 +72,7 @@ class Login extends Component {
                                 <TextInput
                                     underlineColorAndroid="transparent"
                                     onChangeText={this.changeTextUsername}
-                                    value='it1@gmail.com'
+                                    value='asdquang111@gmail.com'
                                     style={styles.inputText}
                                     placeholder="Tài khoản"
                                     placeholderTextColor="#808080"
@@ -80,10 +80,10 @@ class Login extends Component {
                             </View>
                             <View style={styles.inputViewPassword}>
                                 <TextInput
-                                    underlineColorAndroid='#FFF'
+                                    underlineColorAndroid="transparent"
                                     onChangeText={this.changeTextPassword}
                                     style={styles.inputTextPassword}
-                                    value='123456'
+                                    value='quang1999'
                                     placeholder="Mật khẩu"
                                     placeholderTextColor="#808080"
                                     secureTextEntry={this.state.isShow}
@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     iconeye: {
+        top: 5,
         // resizeMode: 'contain',
         height: '100%',
         width: '100%',

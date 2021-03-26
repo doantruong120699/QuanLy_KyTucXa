@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { Login, ChangePassword, ForgotPassword, ShowAllRoom, Dashboard } from '../index';
+import { ChangePassword, ForgotPassword, ShowAllRoom, Dashboard, AllStudent, AllStaff } from '../index';
 import { connect } from 'react-redux';
 import 'react-native-gesture-handler';
 import DrawerContent from './DrawerContent';
@@ -15,6 +15,8 @@ class HomePage extends Component {
                 <Drawer.Screen name="ChangePassword" component={ChangePassword}/>
                 <Drawer.Screen name="ForgotPassword" component={ForgotPassword}/>
                 <Drawer.Screen name="ShowAllRoom" component={ShowAllRoom}/>
+                <Drawer.Screen name="AllStudent" component={AllStudent}/>
+                <Drawer.Screen name="AllStaff" component={AllStaff}/>
             </Drawer.Navigator>
         )
     }
