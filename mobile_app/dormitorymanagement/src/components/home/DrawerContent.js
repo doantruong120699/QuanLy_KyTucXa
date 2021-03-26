@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Drawer, Title } from 'react-native-paper';
-import { mainmenu } from '../../redux/actions/mainmenu';
+import { allstaff, allstudent, mainmenu } from '../../redux/actions/index';
 import { connect } from 'react-redux';
 
 class DrawerContent extends Component {
@@ -74,9 +74,10 @@ class DrawerContent extends Component {
                                     />
                                 )}
                                 label="Sinh viên"
-                                onPress={() => {
+                                onPress={async () => {
                                     this.props.mainmenu('Sinhvien');
-                                    this.props.navigation.navigate("Login");
+                                    await this.props.allstudent();
+                                    this.props.navigation.navigate("AllStudent");
                                 }}
                             />
                             <DrawerItem
@@ -90,9 +91,10 @@ class DrawerContent extends Component {
                                     />
                                 )}
                                 label="Nhân viên"
-                                onPress={() => {
+                                onPress={async () => {
                                     this.props.mainmenu('Nhanvien');
-                                    this.props.navigation.navigate("ForgotPassword");
+                                    await this.props.allstaff();
+                                    this.props.navigation.navigate("AllStaff");
                                 }}
                             />
                             <DrawerItem
@@ -126,6 +128,8 @@ class DrawerContent extends Component {
 
 const mapDispatchToProps = {
     mainmenu,
+    allstudent,
+    allstaff,
 }
 function mapStateToProps(state) {
     return {
