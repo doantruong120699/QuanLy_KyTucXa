@@ -5,18 +5,18 @@ export const NAVIGATION_TITLE = [
   },
   {
     title: "Xem phòng",
-    path: "./room",
+    path: "./rooms",
   },
   {
     title: "Sinh viên",
-    path: "./",
+    path: "./students",
   },
   {
     title: "Nhân viên",
-    path: "./",
+    path: "./employees",
   },
   {
     title: "Dịch vụ",
-    path: "./",
+    path: "./services",
   },
 ];

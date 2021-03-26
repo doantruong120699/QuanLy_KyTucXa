@@ -63,10 +63,10 @@ const Dashboard = () => {
         <div></div>
       </div>
       <div className="col col-half">
-        <div className="notificationsContainer">
+        <div className="notificationsContainer style-lg-box">
           <p className="style-notiTitle">
             <span>
-              <i class="fi-sr-bell"></i>
+              <i className="fi-sr-bell"></i>
             </span>
             Notification
           </p>
