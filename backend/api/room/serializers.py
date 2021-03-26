@@ -4,7 +4,7 @@ import datetime
 from django.utils.translation import ugettext_lazy as _
 from django.utils.crypto import get_random_string
 from api.models import *
-from api.serializers import *
+from api.serializers import AreaSerializer
 
 class StringListField(serializers.ListField): # get from http://www.django-rest-framework.org/api-guide/fields/#listfield
     child = serializers.CharField()
@@ -37,7 +37,7 @@ class RoomSerializer(serializers.ModelSerializer):
     slug = serializers.CharField(required=False)
     number_now = serializers.CharField(required=True)
     # typeroom = TypeRoomSerializer(required=True)
-    # area = AreaSerializer(required=True)
+    area = AreaSerializer(required=True)
     STATUS = Choices(
         ('A', _('Available')),
         ('F', _('Full')),

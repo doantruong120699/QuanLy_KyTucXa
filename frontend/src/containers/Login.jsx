@@ -5,8 +5,8 @@ import InputField from "../components/common/InputField";
 import * as AlertMessage from "../utilities/constants/AlertMessage";
 import { login as LoginUser } from "../redux/actions/login";
 import { useSelector } from "react-redux";
-import jwt from "jsonwebtoken";
 import { setAuth } from "../utilities/helper";
+import * as ROUTER from "../utilities/constants/router";
 
 import { Link, useHistory } from "react-router-dom";
 const Login = () => {
@@ -91,9 +91,8 @@ const Login = () => {
       };
       LoginUser(user, (output) => {
         if (output && output.access) {
-          const access = jwt.decode(output.access);
-          setAuth(access);
-          history.push("/dashboard");
+          setAuth(output.access);
+          history.push(ROUTER.ROUTE_DASHBOARD);
         } else {
           const newAccountState = { ...errorState.accountTxt };
           newAccountState.isInputValid = false;

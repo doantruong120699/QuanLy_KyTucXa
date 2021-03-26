@@ -45,7 +45,7 @@ class ProfileNhanVienSerializer(serializers.ModelSerializer):
         ]
 
 class NhanVienListSerializer(serializers.ModelSerializer):
-    profile = ProfileInListSerializer()
+    profile = ProfileInListSerializer(source='user_profile')
     class Meta:
         model = User
         fields = [
