@@ -48,6 +48,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             data = {}        
             data['id'] = queryset.user.id
             data['email'] = queryset.user.email
+            # Add username
             data['username'] = queryset.user.username
             data['first_name'] = queryset.user.first_name
             data['last_name'] = queryset.user.last_name
