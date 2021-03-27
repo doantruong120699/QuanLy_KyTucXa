@@ -1,20 +1,12 @@
 import React, { useState } from "react";
 import Button from "../common/Button";
-import EditProfile from "./EditProfile";
+import EditEmployeeProfile from "./EditEmployeeProfile";
 import * as AlertMessage from "../../utilities/constants/AlertMessage";
 import { changePass } from "../../redux/actions/changePass";
+import validate from "../../utilities/regex";
 import ChangePass from "./ChangePass";
 const SummaryInfo = (props) => {
-  const {
-    name,
-    username,
-    address,
-    email,
-    birthday,
-    phone,
-    identification,
-    gender,
-  } = props;
+  const { dataRender, isEmployee } = props;
 
   const [errorState, setError] = useState({
     curPass: {
@@ -32,9 +24,7 @@ const SummaryInfo = (props) => {
   });
 
   const validPasswordInput = (checkingValue) => {
-    const regrexPass = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    const isValidPass = regrexPass.exec(checkingValue);
-
+    const isValidPass = validate.password(checkingValue);
     if (isValidPass === null) {
       return {
         isInputValid: false,
@@ -66,16 +56,14 @@ const SummaryInfo = (props) => {
 
     if (curPassError.isInputValid && newPassError.isInputValid) {
       const data = {
-        email: email,
+        email: dataRender.email,
         password: errorState.newPass.value,
         old_password: errorState.curPass.value,
         confirm_password: errorState.newPass.value,
       };
-      console.log(data);
       var token = localStorage.getItem("token");
       changePass(data, token, (output) => {
         if (output) {
-          console.log(output);
           closeChangePassModal();
         } else {
           const curPassState = { ...errorState.newPass };
@@ -146,35 +134,35 @@ const SummaryInfo = (props) => {
       <div className="col col-full justify-content-sb ml-8">
         <div>
           <span className="text-is-purple-gradient style-profile-name">
-            {name}{" "}
+            {dataRender.lastName.value}{" "}
           </span>
-          <span>{username}</span>
+          <span>{dataRender.username.value}</span>
         </div>
         <i className="fi-rr-edit" onClick={openEditModal}></i>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-heart"></i>
-        <span>{gender ? "Nam" : "Nữ"}</span>
+        <span>{dataRender.gender.field[dataRender.gender.value]}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-marker"></i>
-        <span>{address}</span>
+        <span>{dataRender.address.value}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-envelope"></i>
-        <span>{email}</span>
+        <span>{dataRender.email.value}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-bold"></i>
-        <span>{birthday}</span>
+        <span>{dataRender.birthday.value}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-smartphone"></i>
-        <span>{phone}</span>
+        <span>{dataRender.phone.value}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-fingerprint"></i>
-        <span>{identification}</span>
+        <span>{dataRender.phone.value}</span>
       </div>
       <div className="col col-third style-profile-changepass-btn">
         <Button
@@ -190,7 +178,13 @@ const SummaryInfo = (props) => {
           handleInput={handleInput}
           savePass={savePass}
         />
-        <EditProfile open={openEdit} onClose={closeEditModal} />
+        <EditEmployeeProfile
+          open={openEdit}
+          onClose={closeEditModal}
+          handleInput={handleInput}
+          isEmployee={isEmployee}
+          dataRender={dataRender}
+        />
       </div>
     </div>
   );
