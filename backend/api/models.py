@@ -131,6 +131,8 @@ class PaymentMethod(models.Model):
         return self.name
 
 class Contract(models.Model):
+    room = models.ForeignKey(Room, related_name = 'contract_room', on_delete=models.SET_NULL, blank=True, null=True)
+    profile = models.ForeignKey(Profile, related_name = 'contract_profile', on_delete=models.SET_NULL, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     created_by = models.ForeignKey(User, related_name = 'contract_created_by', on_delete=models.CASCADE, blank=True, null=True)
@@ -138,10 +140,14 @@ class Contract(models.Model):
     start_at = models.DateField(null=True, blank=True)
     end_at = models.DateField(null=True, blank=True)
     payment_method = models.ForeignKey(PaymentMethod, related_name = 'contract_payment_method', on_delete=models.SET_NULL, blank=True, null=True)
-    room = models.ForeignKey(Room, related_name = 'contract_room', on_delete=models.SET_NULL, blank=True, null=True)
-    profile = models.ForeignKey(Profile, related_name = 'contract_profile', on_delete=models.SET_NULL, blank=True, null=True)
-    status = models.BooleanField(default=False)
     
+    is_accepted = models.BooleanField(default=False)
+    # is_expired = models.BooleanField(default=False)
+    note = models.TextField(null=True, blank=True)
+    price = models.FloatField(default=0)
+    is_paid = models.BooleanField(default=False)
+
+
     class Meta:
         ordering = ('created_at',)
 
