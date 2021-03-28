@@ -25,6 +25,7 @@ const Profile = () => {
     var token = localStorage.getItem("token");
     GetProfile(token, (output) => {
       if (output) {
+        console.log(output);
         updateState(output);
       }
     });
