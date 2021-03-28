@@ -5,6 +5,7 @@ from .models import *
 admin.site.register(Profile)
 admin.site.register(VietNamProvince)
 admin.site.register(Faculty)
+admin.site.register(Class)
 admin.site.register(Position)
 admin.site.register(Area)
 admin.site.register(TypeRoom)
