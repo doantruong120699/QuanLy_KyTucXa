@@ -51,19 +51,24 @@ def get_profile_view(request):
     if request.method == 'GET':
         data = {}        
         queryset = Profile.objects.get(user=request.user)
-        contract = Contract.objects.filter(profile=queryset).first()
+        
         data['email'] = request.user.email
         user = User.objects.get(email=request.user.email)
         data['username'] = user.username
         data['first_name'] = user.first_name
         data['last_name'] = user.last_name
         data['id'] = user.id
-        data['room'] = contract.room.name
-        data['slug-room'] = contract.room.slug
+
+        if  user.groups.filter(name='sinhvien_group').exists():
+            contract = Contract.objects.filter(profile=queryset).first()
+            data['room'] = contract.room.name
+            data['slug-room'] = contract.room.slug
+    
         groups = Group.objects.filter(user=request.user).all()
         groups_ = []
         for g in groups:
             groups_.append(g.name) ## += g.name + ';'
+        
         data['groups'] = groups_   
         # 
         permissions = Permission.objects.filter(Q(user=user) | Q(group__user=user)).all()
