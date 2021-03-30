@@ -67,11 +67,11 @@ function getHandledDataRender(origin) {
     },
     faculty: {
       title: "Khoa",
-      value: origin.profile.faculty.name,
+      value: origin.profile.faculty ? origin.profile.faculty.name : null,
     },
     grade: {
       title: "Lớp",
-      value: origin.profile.class,
+      value: origin.profile.my_class ? origin.profile.my_class.name : null,
     },
     position: {
       title: "Chức vụ",
@@ -80,17 +80,6 @@ function getHandledDataRender(origin) {
     area: {
       title: "Khu vực",
       value: origin.profile.area.name,
-    },
-    room: {
-      title: "Phòng hiện tại",
-      value:
-        typeof origin.profile.room === "undefined"
-          ? "Trống"
-          : origin.origin.name,
-      type:
-        typeof origin.profile.room === "undefined"
-          ? "Trống"
-          : origin.origin.type,
     },
   };
 }
