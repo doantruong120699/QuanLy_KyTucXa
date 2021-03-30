@@ -21,19 +21,17 @@ const Profile = () => {
     });
   };
 
-  const GetProfileUser = () => {
-    var token = localStorage.getItem("token");
-    GetProfile(token, (output) => {
-      if (output) {
-        console.log(output);
-        updateState(output);
-      }
-    });
-  };
-
   const isEmployee = getAuth().group[0] === "nhanvien_group";
 
   useEffect(() => {
+    const GetProfileUser = () => {
+      var token = localStorage.getItem("token");
+      GetProfile(token, (output) => {
+        if (output) {
+          updateState(output);
+        }
+      });
+    };
     GetProfileUser();
   }, []);
   return (
@@ -67,7 +65,6 @@ const Profile = () => {
                 <RoomInfo
                   name={profileState.dataRender.room.value}
                   area={profileState.dataRender.area.value}
-                  type={profileState.dataRender.room.value}
                 />
               </div>
             </div>

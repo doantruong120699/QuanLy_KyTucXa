@@ -134,7 +134,7 @@ const SummaryInfo = (props) => {
       <div className="col col-full justify-content-sb ml-8">
         <div>
           <span className="text-is-purple-gradient style-profile-name">
-            {dataRender.lastName.value}{" "}
+            {dataRender.firstName.value}{" "}
           </span>
           <span>{dataRender.username.value}</span>
         </div>
