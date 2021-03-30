@@ -19,10 +19,10 @@ from api.permissions import *
 sinhvien_group = 'sinhvien_group'
 
 class SinhVienViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
+    queryset = User.objects.all()
     serializer_class = SinhVienListSerializer
     # permission_classes = [IsAuthenticated]
-    permission_classes = []
+    # permission_classes = []
     lookup_field = 'public_id'
 
     def get_queryset(self):
@@ -31,7 +31,6 @@ class SinhVienViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = User.objects.filter(groups__name=sinhvien_group).order_by('id')
-                   
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -44,16 +43,21 @@ class SinhVienViewSet(viewsets.ModelViewSet):
         try:
             queryset = Profile.objects.get(public_id=kwargs['public_id'])
             # serializer = ProfileSerializer(queryset).user.id
-
+            contract = Contract.objects.filter(profile=queryset).first()
+            print(contract)
             data = {}        
             data['id'] = queryset.user.id
             data['email'] = queryset.user.email
+            # Add username
+            data['username'] = queryset.user.username
             data['first_name'] = queryset.user.first_name
             data['last_name'] = queryset.user.last_name
+            data['room'] = contract.room.name
+            data['slug-room'] = contract.room.slug
 
             profile = {}
             try:
-                profile = ProfileSinhVienSerializer(queryset).data
+                profile = ProfileSinhVienSerializer(queryset.user).data
             except:
                 pass
             data['profile'] = profile
@@ -66,15 +70,3 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Profile Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-    # get list all sinhvien ( filter by user_id)
-    @action(methods=["GET"], detail=False, url_path="get_all_sinhvien", url_name="get_all_sinhvien")
-    def get_all_sinhvien(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=sinhvien_group).order_by('id')
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(page, many=True)
-        return self.get_paginated_response(serializer.data)

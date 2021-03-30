@@ -12,7 +12,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import viewsets
 from .serializers import *
 # from api.lessons.serializers import LessonListSerializer
-
+from django.http import JsonResponse
 from . import status_http
 
 
@@ -50,15 +50,25 @@ def change_password_view(request):
 def get_profile_view(request):
     if request.method == 'GET':
         data = {}        
+        queryset = Profile.objects.get(user=request.user)
+        
         data['email'] = request.user.email
         user = User.objects.get(email=request.user.email)
+        data['username'] = user.username
         data['first_name'] = user.first_name
         data['last_name'] = user.last_name
         data['id'] = user.id
+
+        if  user.groups.filter(name='sinhvien_group').exists():
+            contract = Contract.objects.filter(profile=queryset).first()
+            data['room'] = contract.room.name
+            data['slug-room'] = contract.room.slug
+    
         groups = Group.objects.filter(user=request.user).all()
         groups_ = []
         for g in groups:
             groups_.append(g.name) ## += g.name + ';'
+        
         data['groups'] = groups_   
         # 
         permissions = Permission.objects.filter(Q(user=user) | Q(group__user=user)).all()
@@ -109,16 +119,19 @@ class FacultyViewSet(viewsets.ModelViewSet):
         return Faculty.objects.all().order_by('id')
 
     def list(self, request, *args, **kwargs):
-        queryset = Faculty.objects.all().order_by('id')
-        serializer = FacultySerializer(queryset)
-        return Response(serializer.data)
+        faculty = list(Faculty.objects.values().order_by('id'))
+        return JsonResponse(faculty, safe=False, status=status.HTTP_200_OK)
 
 class ClassViewSet(viewsets.ModelViewSet):
-    queryset = Class.objects.all()
+    queryset =  Class.objects.all()
     serializer_class = ClassSerializer
 
     def get_queryset(self):
         return Class.objects.all().order_by('id')
+
+    def list(self, request, *args, **kwargs):
+        my_class = list(Class.objects.values().order_by('id'))
+        return JsonResponse(my_class, safe=False, status=status.HTTP_200_OK)
 
 
 class PositionViewSet(viewsets.ModelViewSet):
@@ -127,6 +140,9 @@ class PositionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Position.objects.all().order_by('id')
 
+    def list(self, request, *args, **kwargs):
+        position = list(Position.objects.values().order_by('id'))
+        return JsonResponse(position, safe=False, status=status.HTTP_200_OK)
 
 class AreaViewSet(viewsets.ModelViewSet):
     queryset = Area.objects.all()
@@ -134,3 +150,7 @@ class AreaViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Area.objects.all().order_by('id')
+
+    def list(self, request, *args, **kwargs):
+        area = list(Area.objects.values().order_by('id'))
+        return JsonResponse(area, safe=False, status=status.HTTP_200_OK)
