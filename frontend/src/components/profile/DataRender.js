@@ -91,11 +91,8 @@ function getRawDataRender(data) {
     profile: {
       address: data.address.value,
       birthday: data.birthday.value,
-      faculty: data.faculty.value,
-      gender: data.gender === "Nam" ? true : false,
       identify_card: data.identification.value,
-      my_class: data.grade.value,
-      phone: data.grade.phone,
+      phone: data.phone.value,
     },
   };
 }
