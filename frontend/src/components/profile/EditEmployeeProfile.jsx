@@ -1,15 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Popup from "reactjs-popup";
 import Button from "../common/Button";
 import FormError from "../common/FormError";
 import InputField from "../common/InputField";
 import validate from "../../utilities/regex";
-import { getEditEmployeeInfoState } from "./DataRender";
+import ProfileContext from "./ProfileContext";
+import { getEditEmployeeInfoState, getRawDataRender } from "./DataRender";
 
 const EditEmployeeProfile = (props) => {
   const { open, onClose, dataRender } = props;
 
   const [infoState, setInfo] = useState(getEditEmployeeInfoState());
+
+  const context = useContext(ProfileContext);
 
   const handleInput = (event) => {
     const { name, value } = event.target;
@@ -33,6 +36,22 @@ const EditEmployeeProfile = (props) => {
       }
       setInfo(tempEditData);
     });
+  };
+
+  const saveInfo = () => {
+    validateEditedinfo();
+    if (
+      infoState.firstName.isValid &&
+      infoState.lastName.isValid &&
+      infoState.email.isValid &&
+      infoState.identification.isValid &&
+      infoState.phone.isValid
+    ) {
+      const data = getRawDataRender(infoState);
+      const { updateOrigin } = context;
+      updateOrigin(data);
+      onClose(setInfo(getEditEmployeeInfoState()));
+    }
   };
   return (
     <Popup
@@ -75,7 +94,7 @@ const EditEmployeeProfile = (props) => {
                 type="normal-ubg"
                 content="LƯU"
                 isDisable={false}
-                onClick={validateEditedinfo}
+                onClick={saveInfo}
               />
             </div>
           </div>

@@ -56,7 +56,7 @@ const SummaryInfo = (props) => {
 
     if (curPassError.isInputValid && newPassError.isInputValid) {
       const data = {
-        email: dataRender.email,
+        email: dataRender.email.value,
         password: errorState.newPass.value,
         old_password: errorState.curPass.value,
         confirm_password: errorState.newPass.value,

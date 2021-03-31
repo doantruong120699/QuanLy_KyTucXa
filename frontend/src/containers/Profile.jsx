@@ -14,6 +14,10 @@ const Profile = () => {
     origin: null,
   });
 
+  const updateOrigin = (data) => {
+    setProfile({ ...profileState, origin: data });
+    updateState(data);
+  };
   const updateState = (origin) => {
     setProfile({
       dataRender: getHandledDataRender(origin),
@@ -34,9 +38,15 @@ const Profile = () => {
     };
     GetProfileUser();
   }, []);
+
+  const { dataRender, origin } = profileState;
   return (
     <ProfileContext.Provider
-      value={{ dataRender: null, updateOrigin: null, origin: null }}
+      value={{
+        dataRender,
+        updateOrigin: updateOrigin.bind(this),
+        origin,
+      }}
     >
       {profileState.dataRender && profileState.origin && (
         <div className="style-profile-container">
