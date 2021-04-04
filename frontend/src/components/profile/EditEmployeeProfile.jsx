@@ -5,12 +5,12 @@ import FormError from "../common/FormError";
 import InputField from "../common/InputField";
 import validate from "../../utilities/regex";
 import ProfileContext from "./ProfileContext";
-import { getEditEmployeeInfoState, getRawDataRender } from "./DataRender";
+import { getRawDataRender } from "./DataRender";
 
 const EditEmployeeProfile = (props) => {
   const { open, onClose, dataRender } = props;
 
-  const [infoState, setInfo] = useState(getEditEmployeeInfoState());
+  const [infoState, setInfo] = useState(dataRender);
 
   const context = useContext(ProfileContext);
 
@@ -50,36 +50,127 @@ const EditEmployeeProfile = (props) => {
       const data = getRawDataRender(infoState);
       const { updateOrigin } = context;
       updateOrigin(data);
-      onClose(setInfo(getEditEmployeeInfoState()));
+      onClose();
     }
   };
   return (
-    <Popup
-      open={open}
-      closeOnDocumentClick
-      onClose={() => onClose(setInfo(getEditEmployeeInfoState()))}
-    >
+    <Popup open={open} closeOnDocumentClick onClose={() => onClose()}>
       <div className="col modal style-lg-box bg-color-white text-align-ct">
         <h2>Nhập thông tin cá nhân mới</h2>
         <div className="col col-full pd-24">
-          {Object.keys(infoState).map((value, index) => {
-            return (
-              <div key={index} className="col col-full mt-8">
-                <FormError
-                  isHidden={infoState[value].isHidden}
-                  errorMessage={dataRender[value].errorMessage}
-                />
-                <InputField
-                  name={value}
-                  isValid={infoState[value].isValid}
-                  type={dataRender[value].type}
-                  placeholder={dataRender[value].title}
-                  onChange={handleInput}
-                  autocomplete="off"
-                />
-              </div>
-            );
-          })}
+          <div className="col col-full mt-8">
+            <div className="col col-half mt-8 pr-4">
+              <FormError
+                isHidden={infoState.firstName.isHidden}
+                errorMessage={dataRender.firstName.errorMessage}
+              />
+            </div>
+            <div className="col col-half mt-8 pl-4">
+              <FormError
+                isHidden={infoState.lastName.isHidden}
+                errorMessage={dataRender.lastName.errorMessage}
+              />
+            </div>
+          </div>
+          <div className="col col-full mt-8">
+            <div className="col col-half mt-8 pr-4">
+              <InputField
+                name="firstName"
+                isValid={infoState.firstName.isValid}
+                value={infoState.firstName.value}
+                type={dataRender.firstName.type}
+                placeholder={dataRender.firstName.title}
+                onChange={handleInput}
+                autocomplete="off"
+              />
+            </div>
+            <div className="col col-half mt-8 pl-4">
+              <InputField
+                name="lastName"
+                isValid={infoState.lastName.isValid}
+                value={infoState.lastName.value}
+                type={dataRender.lastName.type}
+                placeholder={dataRender.lastName.title}
+                onChange={handleInput}
+                autocomplete="off"
+              />
+            </div>
+          </div>
+          <div className="col col-full mt-8">
+            <FormError
+              isHidden={infoState.email.isHidden}
+              errorMessage={dataRender.email.errorMessage}
+            />
+            <InputField
+              name="email"
+              isValid={infoState.email.isValid}
+              value={infoState.email.value}
+              type={dataRender.email.type}
+              placeholder={dataRender.email.title}
+              onChange={handleInput}
+              autocomplete="off"
+            />
+          </div>
+          <div className="col col-full mt-8">
+            <FormError
+              isHidden={infoState.birthday.isHidden}
+              errorMessage={dataRender.birthday.errorMessage}
+            />
+            <InputField
+              name="birthday"
+              isValid={infoState.birthday.isValid}
+              value={infoState.birthday.value}
+              type={dataRender.birthday.type}
+              placeholder={dataRender.birthday.title}
+              onChange={handleInput}
+              autocomplete="off"
+            />
+          </div>
+          <div className="col col-full mt-8">
+            <FormError
+              isHidden={infoState.address.isHidden}
+              errorMessage={dataRender.address.errorMessage}
+            />
+            <InputField
+              name="address"
+              isValid={infoState.address.isValid}
+              value={infoState.address.value}
+              type={dataRender.address.type}
+              placeholder={dataRender.address.title}
+              onChange={handleInput}
+              autocomplete="off"
+            />
+          </div>
+          <div className="col col-full mt-8">
+            <FormError
+              isHidden={infoState.phone.isHidden}
+              errorMessage={dataRender.phone.errorMessage}
+            />
+            <InputField
+              name="phone"
+              isValid={infoState.phone.isValid}
+              value={infoState.phone.value}
+              type={dataRender.phone.type}
+              placeholder={dataRender.phone.title}
+              onChange={handleInput}
+              autocomplete="off"
+            />
+          </div>
+          <div className="col col-full mt-8">
+            <FormError
+              isHidden={infoState.identification.isHidden}
+              errorMessage={dataRender.identification.errorMessage}
+            />
+            <InputField
+              name="identification"
+              isValid={infoState.identification.isValid}
+              value={infoState.identification.value}
+              type={dataRender.identification.type}
+              placeholder={dataRender.identification.title}
+              onChange={handleInput}
+              autocomplete="off"
+            />
+          </div>
           <div className="col col-full mt-24">
             <div className="col col-half">
               <Button

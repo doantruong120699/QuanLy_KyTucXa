@@ -136,9 +136,12 @@ const SummaryInfo = (props) => {
           <span className="text-is-purple-gradient style-profile-name">
             {dataRender.firstName.value}{" "}
           </span>
-          <span>{dataRender.username.value}</span>
         </div>
-        <i className="fi-rr-edit" onClick={openEditModal}></i>
+        <i
+          className="fi-rr-edit"
+          style={{ cursor: "pointer" }}
+          onClick={openEditModal}
+        ></i>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-heart"></i>

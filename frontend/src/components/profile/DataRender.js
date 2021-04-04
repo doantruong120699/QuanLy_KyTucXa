@@ -1,18 +1,14 @@
 import * as AlertMessage from "../../utilities/constants/AlertMessage";
+import moment from "moment";
 function getHandledDataRender(origin) {
   return {
-    username: {
-      title: "Tên đăng nhập",
-      value: origin.username,
-    },
-    id: {
-      value: origin.id,
-    },
     firstName: {
       value: origin.first_name,
       title: "Tên",
       type: "text",
       validateType: "string",
+      isValid: true,
+      isHidden: true,
       errorMessage: AlertMessage.NAME_INVALID,
     },
     lastName: {
@@ -20,6 +16,8 @@ function getHandledDataRender(origin) {
       title: "Họ",
       type: "text",
       validateType: "string",
+      isValid: true,
+      isHidden: true,
       errorMessage: AlertMessage.NAME_INVALID,
     },
     email: {
@@ -27,13 +25,17 @@ function getHandledDataRender(origin) {
       value: origin.email,
       type: "text",
       validateType: "email",
+      isValid: true,
+      isHidden: true,
       errorMessage: AlertMessage.EMAIL_INVALID,
     },
     birthday: {
-      value: new Date(origin.profile.birthday).toLocaleDateString("es-CL"),
+      value: moment(new Date(origin.profile.birthday)).format("YYYY-MM-DD"),
       title: "Ngày sinh",
       type: "date",
       validateType: null,
+      isValid: true,
+      isHidden: true,
       errorMessage: "",
     },
     address: {
@@ -41,6 +43,8 @@ function getHandledDataRender(origin) {
       title: "Địa chỉ",
       type: "text",
       validateType: null,
+      isValid: true,
+      isHidden: true,
       errorMessage: "",
     },
     phone: {
@@ -48,12 +52,16 @@ function getHandledDataRender(origin) {
       title: "Số điện thoại",
       type: "tel",
       validateType: "phone",
+      isValid: true,
+      isHidden: true,
       errorMessage: AlertMessage.PHONE_NUMBER_INVALID,
     },
     identification: {
       value: origin.profile.identify_card,
       title: "CMND",
       type: "tel",
+      isValid: true,
+      isHidden: true,
       validateType: "idCard",
       errorMessage: AlertMessage.IDENTIFICATION_INVALID,
     },
@@ -68,18 +76,14 @@ function getHandledDataRender(origin) {
     faculty: {
       title: "Khoa",
       value: origin.profile.faculty ? origin.profile.faculty.name : null,
+      isValid: true,
+      isHidden: true,
     },
     grade: {
       title: "Lớp",
       value: origin.profile.my_class ? origin.profile.my_class.name : null,
-    },
-    position: {
-      title: "Chức vụ",
-      value: origin.profile.position.name,
-    },
-    area: {
-      title: "Khu vực",
-      value: origin.profile.area.name,
+      isValid: true,
+      isHidden: true,
     },
   };
 }
@@ -90,49 +94,12 @@ function getRawDataRender(data) {
     last_name: data.lastName.value,
     profile: {
       address: data.address.value,
+      gender: data.gender.value,
       birthday: data.birthday.value,
       identify_card: data.identification.value,
       phone: data.phone.value,
     },
   };
 }
-function getEditEmployeeInfoState() {
-  return {
-    firstName: {
-      value: "",
-      isValid: true,
-      isHidden: true,
-    },
-    lastName: {
-      value: "",
-      isValid: true,
-      isHidden: true,
-    },
-    address: {
-      value: "",
-      isValid: true,
-      isHidden: true,
-    },
-    email: {
-      value: "",
-      isValid: true,
-      isHidden: true,
-    },
-    birthday: {
-      value: "",
-      isValid: true,
-      isHidden: true,
-    },
-    identification: {
-      value: "",
-      isValid: true,
-      isHidden: true,
-    },
-    phone: {
-      value: "",
-      isValid: true,
-      isHidden: true,
-    },
-  };
-}
-export { getHandledDataRender, getRawDataRender, getEditEmployeeInfoState };
+
+export { getHandledDataRender, getRawDataRender };

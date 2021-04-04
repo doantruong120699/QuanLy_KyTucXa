@@ -1,11 +1,10 @@
 const Room = (props) => {
-  const { name, maximum, students } = props;
+  const { name, maximum, numberNow } = props;
 
   var listStudentIcons = [];
 
   for (var i = 0; i < maximum; i++) {
-    let styleStudentIcon =
-      typeof students[i] === "undefined" ? "#fd5353" : "#09bd3d";
+    let styleStudentIcon = i < numberNow ? "#fd5353" : "#09bd3d";
     listStudentIcons.push(
       <div key={i} className="col col-4">
         <div
