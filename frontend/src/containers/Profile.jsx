@@ -10,45 +10,45 @@ import ProfileContext from "../components/profile/ProfileContext";
 import { getHandledDataRender } from "../components/profile/DataRender";
 const Profile = () => {
   const [profileState, setProfile] = useState({
-    dataRender: null,
-    origin: null,
+    profile: null,
+    username: null,
+    position: null,
+    area: null,
+    room: null,
   });
 
   const updateOrigin = (data) => {
-    setProfile({ ...profileState, origin: data });
-    updateState(data);
-  };
-  const updateState = (origin) => {
-    setProfile({
-      dataRender: getHandledDataRender(origin),
-      origin: origin,
-    });
+    setProfile({ ...profileState, profile: getHandledDataRender(data) });
   };
 
   const isEmployee = getAuth().group[0] === "nhanvien_group";
 
   useEffect(() => {
     const GetProfileUser = () => {
-      var token = localStorage.getItem("token");
-      GetProfile(token, (output) => {
+      GetProfile((output) => {
         if (output) {
-          updateState(output);
+          setProfile({
+            profile: getHandledDataRender(output),
+            username: output.username,
+            position: output.profile.position.name,
+            area: output.profile.area.name,
+            room: output.room,
+          });
         }
       });
     };
     GetProfileUser();
   }, []);
 
-  const { dataRender, origin } = profileState;
+  const { profile } = profileState;
   return (
     <ProfileContext.Provider
       value={{
-        dataRender,
+        profile,
         updateOrigin: updateOrigin.bind(this),
-        origin,
       }}
     >
-      {profileState.dataRender && profileState.origin && (
+      {profileState.profile && (
         <div className="style-profile-container">
           <div className="col col-full">
             <div className="col col-third justify-content-ct">
@@ -56,7 +56,7 @@ const Profile = () => {
             </div>
             <div className="col col-two-third">
               <SummaryInfo
-                dataRender={profileState.dataRender}
+                dataRender={profileState.profile}
                 isEmployee={isEmployee}
               />
             </div>
@@ -65,25 +65,21 @@ const Profile = () => {
             <div className="col col-full">
               <div className="col col-half pt-48 pr-20">
                 <StudyInfo
-                  mssv={profileState.dataRender.id.value}
-                  className={profileState.dataRender.grade.value}
-                  position={profileState.dataRender.position.value}
-                  faculty={profileState.dataRender.faculty.value}
+                  id={profileState.username}
+                  grade={profileState.profile.grade.value}
+                  faculty={profileState.profile.faculty.value}
                 />
               </div>
               <div className="col col-half pt-48 pl-20">
-                <RoomInfo
-                  name={profileState.dataRender.room.value}
-                  area={profileState.dataRender.area.value}
-                />
+                <RoomInfo room={profileState.room} area={profileState.area} />
               </div>
             </div>
           ) : (
             <div className="col col-full mt-48">
               <EmployeeInfo
-                msnv={profileState.dataRender.id.value}
-                position={profileState.dataRender.position.value}
-                area={profileState.dataRender.area.value}
+                position={profileState.position}
+                username={profileState.username}
+                area={profileState.area}
               />
             </div>
           )}

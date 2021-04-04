@@ -1,6 +1,6 @@
 import Button from "../common/Button";
 const EmployeeInfo = (props) => {
-  const { msnv, position, area } = props;
+  const { position,username,area } = props;
   return (
     <div className="col col-full style-lg-box bg-color-white style-profile-room">
       <span className="style-notiTitle">Thông tin công việc</span>
@@ -10,7 +10,7 @@ const EmployeeInfo = (props) => {
       </div>
       <div className="col col-full pt-8">
         <span className="text-is-bold">Mã số nhân viên: </span>
-        <span>{msnv}</span>
+        <span>{username}</span>
       </div>
       <div className="col col-full pt-8">
         <span className="text-is-bold">Khu: </span>

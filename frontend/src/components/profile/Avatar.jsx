@@ -6,7 +6,7 @@ const Avatar = () => {
       <div className="style-edit-avatar">
         <input type="file" style={{ display: "none" }} id="edit-avatar" />
         <label htmlFor="edit-avatar">
-          <i className="fi-rr-edit"></i>
+          <i className="fi-rr-edit" style={{ cursor: "pointer" }}></i>
         </label>
       </div>
     </div>

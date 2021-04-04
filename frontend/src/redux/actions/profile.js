@@ -1,6 +1,6 @@
 import * as types from "../constants";
 import store from "../store";
-export async function profile(token, resolve = () => {}) {
+export async function profile(resolve = () => {}) {
   store.dispatch({
     type: types.GET_PROFILE_API,
   });
@@ -10,7 +10,7 @@ export async function profile(token, resolve = () => {}) {
       {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token)}`,
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
