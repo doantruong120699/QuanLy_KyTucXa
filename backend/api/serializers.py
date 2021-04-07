@@ -110,22 +110,22 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 class FacultySerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
-        fields = [ "id", "name"]
+        fields = [ "id", "name", "slug"]
 
 class ClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class
-        fields = [ "id", "name"]
+        fields = [ "id", "name", "slug"]
 
 class PositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Position
-        fields = [ "id", "name"]
+        fields = [ "id", "name", "slug"]
 
 class AreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
-        fields = [ "id", "name"]
+        fields = [ "id", "name", "slug"]
 class ProfileSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
     position = PositionSerializer(required=False)
@@ -200,18 +200,6 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             except Exception as e:
                 print(e)
                 pass
-#             {
-#   "email": "nhanvien@gmail.com",
-#   "username": "nhanvien",
-#   "first_name": "Nhân",
-#   "last_name": "Viên",
-#   "profile":{
-#     "birthday": "2021-04-15",
-#     "address": "Quận Bình Chánh",
-#     "identify_card": "124756",
-#     "phone": "0378178546",
-#   }
-# }
 
         except:
             pass
