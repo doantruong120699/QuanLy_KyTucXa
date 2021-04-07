@@ -4,7 +4,7 @@ export const allRooms = [
     roomsOfArea: [
       {
         name: "A100",
-        number: 6,
+        number: 8,
         students: [
           {
             name: "Nguyen Van A",
@@ -34,7 +34,7 @@ export const allRooms = [
       },
       {
         name: "A100",
-        number: 6,
+        number: 8,
         students: [
           {
             name: "Nguyen Van A",
@@ -64,7 +64,7 @@ export const allRooms = [
       },
       {
         name: "A100",
-        number: 6,
+        number: 8,
         students: [
           {
             name: "Nguyen Van A",
@@ -94,7 +94,7 @@ export const allRooms = [
       },
       {
         name: "A100",
-        number: 6,
+        number: 8,
         students: [
           {
             name: "Nguyen Van A",
@@ -124,7 +124,7 @@ export const allRooms = [
       },
       {
         name: "A100",
-        number: 6,
+        number: 8,
         students: [
           {
             name: "Nguyen Van A",
@@ -154,7 +154,7 @@ export const allRooms = [
       },
       {
         name: "A100",
-        number: 6,
+        number: 8,
         students: [
           {
             name: "Nguyen Van A",
@@ -189,7 +189,7 @@ export const allRooms = [
     roomsOfArea: [
       {
         name: "A100",
-        number: 6,
+        number: 8,
         students: [
           {
             name: "Nguyen Van A",
@@ -219,7 +219,7 @@ export const allRooms = [
       },
       {
         name: "A100",
-        number: 6,
+        number: 8,
         students: [
           {
             name: "Nguyen Van A",
@@ -249,7 +249,7 @@ export const allRooms = [
       },
       {
         name: "A100",
-        number: 6,
+        number: 8,
         students: [
           {
             name: "Nguyen Van A",

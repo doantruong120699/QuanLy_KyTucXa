@@ -6,28 +6,49 @@ import StudyInfo from "../components/profile/StudyInfo";
 import RoomInfo from "../components/profile/RoomInfo";
 import EmployeeInfo from "../components/profile/EmployeeInfo";
 import { getAuth } from "../utilities/helper";
+import ProfileContext from "../components/profile/ProfileContext";
+import { getHandledDataRender } from "../components/profile/DataRender";
 const Profile = () => {
-  const [profileState, setProfile] = useState(null);
+  const [profileState, setProfile] = useState({
+    dataRender: null,
+    origin: null,
+  });
 
-  const GetProfileUser = () => {
-    var token = localStorage.getItem("token");
-    GetProfile(token, (output) => {
-      if (output) {
-        setProfile(output);
-      }
+  const updateOrigin = (data) => {
+    setProfile({ ...profileState, origin: data });
+    updateState(data);
+  };
+  const updateState = (origin) => {
+    setProfile({
+      dataRender: getHandledDataRender(origin),
+      origin: origin,
     });
   };
 
   const isEmployee = getAuth().group[0] === "nhanvien_group";
-  const username = getAuth().username;
 
   useEffect(() => {
+    const GetProfileUser = () => {
+      var token = localStorage.getItem("token");
+      GetProfile(token, (output) => {
+        if (output) {
+          updateState(output);
+        }
+      });
+    };
     GetProfileUser();
   }, []);
 
+  const { dataRender, origin } = profileState;
   return (
-    <div>
-      {profileState && (
+    <ProfileContext.Provider
+      value={{
+        dataRender,
+        updateOrigin: updateOrigin.bind(this),
+        origin,
+      }}
+    >
+      {profileState.dataRender && profileState.origin && (
         <div className="style-profile-container">
           <div className="col col-full">
             <div className="col col-third justify-content-ct">
@@ -35,14 +56,8 @@ const Profile = () => {
             </div>
             <div className="col col-two-third">
               <SummaryInfo
-                name={profileState.first_name}
-                username={username}
-                email={profileState.email}
-                address={profileState.profile.address}
-                phone={profileState.profile.phone}
-                gender={profileState.profile.gender}
-                identification={profileState.profile.identify_card}
-                birthday={profileState.profile.birthday}
+                dataRender={profileState.dataRender}
+                isEmployee={isEmployee}
               />
             </div>
           </div>
@@ -50,32 +65,31 @@ const Profile = () => {
             <div className="col col-full">
               <div className="col col-half pt-48 pr-20">
                 <StudyInfo
-                  mssv={"102170004"}
-                  className={profileState.profile.my_class}
-                  position={profileState.profile.position.name}
-                  faculty={profileState.profile.faculty.name}
+                  mssv={profileState.dataRender.id.value}
+                  className={profileState.dataRender.grade.value}
+                  position={profileState.dataRender.position.value}
+                  faculty={profileState.dataRender.faculty.value}
                 />
               </div>
               <div className="col col-half pt-48 pl-20">
                 <RoomInfo
-                  name={""}
-                  area={profileState.profile.area.name}
-                  type={""}
+                  name={profileState.dataRender.room.value}
+                  area={profileState.dataRender.area.value}
                 />
               </div>
             </div>
           ) : (
             <div className="col col-full mt-48">
               <EmployeeInfo
-                msnv={"102170004"}
-                position={profileState.profile.position.name}
-                area={profileState.profile.area.name}
+                msnv={profileState.dataRender.id.value}
+                position={profileState.dataRender.position.value}
+                area={profileState.dataRender.area.value}
               />
             </div>
           )}
         </div>
       )}
-    </div>
+    </ProfileContext.Provider>
   );
 };
 export default React.memo(Profile);

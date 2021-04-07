@@ -4,7 +4,6 @@
 @import './styles/common/User.css';
 @import './styles/layout/Footer.css';
 @import './styles/layout/Header.css';
-@import './styles/layout/NavLink.css';
 @import './styles/layout/SideBar.css';
 @import './styles/dashboard/InfoContainer.css';
 @import './styles/dashboard/Notification.css';
@@ -17,6 +16,7 @@
 @import './styles/profile/Avatar.css';
 @import './styles/profile/SummaryInfo.css';
 @import './styles/profile/RoomInfo.css';
+@import './styles/common/Modal.css';
 @import './assets/icons/uicons-solid-rounded/css/uicons-solid-rounded.css';
 @import './assets/icons/uicons-regular-rounded/css/uicons-regular-rounded.css';
 @import './styles/common/general.css';
