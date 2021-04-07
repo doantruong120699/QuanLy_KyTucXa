@@ -16,6 +16,26 @@ from .serializers import *
 from api import status_http
 from api.permissions import *
 from django.http import JsonResponse
+
+class TypeRoomViewSet(viewsets.ModelViewSet):
+    queryset = TypeRoom.objects.all()
+    serializer_class = TypeRoomSerializer
+
+    def get_queryset(self):
+        return TypeRoom.objects.all().order_by('id')
+
+    def list(self, request, *args, **kwargs):
+        type_room = list(TypeRoom.objects.values().order_by('id'))
+        return JsonResponse(type_room, safe=False, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, **kwargs):
+        try:
+            queryset = TypeRoom.objects.get(slug=kwargs['slug'])
+            serializer = TypeRoomSerializer(queryset)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Type Not Found'}, status=status.HTTP_404_NOT_FOUND)
 class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomListSerializer
     # permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
@@ -38,7 +58,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         try:
             queryset = Room.objects.get(slug=kwargs['slug'])
             serializer = RoomSerializer(queryset)
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response({'detail': 'Room Not Found'}, status=status.HTTP_404_NOT_FOUND)
@@ -46,7 +66,7 @@ class RoomViewSet(viewsets.ModelViewSet):
     # get list all lesson 
     @action(methods=["GET"], detail=False, url_path="get_all_room", url_name="get_all_room")
     def get_all_room(self, request, *args, **kwargs):
-        list_room = list(Room.objects.values())
+        list_room = (Room.objects.all())
         page = self.paginate_queryset(list_room)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -76,6 +96,29 @@ class RoomViewSet(viewsets.ModelViewSet):
             list_sv[i]['faculty_id'] = user.user_profile.faculty.name
             list_sv[i]['my_class_id'] = user.user_profile.my_class.name
         return JsonResponse(list_sv, safe=False, status=status.HTTP_200_OK)
+
+    @action(methods=["GET"], detail=False, url_path="get_list_room_in_area", url_name="get_list_room_in_area")
+    def get_list_room_in_area(self, request, *args, **kwargs):
+        try:
+            area = kwargs['slug']
+            queryset = Room.objects.filter(area__slug = area)
+            print(queryset)
+            page = self.paginate_queryset(queryset)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+        # list_room = (Room.objects.all())
+        
+
 
 
 

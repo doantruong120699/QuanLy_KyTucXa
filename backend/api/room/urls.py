@@ -32,9 +32,25 @@ list_user_in_room = RoomViewSet.as_view({
     'get' : 'get_list_user_in_room',
 })
 
+list_room_in_area = RoomViewSet.as_view({
+    'get' : 'get_list_room_in_area',
+})
+
+type_room_list = TypeRoomViewSet.as_view({
+    'get': 'list', # Get lists
+})
+
+type_room_detail = TypeRoomViewSet.as_view({
+    'get': 'retrieve',
+})
+
 urlpatterns = [
     # ========== room
     path('rooms/get-all/', room_get_all, name = 'room_get_all'),
+    path('rooms/get-all/<slug:slug>/', list_room_in_area, name = 'list_room_in_area'),
     path('rooms/<slug:slug>/', room_detail, name = 'room_detail_slug'),
     path('rooms/user/<slug:slug>/', list_user_in_room, name = 'list_user_in_room'),
+
+    path('all-type-room/', type_room_list, name = 'type_room_list'),
+    path('type-room/<slug:slug>/', type_room_detail, name = 'type_room_detail'),
 ]
