@@ -188,18 +188,30 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
                 profile_data = self.validated_data['profile']
                 profile = Profile.objects.get(user=user)
                 profile.birthday=profile_data['birthday']
-                profile.gender=profile_data['gender']
+                # profile.gender=profile_data['gender']
                 profile.address=profile_data['address']
                 profile.identify_card=profile_data['identify_card']
                 profile.phone=profile_data['phone']
 
-                profile.faculty=profile_data['faculty']
-                profile.position=profile_data['position']
-                profile.area=profile_data['area']
+                # profile.faculty=profile_data['faculty']
+                # profile.position=profile_data['position']
+                # profile.area=profile_data['area']
                 profile.save()
             except Exception as e:
                 print(e)
                 pass
+#             {
+#   "email": "nhanvien@gmail.com",
+#   "username": "nhanvien",
+#   "first_name": "Nhân",
+#   "last_name": "Viên",
+#   "profile":{
+#     "birthday": "2021-04-15",
+#     "address": "Quận Bình Chánh",
+#     "identify_card": "124756",
+#     "phone": "0378178546",
+#   }
+# }
 
         except:
             pass

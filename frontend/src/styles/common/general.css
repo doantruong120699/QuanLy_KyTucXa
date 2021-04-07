@@ -253,9 +253,19 @@
 .text-is-gray {
   color: #535353;
 }
+.text-20 {
+  font-size: 20px;
+}
+.bold-text {
+  font-weight: 700;
+}
 .align-item-ct {
+  display: flex;
   align-items: center;
 }
 .text-is-bold {
   font-weight: 700;
+}
+.text-align-ct {
+  text-align: center;
 }
