@@ -6,7 +6,7 @@ import { changePass } from "../../redux/actions/changePass";
 import validate from "../../utilities/regex";
 import ChangePass from "./ChangePass";
 const SummaryInfo = (props) => {
-  const { dataRender, isEmployee } = props;
+  const { dataRender, isEmployee, studyInfo } = props;
 
   const [errorState, setError] = useState({
     curPass: {
@@ -187,6 +187,7 @@ const SummaryInfo = (props) => {
           handleInput={handleInput}
           isEmployee={isEmployee}
           dataRender={dataRender}
+          studyInfo={studyInfo}
         />
       </div>
     </div>

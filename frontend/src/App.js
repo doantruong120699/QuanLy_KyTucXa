@@ -1,4 +1,4 @@
-import { Route, Router, Switch } from "react-router-dom";
+import { Route, Router, Switch, Redirect } from "react-router-dom";
 import { createBrowserHistory as history } from "history";
 import withAuth from "./components/layout/withAuth";
 import Dashboard from "./containers/Dashboard";
@@ -12,6 +12,9 @@ function App() {
   return (
     <Router history={history()}>
       <Switch>
+        <Route path="/" exact>
+          <Redirect to={ROUTER.ROUTE_DASHBOARD} />
+        </Route>
         <Route path={ROUTER.ROUTE_LOGIN} component={Login} exact />
         <Route
           path={ROUTER.ROUTE_FORGOT_PASSWORD}

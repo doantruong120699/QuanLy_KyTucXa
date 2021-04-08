@@ -98,6 +98,8 @@ function getRawDataRender(data) {
       birthday: data.birthday.value,
       identify_card: data.identification.value,
       phone: data.phone.value,
+      faculty: data.faculty.name,
+      my_class: data.grade.name,
     },
   };
 }
