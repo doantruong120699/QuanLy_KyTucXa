@@ -35,6 +35,8 @@ const Profile = () => {
     const GetProfileUser = () => {
       GetProfile((output) => {
         if (output) {
+          console.log(output);
+          console.log(getHandledDataRender(output));
           setProfile({
             profile: getHandledDataRender(output),
             username: output.username,
@@ -62,12 +64,11 @@ const Profile = () => {
         }
       });
     };
-    GetAllGrades();
     GetAllFaculties();
+    GetAllGrades();
     setStudy(studyInfo);
     GetProfileUser();
   }, []);
-  console.log(profileState);
   const { profile } = profileState;
   return (
     <ProfileContext.Provider
@@ -76,7 +77,7 @@ const Profile = () => {
         updateOrigin: updateOrigin.bind(this),
       }}
     >
-      {profileState.profile && studyState.faculty && studyState.grade && (
+      {profileState.profile && (
         <div className="style-profile-container">
           <div className="col col-full">
             <div className="col col-third justify-content-ct">
