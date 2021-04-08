@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { profile as GetProfile } from "../redux/actions/profile";
+import {
+  profile as GetProfile,
+  faculty as GetFaculties,
+  grade as GetGrades,
+} from "../redux/actions/profile";
 import Avatar from "../components/profile/Avatar";
 import SummaryInfo from "../components/profile/SummaryInfo";
 import StudyInfo from "../components/profile/StudyInfo";
@@ -15,6 +19,10 @@ const Profile = () => {
     position: null,
     area: null,
     room: null,
+  });
+  const [studyState, setStudy] = useState({
+    faculty: null,
+    grade: null,
   });
 
   const updateOrigin = (data) => {
@@ -37,9 +45,29 @@ const Profile = () => {
         }
       });
     };
+
+    let studyInfo = { faculty: null, grade: null };
+    const GetAllFaculties = () => {
+      GetFaculties((output) => {
+        if (output) {
+          studyInfo.faculty = output;
+        }
+      });
+    };
+
+    const GetAllGrades = () => {
+      GetGrades((output) => {
+        if (output) {
+          studyInfo.grade = output;
+        }
+      });
+    };
+    GetAllGrades();
+    GetAllFaculties();
+    setStudy(studyInfo);
     GetProfileUser();
   }, []);
-
+  console.log(profileState);
   const { profile } = profileState;
   return (
     <ProfileContext.Provider
@@ -48,7 +76,7 @@ const Profile = () => {
         updateOrigin: updateOrigin.bind(this),
       }}
     >
-      {profileState.profile && (
+      {profileState.profile && studyState.faculty && studyState.grade && (
         <div className="style-profile-container">
           <div className="col col-full">
             <div className="col col-third justify-content-ct">
@@ -58,6 +86,7 @@ const Profile = () => {
               <SummaryInfo
                 dataRender={profileState.profile}
                 isEmployee={isEmployee}
+                studyInfo={studyState}
               />
             </div>
           </div>

@@ -1,7 +1,9 @@
 import * as types from "../constants";
 
 const initialState = {
-  data: {},
+  personalProfile: {},
+  faculty: {},
+  grade: {},
   error: {},
   loading: false,
 };
@@ -17,10 +19,46 @@ export default function reducer(state = initialState, actions) {
     case types.GET_PROFILE_API_SUCCEED:
       return {
         ...state,
-        data: actions.payload,
+        personalProfile: actions.payload,
         loading: false,
       };
     case types.GET_PROFILE_API_FAIL:
+      return {
+        ...state,
+        error: actions.payload,
+        loading: false,
+      };
+    case types.GET_FACULTIES_API:
+      return {
+        ...state,
+        loading: true,
+        error: {},
+      };
+    case types.GET_FACULATIES_API_SUCCEED:
+      return {
+        ...state,
+        faculty: actions.payload,
+        loading: false,
+      };
+    case types.GET_FACULATIE_API_FAIL:
+      return {
+        ...state,
+        error: actions.payload,
+        loading: false,
+      };
+    case types.GET_GRADE_API:
+      return {
+        ...state,
+        loading: true,
+        error: {},
+      };
+    case types.GET_GRADE_API_SUCCEED:
+      return {
+        ...state,
+        grade: actions.payload,
+        loading: false,
+      };
+    case types.GET_GRADE_API_FAIL:
       return {
         ...state,
         error: actions.payload,
