@@ -102,7 +102,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         try:
             area = kwargs['slug']
             queryset = Room.objects.filter(area__slug = area)
-            print(queryset)
+            # print(queryset)
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
