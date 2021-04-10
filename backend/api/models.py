@@ -23,7 +23,7 @@ class VietNamProvince(models.Model):
 
 class Faculty(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
-
+    slug = models.CharField(max_length=200, null=True, unique=True)  
     class Meta:
         ordering = ('id',)
     
@@ -32,7 +32,7 @@ class Faculty(models.Model):
 
 class Class(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
-
+    slug = models.CharField(max_length=200, null=True, unique=True)  
     class Meta:
         ordering = ('id',)
     
@@ -41,7 +41,7 @@ class Class(models.Model):
 
 class Position(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
-
+    slug = models.CharField(max_length=200, null=True, unique=True)  
     class Meta:
         ordering = ('id',)
     
