@@ -6,7 +6,7 @@ import { changePass } from "../../redux/actions/changePass";
 import validate from "../../utilities/regex";
 import ChangePass from "./ChangePass";
 const SummaryInfo = (props) => {
-  const { dataRender, isEmployee } = props;
+  const { dataRender, isEmployee, studyInfo } = props;
 
   const [errorState, setError] = useState({
     curPass: {
@@ -136,9 +136,12 @@ const SummaryInfo = (props) => {
           <span className="text-is-purple-gradient style-profile-name">
             {dataRender.firstName.value}{" "}
           </span>
-          <span>{dataRender.username.value}</span>
         </div>
-        <i className="fi-rr-edit" onClick={openEditModal}></i>
+        <i
+          className="fi-rr-edit"
+          style={{ cursor: "pointer" }}
+          onClick={openEditModal}
+        ></i>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-heart"></i>
@@ -184,6 +187,7 @@ const SummaryInfo = (props) => {
           handleInput={handleInput}
           isEmployee={isEmployee}
           dataRender={dataRender}
+          studyInfo={studyInfo}
         />
       </div>
     </div>

@@ -1,7 +1,6 @@
 import React from "react";
 const ProfileContext = React.createContext({
-  data: null,
+  profile: null,
   updateOrigin: () => {},
-  origin: null,
 });
 export default ProfileContext;

@@ -45,9 +45,6 @@ const SideBar = () => {
                 style={{ textDecoration: "none" }}
                 activeClassName="style-activeNavlink"
                 className="style-navLink"
-                onClick={() =>
-                  dispatch(actFetchTitleNavigation(titleNav.title))
-                }
               >
                 <i className={iconStyle[index]} />
                 <span>{titleNav.title}</span>
