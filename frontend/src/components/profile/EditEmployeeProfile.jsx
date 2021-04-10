@@ -49,6 +49,7 @@ const EditEmployeeProfile = (props) => {
       infoState.phone.isValid
     ) {
       const data = getRawDataRender(infoState);
+      console.log(data);
       const { updateOrigin } = context;
       updateOrigin(data);
       onClose();
