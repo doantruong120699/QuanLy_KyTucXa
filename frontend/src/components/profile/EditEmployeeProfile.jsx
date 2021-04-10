@@ -14,6 +14,7 @@ const EditEmployeeProfile = (props) => {
 
   const context = useContext(ProfileContext);
 
+
   const handleInput = (event) => {
     const { name, value } = event.target;
     const newState = { ...infoState[name] };
@@ -48,7 +49,6 @@ const EditEmployeeProfile = (props) => {
       infoState.phone.isValid
     ) {
       const data = getRawDataRender(infoState);
-      console.log(data);
       const { updateOrigin } = context;
       updateOrigin(data);
       onClose();
