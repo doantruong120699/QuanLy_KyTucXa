@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import * as ROUTER from "../../utilities/constants/router";
+import * as ROLE from "../../utilities/constants/roles";
 import { getAuth } from "../../utilities/helper";
 
 const User = () => {
@@ -32,6 +33,7 @@ const User = () => {
   useClickOutside(logoutWrapper);
 
   const user = getAuth();
+  const role = ROLE.ROLES[user.group[0]];
   return (
     <div ref={logoutWrapper} className="style-userContainer">
       <div className="style-userInfor" onClick={() => setIsShown(!isShown)}>
@@ -40,7 +42,7 @@ const User = () => {
           <span className="style-nameUser">
             {user.first_name} {user.last_name}
           </span>
-          <span className="style-roleUser">Sinh viên</span>
+          <span className="style-roleUser">{role}</span>
         </div>
         <div className="icon-custome">
           <i className={styleIcon} />

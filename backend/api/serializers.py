@@ -110,22 +110,22 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
 class FacultySerializer(serializers.ModelSerializer):
     class Meta:
         model = Faculty
-        fields = [ "id", "name"]
+        fields = [ "id", "name", "slug"]
 
 class ClassSerializer(serializers.ModelSerializer):
     class Meta:
         model = Class
-        fields = [ "id", "name"]
+        fields = [ "id", "name", "slug"]
 
 class PositionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Position
-        fields = [ "id", "name"]
+        fields = [ "id", "name", "slug"]
 
 class AreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
-        fields = [ "id", "name"]
+        fields = [ "id", "name", "slug"]
 class ProfileSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
     position = PositionSerializer(required=False)
@@ -188,14 +188,14 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
                 profile_data = self.validated_data['profile']
                 profile = Profile.objects.get(user=user)
                 profile.birthday=profile_data['birthday']
-                profile.gender=profile_data['gender']
+                # profile.gender=profile_data['gender']
                 profile.address=profile_data['address']
                 profile.identify_card=profile_data['identify_card']
                 profile.phone=profile_data['phone']
 
-                profile.faculty=profile_data['faculty']
-                profile.position=profile_data['position']
-                profile.area=profile_data['area']
+                # profile.faculty=profile_data['faculty']
+                # profile.position=profile_data['position']
+                # profile.area=profile_data['area']
                 profile.save()
             except Exception as e:
                 print(e)

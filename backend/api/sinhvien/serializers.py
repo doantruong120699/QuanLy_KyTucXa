@@ -52,3 +52,5 @@ class SinhVienListSerializer(serializers.ModelSerializer):
             'last_name',
             'profile',
         ]
+
+

@@ -1,22 +1,14 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
 import logo from "../../assets/images/logo/logo.jpg";
 import Footer from "./Footer";
-import NavLink from "./NavLink";
+//import NavLink from "./NavLink";
 import * as TitleList from "../../utilities/constants/titles";
 import { useDispatch } from "react-redux";
 import { actFetchTitleNavigation } from "../../redux/actions/dashboard";
 const SideBar = () => {
   const dispatch = useDispatch();
 
-  const [activeState, setActiveState] = useState({
-    active: 0,
-  });
-
-  const setActive = (index, title) => {
-    dispatch(actFetchTitleNavigation(title));
-    setActiveState({ ...activeState, active: index });
-  };
   const iconStyle = [
     "fi-sr-apps",
     "fi-sr-eye",
@@ -50,12 +42,17 @@ const SideBar = () => {
             return (
               <NavLink
                 key={index}
-                title={titleNav.title}
-                path={titleNav.path}
-                iconStyle={iconStyle[index]}
-                active={activeState.active === index}
-                onClick={() => setActive(index, titleNav.title)}
-              />
+                to={titleNav.path}
+                style={{ textDecoration: "none" }}
+                activeClassName="style-activeNavlink"
+                className="style-navLink"
+                onClick={() =>
+                  dispatch(actFetchTitleNavigation(titleNav.title))
+                }
+              >
+                <i className={iconStyle[index]} />
+                <span>{titleNav.title}</span>
+              </NavLink>
             );
           })}
         </div>
