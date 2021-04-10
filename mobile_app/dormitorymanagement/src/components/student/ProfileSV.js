@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { getData } from '../../utils/asyncStorage';
+import { getarea, getclass, getfaculty } from '../../redux/actions/index';
 
 class ProfileSV extends Component {
     constructor(props) {
@@ -10,6 +11,15 @@ class ProfileSV extends Component {
     }
     goBack = () => {
         this.props.navigation.goBack();
+    };
+    moveToChangeInfo = async () => {
+        await this.props.getarea();
+        await this.props.getclass();
+        await this.props.getfaculty();
+        this.props.navigation.navigate("ChangeProfileSV");
+    };
+    moveToChangePassword = () => {
+        this.props.navigation.navigate("ChangePassword");
     };
     render() {
         let data = this.props.dataProfile;
@@ -56,10 +66,10 @@ class ProfileSV extends Component {
                                 <Text style={styles.info}>{data.profile.faculty.name}</Text>
                             </View>
                             <View style={styles.viewButton}>
-                                <TouchableOpacity style={styles.button}>
+                                <TouchableOpacity style={styles.button} onPress={this.moveToChangeInfo}>
                                     <Text style={styles.textButton}>Sửa thông tin</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.button}>
+                                <TouchableOpacity style={styles.button} onPress={this.moveToChangePassword}>
                                     <Text style={styles.textButton}>Đổi mật khẩu</Text>
                                 </TouchableOpacity>
                             </View>                            
@@ -71,13 +81,19 @@ class ProfileSV extends Component {
     }
 }
 
+const mapDispatchToProps = {
+    getarea,
+    getclass,
+    getfaculty,
+};
+
 function mapStateToProps(state) {
     console.log(state.getprofile);
     return {
         dataProfile: state.getprofile.msg,
     };
 };
-export default connect(mapStateToProps)(ProfileSV);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileSV);
 
 const styles = StyleSheet.create({
     container: {

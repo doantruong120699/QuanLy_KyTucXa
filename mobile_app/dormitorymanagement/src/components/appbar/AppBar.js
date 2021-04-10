@@ -61,7 +61,7 @@ class AppBar extends Component {
                 <TouchableOpacity style={styles.bars} onPress={() => {openDrawer(this.props.navigation)}}>
                     <FontAwesome5 style={styles.iconbars} name={'bars'}/>
                 </TouchableOpacity>
-                <View style={styles.viewSearch}>
+                {/* <View style={styles.viewSearch}>
                     <TextInput
                         underlineColorAndroid="transparent"
                         onChangeText={this.changeTextSearch}
@@ -75,7 +75,7 @@ class AppBar extends Component {
                     >
                         <Text>Tìm</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
                 <TouchableOpacity style={styles.user} onPress={this.alert}>
                     <View style={styles.viewuser}>
                         <FontAwesome5 style={styles.iconuser} name={'user'}/>
@@ -101,7 +101,6 @@ const styles = StyleSheet.create({
     container: {
         width: '90%',
         // height: '50%',
-        justifyContent: 'center',
         flex: 1,
         alignItems: 'center',
         flexDirection: 'row',
@@ -116,9 +115,9 @@ const styles = StyleSheet.create({
     },
     bars: {
         flex: 1,
-        // marginRight: '70%',
+        marginLeft: '5%',
         justifyContent: 'center',
-        alignItems: 'center',
+        // alignItems: 'center',
         // borderRadius: 25,
         width: 30,
         height: 30,
@@ -128,9 +127,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     user: {
+        marginRight: '5%',
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         height: 30,
         width: 30,
         // backgroundColor: 'black',

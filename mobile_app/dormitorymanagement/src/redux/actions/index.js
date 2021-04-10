@@ -7,5 +7,23 @@ import { login } from './login';
 import { mainmenu } from './mainmenu';
 import { searchroom } from './searchroom';
 import { setbackgroundcolor } from './setbackgroundcolor';
+import { getarea } from './getarea';
+import { getclass } from './getclass';
+import { getposition } from './getposition';
+import { getfaculty } from './getfaculty';
 
-export { allstaff, allstudent, changepassword, getallroom, getprofile, login, mainmenu, searchroom, setbackgroundcolor };
+export { 
+    allstaff, 
+    allstudent, 
+    changepassword, 
+    getallroom, 
+    getprofile, 
+    login, 
+    mainmenu, 
+    searchroom, 
+    setbackgroundcolor, 
+    getarea,
+    getclass,
+    getposition,
+    getfaculty, 
+};
