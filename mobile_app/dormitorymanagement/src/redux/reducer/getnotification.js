@@ -4,7 +4,7 @@ const { GET_NOTIFICATION_SUCCESS, GET_NOTIFICATION_FAIL } = actionType;
 const initialState = {
     msg: '',
 }
-export const getposition = (state = initialState, actions) => {
+export const getnotification = (state = initialState, actions) => {
     switch (actions.type) {
         case GET_NOTIFICATION_SUCCESS:
             return {...state, msg: actions.payload};

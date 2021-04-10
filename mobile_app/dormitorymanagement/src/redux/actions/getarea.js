@@ -5,6 +5,7 @@ import axios from 'axios';
 const { GET_AREA_SUCCESS, GET_AREA_FAIL } = actionType;
 const { GET_AREA } = apiUrl;
 export const getarea = () => async (dispatch) => {
+    let result;
     try {
         let token = await getData('token');
         let config = {
