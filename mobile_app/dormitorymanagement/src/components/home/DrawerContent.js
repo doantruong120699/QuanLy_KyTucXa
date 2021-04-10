@@ -113,6 +113,22 @@ class DrawerContent extends Component {
                                     this.props.navigation.navigate("ChangePassword");
                                 }}
                             />
+                            <DrawerItem
+                                style={this.getStyle('Thongbao')}
+                                icon={({color, size}) => (
+                                    <FontAwesome5 
+                                        color={color} 
+                                        size={size}
+                                        name={'clipboard'}
+                                        style={styles.iconMenu}
+                                    />
+                                )}
+                                label="Thông báo"
+                                onPress={() => {
+                                    this.props.mainmenu('Thongbao');
+                                    this.props.navigation.navigate("Notification");
+                                }}
+                            />
                         </Drawer.Section>
                     </View>
                 </DrawerContentScrollView>

@@ -63,7 +63,6 @@ class Login extends Component {
         return (
             <View style={styles.container}>
                 <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
-                    <AppBar style={styles.appbar} navigation={this.props.navigation}/>
                     <View style={styles.container_child}>
                         <View style={styles.formLogin}>
                             <Text style={styles.textLogin}>ĐĂNG NHẬP</Text>
@@ -133,13 +132,6 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "column",
     },
-    appbar: {
-        flex: 1,
-        backgroundColor: 'white',
-        elevation: 7,  
-        borderRadius: 20,
-        marginTop: '3%',
-    },  
     imageBackground: {
         flex: 1,
         width: '100%',
@@ -148,7 +140,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     container_child: {
-      flex: 9, 
+      flex:1, 
       width: '100%',
       height: '100%',
       justifyContent: 'center',

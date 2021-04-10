@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { getData } from '../../utils/asyncStorage';
+import { getarea, getposition } from '../../redux/actions/index';
 
 class ProfileNV extends Component {
     constructor(props) {
@@ -11,10 +12,12 @@ class ProfileNV extends Component {
     goBack = () => {
         this.props.navigation.boBack();
     };
-    moveToChangeInfo = () => {
+    moveToChangeInfo = async () => {
+        await this.props.getarea();
+        await this.props.getposition();
         this.props.navigation.navigate("ChangeProfileNV");
     };
-    moveToChangePassword = () => {
+    moveToChangePassword = async () => {
         this.props.navigation.navigate("ChangePassword");
     };
     render() {
@@ -81,13 +84,18 @@ class ProfileNV extends Component {
     }
 }
 
+const mapDispatchToProps = {
+    getarea,
+    getposition,
+};
+
 function mapStateToProps(state) {
     console.log(state.getprofile);
     return {
         dataProfile: state.getprofile.msg,
     };
 };
-export default connect(mapStateToProps)(ProfileNV);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileNV);
 
 const styles = StyleSheet.create({
     container: {

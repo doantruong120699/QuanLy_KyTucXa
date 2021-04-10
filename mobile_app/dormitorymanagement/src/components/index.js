@@ -10,6 +10,24 @@ import ProfileSV from './student/ProfileSV';
 import ProfileNV from './staff/ProfileNV';
 import AllStudent from './showstudent/AllStudent';
 import AllStaff from './showstaff/AllStaff';
-// import ChangeProfileNV from './staff/ChangeProfileNV';
+import ChangeProfileNV from './staff/ChangeProfileNV';
+import ChangeProfileSV from './student/ChangeProfileSV';
+import Notification from './notification/Notification';
 
-export { Login, ChangePassword, ForgotPassword, AppBar, ShowAllRoom, Dashboard, Avatar, HomePage, ProfileSV, ProfileNV, AllStudent, AllStaff };
+export { 
+    Login, 
+    ChangePassword, 
+    ForgotPassword, 
+    AppBar, 
+    ShowAllRoom, 
+    Dashboard, 
+    Avatar, 
+    HomePage, 
+    ProfileSV, 
+    ProfileNV, 
+    AllStudent,
+    AllStaff, 
+    ChangeProfileNV ,
+    ChangeProfileSV,
+    Notification,
+};
