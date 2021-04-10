@@ -5,7 +5,8 @@ const Button = (props) => {
   const btnStyle = className(
     "btn-custom",
     `${type === "normal-blue" ? "btn-bg-blue" : ""}`,
-    `${type === "normal-yellow" ? "btn-bg-yello" : ""}`,
+    `${type === "normal-yellow" ? "btn-bg-yellow" : ""}`,
+    `${type === "normal-red" ? "btn-bg-red" : ""}`,
     `${type === "normal-ubg" ? "btn-ubg" : ""}`
   );
   return (

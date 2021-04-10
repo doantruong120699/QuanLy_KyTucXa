@@ -31,6 +31,12 @@ class RoomListSerializer(serializers.ModelSerializer):
         model = Room
         fields = ['id', 'name', 'slug', 'number_now', 'typeroom', 'area', 'status', 'created_at', 'last_update'] 
 
+class RoomListByAreaSerializer(serializers.ModelSerializer):
+    typeroom = TypeRoomSerializer(required=False)
+    class Meta:
+        model = Room
+        fields = ['id', 'name', 'slug', 'number_now', 'typeroom', 'status', 'created_at', 'last_update'] 
+
 class RoomSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(required=False)
     name = serializers.CharField(required=True)
@@ -38,6 +44,7 @@ class RoomSerializer(serializers.ModelSerializer):
     number_now = serializers.CharField(required=True)
     # typeroom = TypeRoomSerializer(required=True)
     area = AreaSerializer(required=True)
+    typeroom = TypeRoomSerializer(required=False)
     STATUS = Choices(
         ('A', _('Available')),
         ('F', _('Full')),
