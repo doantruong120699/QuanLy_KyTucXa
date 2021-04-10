@@ -19,4 +19,8 @@ export const NAVIGATION_TITLE = [
     title: "Dịch vụ",
     path: "./services",
   },
+  {
+    title: "Thông tin cá nhân",
+    path: "./profile",
+  },
 ];
