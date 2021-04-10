@@ -83,7 +83,7 @@ const Profile = () => {
         updateOrigin: updateOrigin.bind(this),
       }}
     >
-      {profileState.profile && (
+      {profileState.profile && studyState.faculty && studyState.grade && (
         <div className="style-profile-container">
           <div className="col col-full">
             <div className="col col-third justify-content-ct">
