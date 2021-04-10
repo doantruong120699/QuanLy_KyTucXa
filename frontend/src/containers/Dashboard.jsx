@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import InfoContainer from "../components/dashboard/InfoContainer";
 import Notification from "../components/dashboard/Notification";
+import * as TitleList from "../utilities/constants/titles";
+import { actFetchTitleNavigation } from "../redux/actions/dashboard";
 const Dashboard = () => {
+  const dispatch = useDispatch();
   const notification = [
     {
       time: "3/9/2021",
@@ -19,6 +23,9 @@ const Dashboard = () => {
       content: "Thông báo hoạt động văn nghệ.",
     },
   ];
+  useEffect(() =>
+    dispatch(actFetchTitleNavigation(TitleList.NAVIGATION_TITLE[0].title))
+  );
   return (
     <div className="style-dashboardContainer">
       <div className="col col-half">

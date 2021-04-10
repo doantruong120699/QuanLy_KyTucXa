@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+
 import {
   profile as GetProfile,
   faculty as GetFaculties,
@@ -12,6 +14,8 @@ import EmployeeInfo from "../components/profile/EmployeeInfo";
 import { getAuth } from "../utilities/helper";
 import ProfileContext from "../components/profile/ProfileContext";
 import { getHandledDataRender } from "../components/profile/DataRender";
+import * as TitleList from "../utilities/constants/titles";
+import { actFetchTitleNavigation } from "../redux/actions/dashboard";
 const Profile = () => {
   const [profileState, setProfile] = useState({
     profile: null,
@@ -30,8 +34,9 @@ const Profile = () => {
   };
 
   const isEmployee = getAuth().group[0] === "nhanvien_group";
-
+  const dispatch = useDispatch();
   useEffect(() => {
+    dispatch(actFetchTitleNavigation(TitleList.NAVIGATION_TITLE[5].title));
     const GetProfileUser = () => {
       GetProfile((output) => {
         if (output) {
