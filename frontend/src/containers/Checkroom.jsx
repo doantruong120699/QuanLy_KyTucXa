@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { getRooms as GetRooms } from "../redux/actions/checkroom";
@@ -7,10 +8,9 @@ import * as TitleList from "../utilities/constants/titles";
 import { actFetchTitleNavigation } from "../redux/actions/dashboard";
 const Checkroom = () => {
   const [roomState, setState] = useState(null);
-  
+
   const dispatch = useDispatch();
   useEffect(() => {
-
     dispatch(actFetchTitleNavigation(TitleList.NAVIGATION_TITLE[1].title));
 
     const GetAllRooms = () => {
@@ -34,7 +34,7 @@ const Checkroom = () => {
               <p className="bold-text">{area.name}</p>
               {area.rooms.map((room, i) => {
                 return (
-                  <div className="col col-5 pd-8">
+                  <div key={i} className="col col-5 pd-8">
                     <Room
                       name={room.name}
                       maximum={room.typeroom.number_max}
