@@ -118,8 +118,55 @@ class RoomViewSet(viewsets.ModelViewSet):
 
         # list_room = (Room.objects.all())
         
+class ContractViewSet(viewsets.ModelViewSet):
+    serializer_class = ContractSerializer
+    permission_classes = [IsAuthenticated, IsSinhVien]
+    lookup_field = 'public_id'
+    
 
+    def get_queryset(self):
+        return Contract.objects.filter(profile=self.request.user.user_profile).order_by('-created_at')
 
+    def get_permissions(self):
+        if self.action == 'get_all_lesson':
+            return [IsAuthenticated(), IsSinhVien(),]
+        return [IsAuthenticated(), IsSinhVien(),]
+
+    # ==== Get all contract of sinhvien ====
+    def list(self, request, *args, **kwargs):
+        queryset = Contract.objects.filter(profile=self.request.user.user_profile).order_by('-created_at')
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+
+    # ==== Get detail contract ====
+    def retrieve(self, request, **kwargs):
+        try:
+            queryset = Contract.objects.filter(public_id=kwargs['public_id']).first()
+            serializer = ContractSerializer(queryset)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Contract Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # ==== get list all contract ( filter by profile, is_accepted) ====
+    @action(methods=["GET"], detail=False, url_path="get_all_contract", url_name="get_all_contract")
+    def get_all_contract(self, request, *args, **kwargs):
+        queryset = Contract.objects.filter(profile=self.request.user.user_profile).order_by('-created_at')
+        q_search = self.request.GET.get('is_accepted')
+        if q_search and len(q_search) > 0:
+            queryset = queryset.filter(is_accepted=q_search)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
 
