@@ -131,6 +131,7 @@ class PaymentMethod(models.Model):
         return self.name
 
 class Contract(models.Model):
+    public_id = models.UUIDField(default=uuid.uuid4, editable=False)
     room = models.ForeignKey(Room, related_name = 'contract_room', on_delete=models.SET_NULL, blank=True, null=True)
     profile = models.ForeignKey(Profile, related_name = 'contract_profile', on_delete=models.SET_NULL, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -141,11 +142,11 @@ class Contract(models.Model):
     end_at = models.DateField(null=True, blank=True)
     payment_method = models.ForeignKey(PaymentMethod, related_name = 'contract_payment_method', on_delete=models.SET_NULL, blank=True, null=True)
     
-    is_accepted = models.BooleanField(default=False)
-    # is_expired = models.BooleanField(default=False)
+    is_accepted = models.BooleanField(null=True)
+    is_expired = models.BooleanField(null=True)
     note = models.TextField(null=True, blank=True)
     price = models.FloatField(default=0)
-    is_paid = models.BooleanField(default=False)
+    is_paid = models.BooleanField(null=True)
 
 
     class Meta:
