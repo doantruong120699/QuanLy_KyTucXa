@@ -5,6 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.crypto import get_random_string
 from api.models import *
 from api.serializers import AreaSerializer
+from datetime import date
 
 class StringListField(serializers.ListField): # get from http://www.django-rest-framework.org/api-guide/fields/#listfield
     child = serializers.CharField()
@@ -114,19 +115,26 @@ class RoomSerializer(serializers.ModelSerializer):
     #             pass
     #     return instance
 
-class RegisterRoomSerializer(serializers.ModelSerializer):
-    # lesson_category = LessonCategorySerializer(source='lesson_category_id', required=False)
-    # created_by = UserSerializer(source='user_id', required=False)
-    # students_of_coach = serializers.IntegerField(required=False)
-    # slug = serializers.CharField(required=False)
-    # subtitle = serializers.CharField(required=False)
-    # title = serializers.CharField(required=True)
-    # is_display = serializers.BooleanField(required=False)
-    # lesson_with_lessons_of_student = LessonsOfStudentField(queryset=LessonsOfStudent.objects.all(), many=True, required=False)
-    # tags = StringListField(required=False)
+class PaymenMethodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentMethod
+        fields = ['id', 'name', 'bank_number'] 
+
+
+class ContractSerializer(serializers.ModelSerializer):
+    room = RoomListSerializer()
+    payment_method = PaymenMethodSerializer()
     class Meta:
         model = Contract
-        fields = ['id', 'room', 'profile', 'start_at', 'end_at', 'body', 'slug', 'tags', 'is_display', 'created_at', 'updated_at', 'published_at', 'created_by', 'students_of_coach', 'lesson_with_lessons_of_student'] 
+        fields = [
+            'public_id',
+            'room', 
+            'profile', 
+            'start_at', 
+            'end_at', 
+            'payment_method', 
+            'is_expired',
+        ] 
 
     # Get current user login
     def _current_user(self):
@@ -138,34 +146,18 @@ class RegisterRoomSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             current_user = self._current_user()
-            model = Lesson.objects.create(
-                user_id=current_user,
-                lesson_category_id=validated_data['lesson_category_id'],
-                title=validated_data['title'],
-                # subtitle=validated_data['subtitle'],
-                # slug=validated_data['slug'],
-                body=validated_data['body'],
-                is_display=validated_data['is_display'],
-                published_at=validated_data['published_at'],
-            )
-
-            model.tags.add(*validated_data['tags'])
-            model.save()
-            
-            if 'students_of_coach' in validated_data:
-                students_of_coach = validated_data['students_of_coach']
-                try:
-                    # check relation member and coach
-                    studentOfCoach = StudentsOfCoach.objects.get(pk=students_of_coach, coach=current_user)
-                    # add lesson of coach to member
-                    lessonOfStudent = LessonsOfStudent.objects.create(
-                        students_of_coach=studentOfCoach,
-                        lesson=model
-                    )
-                except :
-                    pass
-            
-            return model
+            check_contract = Contract.objects.filter(profile=current_user.user_profile, is_expired=True)
+            if len(check_contract) == 0:
+                model = Contract.objects.create(
+                    room=validated_data['room'],
+                    profile=validated_data['profile'],
+                    start_at=validated_data['start_at'],
+                    end_at=validated_data['end_at'],
+                    payment_method=validated_data['payment_method'],
+                )
+                model.save()
+                return model
+            return serializers.ValidationError("You are on contract with another room")
         except:
             return serializers.ValidationError("Error")
         return serializers.ValidationError("Server error")
