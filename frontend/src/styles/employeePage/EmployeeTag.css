@@ -1,0 +1,19 @@
+.style-employee-avatar {
+  border-radius: 5px;
+  width: 100%;
+  height: 100%;
+}
+.style-avatar-container {
+  position: relative;
+}
+.style-more-detail {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+.style-more-detail:hover i {
+  color: #e5e5e5;
+}

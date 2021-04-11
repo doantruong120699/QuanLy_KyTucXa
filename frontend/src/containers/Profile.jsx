@@ -37,7 +37,7 @@ const Profile = () => {
   const isEmployee = getAuth().group[0] === "nhanvien_group";
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(actFetchTitleNavigation(TitleList.NAVIGATION_TITLE[5].title));
+    dispatch(actFetchTitleNavigation("Thông tin cá nhân"));
     const GetProfileUser = () => {
       GetProfile((output) => {
         if (output) {
