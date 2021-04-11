@@ -6,6 +6,7 @@ import Login from "./containers/Login";
 import ForgotPassword from "./containers/ForgotPassword";
 import ResetPassword from "./containers/ResetPassword";
 import Checkroom from "./containers/Checkroom";
+import EmployeePage from "./containers/EmployeePage";
 import * as ROUTER from "./utilities/constants/router";
 import Profile from "./containers/Profile";
 function App() {
@@ -39,6 +40,11 @@ function App() {
         <Route
           path={ROUTER.ROUTE_MY_PROFILE}
           component={withAuth(Profile)}
+          exact
+        />
+        <Route
+          path={ROUTER.ROUTE_EMPLOYEES}
+          component={withAuth(EmployeePage)}
           exact
         />
       </Switch>

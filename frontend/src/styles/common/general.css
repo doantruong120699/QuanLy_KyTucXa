@@ -256,6 +256,12 @@
 .text-20 {
   font-size: 20px;
 }
+.text-14 {
+  font-size: 14px;
+}
+.text-12 {
+  font-size: 12px;
+}
 .bold-text {
   font-weight: 700;
 }
@@ -263,9 +269,12 @@
   display: flex;
   align-items: center;
 }
-.text-is-bold {
-  font-weight: 700;
-}
 .text-align-ct {
   text-align: center;
+}
+.text-is-pink {
+  color: #fe6276;
+}
+.text-is-grey {
+  color: #7b8191;
 }
