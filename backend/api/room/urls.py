@@ -44,13 +44,37 @@ type_room_detail = TypeRoomViewSet.as_view({
     'get': 'retrieve',
 })
 
+# ===== Contract =======
+
+# list - create
+contract_list = ContractViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+# get all contract
+contract_get_all = ContractViewSet.as_view({
+    'get': 'get_all_contract'
+})
+# detail - update - delete
+contract_detail = ContractViewSet.as_view({
+    'get': 'retrieve',
+    # 'put': 'update',
+    # 'patch': 'partial_update',
+    # 'delete': 'destroy'
+})
+
 urlpatterns = [
     # ========== room
     path('rooms/get-all/', room_get_all, name = 'room_get_all'),
     path('rooms/get-all/<slug:slug>/', list_room_in_area, name = 'list_room_in_area'),
     path('rooms/<slug:slug>/', room_detail, name = 'room_detail_slug'),
     path('rooms/user/<slug:slug>/', list_user_in_room, name = 'list_user_in_room'),
-
+    # ========== type room
     path('all-type-room/', type_room_list, name = 'type_room_list'),
     path('type-room/<slug:slug>/', type_room_detail, name = 'type_room_detail'),
+    # =========== contract
+    path('contracts/', contract_list, name='contract_list'),
+    path('contracts/get-all/', contract_get_all, name = 'contract_get_all'),
+    path('contracts/<uuid:public_id>/', contract_detail, name = 'contract_detail'),
+
 ]
