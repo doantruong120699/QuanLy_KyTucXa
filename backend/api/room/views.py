@@ -56,9 +56,28 @@ class RoomViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, **kwargs):
         try:
-            queryset = Room.objects.get(slug=kwargs['slug'])
-            serializer = RoomSerializer(queryset)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            room = Room.objects.get(slug=kwargs['slug'])
+            _sv = Profile.objects.filter(contract_profile__room=room, contract_profile__is_expired=False)
+            list_sv = list(_sv.values())
+            for i in range(len(list_sv)):
+                list_sv[i].pop('token', None)
+                list_sv[i].pop('area_id', None)
+                list_sv[i].pop('position_id', None)
+                list_sv[i].pop('identify_card', None)
+                list_sv[i].pop('created_at', None)
+                list_sv[i].pop('last_update', None)
+                user = User.objects.get(pk=list_sv[i]['user_id'])
+                list_sv[i]['username'] = user.username
+                list_sv[i]['first_name'] = user.first_name
+                list_sv[i]['last_name'] = user.last_name
+                list_sv[i]['faculty_id'] = user.user_profile.faculty.name
+                list_sv[i]['my_class_id'] = user.user_profile.my_class.name
+
+            serializer = RoomSerializer(room)
+            data_room = serializer.data
+            data_room['list_user'] = list_sv
+            
+            return Response(data_room, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response({'detail': 'Room Not Found'}, status=status.HTTP_404_NOT_FOUND)
@@ -119,7 +138,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         # list_room = (Room.objects.all())
         
 class ContractViewSet(viewsets.ModelViewSet):
-    serializer_class = ContractSerializer
+    serializer_class = ContractRegistationSerializer
     permission_classes = [IsAuthenticated, IsSinhVien]
     lookup_field = 'public_id'
     
@@ -142,6 +161,14 @@ class ContractViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
+    
+    def post(self, request, *args, **kwargs):
+        serializer = ContractRegistationSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # ==== Get detail contract ====
     def retrieve(self, request, **kwargs):
