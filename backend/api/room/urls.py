@@ -24,9 +24,9 @@ room_get_post = RoomViewSet.as_view({
 # detail - update - delete
 room_detail = RoomViewSet.as_view({
     'get': 'retrieve',
-    'put': 'update',
+    # 'put': 'update',
     # 'patch': 'partial_update',
-    'delete': 'destroy'
+    # 'delete': 'destroy'
 })
 list_user_in_room = RoomViewSet.as_view({
     'get' : 'get_list_user_in_room',
@@ -49,7 +49,7 @@ type_room_detail = TypeRoomViewSet.as_view({
 # list - create
 contract_list = ContractViewSet.as_view({
     'get': 'list',
-    'post': 'create'
+    'post': 'post'
 })
 # get all contract
 contract_get_all = ContractViewSet.as_view({
