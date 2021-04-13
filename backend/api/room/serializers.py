@@ -143,22 +143,64 @@ class ContractSerializer(serializers.ModelSerializer):
             return request.user
         return False
 
+
+
+class ContractRegistationSerializer(serializers.ModelSerializer):
+    # room = RoomListSerializer()
+    # payment_method = PaymenMethodSerializer()
+    class Meta:
+        model = Contract
+        fields = [
+            'public_id',
+            'room', 
+            'profile', 
+            'start_at', 
+            'end_at', 
+            'payment_method', 
+            'is_expired',
+        ] 
+
+    # Get current user login
+    def _current_user(self):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
+        return False
+
     def create(self, validated_data):
+        print("create")
         try:
-            current_user = self._current_user()
-            check_contract = Contract.objects.filter(profile=current_user.user_profile, is_expired=True)
-            if len(check_contract) == 0:
-                model = Contract.objects.create(
-                    room=validated_data['room'],
-                    profile=validated_data['profile'],
-                    start_at=validated_data['start_at'],
-                    end_at=validated_data['end_at'],
-                    payment_method=validated_data['payment_method'],
-                )
-                model.save()
-                return model
-            return serializers.ValidationError("You are on contract with another room")
-        except:
+            print("create")
+            if validated_data['end_at'] <= validated_data['start_at']:
+                return serializers.ValidationError("Time incorrect!")
+            else:
+                print("create")
+                current_user = self._current_user()
+                check_contract = Contract.objects.filter(profile=current_user.user_profile, is_expired=False)
+                if len(check_contract) == 0:
+                    model = Contract.objects.create(
+                        room=validated_data['room'],
+                        profile=validated_data['profile'],
+                        start_at=validated_data['start_at'],
+                        end_at=validated_data['end_at'],
+                        payment_method=validated_data['payment_method'],
+                    )
+                    start_at=validated_data['start_at']
+                    end_at=validated_data['end_at']
+                    room = validated_data['room']
+
+                    time_rentail = int((end_at - start_at).days)
+                    model.price = (time_rentail/30)*room.typeroom.price
+                    # r = Room.objects.get(pk=room.pk)
+                    # print("++++++++")
+                    # print(room.typeroom)
+                    model.created_by = current_user
+                    model.save()
+                    return True
+                else: 
+                    return serializers.ValidationError("You are on contract with another room")
+        except Exception as e:
+            print(e)
             return serializers.ValidationError("Error")
         return serializers.ValidationError("Server error")
 
