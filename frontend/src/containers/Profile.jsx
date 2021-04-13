@@ -15,7 +15,6 @@ import EmployeeInfo from "../components/profile/EmployeeInfo";
 import { getAuth } from "../utilities/helper";
 import ProfileContext from "../components/profile/ProfileContext";
 import { getHandledDataRender } from "../components/profile/DataRender";
-import * as TitleList from "../utilities/constants/titles";
 import { actFetchTitleNavigation } from "../redux/actions/dashboard";
 const Profile = () => {
   const [profileState, setProfile] = useState({

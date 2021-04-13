@@ -1,19 +1,24 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { getEmployees } from "../redux/actions/employeePage";
+import { actFetchTitleNavigation } from "../redux/actions/dashboard";
+import * as Titlelist from "../utilities/constants/titles";
 import EmployeeTag from "../components/employeePage/EmployeeTag";
 const EmployeePage = () => {
   const [employeeListState, setEmployeeList] = useState();
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
+    dispatch(actFetchTitleNavigation(Titlelist.NAVIGATION_TITLE[3].title));
     getEmployees((output) => {
       if (output) {
-        console.log(output);
         setEmployeeList(output);
       }
     });
   }, []);
   return (
-    <div className="col col-full style-employee-container">
+    <div className="col col-full style-background-container">
       {employeeListState &&
         employeeListState.results.map((employee, index) => {
           return (
