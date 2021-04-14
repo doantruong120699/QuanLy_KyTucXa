@@ -36,6 +36,17 @@ class TypeRoomViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
             return Response({'detail': 'Type Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+class PaymentMethodViewSet(viewsets.ModelViewSet):
+    queryset =  PaymentMethod.objects.all()
+    serializer_class = PaymentMethodSerializer
+
+    def get_queryset(self):
+        return PaymentMethodSerializer.objects.all().order_by('id')
+
+    def list(self, request, *args, **kwargs):
+        payment_method = list(PaymentMethod.objects.values().order_by('id'))
+        return JsonResponse(payment_method, safe=False, status=status.HTTP_200_OK)
 class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomListSerializer
     # permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
@@ -165,9 +176,9 @@ class ContractViewSet(viewsets.ModelViewSet):
     def post(self, request, *args, **kwargs):
         serializer = ContractRegistationSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print(serializer.errors)
+            save = serializer.create(request.data)
+            if save:
+                return Response({'detail': 'Save successful!'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # ==== Get detail contract ====
