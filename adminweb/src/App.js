@@ -4,6 +4,7 @@ import withAuth from "./components/layout/withAuth";
 
 import Login from "./containers/Login";
 import ManageUser from "./containers/ManageUser";
+import Financial from "./containers/Financial";
 import * as ROUTER from "./utilities/constants/router";
 
 function App() {
@@ -14,6 +15,11 @@ function App() {
         <Route
           path={ROUTER.ROUTE_MANAGE_USER}
           component={withAuth(ManageUser)}
+          exact
+        />
+        <Route
+          path={ROUTER.ROUTE_MANAGE_FINANCIAL}
+          component={withAuth(Financial)}
           exact
         />
       </Switch>
