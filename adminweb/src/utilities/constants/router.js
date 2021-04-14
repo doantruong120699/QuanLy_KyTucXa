@@ -8,3 +8,4 @@ export const ROUTE_EMPLOYEES = "/employees";
 export const ROUTE_STUDENTS = "/students";
 export const ROUTE_SERVICES = "/services";
 export const ROUTE_MANAGE_USER = "/manage-user";
+export const ROUTE_MANAGE_FINANCIAL = "/financial";
