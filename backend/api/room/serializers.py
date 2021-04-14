@@ -6,6 +6,7 @@ from django.utils.crypto import get_random_string
 from api.models import *
 from api.serializers import AreaSerializer
 from datetime import date
+from datetime import datetime
 
 class StringListField(serializers.ListField): # get from http://www.django-rest-framework.org/api-guide/fields/#listfield
     child = serializers.CharField()
@@ -22,6 +23,11 @@ class TypeRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = TypeRoom
         fields = ['id', 'name', 'price', 'number_max', 'slug'] 
+
+class PaymentMethodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentMethod
+        fields = ['id', 'name', 'bank_number'] 
 
 
 class RoomListSerializer(serializers.ModelSerializer):
@@ -115,15 +121,9 @@ class RoomSerializer(serializers.ModelSerializer):
     #             pass
     #     return instance
 
-class PaymenMethodSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PaymentMethod
-        fields = ['id', 'name', 'bank_number'] 
-
-
 class ContractSerializer(serializers.ModelSerializer):
     room = RoomListSerializer()
-    payment_method = PaymenMethodSerializer()
+    payment_method = PaymentMethodSerializer()
     class Meta:
         model = Contract
         fields = [
@@ -146,19 +146,22 @@ class ContractSerializer(serializers.ModelSerializer):
 
 
 class ContractRegistationSerializer(serializers.ModelSerializer):
-    # room = RoomListSerializer()
-    # payment_method = PaymenMethodSerializer()
     class Meta:
         model = Contract
         fields = [
             'public_id',
             'room', 
-            'profile', 
             'start_at', 
             'end_at', 
             'payment_method', 
             'is_expired',
         ] 
+        extra_kwargs = {
+            'room': {'required': True},
+            'start_at': {'required': True},
+            'end_at': {'required': True},
+            'payment_method': {'required': True}
+        }
 
     # Get current user login
     def _current_user(self):
@@ -168,39 +171,44 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         return False
 
     def create(self, validated_data):
-        print("create")
         try:
-            print("create")
-            if validated_data['end_at'] <= validated_data['start_at']:
-                return serializers.ValidationError("Time incorrect!")
-            else:
-                print("create")
-                current_user = self._current_user()
-                check_contract = Contract.objects.filter(profile=current_user.user_profile, is_expired=False)
-                if len(check_contract) == 0:
-                    model = Contract.objects.create(
-                        room=validated_data['room'],
-                        profile=validated_data['profile'],
-                        start_at=validated_data['start_at'],
-                        end_at=validated_data['end_at'],
-                        payment_method=validated_data['payment_method'],
-                    )
-                    start_at=validated_data['start_at']
-                    end_at=validated_data['end_at']
-                    room = validated_data['room']
-
-                    time_rentail = int((end_at - start_at).days)
-                    model.price = (time_rentail/30)*room.typeroom.price
-                    # r = Room.objects.get(pk=room.pk)
-                    # print("++++++++")
-                    # print(room.typeroom)
-                    model.created_by = current_user
-                    model.save()
-                    return True
-                else: 
-                    return serializers.ValidationError("You are on contract with another room")
+            current_user = self._current_user()
+            room = Room.objects.get(pk=validated_data['room'])
+            payment_method = PaymentMethod.objects.get(pk=validated_data['payment_method'])
+            model = Contract.objects.create(
+                room=room,
+                profile=current_user.user_profile,
+                start_at=validated_data['start_at'],
+                end_at=validated_data['end_at'],
+                payment_method=payment_method,
+            )
+            
+            start_at=validated_data['start_at']
+            end_at=validated_data['end_at']
+            start_at = datetime.fromisoformat(start_at)
+            end_at = datetime.fromisoformat(end_at)
+            
+            time_rentail = int((end_at - start_at).days)
+            model.price = (time_rentail/30)*room.typeroom.price
+            model.created_by = current_user
+            model.save()
+            return True
         except Exception as e:
-            print(e)
             return serializers.ValidationError("Error")
         return serializers.ValidationError("Server error")
 
+    def validate(self, data):
+        """
+        Check that start is before finish.
+        """
+        start_at=data['start_at']
+        end_at=data['end_at']
+
+        if start_at >= end_at:
+            raise serializers.ValidationError({'end_at':'Time end must be after time start!'})
+        
+        current_user = self._current_user()
+        check_contract = Contract.objects.filter(profile=current_user.user_profile, is_accepted=None)
+        if len(check_contract) != 0:
+            raise serializers.ValidationError({'registered':'You signed up for another room!'})
+        return data
