@@ -14,27 +14,37 @@ const AdminNavbar = () => {
       </div>
       <ul className={(!isBurgerClicked ? "nav-active" : "") + " nav-links"}>
         <div>
-          <li>
-            <a href="/manage-user">Manage User</a>
+          <li style={{ paddingTop: "20px" }}>
+            <a href="/manage-user" style={{ fontSize: "20px" }}>
+              Tổng Quan
+            </a>
           </li>
         </div>
         <div>
-          <li>
-            <a href="#">Manage User</a>
+          <li style={{ paddingTop: "20px" }}>
+            <a href="/financial" style={{ fontSize: "20px" }}>
+              Tài chính
+            </a>
           </li>
         </div>
         <div>
-          <li>
-            <a href="#">Manage User</a>
+          <li style={{ paddingTop: "20px" }}>
+            <a href="#" style={{ fontSize: "20px" }}>
+              Nhân sự
+            </a>
           </li>
         </div>
         <div>
-          <li>
-            <a href="#">Manage User</a>
+          <li style={{ paddingTop: "20px" }}>
+            <a href="#" style={{ fontSize: "20px" }}>
+              Tài khoản
+            </a>
           </li>
         </div>
         <div className={"user"}>
-          <User />
+          <li>
+            <User />
+          </li>
         </div>
         <div>
           <div className="footer">

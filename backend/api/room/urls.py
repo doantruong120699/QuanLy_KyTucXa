@@ -63,6 +63,10 @@ contract_detail = ContractViewSet.as_view({
     # 'delete': 'destroy'
 })
 
+payment_method = PaymentMethodViewSet.as_view({
+    'get': 'list', # Get lists
+})
+
 urlpatterns = [
     # ========== room
     path('rooms/get-all/', room_get_all, name = 'room_get_all'),
@@ -76,5 +80,6 @@ urlpatterns = [
     path('contracts/', contract_list, name='contract_list'),
     path('contracts/get-all/', contract_get_all, name = 'contract_get_all'),
     path('contracts/<uuid:public_id>/', contract_detail, name = 'contract_detail'),
-
+    # =========== Payment Method
+    path('payment-method/', payment_method),
 ]

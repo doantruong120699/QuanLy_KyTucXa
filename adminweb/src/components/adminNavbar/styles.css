@@ -26,7 +26,6 @@ nav {
 .nav-links li {
   list-style: none;
   width: 200px;
-  padding-top:20px
 }
 .nav-links a {
   color: aliceblue;
@@ -35,8 +34,8 @@ nav {
   font-weight: bold;
   font-size: 14px;
 }
-.footer{
-  display:none ;
+.footer {
+  display: none;
 }
 .nav-links a:hover {
   text-decoration: underline;
@@ -58,17 +57,22 @@ nav {
   .nav-links {
     width: 60%;
   }
-  .user{
+  .user {
     display: none;
+  }
+}
+@media screen and (max-width: 1600px) {
+  body {
+    transform: scale(0.9);
   }
 }
 @media screen and (max-width: 1200px) {
   body {
     overflow-x: hidden;
   }
-.footer{
-  display: block;
-}
+  .footer {
+    display: block;
+  }
   .nav-links {
     position: absolute;
     right: 0px;

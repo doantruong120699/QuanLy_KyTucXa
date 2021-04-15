@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-
+import Grow from "@material-ui/core/Grow";
+import "./styles.css";
 function CircularProgressWithLabel(props) {
   return (
     <Box position="relative" display="inline-flex" paddingTop="20px">
@@ -57,7 +58,11 @@ function CircularProgressWithLabel(props) {
           variant="determinate"
           color={"primary"}
           size={200}
-          style={{ color: "olivedrab", marginTop: "130px", position: "absolute" }}
+          style={{
+            color: "olivedrab",
+            marginTop: "130px",
+            position: "absolute",
+          }}
           value={100}
         />
         <CircularProgress
@@ -114,39 +119,42 @@ CircularProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function CircularStatic() {
-  const [availabeRoomA, setAvailableRoomA] = useState(375);
-  const [availabeRoomB, setAvailableRoomB] = useState(425);
-  const [availabeRoomC, setAvailableRoomC] = useState(300);
-
-  const [allRoomA, setAllRoomA] = useState(1500);
-  const [allRoomB, setAllRoomB] = useState(1500);
-  const [allRoomC, setAllRoomC] = useState(1500);
-
-  const [checkinDate, setCheckinDate] = useState(new Date());
-
-  const dateFormat = "ddd. MMM DD, yyyy ";
-
-  const dateTimeFormatTitle = "dddd, MMMM DD, yyyy";
+export default function ManageUser() {
+  const [data, setData] = useState([
+    {
+      id: 1,
+      name: "Khu A",
+      maxRoom: 1500,
+      availableRoom: 375,
+    },
+    {
+      id: 2,
+      name: "Khu B",
+      maxRoom: 1500,
+      availableRoom: 425,
+    },
+    {
+      id: 3,
+      name: "Khu C",
+      maxRoom: 1500,
+      availableRoom: 300,
+    },
+  ]);
 
   //const data =
   return (
-    <Box>
-      <CircularProgressWithLabel
-        name={"Khu A"}
-        allRoom={allRoomA}
-        availabeRoom={availabeRoomA}
-      />
-      <CircularProgressWithLabel
-        name={"Khu B"}
-        allRoom={allRoomB}
-        availabeRoom={availabeRoomB}
-      />
-      <CircularProgressWithLabel
-        name={"Khu C"}
-        allRoom={allRoomC}
-        availabeRoom={availabeRoomC}
-      />
-    </Box>
+    <Grow in={true} timeout={1000} style={{ transformOrigin: "10 10 10" }}>
+      <Box style={{ transform: "scale(1)" }}>
+        {data.map((n) => {
+          return (
+            <CircularProgressWithLabel
+              name={n.name}
+              allRoom={n.maxRoom}
+              availabeRoom={n.availableRoom}
+            />
+          );
+        })}
+      </Box>
+    </Grow>
   );
 }
