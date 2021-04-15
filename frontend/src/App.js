@@ -10,6 +10,7 @@ import EmployeePage from "./containers/EmployeePage";
 import * as ROUTER from "./utilities/constants/router";
 import Profile from "./containers/Profile";
 import StudentPage from "./containers/StudentPage";
+import RoomDetails from "./components/checkroom/RoomDetails";
 function App() {
   return (
     <Router history={history()}>
@@ -51,6 +52,11 @@ function App() {
         <Route
           path={ROUTER.ROUTE_STUDENTS}
           component={withAuth(StudentPage)}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_CHECKROOM}/detail/:roomID`}
+          component={withAuth(RoomDetails)}
           exact
         />
       </Switch>
