@@ -55,3 +55,38 @@ class NhanVienListSerializer(serializers.ModelSerializer):
             'last_name',
             'profile',
         ]
+
+class ShiftSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Shift
+        fields = [ "id", "name", "weekdays", "start_at", "end_at", "slug"]
+
+class NhanVienScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'email',
+            'first_name',
+            'last_name',
+        ]
+
+class DailyScheduleListSerializer(serializers.ModelSerializer):
+    staff = NhanVienScheduleSerializer()
+    shift = ShiftSerializer()
+    class Meta:
+        model = DailySchedule
+        fields = [ "public_id", "week", "title", "shift", "staff"]
+
+class DailyScheduleDetailSerializer(serializers.ModelSerializer):
+    shift = ShiftSerializer()
+    staff = NhanVienListSerializer()
+    class Meta:
+        model = DailySchedule
+        fields = [ "public_id", "created_by", "created_at", "week", "year", "title", "shift", "staff"]
+
+
+
+
+
+

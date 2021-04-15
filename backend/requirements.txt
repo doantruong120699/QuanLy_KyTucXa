@@ -6,6 +6,7 @@ djangorestframework-simplejwt
 vietnam-provinces
 django-cors-headers
 django-model-utils
+shortuuid
 
 # django-taggit
 # django-s3direct
