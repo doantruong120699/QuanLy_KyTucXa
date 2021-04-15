@@ -6,7 +6,7 @@ const EmployeeTag = (props) => {
     <div className="col col-full style-lg-box bg-color-white ">
       <div className="col col-full justify-content-ct style-avatar-container">
         <div className="col col-half mg-16">
-          <img className="style-employee-avatar" src={avatar} alt="" />
+          <img className="style-img" src={avatar} alt="" />
           <div className="style-more-detail pl-4 pt-4">
             <i className="fi-rr-menu-dots-vertical text-20 text-is-grey" />
           </div>

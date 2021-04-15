@@ -1,13 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getRooms as GetRooms } from "../redux/actions/checkroom";
 import Room from "../components/checkroom/Room";
 import { getRoom } from "../utilities/DataRender/checkroom";
 import * as TitleList from "../utilities/constants/titles";
 import { actFetchTitleNavigation } from "../redux/actions/dashboard";
-const Checkroom = () => {
+import * as ROUTER from "../utilities/constants/router";
+
+const Checkroom = (props) => {
+  const { match } = props;
   const [roomState, setState] = useState(null);
+  console.log(match);
+  const history = useHistory();
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -39,6 +45,11 @@ const Checkroom = () => {
                       name={room.name}
                       maximum={room.typeroom.number_max}
                       numberNow={room.number_now}
+                      getDetails={() =>
+                        history.push(
+                          `${ROUTER.ROUTE_CHECKROOM}/detail/${room.slug}`
+                        )
+                      }
                     />
                   </div>
                 );
