@@ -274,6 +274,9 @@
 .bold-text {
   font-weight: 700;
 }
+.text-uppercase {
+  text-transform: uppercase;
+}
 .align-item-ct {
   display: flex;
   align-items: center;
@@ -281,15 +284,26 @@
 .text-align-ct {
   text-align: center;
 }
+.float-right {
+  float: right;
+}
 .text-is-pink {
   color: #fe6276;
 }
 .text-is-grey {
   color: #7b8191;
 }
+.text-is-white {
+  color: #fff;
+}
 .style-background-container {
   height: 100vh;
   padding: 20px;
   background: url('../../assets/images/backgrounds/background.jpg') center/cover
     no-repeat;
+}
+.style-img {
+  border-radius: 5px;
+  width: 100%;
+  height: 100%;
 }

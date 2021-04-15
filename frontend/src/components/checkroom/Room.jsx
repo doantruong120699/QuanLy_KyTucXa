@@ -1,5 +1,5 @@
 const Room = (props) => {
-  const { name, maximum, numberNow } = props;
+  const { name, maximum, numberNow, getDetails } = props;
 
   var listStudentIcons = [];
 
@@ -21,7 +21,7 @@ const Room = (props) => {
     <div className="col col-full style-roomOfArea style-sm-box">
       <div className="col col-full justify-content-sb text-20 pd-8">
         <span className="bold-text">{name}</span>
-        <i className="fi-rr-info"></i>
+        <i className="fi-rr-info" onClick={getDetails}></i>
       </div>
       <div>{listStudentIcons}</div>
     </div>

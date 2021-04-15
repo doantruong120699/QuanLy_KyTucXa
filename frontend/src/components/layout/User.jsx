@@ -8,6 +8,7 @@ const User = () => {
   const [isShown, setIsShown] = useState(false);
 
   const history = useHistory();
+  
   const logoutWrapper = useRef(null);
 
   const useClickOutside = (ref) => {
