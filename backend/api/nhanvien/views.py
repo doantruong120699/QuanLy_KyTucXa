@@ -16,6 +16,9 @@ from .serializers import *
 from api.serializers import *
 from api import status_http
 from api.permissions import *
+from django.http import JsonResponse
+import shortuuid
+
 nhanvien_group = 'nhanvien_group'
 
 class NhanVienViewSet(viewsets.ModelViewSet):
@@ -79,3 +82,47 @@ class NhanVienViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
+
+class ShiftViewSet(viewsets.ModelViewSet):
+    queryset = Shift.objects.all()
+    serializer_class = ShiftSerializer
+
+    def get_queryset(self):
+        return Shift.objects.all().order_by('id')
+
+    def list(self, request, *args, **kwargs):
+        _list = list(Shift.objects.values().order_by('id'))
+        return JsonResponse(_list, safe=False, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, **kwargs):
+        try:
+            queryset = Shift.objects.get(slug=kwargs['slug'])
+            serializer = ShiftSerializer(queryset)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Shift Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+class DailyScheduleViewSet(viewsets.ModelViewSet):
+    queryset = DailySchedule.objects.all()
+    serializer_class = DailyScheduleListSerializer
+
+    def get_queryset(self):
+        week = self.kwargs['week']
+        return DailySchedule.objects.filter(week=week).order_by('-pk')
+
+    def list(self, request, *args, **kwargs):
+        _list = DailySchedule.objects.filter(week=kwargs['week']).order_by('id')
+        serializer = DailyScheduleListSerializer(_list, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+        # return JsonResponse(_list, safe=False, status=status.HTTP_200_OK)
+
+    def retrieve(self, request, **kwargs):
+        try:
+            queryset = DailySchedule.objects.get(public_id=kwargs['public_id'])
+            serializer = DailyScheduleDetailSerializer(queryset)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Schedule Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
