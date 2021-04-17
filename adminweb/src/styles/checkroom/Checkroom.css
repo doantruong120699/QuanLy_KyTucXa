@@ -1,0 +1,29 @@
+.style-checkroom {
+  height: 100vh;
+  padding: 20px;
+  background: url('../../assets//images/backgrounds/background.jpg')
+    center/cover no-repeat;
+}
+.style-areaBox {
+  margin-bottom: 15px;
+  background-color: #fff;
+  color: #333;
+}
+.style-areaBox > p {
+  margin-bottom: 10px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.style-roomOfArea {
+  background-color: #ffaa2b;
+  color: #fff;
+}
+.style-roomOfArea i:hover {
+  color: #717479;
+}
+.style-student {
+  margin: 5px;
+  border-radius: 5px;
+  padding: 5px;
+  text-align: center;
+}

@@ -4,7 +4,8 @@ export const allRooms = [
     roomsOfArea: [
       {
         name: "A100",
-        number: 8,
+        number_now: 8,
+        number_max: 8,
         students: [
           {
             name: "Nguyen Van A",

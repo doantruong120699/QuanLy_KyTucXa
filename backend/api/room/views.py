@@ -36,6 +36,17 @@ class TypeRoomViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
             return Response({'detail': 'Type Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+class PaymentMethodViewSet(viewsets.ModelViewSet):
+    queryset =  PaymentMethod.objects.all()
+    serializer_class = PaymentMethodSerializer
+
+    def get_queryset(self):
+        return PaymentMethodSerializer.objects.all().order_by('id')
+
+    def list(self, request, *args, **kwargs):
+        payment_method = list(PaymentMethod.objects.values().order_by('id'))
+        return JsonResponse(payment_method, safe=False, status=status.HTTP_200_OK)
 class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomListSerializer
     # permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
@@ -56,9 +67,28 @@ class RoomViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, **kwargs):
         try:
-            queryset = Room.objects.get(slug=kwargs['slug'])
-            serializer = RoomSerializer(queryset)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            room = Room.objects.get(slug=kwargs['slug'])
+            _sv = Profile.objects.filter(contract_profile__room=room, contract_profile__is_expired=False)
+            list_sv = list(_sv.values())
+            for i in range(len(list_sv)):
+                list_sv[i].pop('token', None)
+                list_sv[i].pop('area_id', None)
+                list_sv[i].pop('position_id', None)
+                list_sv[i].pop('identify_card', None)
+                list_sv[i].pop('created_at', None)
+                list_sv[i].pop('last_update', None)
+                user = User.objects.get(pk=list_sv[i]['user_id'])
+                list_sv[i]['username'] = user.username
+                list_sv[i]['first_name'] = user.first_name
+                list_sv[i]['last_name'] = user.last_name
+                list_sv[i]['faculty_id'] = user.user_profile.faculty.name
+                list_sv[i]['my_class_id'] = user.user_profile.my_class.name
+
+            serializer = RoomSerializer(room)
+            data_room = serializer.data
+            data_room['list_user'] = list_sv
+            
+            return Response(data_room, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response({'detail': 'Room Not Found'}, status=status.HTTP_404_NOT_FOUND)
@@ -102,7 +132,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         try:
             area = kwargs['slug']
             queryset = Room.objects.filter(area__slug = area)
-            print(queryset)
+            # print(queryset)
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
@@ -118,8 +148,63 @@ class RoomViewSet(viewsets.ModelViewSet):
 
         # list_room = (Room.objects.all())
         
+class ContractViewSet(viewsets.ModelViewSet):
+    serializer_class = ContractRegistationSerializer
+    permission_classes = [IsAuthenticated, IsSinhVien]
+    lookup_field = 'public_id'
+    
 
+    def get_queryset(self):
+        return Contract.objects.filter(profile=self.request.user.user_profile).order_by('-created_at')
 
+    def get_permissions(self):
+        if self.action == 'get_all_lesson':
+            return [IsAuthenticated(), IsSinhVien(),]
+        return [IsAuthenticated(), IsSinhVien(),]
+
+    # ==== Get all contract of sinhvien ====
+    def list(self, request, *args, **kwargs):
+        queryset = Contract.objects.filter(profile=self.request.user.user_profile).order_by('-created_at')
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
+    
+    def post(self, request, *args, **kwargs):
+        serializer = ContractRegistationSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            save = serializer.create(request.data)
+            if save:
+                return Response({'detail': 'Save successful!'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # ==== Get detail contract ====
+    def retrieve(self, request, **kwargs):
+        try:
+            queryset = Contract.objects.filter(public_id=kwargs['public_id']).first()
+            serializer = ContractSerializer(queryset)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Contract Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+    # ==== get list all contract ( filter by profile, is_accepted) ====
+    @action(methods=["GET"], detail=False, url_path="get_all_contract", url_name="get_all_contract")
+    def get_all_contract(self, request, *args, **kwargs):
+        queryset = Contract.objects.filter(profile=self.request.user.user_profile).order_by('-created_at')
+        q_search = self.request.GET.get('is_accepted')
+        if q_search and len(q_search) > 0:
+            queryset = queryset.filter(is_accepted=q_search)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
 
