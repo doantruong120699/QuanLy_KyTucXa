@@ -15,6 +15,9 @@
 @import './styles/profile/Profile.css';
 @import './styles/profile/Avatar.css';
 @import './styles/profile/SummaryInfo.css';
+@import './styles/employeePage/EmployeeTag.css';
+@import './styles/employeePage/EmployeePage.css';
+@import './styles/studentPage/StudentPage.css';
 @import './styles/profile/RoomInfo.css';
 @import './styles/common/Modal.css';
 @import './assets/icons/uicons-solid-rounded/css/uicons-solid-rounded.css';

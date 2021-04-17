@@ -5,6 +5,7 @@ const InputField = (props) => {
     name,
     isValid,
     type,
+    value,
     placeholder,
     onBlur,
     onChange,
@@ -21,6 +22,7 @@ const InputField = (props) => {
       type={type}
       name={name}
       id={id}
+      value={value}
       placeholder={placeholder}
       autoComplete={autocomplete}
       className={inputStyle}

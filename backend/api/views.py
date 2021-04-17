@@ -51,7 +51,7 @@ def get_profile_view(request):
     if request.method == 'GET':
         data = {}        
         queryset = Profile.objects.get(user=request.user)
-        
+        # print(queryset.public_id)
         data['email'] = request.user.email
         user = User.objects.get(email=request.user.email)
         data['username'] = user.username
@@ -84,7 +84,8 @@ def get_profile_view(request):
         profile = {}
         try:
             profile = ProfileSerializer(user.user_profile).data
-        except:
+        except Exception as e:
+            print(e)
             pass
         data['profile'] = profile
         #
@@ -96,17 +97,18 @@ def get_profile_view(request):
 def update_user_profile_view(request):
     if request.method == 'POST':
         # update current user by email
-        request.data['email'] = request.user.email
+        request.user.email = request.data['email']  
         serializer = UpdateProfileSerializer(data=request.data)
         data = {}
-        if serializer.is_valid():
+        if serializer.is_valid():   
             try:
                 serializer.save()
                 data['email'] = request.data['email']
                 data['message'] = 'Update profile successfully'
                 return Response(data, status=status.HTTP_200_OK)
-            except:
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                print(e)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
 
@@ -132,7 +134,6 @@ class ClassViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         my_class = list(Class.objects.values().order_by('id'))
         return JsonResponse(my_class, safe=False, status=status.HTTP_200_OK)
-
 
 class PositionViewSet(viewsets.ModelViewSet):
     queryset = Position.objects.all()

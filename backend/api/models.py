@@ -6,6 +6,8 @@ import uuid
 from model_utils import Choices
 from django.utils.translation import ugettext_lazy as _
 from django.utils.crypto import get_random_string
+import shortuuid
+import datetime
 
 def unique_slugify(instance, slug):
     model = instance.__class__
@@ -23,7 +25,7 @@ class VietNamProvince(models.Model):
 
 class Faculty(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
-
+    slug = models.CharField(max_length=200, null=True, unique=True)  
     class Meta:
         ordering = ('id',)
     
@@ -32,7 +34,7 @@ class Faculty(models.Model):
 
 class Class(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
-
+    slug = models.CharField(max_length=200, null=True, unique=True)  
     class Meta:
         ordering = ('id',)
     
@@ -41,7 +43,7 @@ class Class(models.Model):
 
 class Position(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
-
+    slug = models.CharField(max_length=200, null=True, unique=True)  
     class Meta:
         ordering = ('id',)
     
@@ -131,6 +133,7 @@ class PaymentMethod(models.Model):
         return self.name
 
 class Contract(models.Model):
+    public_id = models.UUIDField(default=uuid.uuid4, editable=False)
     room = models.ForeignKey(Room, related_name = 'contract_room', on_delete=models.SET_NULL, blank=True, null=True)
     profile = models.ForeignKey(Profile, related_name = 'contract_profile', on_delete=models.SET_NULL, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
@@ -141,11 +144,11 @@ class Contract(models.Model):
     end_at = models.DateField(null=True, blank=True)
     payment_method = models.ForeignKey(PaymentMethod, related_name = 'contract_payment_method', on_delete=models.SET_NULL, blank=True, null=True)
     
-    is_accepted = models.BooleanField(default=False)
-    # is_expired = models.BooleanField(default=False)
+    is_accepted = models.BooleanField(null=True)
+    is_expired = models.BooleanField(null=True)
     note = models.TextField(null=True, blank=True)
     price = models.FloatField(default=0)
-    is_paid = models.BooleanField(default=False)
+    is_paid = models.BooleanField(null=True)
 
 
     class Meta:
@@ -154,4 +157,69 @@ class Contract(models.Model):
     def __str__(self):
         return self.profile.user.username + ' - ' + self.room.name
 
+# =========================================
+
+class Notification(models.Model):
+    public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
+    created_by = models.ForeignKey(User, related_name = 'notification_created_by', on_delete=models.CASCADE, blank=True, null=True)
+    title = models.CharField(max_length=100, null=True, blank=True)
+    content = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_by = models.ForeignKey(User, related_name = 'notification_updated_by', on_delete=models.CASCADE, blank=True, null=True)
+    
+    def __str__(self):
+        return self.title
+#  Ca truc
+class Shift(models.Model):
+    WEEKDAYS = Choices(
+        ('Mon', _('Monday')),
+        ('Tue', _('Tuesday')),
+        ('Wed', _('Wednesday')),
+        ('Thu', _('Thursday')),
+        ('Fri', _('Friday')),
+        ('Sat', _('Saturday')),
+        ('Sun', _('Sunday')),
+    )
+    name = models.CharField(max_length=100, null=True, blank=True)
+    weekdays = models.CharField(choices=WEEKDAYS, max_length=10, null=True, blank=True)
+    start_at = models.TimeField(null=True, blank=True)
+    end_at = models.TimeField(null=True, blank=True)
+    slug = models.CharField(max_length=255, null=True, unique=True)
+
+    class Meta:
+        ordering = ('id',)
+
+    def __str__(self):
+        return self.name + ' - ' +  self.weekdays
+
+
+class DailySchedule(models.Model):
+    public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
+    created_by = models.ForeignKey(User, related_name = 'schedule_created_by', on_delete=models.CASCADE, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_by = models.ForeignKey(User, related_name = 'schedule_updated_by', on_delete=models.CASCADE, blank=True, null=True)
+    # 
+    YEAR_CHOICES = []
+    for r in range(2010, (datetime.datetime.now().year+1)):
+        YEAR_CHOICES.append((r,r))
+
+    YEAR_CHOICES = []
+    for r in range(2010, (datetime.datetime.now().year+1)):
+        YEAR_CHOICES.append((r,r))
+
+    WEEk_CHOICES = []
+    d = (datetime.datetime.now().isocalendar()[1])
+    for r in range(d, 53):
+        WEEk_CHOICES.append((r,r))
+
+    week = models.IntegerField(_('week'), choices=WEEk_CHOICES, default=datetime.datetime.now().isocalendar()[1] + 1)
+    year = models.IntegerField(_('year'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
+    title = models.CharField(max_length=100, null=True, blank=True)
+    shift = models.ForeignKey(Shift, related_name = 'schedule_shift', on_delete=models.CASCADE, blank=True, null=True)
+    staff = models.ForeignKey(User, related_name = 'daily_schedule_staff', on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return self.title + ' (week:  ' + str(self.week) + ' - ' + str(self.shift) + ' - ' + str(self.staff.user.username) + ')'
 
