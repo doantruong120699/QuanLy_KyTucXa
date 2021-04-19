@@ -217,9 +217,10 @@ class DailySchedule(models.Model):
     week = models.IntegerField(_('week'), choices=WEEk_CHOICES, default=datetime.datetime.now().isocalendar()[1] + 1)
     year = models.IntegerField(_('year'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     title = models.CharField(max_length=100, null=True, blank=True)
+    content = models.TextField(null=True, blank=True)
     shift = models.ForeignKey(Shift, related_name = 'schedule_shift', on_delete=models.CASCADE, blank=True, null=True)
     staff = models.ForeignKey(User, related_name = 'daily_schedule_staff', on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
-        return self.title + ' (week:  ' + str(self.week) + ' - ' + str(self.shift) + ' - ' + str(self.staff.user.username) + ')'
+        return self.title + ' (week:  ' + str(self.week) + ' - ' + str(self.shift) + ' - ' + str(self.staff.username) + ')'
 
