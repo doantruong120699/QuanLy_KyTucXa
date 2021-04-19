@@ -13,11 +13,11 @@ class Student extends Component {
     };
     openDetail = async () => {
         this.setModalVisible(true);
-        this.props.setbackgroundcolor('gray');
+        // this.props.setbackgroundcolor('gray');
     };
     closeDetail = async () => {
         this.setModalVisible(!modalVisible);
-        this.props.setbackgroundcolor('white');
+        // this.props.setbackgroundcolor('white');
     }
     render() {
         const { modalVisible } = this.state;
@@ -87,7 +87,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Student);
 
 const styles = StyleSheet.create({
     container: {
-      backgroundColor: 'rgba(52, 52, 52, 0.8)',
+    //   backgroundColor: 'rgba(52, 52, 52, 0.8)',
       flex: 1,
       width: '100%',
       justifyContent: 'center',

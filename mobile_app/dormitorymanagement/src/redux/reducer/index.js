@@ -11,7 +11,7 @@ import { getarea } from './getarea';
 import { getclass } from './getclass';
 import { getposition } from './getposition';
 import { getfaculty } from './getfaculty';
-
+import { changeprofile } from './changeprofile';
 
 export { 
     login,
@@ -27,4 +27,5 @@ export {
     getclass, 
     getposition, 
     getfaculty,
+    changeprofile
 };

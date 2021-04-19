@@ -10,8 +10,7 @@ import ProfileSV from './student/ProfileSV';
 import ProfileNV from './staff/ProfileNV';
 import AllStudent from './showstudent/AllStudent';
 import AllStaff from './showstaff/AllStaff';
-import ChangeProfileNV from './staff/ChangeProfileNV';
-import ChangeProfileSV from './student/ChangeProfileSV';
+import ChangeProfile from './changeprofile/ChangeProfile';
 import Notification from './notification/Notification';
 
 export { 
@@ -27,7 +26,6 @@ export {
     ProfileNV, 
     AllStudent,
     AllStaff, 
-    ChangeProfileNV ,
-    ChangeProfileSV,
+    ChangeProfile,
     Notification,
 };
