@@ -297,7 +297,7 @@
   color: #fff;
 }
 .style-background-container {
-  height: 100vh;
+  height: 85vh;
   padding: 20px;
   background: url('../../assets/images/backgrounds/background.jpg') center/cover
     no-repeat;

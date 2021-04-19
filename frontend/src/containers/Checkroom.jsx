@@ -9,10 +9,9 @@ import * as TitleList from "../utilities/constants/titles";
 import { actFetchTitleNavigation } from "../redux/actions/dashboard";
 import * as ROUTER from "../utilities/constants/router";
 
-const Checkroom = (props) => {
-  const { match } = props;
+const Checkroom = () => {
   const [roomState, setState] = useState(null);
-  console.log(match);
+
   const history = useHistory();
 
   const dispatch = useDispatch();
@@ -29,7 +28,7 @@ const Checkroom = (props) => {
     GetAllRooms();
   }, []);
   return (
-    <div className="style-checkroom">
+    <div className="style-background-container">
       {roomState &&
         roomState.map((area, index) => {
           return (

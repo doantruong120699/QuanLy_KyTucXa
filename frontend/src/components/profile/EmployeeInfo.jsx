@@ -1,6 +1,12 @@
+import React from "react";
 import Button from "../common/Button";
+import { useHistory } from "react-router-dom";
+import * as ROUTER from "../../utilities/constants/router";
 const EmployeeInfo = (props) => {
-  const { position,username,area } = props;
+  const { position, username, area } = props;
+
+  const history = useHistory();
+
   return (
     <div className="col col-full style-lg-box bg-color-white style-profile-room">
       <span className="style-notiTitle">Thông tin công việc</span>
@@ -21,6 +27,9 @@ const EmployeeInfo = (props) => {
           type="normal-ubg"
           content="Xem lịch làm việc"
           isDisable={false}
+          onClick={() =>
+            history.push(`${ROUTER.ROUTE_MY_PROFILE}${ROUTER.ROUTE_SCHEDULE}`)
+          }
         />
       </div>
     </div>
