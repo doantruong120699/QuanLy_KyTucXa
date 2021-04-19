@@ -27,7 +27,7 @@ const Dashboard = () => {
     dispatch(actFetchTitleNavigation(TitleList.NAVIGATION_TITLE[0].title))
   );
   return (
-    <div className="style-dashboardContainer">
+    <div className="style-background-container">
       <div className="col col-half">
         <div className="col col-full">
           <div className="col col-half">

@@ -11,6 +11,9 @@ import * as ROUTER from "./utilities/constants/router";
 import Profile from "./containers/Profile";
 import StudentPage from "./containers/StudentPage";
 import RoomDetails from "./components/checkroom/RoomDetails";
+import DetailedStudent from "./components/studentPage/DetailedStudent";
+import MySchedule from "./components/profile/MySchedule";
+import DetailedEmployee from "./components/employeePage/DetailedEmployee";
 function App() {
   return (
     <Router history={history()}>
@@ -57,6 +60,21 @@ function App() {
         <Route
           path={`${ROUTER.ROUTE_CHECKROOM}/detail/:roomID`}
           component={withAuth(RoomDetails)}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_STUDENTS}${ROUTER.ROUTE_DETAILED_STUDENTS}/:studentID`}
+          component={withAuth(DetailedStudent)}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_MY_PROFILE}${ROUTER.ROUTE_SCHEDULE}`}
+          component={withAuth(MySchedule)}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_EMPLOYEES}${ROUTER.ROUTE_DETAILED_EMPLOYEES}/:employeeID`}
+          component={withAuth(DetailedEmployee)}
           exact
         />
       </Switch>
