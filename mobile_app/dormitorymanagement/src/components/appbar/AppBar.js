@@ -32,15 +32,16 @@ class AppBar extends Component {
             role,
             [
               { text: "Trang cá nhân", onPress: async () => {
-                  const decoded = await getData('decoded');
+                  const role = await getData('role');
                 //   console.log(decoded);
                 //   const group = decoded.group[0];
                 //   console.log(decoded.group);
+                console.log(role);
                   await this.props.getprofile();
-                  if(decoded==='sinhvien_group') {
+                  if(role==='sinhvien_group') {
                     this.props.navigation.navigate("ProfileSV");
                   }
-                  if(decoded==='nhanvien_group') {
+                  if(role==='nhanvien_group') {
                     this.props.navigation.navigate("ProfileNV"); 
                   }
               }},

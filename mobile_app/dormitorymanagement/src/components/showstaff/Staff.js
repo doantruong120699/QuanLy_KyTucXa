@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
     viewData: {
-      flex: 2,
+    //   flex: 2,
       flexDirection: 'column',
     },
     email: {
@@ -138,11 +138,12 @@ const styles = StyleSheet.create({
     button: {
         borderRadius: 15,
         padding: 10,
+        elevation: 5,
     },
     buttonOpen: {
         width: '80%',
+        height: '90%',
         backgroundColor: "white",
-        elevation: 5,
     },
     buttonClose: {
         backgroundColor: "#2196F3",

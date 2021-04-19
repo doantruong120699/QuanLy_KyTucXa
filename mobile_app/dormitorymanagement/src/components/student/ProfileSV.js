@@ -12,11 +12,8 @@ class ProfileSV extends Component {
     goBack = () => {
         this.props.navigation.goBack();
     };
-    moveToChangeInfo = async () => {
-        await this.props.getarea();
-        await this.props.getclass();
-        await this.props.getfaculty();
-        this.props.navigation.navigate("ChangeProfileSV");
+    moveToChangeProfile = () => {
+        this.props.navigation.navigate("ChangeProfile");
     };
     moveToChangePassword = () => {
         this.props.navigation.navigate("ChangePassword");
@@ -66,7 +63,7 @@ class ProfileSV extends Component {
                                 <Text style={styles.info}>{data.profile.faculty.name}</Text>
                             </View>
                             <View style={styles.viewButton}>
-                                <TouchableOpacity style={styles.button} onPress={this.moveToChangeInfo}>
+                                <TouchableOpacity style={styles.button} onPress={this.moveToChangeProfile}>
                                     <Text style={styles.textButton}>Sửa thông tin</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.button} onPress={this.moveToChangePassword}>
@@ -88,7 +85,7 @@ const mapDispatchToProps = {
 };
 
 function mapStateToProps(state) {
-    console.log(state.getprofile);
+    // console.log(state.getprofile);
     return {
         dataProfile: state.getprofile.msg,
     };

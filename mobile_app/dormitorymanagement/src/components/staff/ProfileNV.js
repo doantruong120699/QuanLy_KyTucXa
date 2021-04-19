@@ -10,12 +10,10 @@ class ProfileNV extends Component {
         super(props);
     }
     goBack = () => {
-        this.props.navigation.boBack();
+        this.props.navigation.goBack();
     };
-    moveToChangeInfo = async () => {
-        await this.props.getarea();
-        await this.props.getposition();
-        this.props.navigation.navigate("ChangeProfileNV");
+    moveToChangeInfo = () => {
+        this.props.navigation.navigate("ChangeProfile");
     };
     moveToChangePassword = async () => {
         this.props.navigation.navigate("ChangePassword");
@@ -90,7 +88,7 @@ const mapDispatchToProps = {
 };
 
 function mapStateToProps(state) {
-    console.log(state.getprofile);
+    // console.log(state.getprofile);
     return {
         dataProfile: state.getprofile.msg,
     };
