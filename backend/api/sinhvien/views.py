@@ -41,7 +41,9 @@ class SinhVienViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, **kwargs):
         try:
+            print("================")
             queryset = Profile.objects.get(public_id=kwargs['public_id'])
+            print(queryset.room.name)
             # serializer = ProfileSerializer(queryset).user.id
             contract = Contract.objects.filter(profile=queryset).first()
             print(contract)
@@ -58,9 +60,11 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             profile = {}
             try:
                 profile = ProfileSinhVienSerializer(queryset.user).data
-            except:
+            except Exception as e:
+                print(e)
                 pass
             data['profile'] = profile
+            print(profile)
             #
             return Response(data, status=status.HTTP_200_OK) 
 
