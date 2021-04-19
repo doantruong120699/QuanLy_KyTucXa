@@ -1,28 +1,5 @@
-.odd {
-  background-color: #f1f8ff !important;
-}
-.even {
-  background-color: #ffffff !important;
-}
-.ag-row-hover {
-  /* putting in !important so it overrides the theme's styling as it hovers the row also */
-  background-color: #ddd !important;
-}
-.grid {
-  height: 600px;
-  width: 1250px;
-}
-.ag-header-row:first-child {
-  background-color: #5d4954;
-  color: white;
-  font-size: 20px;
-  text-align: center;
-  align-items: center;
-  padding-left: 20px;
-}
-.ag-header-cell-label {
-  justify-content: center;
-}
-.Box-component:hover {
-  background-color: rgba(189, 189, 189, 0.2);
+.tab_component {
+  display: flex;
+  width: auto;
+ 
 }

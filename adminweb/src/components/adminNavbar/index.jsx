@@ -21,7 +21,7 @@ const AdminNavbar = () => {
           </li>
         </div>
         <div>
-          <li style={{ paddingTop: "20px" }}>
+          <li style={{ paddingTop: "20px",fontWeight:"500" }}>
             <a href="/financial" style={{ fontSize: "20px" }}>
               Tài chính
             </a>
