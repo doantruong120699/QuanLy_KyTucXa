@@ -11,22 +11,22 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: 'it1@gmail.com',
-            password: '123456',
+            username: 'asdquang111@gmail.com',
+            password: 'quang1999',
             icon: 'eye-slash',
             isShow: true,
         };
     };
     changeTextUsername = (text) => {
-        this.setState({username: text});
+        this.setState({ username: text });
     };
     changeTextPassword = (text) => {
-        this.setState({password: text});
+        this.setState({ password: text });
     };
     validateData = () => {
         const { username, password } = this.state;
-        if (!username || !password) 
-            return false;
+        // if (!username || !password)
+        //     return false;
         return true;
     };
     showToast = (msg) => {
@@ -37,18 +37,18 @@ class Login extends Component {
             this.showToast('Email or password is empty!');
             return;
         }
-        const data = {"username": "asdquang111@gmail.com", "password": "quang1999"};
+        const data = { "username": "asdquang111@gmail.com", "password": "quang1999" };
         await this.props.login(data);
         const token = await getData('token');
         // const role = await getData('role');
-        if (token === null || token === undefined || token === '') {
-            this.showToast('Email or password incorrect!');
-            this.props.navigation.navigate("Login");
-        }
-        else {
+        // if (token === null || token === undefined || token === '') {
+        //     this.showToast('Email or password incorrect!');
+        //     this.props.navigation.navigate("Login");
+        // }
+        // else {
             this.showToast('Success');
             this.props.navigation.navigate("HomePage");
-        }
+        //}
     };
     forgotPassword = () => {
         this.props.navigation.navigate("ForgotPassword");
@@ -63,7 +63,7 @@ class Login extends Component {
         return (
             <View style={styles.container}>
                 <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
-                    <AppBar style={styles.appbar} navigation={this.props.navigation}/>
+                    <AppBar style={styles.appbar} navigation={this.props.navigation} />
                     <View style={styles.container_child}>
                         <View style={styles.formLogin}>
                             <Text style={styles.textLogin}>ĐĂNG NHẬP</Text>
@@ -72,7 +72,7 @@ class Login extends Component {
                                 <TextInput
                                     underlineColorAndroid="transparent"
                                     onChangeText={this.changeTextUsername}
-                                    value='it1@gmail.com'
+                                    value='asdquang111@gmail.com'
                                     style={styles.inputText}
                                     placeholder="Tài khoản"
                                     placeholderTextColor="#808080"
@@ -83,18 +83,18 @@ class Login extends Component {
                                     underlineColorAndroid='#FFF'
                                     onChangeText={this.changeTextPassword}
                                     style={styles.inputTextPassword}
-                                    value='123456'
+                                    value='quang1999'
                                     placeholder="Mật khẩu"
                                     placeholderTextColor="#808080"
                                     secureTextEntry={this.state.isShow}
                                 >
                                 </TextInput>
-                                <TouchableOpacity 
+                                <TouchableOpacity
                                     style={styles.touchableShowPassword}
                                     onPress={this.hideShowPassword}
                                 >
-                                    <FontAwesome5 
-                                        style={styles.iconeye} 
+                                    <FontAwesome5
+                                        style={styles.iconeye}
                                         name={this.state.icon}
                                     ></FontAwesome5>
                                 </TouchableOpacity>
@@ -136,10 +136,10 @@ const styles = StyleSheet.create({
     appbar: {
         flex: 1,
         backgroundColor: 'white',
-        elevation: 7,  
+        elevation: 7,
         borderRadius: 20,
         marginTop: '3%',
-    },  
+    },
     imageBackground: {
         flex: 1,
         width: '100%',
@@ -148,14 +148,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     container_child: {
-      flex: 9, 
-      width: '100%',
-      height: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
+        flex: 9,
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     formLogin: {
-        elevation: 7, 
+        elevation: 7,
         backgroundColor: 'white',
         width: '80%',
         height: 300,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     text: {
         marginBottom: '5%',
         fontSize: 10,
-        textAlign: 'center', 
+        textAlign: 'center',
     },
     inputView: {
         width: '80%',
@@ -245,6 +245,6 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 15,
         // marginLeft: 50,
-        
+
     }
 });
