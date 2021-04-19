@@ -7,6 +7,7 @@ import Dashboard from './dashboard/Dashboard';
 import Avatar from './avatar/Avatar';
 import HomePage from './home/HomePage';
 import ProfileSV from './student/ProfileSV';
+import RoomDetail from './student/RoomDetail';
 import ProfileNV from './staff/ProfileNV';
 import AllStudent from './showstudent/AllStudent';
 import AllStaff from './showstaff/AllStaff';
@@ -28,4 +29,5 @@ export {
     AllStaff, 
     ChangeProfile,
     Notification,
+    RoomDetail,
 };
