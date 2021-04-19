@@ -24,6 +24,7 @@ const EmployeePage = () => {
           return (
             <div key={index} className="col col-5 pd-8">
               <EmployeeTag
+                slug={employee.profile.public_id}
                 name={employee.first_name + " " + employee.last_name}
                 email={employee.email}
                 phone={employee.profile.phone}
