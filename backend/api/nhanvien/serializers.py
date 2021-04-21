@@ -76,14 +76,14 @@ class DailyScheduleListSerializer(serializers.ModelSerializer):
     shift = ShiftSerializer()
     class Meta:
         model = DailySchedule
-        fields = [ "public_id", "week", "title", "shift", "staff"]
+        fields = [ "public_id", "week", "title", "content", "shift", "staff"]
 
 class DailyScheduleDetailSerializer(serializers.ModelSerializer):
     shift = ShiftSerializer()
     staff = NhanVienListSerializer()
     class Meta:
         model = DailySchedule
-        fields = [ "public_id", "created_by", "created_at", "week", "year", "title", "shift", "staff"]
+        fields = [ "public_id", "created_by", "created_at", "week", "year", "title", "content", "shift", "staff"]
 
 
 
