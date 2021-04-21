@@ -156,12 +156,6 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
             'payment_method', 
             'is_expired',
         ] 
-        extra_kwargs = {
-            'room': {'required': True},
-            'start_at': {'required': True},
-            'end_at': {'required': True},
-            'payment_method': {'required': True}
-        }
 
     # Get current user login
     def _current_user(self):
@@ -201,14 +195,29 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         """
         Check that start is before finish.
         """
+        if 'room' not in data:
+            raise serializers.ValidationError({'room':'This Field is required'})
+            # return False
+        if 'start_at' not in data:
+            raise serializers.ValidationError({'start_at':'This Field is required'})
+            # return False
+        if 'end_at' not in data:
+            raise serializers.ValidationError({'end_at':'This Field is required'})
+            # return False
+        if 'payment_method' not in data:
+            raise serializers.ValidationError({'payment_method':'This Field is required'})
+            # return False
+
         start_at=data['start_at']
         end_at=data['end_at']
-
+            
         if start_at >= end_at:
             raise serializers.ValidationError({'end_at':'Time end must be after time start!'})
+            # return False
         
         current_user = self._current_user()
         check_contract = Contract.objects.filter(profile=current_user.user_profile, is_accepted=None)
         if len(check_contract) != 0:
             raise serializers.ValidationError({'registered':'You signed up for another room!'})
+            # return False
         return data
