@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'rest_framework_swagger',
     
     'api',
 ]
@@ -156,6 +157,8 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_PAGINATION_CLASS': 'api.custom_pagination.CustomPagination',
     'PAGE_SIZE': 10,    
+    # 
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_WHITELIST = [
@@ -168,7 +171,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 # ]
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=600),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10080),
     'REFRESH_TOKEN_LIFETIME': timedelta(minutes=1000),
 }
 
