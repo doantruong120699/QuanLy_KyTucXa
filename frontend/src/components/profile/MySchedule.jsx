@@ -8,24 +8,20 @@ import {
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { getSchedule } from "../../redux/actions/profile";
-import {
-  appointments,
-  resourcesData,
-} from "../../utilities/DataRender/schedule";
-import { getTaskList } from "./ScheduleRender";
+import { colorData, getTaskList } from "../../utilities/DataRender/schedule";
 import moment from "moment";
 
 const MySchedule = () => {
-
-  const [myScheduleState, setSchedule] = useState();
+  const [myScheduleState, setSchedule] = useState({
+    date: new Date(),
+    data: null,
+  });
 
   useEffect(() => {
-    
     const currentWeek = moment().format("w") - 1;
     getSchedule(currentWeek, (output) => {
       if (output) {
-        console.log(output);
-        setSchedule(getTaskList(currentWeek, output));
+        setSchedule({ ...myScheduleState, data: getTaskList(output) });
       }
     });
   }, []);
@@ -33,18 +29,18 @@ const MySchedule = () => {
   const resources = [
     {
       fieldName: "colorID",
-      instances: resourcesData,
+      instances: colorData,
     },
   ];
   return (
     <div className="style-background-container">
-      {myScheduleState && (
+      {myScheduleState.data && (
         <div className="col col-full style-lg-box bg-color-white">
           <p className="bold-text text-20 pd-8">Lịch trực cá nhân</p>
           <Paper>
-            <Scheduler data={appointments} height={400}>
-              <ViewState defaultCurrentDate="2017-05-25" />
-              <WeekView startDayHour={8} endDayHour={18} />
+            <Scheduler data={myScheduleState.data} height={400}>
+              <ViewState currentDate={myScheduleState.date} />
+              <WeekView startDayHour={0} endDayHour={24} cellDuration={120} />
               <Appointments />
               <Resources data={resources} />
             </Scheduler>
