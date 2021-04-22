@@ -10,6 +10,7 @@ const InputField = (props) => {
     onBlur,
     onChange,
     autocomplete,
+    disabled,
   } = props;
 
   const inputStyle = className(
@@ -28,6 +29,7 @@ const InputField = (props) => {
       className={inputStyle}
       onBlur={onBlur}
       onChange={onChange}
+      disabled={disabled}
     />
   );
 };
