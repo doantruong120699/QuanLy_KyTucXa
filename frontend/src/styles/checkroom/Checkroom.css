@@ -27,3 +27,8 @@
 .style-sm-tag i:hover {
   color: #e5e5e5;
 }
+.style-room-registration{
+  position: absolute;
+  right: 48px;
+  bottom: 48px;
+}
