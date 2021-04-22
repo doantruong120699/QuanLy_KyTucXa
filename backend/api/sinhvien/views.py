@@ -43,10 +43,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
         try:
             print("================")
             queryset = Profile.objects.get(public_id=kwargs['public_id'])
-            print(queryset.room.name)
-            # serializer = ProfileSerializer(queryset).user.id
             contract = Contract.objects.filter(profile=queryset).first()
-            print(contract)
             data = {}        
             data['id'] = queryset.user.id
             data['email'] = queryset.user.email
@@ -59,7 +56,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
 
             profile = {}
             try:
-                profile = ProfileSinhVienSerializer(queryset.user).data
+                profile = ProfileSinhVienSerializer(queryset).data
             except Exception as e:
                 print(e)
                 pass
