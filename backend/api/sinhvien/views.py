@@ -41,7 +41,13 @@ class SinhVienViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, **kwargs):
         try:
+            print("================")
             queryset = Profile.objects.get(public_id=kwargs['public_id'])
+<<<<<<< HEAD
+=======
+            print(queryset.room.name)
+            # serializer = ProfileSerializer(queryset).user.id
+>>>>>>> f28990f... benphan#View-detailed-employee
             contract = Contract.objects.filter(profile=queryset).first()
             data = {}        
             data['id'] = queryset.user.id
@@ -60,6 +66,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
                 print(e)
                 pass
             data['profile'] = profile
+            print(profile)
             #
             return Response(data, status=status.HTTP_200_OK) 
 
