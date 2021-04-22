@@ -193,7 +193,6 @@ class Shift(models.Model):
     def __str__(self):
         return self.name + ' - ' +  self.weekdays
 
-
 class DailySchedule(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
     created_by = models.ForeignKey(User, related_name = 'schedule_created_by', on_delete=models.CASCADE, blank=True, null=True)
@@ -223,4 +222,54 @@ class DailySchedule(models.Model):
 
     def __str__(self):
         return self.title + ' (week:  ' + str(self.week) + ' - ' + str(self.shift) + ' - ' + str(self.staff.username) + ')'
+
+# ============================================
+
+class WaterElectrical(models.Model):
+    public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
+    room = models.ForeignKey(Room, related_name = 'water_electrical_room', on_delete=models.SET_NULL, blank=True, null=True)
+    # 
+    new_index_eclectrical = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    old_index_electrical = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    # 
+    new_index_water = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    old_index_water = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    # 
+    # Only yyyy-mm
+    time = models.DateField(max_length=50, null=True, blank=True) 
+    # 
+    water_unit_price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    electrical_unit_price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    # 
+    price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    # 
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_by = models.ForeignKey(User, related_name = 'water_electrical_updated_by', on_delete=models.CASCADE, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        # if not self.price:
+        electrical = self.new_index_eclectrical - self.old_index_electrical
+        water = self.new_index_water - self.old_index_water
+        self.price = electrical*self.electrical_unit_price + water*self.water_unit_price
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.room.name + ' - ' + str(self.time) + ' - ' + str(self.price) 
+
+class Bill(models.Model):
+    public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
+    water_electrical = models.ForeignKey(WaterElectrical, related_name = 'bill_water_electrical', on_delete=models.SET_NULL, blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    payment_method = models.ForeignKey(PaymentMethod, related_name = 'bill_payment_method', on_delete=models.SET_NULL, blank=True, null=True)
+    is_paid = models.BooleanField(default=False)
+
+    sinhvien_paid = models.ForeignKey(Profile, related_name = 'bill_sinhvien_paid', on_delete=models.CASCADE, blank=True, null=True)
+    time_paid = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.water_electrical.room.name + ' - ' + str(self.is_paid)
 
