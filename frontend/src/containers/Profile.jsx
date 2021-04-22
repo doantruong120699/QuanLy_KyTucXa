@@ -40,8 +40,6 @@ const Profile = () => {
     const GetProfileUser = () => {
       GetProfile((output) => {
         if (output) {
-          console.log(output);
-          console.log(getHandledDataRender(output));
           setProfile({
             profile: getHandledDataRender(output),
             username: output.username,
