@@ -17,7 +17,6 @@ const RoomRegistration = (props) => {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setRegistration({ ...resgistrationState, [name]: value });
-    console.log(resgistrationState);
   };
 
   const [paymentState, setPayment] = useState();
@@ -32,7 +31,9 @@ const RoomRegistration = (props) => {
   const register = () => {
     registerRoom(resgistrationState, (output) => {
       if (output) {
-        console.log(output);
+        alert(output.notification);
+      } else {
+        alert("Lỗi hệ thống");
       }
     });
     onClose();

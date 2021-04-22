@@ -78,7 +78,7 @@ const StudentPage = () => {
                     </td>
                     <td className="col col-15 text-align-ct bold-text text-20 pl-4 pr-4 pt-16 pb-16">
                       <i
-                        className="fi-rr-search-alt"
+                        className="fi-rr-search-alt icon-white-active"
                         style={{ cursor: "pointer" }}
                         onClick={() =>
                           history.push(
