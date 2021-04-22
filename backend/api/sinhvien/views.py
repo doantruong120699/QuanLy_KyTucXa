@@ -41,7 +41,6 @@ class SinhVienViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, **kwargs):
         try:
-            print("================")
             queryset = Profile.objects.get(public_id=kwargs['public_id'])
             contract = Contract.objects.filter(profile=queryset).first()
             data = {}        
