@@ -11,6 +11,9 @@ const initialState = {
 export default function reducer(state = initialState, actions) {
   switch (actions.type) {
     case types.GET_PROFILE_API:
+    case types.GET_FACULTIES_API:
+    case types.GET_GRADE_API:
+    case types.GET_MY_SCHEDULE_API:
       return {
         ...state,
         loading: true,
@@ -23,16 +26,13 @@ export default function reducer(state = initialState, actions) {
         loading: false,
       };
     case types.GET_PROFILE_API_FAIL:
+    case types.GET_FACULATIE_API_FAIL:
+    case types.GET_GRADE_API_FAIL:
+    case types.GET_MY_SCHEDULE_API_FAIL:
       return {
         ...state,
         error: actions.payload,
         loading: false,
-      };
-    case types.GET_FACULTIES_API:
-      return {
-        ...state,
-        loading: true,
-        error: {},
       };
     case types.GET_FACULATIES_API_SUCCEED:
       return {
@@ -40,25 +40,13 @@ export default function reducer(state = initialState, actions) {
         faculty: actions.payload,
         loading: false,
       };
-    case types.GET_FACULATIE_API_FAIL:
-      return {
-        ...state,
-        error: actions.payload,
-        loading: false,
-      };
-    case types.GET_GRADE_API:
-      return {
-        ...state,
-        loading: true,
-        error: {},
-      };
     case types.GET_GRADE_API_SUCCEED:
       return {
         ...state,
         grade: actions.payload,
         loading: false,
       };
-    case types.GET_GRADE_API_FAIL:
+    case types.GET_MY_SCHEDULE_API_SUCCEED:
       return {
         ...state,
         error: actions.payload,

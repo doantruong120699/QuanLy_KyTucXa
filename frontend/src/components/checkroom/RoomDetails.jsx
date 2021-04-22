@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getRoomDetails } from "../../redux/actions/checkroom";
+import Button from "../common/Button";
+import RoomRegistration from "./RoomRegistration";
+import { getAuth } from "../../utilities/helper";
 import roomImg from "../../assets/images/room/bedroom.jpg";
 
 const RoomDetails = () => {
@@ -8,10 +11,17 @@ const RoomDetails = () => {
 
   const [roomState, setRoom] = useState();
 
+  const [openState, setOpen] = useState(false);
+
+  const setOpenModal = () => setOpen(true);
+
+  const setCloseModal = () => setOpen(false);
+
+  const isEmployee = getAuth().group[0] === "nhanvien_group";
+
   useEffect(() => {
     getRoomDetails(roomID, (output) => {
       if (output) {
-        console.log(output);
         setRoom(output);
       }
     });
@@ -20,7 +30,7 @@ const RoomDetails = () => {
   return (
     <div className="style-background-container">
       {roomState && (
-        <div className="col col-full style-lg-box bg-color-white">
+        <div className="col col-full style-lg-box bg-color-white position-relative">
           <p className="text-20 bold-text pl-24 pb-16">
             Phòng {roomState.name} - {roomState.area.name}
           </p>
@@ -68,6 +78,21 @@ const RoomDetails = () => {
               );
             })}
           </div>
+          {!isEmployee && (
+            <div className=" col style-room-registration">
+              <Button
+                type="normal-blue"
+                content="Đăng ký"
+                onClick={setOpenModal}
+              />
+            </div>
+          )}
+          <RoomRegistration
+            open={openState}
+            onClose={setCloseModal}
+            name={roomState.name}
+            id={roomState.id}
+          />
         </div>
       )}
     </div>
