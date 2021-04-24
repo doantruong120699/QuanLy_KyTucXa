@@ -3,42 +3,66 @@ import { StyleSheet, View, Text, TouchableOpacity, Button, Alert, TextInput } fr
 import { connect } from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { searchroom } from '../../redux/actions/searchroom';
-import { Avatar } from '../index';
+import { getprofile } from '../../redux/actions/getprofile';
+import { getData } from '../../utils/asyncStorage';
 
 const openDrawer = (navigation) => {
     navigation.openDrawer();
 }
-const alert = (navigation) => {
-    Alert.alert(
-        "Quang",
-        "Sinh viên",
-        [
-          { text: "Profile", onPress: () => navigation.navigate("ProfileSV")},
-          { text: "Cancel", onPress: () => {} }
-        ],
-        { cancelable: true },
-        
-      );
-}
+
 class AppBar extends Component {
     constructor(props) {
         super(props);
         this.state = {
             textSearch: '',
         }
+    };
+    alert = async () => {
+        const name = await getData('name');
+        const group = await getData('role');
+        let role = '';
+        if(group==='sinhvien_group') {
+            role = 'Sinh viên';
+        }
+        if(group==='nhanvien_group') {
+            role = 'Nhân viên';
+        }
+        Alert.alert(
+            name,
+            role,
+            [
+              { text: "Trang cá nhân", onPress: async () => {
+                  const role = await getData('role');
+                //   console.log(decoded);
+                //   const group = decoded.group[0];
+                //   console.log(decoded.group);
+                console.log(role);
+                  await this.props.getprofile();
+                  if(role==='sinhvien_group') {
+                    this.props.navigation.navigate("ProfileSV");
+                  }
+                  if(role==='nhanvien_group') {
+                    this.props.navigation.navigate("ProfileNV"); 
+                  }
+              }},
+              { text: "Đóng", onPress: () => {} }
+            ],
+            { cancelable: true },
+            
+          );
     }
     changeTextSearch = (text) => {
         this.setState({
             textSearch: text,
         })
-    }
+    };
     render() {
         return (
             <View style={styles.container}>
                 <TouchableOpacity style={styles.bars} onPress={() => {openDrawer(this.props.navigation)}}>
                     <FontAwesome5 style={styles.iconbars} name={'bars'}/>
                 </TouchableOpacity>
-                <View style={styles.viewSearch}>
+                {/* <View style={styles.viewSearch}>
                     <TextInput
                         underlineColorAndroid="transparent"
                         onChangeText={this.changeTextSearch}
@@ -53,8 +77,8 @@ class AppBar extends Component {
                     >
                         <Text>Tìm</Text>
                     </TouchableOpacity>
-                </View>
-                <TouchableOpacity style={styles.user} onPress={() => {alert(this.props.navigation)}}>
+                </View> */}
+                <TouchableOpacity style={styles.user} onPress={this.alert}>
                     <View style={styles.viewuser}>
                         <FontAwesome5 style={styles.iconuser} name={'user'}/>
                     </View>
@@ -66,6 +90,7 @@ class AppBar extends Component {
 
 const mapDispatchToProps = {
     searchroom,
+    getprofile,
 };
 function mapStateToProps(state) {
     return {
@@ -78,7 +103,6 @@ const styles = StyleSheet.create({
     container: {
         width: '90%',
         // height: '50%',
-        justifyContent: 'center',
         flex: 1,
         alignItems: 'center',
         flexDirection: 'row',
@@ -93,9 +117,9 @@ const styles = StyleSheet.create({
     },
     bars: {
         flex: 1,
-        // marginRight: '70%',
+        marginLeft: '5%',
         justifyContent: 'center',
-        alignItems: 'center',
+        // alignItems: 'center',
         // borderRadius: 25,
         width: 30,
         height: 30,
@@ -105,9 +129,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     user: {
+        marginRight: '5%',
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-end',
         height: 30,
         width: 30,
         // backgroundColor: 'black',
