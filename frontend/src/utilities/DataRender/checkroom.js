@@ -7,7 +7,7 @@ export const getRoom = (origin) => {
     }
     return areas;
   }, []);
-  console.log(origin);
+
   result.forEach((area) => {
     origin.results.forEach((room) => {
       if (area.id === room.area.id) {

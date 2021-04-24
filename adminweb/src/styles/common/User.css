@@ -2,15 +2,14 @@
   position: relative;
   display: flex;
   justify-content: center;
-  border: 1px solid #7b8191;
-  border-radius: 10px;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
   min-width: 230px;
   vertical-align: middle;
   color: aliceblue;
   background-color: transparent;
   overflow: hidden;
+  background-color: #5d4954;
 }
 .style-avatarContainer {
   display: inline-block;

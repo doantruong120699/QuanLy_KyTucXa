@@ -62,8 +62,8 @@ nav {
   }
 }
 @media screen and (max-width: 1600px) {
-  body {
-    transform: scale(0.9);
+  nav {
+    transform: scale(1);
   }
 }
 @media screen and (max-width: 1200px) {
@@ -82,12 +82,10 @@ nav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 50%;
+    width: 300px;
     transform: translateX(100%);
     transition: transform 0.5 ease-in;
     transition-duration: 0.4s;
-  }
-  .nav-links li {
   }
   .burger {
     display: block;
