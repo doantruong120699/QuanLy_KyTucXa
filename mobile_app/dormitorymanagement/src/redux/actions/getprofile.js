@@ -1,35 +1,33 @@
-import {actionType} from '../actionType';
+import { actionType } from '../actionType';
 import {storeData, getData} from '../../utils/asyncStorage';
 import axios from 'axios';
 import {apiUrl} from '../../api/api';
 import _ from 'lodash';
-import jwt_decode from "jwt-decode";
 
-const { LOGIN_URL } = apiUrl;
-const {LOGIN, LOGIN_FAIL, LOGIN_SUCCESS} = actionType;
-export const login = (data) => async (dispatch) => {
-    storeData('token', '');
+const { PROFILE_URL } = apiUrl;
+const {GET_PROFILE, GET_PROFILE_SUCCESS, GET_PROFILE_FAIL} = actionType;
+export const getprofile = () => async (dispatch) => {
     let result;
     try {
-        result = await axios.post(LOGIN_URL, data);
-        let token = result.data.access;
-        let decoded = jwt_decode(token);
-        storeData('token', token);
-        storeData('role', decoded.group[0]);
-        // console.log(decoded.first_name + ' ' + decoded.last_name);
-        storeData('name', decoded.first_name + ' ' + decoded.last_name);
-        console.log(token);
+        let token = await getData('token');
+        let config = {
+            headers: { 'Authorization': 'Bearer ' + token }
+        }
+        result = await axios.get(PROFILE_URL, config);
+        // storeData('profile', result.data);
         dispatch({
-            type: LOGIN_SUCCESS, 
-            payload: result.data
+            type: GET_PROFILE_SUCCESS, 
+            payload: result.data,
+            msg: 'Success',
         });
     }
     catch(error) {
         const msg = _.get(error.response, 'data.msg') || "Cant't connect network";
         console.log(error);
         dispatch({
-            type: LOGIN_FAIL, 
-            payload: {msg}
+            type: GET_PROFILE_FAIL, 
+            payload: {msg},
+            msg: 'Fail',
         });
     }
     // fetch(LOGIN_URL, {

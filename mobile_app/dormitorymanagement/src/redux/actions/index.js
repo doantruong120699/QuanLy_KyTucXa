@@ -1,11 +1,11 @@
-import { login } from './login';
-import { getallroom } from './getallroom';
-import { searchroom } from './searchroom';
-import { mainmenu } from './mainmenu';
-import { changepassword } from './changepassword';
-import { getprofile } from './getprofile';
-import { allstudent } from './allstudent';
 import { allstaff } from './allstaff';
+import { allstudent } from './allstudent';
+import { changepassword } from './changepassword';
+import { getallroom } from './getallroom';
+import { getprofile } from './getprofile';
+import { login } from './login';
+import { mainmenu } from './mainmenu';
+import { searchroom } from './searchroom';
 import { setbackgroundcolor } from './setbackgroundcolor';
 import { getarea } from './getarea';
 import { getclass } from './getclass';
@@ -14,18 +14,18 @@ import { getfaculty } from './getfaculty';
 import { changeprofile } from './changeprofile';
 
 export { 
-    login,
-    getallroom, 
-    searchroom, 
-    mainmenu, 
-    changepassword, 
-    getprofile, 
-    allstudent, 
     allstaff, 
-    setbackgroundcolor,
+    allstudent, 
+    changepassword, 
+    getallroom, 
+    getprofile, 
+    login, 
+    mainmenu, 
+    searchroom, 
+    setbackgroundcolor, 
     getarea,
-    getclass, 
-    getposition, 
-    getfaculty,
-    changeprofile
+    getclass,
+    getposition,
+    getfaculty, 
+    changeprofile,
 };

@@ -11,8 +11,8 @@ class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: 'asdquang111@gmail.com',
-            password: 'quang1999',
+            username: 'tmquang@gmail.com',
+            password: 'quang301199',
             icon: 'eye-slash',
             isShow: true,
         };
@@ -37,7 +37,7 @@ class Login extends Component {
             this.showToast('Email or password is empty!');
             return;
         }
-        const data = { "username": "asdquang111@gmail.com", "password": "quang1999" };
+        const data = {"username": "tmquang@gmail.com", "password": "quang301199"};
         await this.props.login(data);
         const token = await getData('token');
         // const role = await getData('role');
@@ -63,7 +63,6 @@ class Login extends Component {
         return (
             <View style={styles.container}>
                 <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
-                    <AppBar style={styles.appbar} navigation={this.props.navigation} />
                     <View style={styles.container_child}>
                         <View style={styles.formLogin}>
                             <Text style={styles.textLogin}>ĐĂNG NHẬP</Text>
@@ -80,7 +79,7 @@ class Login extends Component {
                             </View>
                             <View style={styles.inputViewPassword}>
                                 <TextInput
-                                    underlineColorAndroid='#FFF'
+                                    underlineColorAndroid="transparent"
                                     onChangeText={this.changeTextPassword}
                                     style={styles.inputTextPassword}
                                     value='quang1999'
