@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, TouchableOpacity, TextInput, Text, StyleSheet, ImageBackground, ToastAndroid, ScrollView } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import DatePicker from 'react-native-datepicker'
-import {Picker} from '@react-native-picker/picker';
 import { changeprofile } from '../../redux/actions/index';
 
 class ChangeProfile extends Component {

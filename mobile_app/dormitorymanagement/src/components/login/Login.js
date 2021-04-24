@@ -63,7 +63,6 @@ class Login extends Component {
         return (
             <View style={styles.container}>
                 <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
-                    <AppBar style={styles.appbar} navigation={this.props.navigation} />
                     <View style={styles.container_child}>
                         <View style={styles.formLogin}>
                             <Text style={styles.textLogin}>ĐĂNG NHẬP</Text>
@@ -148,11 +147,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     container_child: {
-      flex:1, 
-      width: '100%',
-      height: '100%',
-      justifyContent: 'center',
-      alignItems: 'center',
+        flex: 9,
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     formLogin: {
         elevation: 7,
@@ -213,7 +212,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     iconeye: {
-        top: 5,
         // resizeMode: 'contain',
         height: '100%',
         width: '100%',
