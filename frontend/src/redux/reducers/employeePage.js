@@ -1,7 +1,8 @@
 import * as types from "../constants";
 
 const initialState = {
-  data: {},
+  listEmployee: {},
+  currentEmployee: {},
   error: {},
   loading: false,
 };
@@ -9,6 +10,7 @@ const initialState = {
 export default function employeePage(state = initialState, actions) {
   switch (actions.type) {
     case types.GET_EMPLOYEES_API:
+    case types.GET_DETAILED_EMPLOYEE_API:
       return {
         ...state,
         loading: true,
@@ -17,10 +19,17 @@ export default function employeePage(state = initialState, actions) {
     case types.GET_EMPLOYEES_API_SUCCEED:
       return {
         ...state,
-        data: actions.payload,
+        listEmployee: actions.payload,
+        loading: false,
+      };
+    case types.GET_DETAILED_EMPLOYEE_API_SUCCEED:
+      return {
+        ...state,
+        currentEmployee: actions.payload,
         loading: false,
       };
     case types.GET_EMPLOYEES_API_FAIL:
+    case types.GET_DETAILED_EMPLOYEE_API_FAIL:
       return {
         ...state,
         error: actions.payload,

@@ -7,3 +7,6 @@ export const ROUTE_MY_PROFILE = "/myProfile";
 export const ROUTE_EMPLOYEES = "/employees";
 export const ROUTE_STUDENTS = "/students";
 export const ROUTE_SERVICES = "/services";
+export const ROUTE_SCHEDULE = "/mySchedule";
+export const ROUTE_DETAILED_STUDENTS = "/detailedStudent";
+export const ROUTE_DETAILED_EMPLOYEES = "/detailedEmployee";

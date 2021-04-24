@@ -110,12 +110,33 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         week = self.kwargs['week']
         return DailySchedule.objects.filter(week=week).order_by('-pk')
+    
+    def day_week(self, i):
+        switcher={
+                'Mon':0,
+                'Tue':1,
+                'Wed':2,
+                'Thu':3,
+                'Fri':4,
+                'Sat':5,
+                'Sun':6,
+            }
+        return switcher.get(i,"Invalid day of week")
 
     def list(self, request, *args, **kwargs):
         _list = DailySchedule.objects.filter(week=kwargs['week']).order_by('id')
         serializer = DailyScheduleListSerializer(_list, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-        # return JsonResponse(_list, safe=False, status=status.HTTP_200_OK)
+        data = serializer.data
+
+        weekday = serializer.data[0]['shift']['weekdays']
+        d =  str(serializer.data[0]['year'])+"-"+'W'+str(serializer.data[0]['week'])
+        monday = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
+
+        for item in range(len(data)):
+            day_of_week = data[item]['shift']['weekdays']
+            day_shift = monday + datetime.timedelta(days=self.day_week(day_of_week))
+            data[item]['shift']['date'] = day_shift.date()
+        return Response(data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, **kwargs):
         try:

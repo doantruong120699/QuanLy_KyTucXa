@@ -16,8 +16,8 @@ class StringListField(serializers.ListField): # get from http://www.django-rest-
 
 class FinancalRoomInAreaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Room
-        fields = ['id', 'name', 'is_paid'] 
+        model = Area
+        fields = ['id', 'name'] 
 
 
 

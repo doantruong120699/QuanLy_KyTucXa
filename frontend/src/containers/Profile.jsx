@@ -40,8 +40,6 @@ const Profile = () => {
     const GetProfileUser = () => {
       GetProfile((output) => {
         if (output) {
-          console.log(output);
-          console.log(getHandledDataRender(output));
           setProfile({
             profile: getHandledDataRender(output),
             username: output.username,
@@ -83,7 +81,7 @@ const Profile = () => {
       }}
     >
       {profileState.profile && studyState.faculty && studyState.grade && (
-        <div className="style-profile-container">
+        <div className="style-background-container">
           <div className="col col-full">
             <div className="col col-third justify-content-ct">
               <Avatar />
