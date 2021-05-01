@@ -60,9 +60,13 @@ def get_profile_view(request):
         data['id'] = user.id
 
         if  user.groups.filter(name='sinhvien_group').exists():
-            contract = Contract.objects.filter(profile=queryset).first()
-            data['room'] = contract.room.name
-            data['slug-room'] = contract.room.slug
+            try:
+                contract = Contract.objects.filter(profile=queryset).first()
+                data['room'] = contract.room.name
+                data['slug-room'] = contract.room.slug
+            except Exception as ex:
+                data['room'] = None
+                data['slug-room'] = None
     
         groups = Group.objects.filter(user=request.user).all()
         groups_ = []
