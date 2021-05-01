@@ -18,39 +18,34 @@ from api.permissions import *
 from django.http import JsonResponse
 
 
-# class FinancalRoomInAreaViewSet(viewsets.ModelViewSet):
-#     serializer_class = FinancalRoomInAreaSerializer
-#     permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
-#     lookup_field = 'slug'
+class NotificationViewSet(viewsets.ModelViewSet):
+    serializer_class = NotificationListSerializer
+    # permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
+    lookup_field = 'public_id'
 
-#     def get_queryset(self):
-#         return Area.objects.all().order_by('-created_at')
+    def get_queryset(self):
+        return Notification.objects.all().order_by('-created_at')
 
-#     def get_permissions(self):
-#         if self.action == 'list':
-#             return [IsAuthenticated(), IsQuanLyTaiChinh(),]
-#         return [IsAuthenticated(), IsQuanLyTaiChinh(),]
+    def list(self, request, *args, **kwargs):
+        try:
+            list_notification = Notification.objects.all().order_by('-created_at')
+            page = self.paginate_queryset(list_notification)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
 
-#     def list(self, request, *args, **kwargs):
-#         try:
-#             area = Area.objects.get(slug=kwargs['slug'])
-#             time = kwargs['time'] + '-01'
-#             time = datetime.fromisoformat(time)
-#             # Number now in room >=0 
-#             room_in_area = Room.objects.filter(area=area).order_by('-id')
-#             all_bill = Bill.objects.filter(water_electrical__room__in=room_in_area, 
-#                                                               water_electrical__time__year=time.year,
-#                                                               water_electrical__time__month=time.month)
-#             list_room_add_json = []
-#             for bill in all_bill:
-#                 list_room_add_json.append({'name': bill.water_electrical.room.name, 'isPaid' : bill.is_paid})
-            
-#             serializer = FinancalRoomInAreaSerializer(area)
-#             data_room = serializer.data
-#             data_room['room'] = list_room_add_json
-            
-#             return Response(data_room, status=status.HTTP_200_OK)
-#         except Exception as e:
-#             print(e)
-#             return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, **kwargs):
+        try:
+            noti = Notification.objects.get(public_id=kwargs['public_id'])
+            serializer = NotificationListSerializer(noti)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Notification Not Found'}, status=status.HTTP_404_NOT_FOUND)
 

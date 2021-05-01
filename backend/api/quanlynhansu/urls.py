@@ -7,13 +7,16 @@ from rest_framework import permissions
 from .views import *
 
 
-# ========== room
-# list - create
-# financal_room_in_area_list = FinancalRoomInAreaViewSet.as_view({
-#     'get': 'list',
-# })
+# ========== notification
+list_notification = NotificationViewSet.as_view({
+    'get': 'list',
+})
+detail_notification = NotificationViewSet.as_view({
+    'get': 'retrieve',
+})
 
 urlpatterns = [ 
-    # ========== room
-    # path('financal-room-area/<slug:slug>/<str:time>/', financal_room_in_area_list, name = 'financal_room_in_area_list'),
+    # ========== notification
+    path('notifications/', list_notification, name = 'list_notification'),
+    path('notifications/<str:public_id>/', detail_notification, name = 'detail_notification'),
 ]
