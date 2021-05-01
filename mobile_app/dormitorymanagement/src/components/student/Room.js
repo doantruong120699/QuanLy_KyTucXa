@@ -27,7 +27,7 @@ class Room extends Component {
           <View style={styles.item}>
             <FontAwesome5 style={styles.iconItem} name={icon} />
             <View style={styles.viewData}>
-              <Text style={styles.title}>{this.props.myRoom.name}</Text>
+              <Text style={styles.title}>{`${this.props.myRoom.area.name}${this.props.myRoom.name}`}</Text>
               <Text style={styles.numbers}>{this.props.myRoom.number_now}/8</Text>
             </View>
             <View style={styles.viewIconPeople}>
