@@ -1,0 +1,12 @@
+export const ROUTE_LOGIN = "/login";
+export const ROUTE_RESET_PASSWORD = "/reset-password";
+export const ROUTE_FORGOT_PASSWORD = "/forgot-password";
+export const ROUTE_DASHBOARD = "/dashboard";
+export const ROUTE_CHECKROOM = "/rooms";
+export const ROUTE_MY_PROFILE = "/myProfile";
+export const ROUTE_EMPLOYEES = "/employees";
+export const ROUTE_STUDENTS = "/students";
+export const ROUTE_SERVICES = "/services";
+export const ROUTE_SCHEDULE = "/mySchedule";
+export const ROUTE_DETAILED_STUDENTS = "/detailedStudent";
+export const ROUTE_DETAILED_EMPLOYEES = "/detailedEmployee";
