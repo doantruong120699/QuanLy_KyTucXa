@@ -27,8 +27,8 @@ function CircularProgressWithLabel(props) {
         position="relative"
         display="inline-flex"
         boxShadow={2}
-        height={450}
-        width={400}
+        height={400}
+        width={300}
         justifyContent="center"
         marginRight={"20px"}
         marginBottom={"20px"}
@@ -73,7 +73,7 @@ function CircularProgressWithLabel(props) {
         <CircularProgress
           variant="determinate"
           color={"primary"}
-          size={200}
+          size={150}
           style={{
             color: "olivedrab",
             marginTop: "130px",
@@ -84,7 +84,7 @@ function CircularProgressWithLabel(props) {
         <CircularProgress
           variant="determinate"
           color={"primary"}
-          size={200}
+          size={150}
           style={{ color: "maroon", marginTop: "130px" }}
           value={props.percentage}
         />
@@ -103,9 +103,9 @@ function CircularProgressWithLabel(props) {
             component="div"
             color="textSecondary"
             style={{
-              paddingTop: "210px",
-              paddingLeft: "15px",
-              fontSize: "36px",
+              paddingTop: "190px",
+              paddingLeft: "20px",
+              fontSize: "30px",
               paddingRight: "15px",
             }}
           >
@@ -380,6 +380,16 @@ export default function WaterElectrical() {
     } else setIsShowTable(!isShowTable);
   };
   //const data =
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+    },
+  };
   return (
     <Box paddingRight={15} style={{ width: "100%" }}>
       <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
@@ -427,7 +437,11 @@ export default function WaterElectrical() {
           </div>
         </div>
       </Grow>
-      <ReactModal isOpen={isModalVisible} onRequestClose={hideModal}>
+      <ReactModal
+        isOpen={isModalVisible}
+        onRequestClose={hideModal}
+        style={customStyles}
+      >
         <DetailRoom />
       </ReactModal>
     </Box>
