@@ -239,11 +239,9 @@ const room = [
 const ShowAllRoom = (props) => {
   const { data, navigation } = props;
   handleClickItem = (item) => {
-    console.log("Clicked", item.area.name + item.name);
     navigation.navigate("RoomDetail", { item });
   }
   const renderItem = ({ item }) => {
-    console.log("Renderrr", item)
     return (
       <Room myRoom={item} onClick={() => handleClickItem(item)} />
     )
@@ -259,15 +257,6 @@ const ShowAllRoom = (props) => {
     }))
   }, [])
   const [selectedValue, setSelectedValue] = useState("All");
-  const loadCurrentData = () => {
-    const result = data.filter(t => t.title === selectedValue)
-    setSectionData(...[result]);
-
-  }
-  const [sectionData, setSectionData] = useState(data);
-  useEffect(() => {
-    loadCurrentData();
-  }, [])
   const changeSelectedValueItem = (item) => {
     setSelectedValue(item);
   }
@@ -280,6 +269,8 @@ const ShowAllRoom = (props) => {
     "name": "All",
     "slug": "all"
   }, ...dataArea,])
+  console.log("Selected Value", selectedValue);
+  console.log("New Data", newData[0])
   return (
     <View style={styles.container}>
 
@@ -303,7 +294,7 @@ const ShowAllRoom = (props) => {
         <View style={styles.container_child}>
           <SectionList
             style={styles.sectionList}
-            sections={selectedValue === "All" ? newData : newData}
+            sections={selectedValue === "All" ? newData : newData.filter(t => t.title === `Khu ${selectedValue}`)}
             keyExtrator={(item, index) => item + index}
             renderItem={renderItem}
             renderSectionHeader={({ section: { title } }) => (
