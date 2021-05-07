@@ -31,19 +31,19 @@ class RoomDetail extends Component {
                         <View style={styles.formProfile}>
                             <View style={styles.viewInfo}>
                                 <Text style={styles.title}>Tên Phòng:</Text>
-                                <Text style={styles.info}>{item.room}</Text>
+                                <Text style={styles.info}>{item.area.name + item.name}</Text>
                             </View>
                             <View style={styles.viewInfo}>
                                 <Text style={styles.title}>Loại Phòng:</Text>
-                                <Text style={styles.info}>Phòng Thường</Text>
+                                <Text style={styles.info}>{item.typeroom.name}</Text>
                             </View>
                             <View style={styles.viewInfo}>
                                 <Text style={styles.title}>Giá Phòng:</Text>
-                                <Text style={styles.info}>800k/Tháng</Text>
+                                <Text style={styles.info}>{`${item.typeroom.price}/Tháng`}</Text>
                             </View>
                             <View style={styles.viewInfo}>
                                 <Text style={styles.title}>Số Người Trong Phòng:</Text>
-                                <Text style={styles.info}>{item.numbers}</Text>
+                                <Text style={styles.info}>{item.number_now}</Text>
                             </View>
                             <View style={styles.viewInfo}>
                                 <Text style={styles.title}>Thành Viên:</Text>
@@ -51,7 +51,7 @@ class RoomDetail extends Component {
                             </View>
                             <View style={styles.viewInfo}>
                                 <Text style={styles.title}>Tình Trạng Phòng:</Text>
-                                <Text style={styles.info}>{item.numbers < 8 ? 'Có Thể Đăng Kí' : 'Đã Đủ Người'}</Text>
+                                <Text style={styles.info}>{item.number_now < item.number_max ? 'Có Thể Đăng Kí' : 'Đã Đủ Người'}</Text>
                             </View>
                             <View style={styles.viewButton}>
 

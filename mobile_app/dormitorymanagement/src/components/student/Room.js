@@ -19,19 +19,19 @@ class Room extends Component {
       }
       return listPeople;
     }
-    const { status } = this.props.myRoom;
-    const icon = this.props.myRoom.numbers !== 8 ? 'check-circle' : 'ban';
+    //const { status } = this.props.myRoom;
+    const icon = this.props.myRoom.number_now !== 8 ? 'check-circle' : 'ban';
     return (
       <View >
         <TouchableOpacity onPress={this.props.onClick}>
           <View style={styles.item}>
             <FontAwesome5 style={styles.iconItem} name={icon} />
             <View style={styles.viewData}>
-              <Text style={styles.title}>{this.props.myRoom.room}</Text>
-              <Text style={styles.numbers}>{this.props.myRoom.numbers}/8</Text>
+              <Text style={styles.title}>{`${this.props.myRoom.area.name}${this.props.myRoom.name}`}</Text>
+              <Text style={styles.numbers}>{this.props.myRoom.number_now}/8</Text>
             </View>
             <View style={styles.viewIconPeople}>
-              {RenderPeople(this.props.myRoom.numbers)}
+              {RenderPeople(this.props.myRoom.number_now)}
             </View>
           </View>
         </TouchableOpacity>

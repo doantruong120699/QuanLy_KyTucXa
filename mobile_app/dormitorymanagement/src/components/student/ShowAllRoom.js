@@ -20,29 +20,243 @@ import { useEffect } from 'react';
 //         />
 //     );
 // };
+const dataArea = [
+  {
+    "id": 1,
+    "name": "A",
+    "slug": "a"
+  },
+  {
+    "id": 2,
+    "name": "B",
+    "slug": "b"
+  },
+  {
+    "id": 4,
+    "name": "C",
+    "slug": "c"
+  },
+  {
+    "id": 5,
+    "name": "D",
+    "slug": "d"
+  }
+]
+
+const room = [
+  {
+    "id": 1,
+    "name": "101",
+    "slug": "101",
+    "number_now": 5,
+    "typeroom": {
+      "id": 1,
+      "name": "Type 1",
+      "price": 200000,
+      "number_max": 8,
+      "slug": "type-1"
+    },
+    "area": {
+      "id": 1,
+      "name": "A",
+      "slug": "a"
+    },
+    "status": "F",
+    "created_at": "2021-03-15T14:40:15.339962Z",
+    "last_update": "2021-03-18T15:36:20.411397Z"
+  },
+  {
+    "id": 2,
+    "name": "102",
+    "slug": "102",
+    "number_now": 4,
+    "typeroom": {
+      "id": 2,
+      "name": "Type 2",
+      "price": 150000,
+      "number_max": 8,
+      "slug": "type-2"
+    },
+    "area": {
+      "id": 1,
+      "name": "A",
+      "slug": "a"
+    },
+    "status": "F",
+    "created_at": "2021-03-15T14:40:37.232087Z",
+    "last_update": "2021-04-07T09:14:11.123500Z"
+  },
+  {
+    "id": 3,
+    "name": "103",
+    "slug": "103",
+    "number_now": 4,
+    "typeroom": {
+      "id": 1,
+      "name": "Type 1",
+      "price": 200000,
+      "number_max": 8,
+      "slug": "type-1"
+    },
+    "area": {
+      "id": 1,
+      "name": "A",
+      "slug": "a"
+    },
+    "status": "A",
+    "created_at": "2021-04-14T07:34:53.112768Z",
+    "last_update": "2021-04-21T16:06:51.341576Z"
+  },
+
+  {
+    "id": 4,
+    "name": "101",
+    "slug": "101",
+    "number_now": 5,
+    "typeroom": {
+      "id": 1,
+      "name": "Type 1",
+      "price": 200000,
+      "number_max": 8,
+      "slug": "type-1"
+    },
+    "area": {
+      "id": 2,
+      "name": "B",
+      "slug": "b"
+    },
+    "status": "F",
+    "created_at": "2021-03-15T14:40:15.339962Z",
+    "last_update": "2021-03-18T15:36:20.411397Z"
+  },
+  {
+    "id": 5,
+    "name": "102",
+    "slug": "102",
+    "number_now": 4,
+    "typeroom": {
+      "id": 2,
+      "name": "Type 2",
+      "price": 150000,
+      "number_max": 8,
+      "slug": "type-2"
+    },
+    "area": {
+      "id": 2,
+      "name": "B",
+      "slug": "b"
+    },
+    "status": "F",
+    "created_at": "2021-03-15T14:40:37.232087Z",
+    "last_update": "2021-04-07T09:14:11.123500Z"
+  },
+  {
+    "id": 6,
+    "name": "103",
+    "slug": "103",
+    "number_now": 4,
+    "typeroom": {
+      "id": 1,
+      "name": "Type 1",
+      "price": 200000,
+      "number_max": 8,
+      "slug": "type-1"
+    },
+    "area": {
+      "id": 2,
+      "name": "B",
+      "slug": "b"
+    },
+    "status": "F",
+    "created_at": "2021-04-14T07:34:53.112768Z",
+    "last_update": "2021-04-21T16:06:51.341576Z"
+  },
+  {
+    "id": 7,
+    "name": "101",
+    "slug": "101",
+    "number_now": 5,
+    "typeroom": {
+      "id": 1,
+      "name": "Type 1",
+      "price": 200000,
+      "number_max": 8,
+      "slug": "type-1"
+    },
+    "area": {
+      "id": 3,
+      "name": "C",
+      "slug": "c"
+    },
+    "status": "F",
+    "created_at": "2021-03-15T14:40:15.339962Z",
+    "last_update": "2021-03-18T15:36:20.411397Z"
+  },
+  {
+    "id": 8,
+    "name": "102",
+    "slug": "102",
+    "number_now": 4,
+    "typeroom": {
+      "id": 2,
+      "name": "Type 2",
+      "price": 150000,
+      "number_max": 8,
+      "slug": "type-2"
+    },
+    "area": {
+      "id": 3,
+      "name": "C",
+      "slug": "c"
+    },
+    "status": "F",
+    "created_at": "2021-03-15T14:40:37.232087Z",
+    "last_update": "2021-04-07T09:14:11.123500Z"
+  },
+  {
+    "id": 9,
+    "name": "103",
+    "slug": "103",
+    "number_now": 4,
+    "typeroom": {
+      "id": 1,
+      "name": "Type 1",
+      "price": 200000,
+      "number_max": 8,
+      "slug": "type-1"
+    },
+    "area": {
+      "id": 3,
+      "name": "C",
+      "slug": "c"
+    },
+    "status": "A",
+    "created_at": "2021-04-14T07:34:53.112768Z",
+    "last_update": "2021-04-21T16:06:51.341576Z"
+  },
+
+]
 const ShowAllRoom = (props) => {
   const { data, navigation } = props;
   handleClickItem = (item) => {
-    console.log("Clicked", item);
     navigation.navigate("RoomDetail", { item });
   }
   const renderItem = ({ item }) => {
-    let result;
     return (
-      <Room myRoom={item} onClick={() => this.handleClickItem(item)} />
+      <Room myRoom={item} onClick={() => handleClickItem(item)} />
     )
   }
-  const [selectedValue, setSelectedValue] = useState("All");
-  const [loading, setLoading] = useState(false);
-  const loadCurrentData = () => {
-    const result = data.filter(t => t.title === selectedValue)
-    setSectionData(...[result]);
-
-  }
-  const [sectionData, setSectionData] = useState(data);
+  const [newData, setNewData] = useState([]);
   useEffect(() => {
-    loadCurrentData();
+    setNewData(dataArea.map(t => {
+      const roomInThisArea = room.filter(index => index.area.name === t.name)
+      return {
+        title: `Khu ${t.name}`,
+        data: [...roomInThisArea],
+      }
+    }))
   }, [])
+  const [selectedValue, setSelectedValue] = useState("All");
   const changeSelectedValueItem = (item) => {
     setSelectedValue(item);
   }
@@ -50,6 +264,13 @@ const ShowAllRoom = (props) => {
     changeSelectedValueItem(item);
 
   }
+  const [area, setArea] = useState([{
+    "id": 6,
+    "name": "All",
+    "slug": "all"
+  }, ...dataArea,])
+  console.log("Selected Value", selectedValue);
+  console.log("New Data", newData[0])
   return (
     <View style={styles.container}>
 
@@ -65,20 +286,17 @@ const ShowAllRoom = (props) => {
               handlePickerChange(itemValue);
             }}
           >
-            <Picker.Item label="Khu A" value="Khu A" />
-            <Picker.Item label="Khu B" value="Khu B" />
-            <Picker.Item label="Khu C" value="Khu C" />
-            <Picker.Item label="Tat ca" value="All" />
+            {area.map(t => {
+              return t.name === "All" ? <Picker.Item label="Tất cả phòng" value="all" /> : <Picker.Item label={`Khu ${t.name}`} value={t.name} />
+            })}
           </Picker>
         </View>
         <View style={styles.container_child}>
           <SectionList
             style={styles.sectionList}
-            sections={selectedValue === "All" ? data : data.filter(t => t.title === selectedValue)}
+            sections={selectedValue === "All" ? newData : newData.filter(t => t.title === `Khu ${selectedValue}`)}
             keyExtrator={(item, index) => item + index}
-            renderItem={
-              renderItem
-            }
+            renderItem={renderItem}
             renderSectionHeader={({ section: { title } }) => (
               <Text style={styles.header}>{title}</Text>
             )}

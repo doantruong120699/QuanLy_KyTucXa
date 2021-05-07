@@ -12,8 +12,8 @@ function CircularProgressWithLabel(props) {
         position="relative"
         display="inline-flex"
         boxShadow={2}
-        height={450}
-        width={400}
+        height={400}
+        width={350}
         justifyContent="center"
         marginRight={"20px"}
         marginBottom={"20px"}
@@ -57,7 +57,7 @@ function CircularProgressWithLabel(props) {
         <CircularProgress
           variant="determinate"
           color={"primary"}
-          size={200}
+          size={150}
           style={{
             color: "olivedrab",
             marginTop: "130px",
@@ -68,7 +68,7 @@ function CircularProgressWithLabel(props) {
         <CircularProgress
           variant="determinate"
           color={"primary"}
-          size={200}
+          size={150}
           style={{ color: "maroon", marginTop: "130px" }}
           value={(
             ((props.allRoom - props.availabeRoom) / props.allRoom) *
@@ -90,9 +90,9 @@ function CircularProgressWithLabel(props) {
             component="div"
             color="textSecondary"
             style={{
-              paddingTop: "210px",
-              paddingLeft: "15px",
-              fontSize: "40px",
+              paddingTop: "190px",
+              paddingLeft: "8px",
+              fontSize: "30px",
             }}
           >
             {`${(

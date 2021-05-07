@@ -93,7 +93,7 @@ class RoomViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Room Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-    # get list all lesson 
+    # get list all room 
     @action(methods=["GET"], detail=False, url_path="get_all_room", url_name="get_all_room")
     def get_all_room(self, request, *args, **kwargs):
         list_room = (Room.objects.all())
