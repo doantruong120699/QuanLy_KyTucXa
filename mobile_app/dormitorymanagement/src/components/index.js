@@ -13,6 +13,7 @@ import AllStudent from './showstudent/AllStudent';
 import AllStaff from './showstaff/AllStaff';
 import ChangeProfile from './changeprofile/ChangeProfile';
 import Notification from './notification/Notification';
+import Schedule from './staff/Schedule';
 
 export { 
     Login, 
@@ -30,4 +31,5 @@ export {
     ChangeProfile,
     Notification,
     RoomDetail,
+    Schedule,
 };
