@@ -18,6 +18,11 @@
   background-color: #ffaa2b;
   color: #fff;
 }
+.style-roomOfArea:hover {
+ cursor: pointer;
+ background-color: #ffaa2b5d;
+
+}
 .style-roomOfArea i:hover {
   color: #717479;
 }

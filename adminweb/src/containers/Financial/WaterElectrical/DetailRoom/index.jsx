@@ -8,6 +8,8 @@ import Grid from "@material-ui/core/Grid";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
+import ReactModal from "react-modal";
+import NotificationForm from "./NotificationForm";
 
 import "./styles.css";
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +47,23 @@ export default function DetailRoom() {
     last_update: "2021-03-18T15:36:20.411397Z",
   };
   const isFull = data.number_now === data.typeroom.number_max;
-
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const hideModal = () => {
+    setIsModalVisible(false);
+  };
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "50%",
+      bottom: "10%",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+    },
+  };
+  const handleClick = () => {
+    setIsModalVisible(true);
+  };
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
@@ -147,7 +165,7 @@ export default function DetailRoom() {
           </Paper>
         </Grid>
         <Grid item xs={6} style={{ textAlign: "end" }}>
-          <Button variant="contained" color="secondary">
+          <Button variant="contained" color="secondary" onClick={handleClick}>
             Gửi thông báo
           </Button>
         </Grid>
@@ -156,6 +174,13 @@ export default function DetailRoom() {
             Đóng tiền
           </Button>
         </Grid>
+        <ReactModal
+          isOpen={isModalVisible}
+          onRequestClose={hideModal}
+          style={customStyles}
+        >
+          <NotificationForm />
+        </ReactModal>
       </Grid>
     </div>
   );
