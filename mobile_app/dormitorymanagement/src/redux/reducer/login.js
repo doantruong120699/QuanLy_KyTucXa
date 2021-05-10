@@ -10,7 +10,7 @@ export const login = (state = initialState, actions) => {
         case LOGIN_SUCCESS:
             return {...state, ...actions.payload, isLoggedIn: true};
         case LOGIN_FAIL:
-            return {...state, ...actions.payload, isLoggedIn: false};
+            return {...state, msg: actions.msg, isLoggedIn: false};
         default:
             return state;
     }

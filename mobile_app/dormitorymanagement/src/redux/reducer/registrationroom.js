@@ -1,15 +1,15 @@
 import { actionType } from '../actionType';
 
-const { CHANGE_PROFILE_SUCCESS, CHANGE_PROFILE_FAIL } = actionType;
+const { REGISTRATION_ROOM, REGISTRATION_ROOM_FAIL, REGISTRATION_ROOM_SUCCESS } = actionType;
 const initialState = {
   msg: '',
 }
 
-export const changeprofile = (state = initialState, actions) => {
+export const registrationroom = (state = initialState, actions) => {
   switch (actions.type) {
-    case CHANGE_PROFILE_SUCCESS:
+    case REGISTRATION_ROOM_SUCCESS:
       return { ...state, msg: actions.msg };
-    case CHANGE_PROFILE_FAIL:
+    case REGISTRATION_ROOM_FAIL:
       return { ...state, msg: actions.msg };
     default:
       return state;
