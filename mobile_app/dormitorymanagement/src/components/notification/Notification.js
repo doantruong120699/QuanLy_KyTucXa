@@ -1,128 +1,169 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, FlatList, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { AppBar } from '../index';
+import ItemNotification from './ItemNotification';
+import { getnotification } from '../../redux/actions/getnotification';
+import { TextInput } from 'react-native-gesture-handler';
 
 class Notification extends Component {
-    render() {
-        return(
-            <View style={styles.container}>
-                <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
-                    <AppBar style={styles.appbar} navigation={this.props.navigation}/>
-                    <View style={styles.container_child}>
-                        
-                    </View>
-                </ImageBackground>
-            </View>
-        )
+  constructor(props) {
+    super(props);
+    this.state = {
+      // data: this.props.listSV,
+      page: "1",
     }
+  }
+  renderItem = ({ item }) => {
+    console.log("ab");
+    return (
+      <ItemNotification item={item} />
+    )
+  }
+  changeNumberPage = async (value) => {
+    await this.setState({ page: value });
+    await this.props.getnotification(this.state.page);
+    await this.setState({ listSV: this.props.listSV.results });
+  }
+  minusNumberPage = async () => {
+    if (this.state.page > 1) {
+      await this.setState({ page: (parseInt(this.state.page) - 1).toString() });
+      await this.props.getnotification(this.state.page);
+      await this.setState({ listSV: this.props.listSV.results });
+    }
+  }
+  plusNumberPage = async () => {
+    await this.setState({ page: (parseInt(this.state.page) + 1).toString() });
+    await this.props.getnotification(this.state.page);
+    await this.setState({ listSV: this.props.listSV.results });
+  }
+  render() {
+    console.log(this.props.listNotification);
+    return (
+      <View style={styles.container}>
+        <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
+          <AppBar style={styles.appbar} navigation={this.props.navigation} />
+          <View style={styles.container_child}>
+            <FlatList
+              style={styles.flatlist}
+              data={this.props.listNotification.results}
+              renderItem={this.renderItem}
+              keyExtractor={item => item.public_id}
+            />
+            <View style={styles.flexRow}>
+              <TouchableOpacity style={[styles.btnOperation, styles.viewPage]} onPress={this.minusNumberPage}>
+                <Text>-</Text>
+              </TouchableOpacity>
+              <TextInput
+                underlineColorAndroid="transparent"
+                onChangeText={this.changeNumberPage}
+                value={this.state.page}
+                style={[styles.inputPage, styles.viewPage]}
+                placeholderTextColor="#808080"
+                keyboardType="numeric"
+              >
+              </TextInput>
+              <TouchableOpacity style={[styles.btnOperation, styles.viewPage]} onPress={this.plusNumberPage}>
+                <Text>+</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ImageBackground>
+      </View>
+    )
+  }
 }
-
-export default connect()(Notification);
+const mapDispatchToProps = {
+  getnotification,
+};
+function mapStateToProps(state) {
+  return {
+    listNotification: state.getnotification.data,
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Notification);
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    imageBackground: {
-        flex: 1,
-        width: '100%',
-        justifyContent: 'center',
-        // resizeMode: "cover",
-        alignItems: 'center',
-    },
-    appbar: {
-        flex: 1,
-        backgroundColor: 'white',
-        elevation: 7,  
-        borderRadius: 20,
-        marginTop: '3%',
-    },  
-    container_child: {
-        flex: 9, 
-        width: '100%',
-        height: '100%',
-    },
-    dashboard: {
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
-        borderBottomWidth: 1,
-        borderBottomColor: 'black',
-    },
-    iconList: {
-        fontSize:25,
-        fontWeight: 'bold',
-        marginRight: 5,
-        marginTop: 10,
-    },
-    textDashboard: {
-        fontWeight: 'bold',
-        fontSize: 30,
-        marginTop: 10,
-    },
-    students: {
-        marginTop: 10,
-        marginLeft: 60,
-        marginRight: 60,
-        backgroundColor: '#8a2be2',
-        borderRadius: 20,
-        elevation: 7,
-    },
-    teachers: {
-        marginTop: 10,
-        marginLeft: 60,
-        marginRight: 60,
-        backgroundColor: 'blue',
-        borderRadius: 20,
-        elevation: 7,
-    },
-    rooms: {
-        marginTop: 10,
-        marginLeft: 60,
-        marginRight: 60,
-        backgroundColor: '#32cd32',
-        borderRadius: 20,
-        elevation: 6,
-    },
-    events: {
-        marginTop: 10,
-        marginLeft: 60,
-        marginRight: 60,
-        backgroundColor: '#ff69b4',
-        borderRadius: 20,
-        elevation: 6,
-    },
-    numbers: {
-        margin: 10,
-        color: 'white',
-        fontSize: 25,
-        fontWeight: 'bold',
-    },
-    bottom: {
-        flexDirection: 'row',
-    },
-    left: {
-        marginLeft: 10,
-        marginBottom: 10,
-        flex: 2,
-    },
-    total: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 18,
-    },
-    last: {
-        color: 'white',
-        fontSize: 15,
-    },
-    icon: {
-        flex: 1,
-        textAlign: 'center',
-        fontSize: 30,
-        color: 'white',
-    }
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  imageBackground: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    resizeMode: "cover",
+    alignItems: 'center',
+  },
+  appBar: {
+    flex: 1,
+  },
+  container_child: {
+    flex: 9,
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  flatlist: {
+    elevation: 7,
+    borderRadius: 20,
+    backgroundColor: 'white',
+    width: '90%',
+    marginBottom: '2%',
+  },
+  item: {
+    padding: 20,
+    marginVertical: 8,
+    marginHorizontal: 16,
+  },
+  header: {
+    textAlign: 'center',
+    fontSize: 20,
+  },
+  item: {
+    marginLeft: 20,
+    marginRight: 20,
+    backgroundColor: 'yellow',
+    borderRadius: 15,
+    marginBottom: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconitem: {
+    padding: 5,
+    fontSize: 15,
+  },
+  title: {
+    padding: 5,
+    fontSize: 15,
+  },
+  flexRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  viewPage: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inputPage: {
+    width: 50,
+    height: 30,
+    marginLeft: 5,
+    marginRight: 5,
+    color: 'black',
+    padding: 5,
+    textAlign: 'center',
+    backgroundColor: 'white',
+  },
+  btnOperation: {
+    width: 30,
+    height: 30,
+    backgroundColor: 'gray',
+  }
 });
