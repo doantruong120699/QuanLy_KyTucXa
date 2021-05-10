@@ -15,21 +15,21 @@ import ChangeProfile from './changeprofile/ChangeProfile';
 import Notification from './notification/Notification';
 import Schedule from './staff/Schedule';
 
-export { 
-    Login, 
-    ChangePassword, 
-    ForgotPassword, 
-    AppBar, 
-    ShowAllRoom, 
-    Dashboard, 
-    Avatar, 
-    HomePage, 
-    ProfileSV, 
-    ProfileNV, 
-    AllStudent,
-    AllStaff, 
-    ChangeProfile,
-    Notification,
-    RoomDetail,
-    Schedule,
+export {
+  Login,
+  ChangePassword,
+  ForgotPassword,
+  AppBar,
+  ShowAllRoom,
+  Dashboard,
+  Avatar,
+  HomePage,
+  ProfileSV,
+  ProfileNV,
+  AllStudent,
+  AllStaff,
+  ChangeProfile,
+  Notification,
+  RoomDetail,
+  Schedule,
 };

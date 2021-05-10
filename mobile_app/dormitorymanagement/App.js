@@ -13,7 +13,7 @@ class App extends Component {
       <Provider store={store}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="Schedule"
+            initialRouteName="Login"
             screenOptions={{
               headerShown: false,
             }}>
@@ -24,6 +24,7 @@ class App extends Component {
             <Stack.Screen name="ChangePassword" component={ChangePassword} />
             <Stack.Screen name="ChangeProfile" component={ChangeProfile} />
             <Stack.Screen name="ShowAllRoom" component={ShowAllRoom} />
+            <Stack.Screen name="RoomDetail" component={RoomDetail} />
             <Stack.Screen name="Schedule" component={Schedule} />
           </Stack.Navigator>
         </NavigationContainer>
