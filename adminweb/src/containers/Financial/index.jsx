@@ -7,19 +7,19 @@ import "react-tabs/style/react-tabs.css";
 
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import WaterElectrical from "./WaterElectrical";
+import Budget from "./Budget";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function Financial() {
   return (
     <div style={{ fontSize: "30px" }}>
       <Tabs>
-        <TabList style={{ borderBottom: "none",marginBottom:"50px" }}>
+        <TabList style={{ borderBottom: "none", marginBottom: "50px" }}>
           <Tab>Thu Chi</Tab>
           <Tab>Tiền Điện Nước</Tab>
         </TabList>
         <TabPanel>
-          <div style={{ color: "red" }}>
-            Sorry các bạn nhưng trong cái này chưa có clq gì cả :D
-          </div>{" "}
+          <Budget />
         </TabPanel>
         <TabPanel>
           <WaterElectrical />

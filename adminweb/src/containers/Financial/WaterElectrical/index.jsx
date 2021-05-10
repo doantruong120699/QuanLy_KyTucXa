@@ -114,7 +114,7 @@ function CircularProgressWithLabel(props) {
         </Box>
         <Box position="absolute" bottom={5}>
           <Typography variant="h3" component="div" color="textSecondary">
-            {props.name}
+            {`Khu ${props.name}`}
           </Typography>
         </Box>
       </Box>
@@ -136,169 +136,170 @@ export default function WaterElectrical() {
   const [data, setData] = useState([
     {
       id: 1,
-      name: "Khu A",
+      name: "A",
       room: [
         {
-          name: "A101",
+          name: "101",
           isPaid: true,
         },
         {
-          name: "A102",
+          name: "102",
           isPaid: false,
         },
         {
-          name: "A103",
+          name: "103",
           isPaid: true,
         },
         {
-          name: "A104",
+          name: "104",
           isPaid: false,
         },
         {
-          name: "A201",
+          name: "201",
           isPaid: true,
         },
         {
-          name: "A202",
+          name: "202",
           isPaid: false,
         },
         {
-          name: "A203",
+          name: "203",
           isPaid: false,
         },
         {
-          name: "A204",
+          name: "204",
           isPaid: true,
         },
         {
-          name: "A301",
+          name: "301",
           isPaid: true,
         },
         {
-          name: "A302",
+          name: "302",
           isPaid: false,
         },
         {
-          name: "A303",
+          name: "303",
           isPaid: true,
         },
         {
-          name: "A304",
+          name: "304",
           isPaid: true,
         },
       ],
     },
     {
       id: 2,
-      name: "Khu B",
+      name: "B",
       room: [
         {
-          name: "B101",
+          name: "101",
           isPaid: false,
         },
         {
-          name: "B102",
+          name: "102",
           isPaid: false,
         },
         {
-          name: "B103",
+          name: "103",
           isPaid: true,
         },
         {
-          name: "B104",
+          name: "104",
           isPaid: true,
         },
         {
-          name: "B201",
+          name: "201",
           isPaid: false,
         },
         {
-          name: "B202",
+          name: "202",
           isPaid: false,
         },
         {
-          name: "B203",
+          name: "203",
           isPaid: true,
         },
         {
-          name: "B204",
+          name: "204",
           isPaid: true,
         },
         {
-          name: "B301",
+          name: "301",
           isPaid: false,
         },
         {
-          name: "B302",
+          name: "302",
           isPaid: false,
         },
         {
-          name: "B303",
+          name: "303",
           isPaid: true,
         },
         {
-          name: "B304",
+          name: "304",
           isPaid: true,
         },
       ],
     },
     {
       id: 3,
-      name: "Khu C",
+      name: "C",
       room: [
         {
-          name: "C101",
+          name: "101",
           isPaid: true,
         },
         {
-          name: "C102",
+          name: "102",
           isPaid: true,
         },
         {
-          name: "C103",
+          name: "103",
           isPaid: true,
         },
         {
-          name: "C104",
+          name: "104",
           isPaid: true,
         },
         {
-          name: "C201",
+          name: "201",
           isPaid: true,
         },
         {
-          name: "C202",
+          name: "202",
           isPaid: true,
         },
         {
-          name: "C203",
+          name: "203",
           isPaid: true,
         },
         {
-          name: "C204",
+          name: "204",
           isPaid: true,
         },
         {
-          name: "C301",
+          name: "301",
           isPaid: false,
         },
         {
-          name: "C302",
+          name: "302",
           isPaid: true,
         },
         {
-          name: "C303",
+          name: "303",
           isPaid: true,
         },
         {
-          name: "C304",
+          name: "304",
           isPaid: true,
         },
       ],
     },
   ]);
   //const [detailedRoom,setDetailedRoom]
-  const [tabSelected, setTabSelected] = useState(0);
+  const [tabSelected, setTabSelected] = useState(1);
+  const [areaSelected, setAreaSelected] = useState("");
   const [isShowTable, setIsShowTable] = useState(false);
   const [tableData, setTableData] = useState(data.filter((n) => n.id === 1));
   const [gridApi, setGridApi] = useState(null);
@@ -319,6 +320,9 @@ export default function WaterElectrical() {
       cellStyle: {
         fontSize: "20px",
         textAlign: "center",
+      },
+      cellRenderer: (param) => {
+        return `<span style='color:blue'>${param.value}</span>`;
       },
     },
     {
@@ -372,10 +376,14 @@ export default function WaterElectrical() {
     sortable: true,
     floatingFilter: true,
   };
+
   const handleClickBox = (id) => {
+    setAreaSelected(data.filter((n) => n.id === id)[0].name);
+
     if (tabSelected !== id) {
       setTabSelected(id);
       setTableData(data.filter((n) => n.id === id));
+      //console.log("AAAA", data.filter((n) => n.id === id)[0].name);
       setIsShowTable(true);
     } else setIsShowTable(!isShowTable);
   };
@@ -390,6 +398,7 @@ export default function WaterElectrical() {
       transform: "translate(-50%, -50%)",
     },
   };
+
   return (
     <Box paddingRight={15} style={{ width: "100%" }}>
       <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
@@ -410,7 +419,7 @@ export default function WaterElectrical() {
                 paid={paid}
                 unpaid={unpaid}
                 percentage={((paid.length / array.length) * 100).toFixed(2)}
-                availabeRoom={n.availableRoom}
+                availableRoom={n.availableRoom}
                 onClick={() => {
                   handleClickBox(n.id);
                 }}
@@ -421,6 +430,13 @@ export default function WaterElectrical() {
       </Grow>
       <Grow in={isShowTable} timeout={500} style={{ transformOrigin: "0 0 0" }}>
         <div className={"dataTable"}>
+          <div
+            style={{
+              margin: "20px 0 20px 0",
+              fontSize: "40px",
+            }}
+          >{`Khu ${areaSelected}`}</div>
+
           <div className={"ag-theme-alpine grid"}>
             <AgGridReact
               animateRows
