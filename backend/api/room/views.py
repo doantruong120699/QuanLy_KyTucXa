@@ -104,7 +104,7 @@ class RoomViewSet(viewsets.ModelViewSet):
             query |= Q(area__name__icontains=area)
 
         if name and len(name) > 0:
-            words = re.split(r"[-;,.\s]\s*", area)
+            words = re.split(r"[-;,.\s]\s*", name)
             for word in words:
                 query |= Q(name__icontains=word)
 
