@@ -10,6 +10,7 @@ from collections import OrderedDict
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets
+import re
 
 from api.models import *
 from .serializers import *
@@ -34,6 +35,15 @@ class NhanVienViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = User.objects.filter(groups__name=nhanvien_group).order_by('id')
+
+        keyword = self.request.GET.get('keyword')
+        if keyword and len(keyword) > 0:
+            words = re.split(r"[-;,.\s]\s*", keyword)
+            query = Q()
+            for word in words:
+                query |= Q(first_name__icontains=word)
+                query |= Q(last_name__icontains=word)
+            queryset=queryset.filter(query).distinct()
                    
         page = self.paginate_queryset(queryset)
         if page is not None:
