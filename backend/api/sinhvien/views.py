@@ -11,6 +11,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets
 import re
+from django.http import JsonResponse
+import json
 
 from api.models import *
 from .serializers import *
@@ -18,6 +20,7 @@ from api.serializers import *
 from api import status_http
 from api.permissions import *
 sinhvien_group = 'sinhvien_group'
+nhanvien_group = 'nhanvien_group'
 
 class SinhVienViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -81,3 +84,37 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Profile Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
+    @action(methods=["GET"], detail=False, url_path="dashboard", url_name="dashboard")
+    def dashboard(self, request, *args, **kwargs):
+        try:
+            data = {}
+            dt = datetime.datetime.today()
+            #  ====== Student ======
+            sinhvien_queryset = User.objects.filter(groups__name=sinhvien_group)
+            sinhvien_pre_month = sinhvien_queryset.filter(date_joined__month=dt.month-1)
+            sinhvien_cur_month = sinhvien_queryset.filter(date_joined__month=dt.month)
+            sinhvien = {}
+            sinhvien['total'] = sinhvien_queryset.count()
+            sinhvien['pre-month'] = sinhvien_pre_month.count()
+            sinhvien['cur-month'] = sinhvien_cur_month.count()
+            data['student'] = sinhvien
+            # ======Staff=========
+            staff_queryset = User.objects.filter(groups__name=nhanvien_group)
+            staff_pre_month = staff_queryset.filter(date_joined__month=dt.month-1)
+            staff_cur_month = staff_queryset.filter(date_joined__month=dt.month)
+            staff = {}
+            staff['total'] = staff_queryset.count()
+            staff['pre-month'] = staff_pre_month.count()
+            staff['cur-month'] = staff_cur_month.count()
+            data['staff'] = staff
+            # ======Room==========
+            room_queryset = Room.objects.all()
+            room = {}
+            room['total'] = room_queryset.count()
+            data['room'] = room
+            data['room-available'] = room_queryset.filter(number_now__lte = 8).count()
+            return Response(data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            return Response({"status":"Fail"}, status=status.HTTP_200_OK)
