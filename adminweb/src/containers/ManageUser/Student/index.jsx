@@ -10,7 +10,8 @@ import {
   withStyles,
 } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-
+import Box from "@material-ui/core/Box";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 import "./styles.css";
 import React, { useState } from "react";
 import ReactModal from "react-modal";
@@ -429,7 +430,7 @@ export default function Student() {
   const AddButton = withStyles((theme) => ({
     root: {
       width: "100px",
-      marginRight:"20px"
+      marginRight: "20px",
     },
   }))(Button);
   const DeleteButton = withStyles((theme) => ({
@@ -547,9 +548,37 @@ export default function Student() {
       return null;
     },
   };
-
+  const dataNotification = [
+    {
+      id: 1,
+      request: "requestRoom@demailam.com",
+      roomRequested: 101,
+      area: "A",
+      createdDate: "05/09/2021",
+    },
+  ];
   return (
     <div className="style-background-container">
+      <Box>
+        <Box
+        className={"notification"}
+          display={dataNotification.length > 0 ? "block" : "none"}
+          boxShadow={1}
+          borderRadius={5}
+          backgroundColor={"palevioletred"}
+          marginBottom={5}
+          color="red"
+          width={350}
+          textAlign="center"
+          right={5}
+          style={{cursor:"pointer"}}
+        >
+          <NotificationsIcon />
+          <span
+            style={{ marginLeft: "5px" }}
+          >{`Có ${dataNotification.length} yêu cầu mới `}</span>
+        </Box>
+      </Box>
       {dataArea &&
         dataArea.map((area, index) => {
           return (
@@ -584,7 +613,7 @@ export default function Student() {
                         <div
                           style={{
                             textAlign: "center",
-                            marginTop:"20px"
+                            marginTop: "20px",
                           }}
                         >
                           <Button
@@ -594,7 +623,6 @@ export default function Student() {
                           >
                             Thêm người
                           </Button>
-                         
                         </div>
                       </div>
                     </ReactModal>

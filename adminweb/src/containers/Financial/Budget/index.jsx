@@ -166,6 +166,19 @@ export default function Budget() {
       },
     },
     {
+      name: "price",
+      label: "Giá tiền",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value) =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value),
+      },
+    },
+    {
       name: "createdDateNumber",
       label: "Ngày",
       options: {
@@ -274,9 +287,7 @@ export default function Budget() {
         className={"budget-table"}
         style={{ marginTop: "20px", position: "sticky" }}
       >
-        <Box
-          component="div"
-        >
+        <Box component="div">
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
               title={"Account List"}

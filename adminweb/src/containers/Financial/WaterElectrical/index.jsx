@@ -372,6 +372,7 @@ export default function WaterElectrical() {
   const defaultColDef = {
     flex: 1,
     minWidth: 150,
+
     filter: true,
     sortable: true,
     floatingFilter: true,
@@ -449,6 +450,8 @@ export default function WaterElectrical() {
               getRowNodeId={(data) => data.name}
               onGridReady={onGridReady}
               rowData={tableData[0].room}
+              paginationAutoPageSize={true}
+
             />
           </div>
         </div>
