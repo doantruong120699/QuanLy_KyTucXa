@@ -187,11 +187,16 @@ class Shift(models.Model):
     end_at = models.TimeField(null=True, blank=True)
     slug = models.CharField(max_length=255, null=True, unique=True)
 
+    ORDER_CHOICES = []
+    for r in range(1, 22):
+        ORDER_CHOICES.append((r,r))
+    order = models.IntegerField(_('order'), choices=ORDER_CHOICES, null=True, blank=True)
+
     class Meta:
-        ordering = ('id',)
+        ordering = ('order',)
 
     def __str__(self):
-        return self.name + ' - ' +  self.weekdays
+        return self.name + ' - ' +  self.get_weekdays_display()
 
 class DailySchedule(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
