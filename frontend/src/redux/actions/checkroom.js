@@ -1,18 +1,21 @@
 import * as types from "../constants";
 import store from "../store";
-export async function getRooms(resolve = () => {}) {
+export async function getRooms(params, resolve = () => {}) {
   store.dispatch({
     type: types.GET_ROOMS_API,
   });
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/rooms/get-all/", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
+    const response = await fetch(
+      `http://127.0.0.1:8000/api/rooms/get-all/?${params}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
     const data = await response.json();
     resolve(data);
     store.dispatch({

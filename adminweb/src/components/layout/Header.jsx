@@ -1,5 +1,4 @@
 import User from "./User";
-import { useSelector } from "react-redux";
 
 const Header = () => {
   return (

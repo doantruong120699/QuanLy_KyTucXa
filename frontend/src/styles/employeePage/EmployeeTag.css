@@ -1,15 +1,7 @@
-
 .style-avatar-container {
   position: relative;
+  cursor: pointer;
 }
-.style-more-detail {
-  position: absolute;
-  top: 0;
-  right: 0;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-}
-.style-more-detail:hover i {
-  color: #e5e5e5;
+.style-employee-tag:hover {
+  box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
 }

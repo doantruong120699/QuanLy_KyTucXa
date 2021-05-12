@@ -13,7 +13,7 @@ function CircularProgressWithLabel(props) {
         display="inline-flex"
         boxShadow={2}
         height={450}
-        width={400}
+        width={300}
         justifyContent="center"
         marginRight={"20px"}
         marginBottom={"20px"}
@@ -145,12 +145,13 @@ export default function ManageUser() {
   return (
     <Grow in={true} timeout={1000} style={{ transformOrigin: "10 10 10" }}>
       <Box style={{ transform: "scale(1)" }}>
-        {data.map((n) => {
+        {data.map((value, index) => {
           return (
             <CircularProgressWithLabel
-              name={n.name}
-              allRoom={n.maxRoom}
-              availabeRoom={n.availableRoom}
+              key={index}
+              name={value.name}
+              allRoom={value.maxRoom}
+              availabeRoom={value.availableRoom}
             />
           );
         })}

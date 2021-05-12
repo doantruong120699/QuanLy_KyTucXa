@@ -110,3 +110,35 @@ export async function getSchedule(week, resolve = () => {}) {
     });
   }
 }
+
+export async function updateProfile(profile, resolve = () => {}) {
+  console.log(profile);
+  store.dispatch({
+    type: types.POST_UPDATE_MY_PROFILE_API,
+  });
+  try {
+    const response = await fetch(
+      "http://127.0.0.1:8000/api/account/update-user-profile/",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(profile),
+      }
+    );
+    const data = await response.json();
+    resolve(data);
+    store.dispatch({
+      payload: data,
+      type: types.POST_UPDATE_MY_PROFILE_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.POST_UPDATE_MY_PROFILE_API_FAIL,
+    });
+  }
+}

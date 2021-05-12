@@ -10,7 +10,7 @@
 }
 .grid {
   height: 600px;
-  width: 1250px;
+  width: 100%;
 }
 .ag-header-row:first-child {
   background-color: #5d4954;
@@ -28,6 +28,5 @@
 }
 .water-title {
   font-weight: 700 !important;
-  font-size: 40px !important;
-  margin-bottom: 70px;
+  font-size: 24px !important;
 }

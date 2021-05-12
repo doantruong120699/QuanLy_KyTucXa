@@ -1,26 +1,61 @@
 import React, { useEffect, useState } from "react";
-import { Router, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { getStudents } from "../redux/actions/studentPage";
 import { actFetchTitleNavigation } from "../redux/actions/dashboard";
 import * as Titlelist from "../utilities/constants/titles";
 import * as ROUTER from "../utilities/constants/router";
+import Pagination from "../components/common/Pagination";
+import PostFilterForm from "../components/common/PostFilterForm";
+import queryString from "query-string";
+
 const StudentPage = () => {
   const dispatch = useDispatch();
 
   const history = useHistory();
+
   const [studentListState, setStudentList] = useState();
 
+  const [pagination, setPagination] = useState({
+    page: 1,
+    page_size: 10,
+    totals: 11,
+  });
+
+  const [filter, setFilter] = useState({
+    page: 1,
+  });
+
+  function handlePageChange(newPage) {
+    setFilter({ ...filter, page: newPage });
+  }
+
+  function handleFilterChange(newFilters) {
+    setFilter({ ...filter, page: 1, title_like: newFilters.searchTerm });
+  }
+
   useEffect(() => {
+    const paramsString = queryString.stringify(filter);
+
     dispatch(actFetchTitleNavigation(Titlelist.NAVIGATION_TITLE[2].title));
-    getStudents((output) => {
+
+    getStudents(paramsString, (output) => {
       if (output) {
+        const pagination = {
+          page: output.current_page,
+          page_size: output.page_size,
+          totals: output.totals,
+        };
         setStudentList(output);
+        setPagination(pagination);
       }
     });
   }, []);
   return (
     <div className="style-background-container">
+      <div className="col col-full">
+        <PostFilterForm onSubmit={handleFilterChange} />
+      </div>
       {studentListState && (
         <div>
           <table className="col col-full style-lg-box bg-color-white">
@@ -63,12 +98,7 @@ const StudentPage = () => {
                       {student.first_name}
                     </td>
                     <td className="col col-10 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
-                      <input
-                        type="checkbox"
-                        value={student.profile.gender}
-                        className="style-gender-checkbox"
-                        defaultChecked={student.profile.gender}
-                      />
+                      {student.profile.gender ? "Nam" : "Nữ"}
                     </td>
                     <td className="col col-4 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
                       {student.profile.faculty.name}
@@ -94,6 +124,9 @@ const StudentPage = () => {
           </table>
         </div>
       )}
+      <div className="col col-full">
+        <Pagination pagination={pagination} onPageChange={handlePageChange} />
+      </div>
     </div>
   );
 };

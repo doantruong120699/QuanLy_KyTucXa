@@ -1,6 +1,6 @@
-import * as AlertMessage from "../../utilities/constants/AlertMessage";
+import * as AlertMessage from "../constants/AlertMessage";
 import moment from "moment";
-function getHandledDataRender(origin) {
+function getHandledEmployeeDataRender(origin) {
   return {
     firstName: {
       value: origin.first_name,
@@ -33,19 +33,15 @@ function getHandledDataRender(origin) {
       value: moment(new Date(origin.profile.birthday)).format("YYYY-MM-DD"),
       title: "Ngày sinh",
       type: "date",
-      validateType: null,
       isValid: true,
       isHidden: true,
-      errorMessage: "",
     },
     address: {
       value: origin.profile.address,
       title: "Địa chỉ",
       type: "text",
-      validateType: null,
       isValid: true,
       isHidden: true,
-      errorMessage: "",
     },
     phone: {
       value: origin.profile.phone,
@@ -74,20 +70,14 @@ function getHandledDataRender(origin) {
       },
     },
     faculty: {
-      title: "Khoa",
       value: origin.profile.faculty ? origin.profile.faculty.name : null,
-      isValid: true,
-      isHidden: true,
     },
     grade: {
-      title: "Lớp",
       value: origin.profile.my_class ? origin.profile.my_class.name : null,
-      isValid: true,
-      isHidden: true,
     },
   };
 }
-function getRawDataRender(data) {
+function getRawEmployeeDataRender(data) {
   return {
     email: data.email.value,
     first_name: data.firstName.value,
@@ -98,10 +88,8 @@ function getRawDataRender(data) {
       birthday: data.birthday.value,
       identify_card: data.identification.value,
       phone: data.phone.value,
-      faculty: data.faculty.name,
-      my_class: data.grade.name,
     },
   };
 }
 
-export { getHandledDataRender, getRawDataRender };
+export { getHandledEmployeeDataRender, getRawEmployeeDataRender };
