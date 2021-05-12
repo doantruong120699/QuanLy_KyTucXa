@@ -156,7 +156,7 @@ REST_FRAMEWORK = {
     ),
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_PAGINATION_CLASS': 'api.custom_pagination.CustomPagination',
-    'PAGE_SIZE': 10,    
+    'PAGE_SIZE': 20,    
     # 
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
 }

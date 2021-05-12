@@ -94,24 +94,16 @@ class RoomViewSet(viewsets.ModelViewSet):
     @action(methods=["GET"], detail=False, url_path="get_all_room", url_name="get_all_room")
     def get_all_room(self, request, *args, **kwargs):
         queryset = Room.objects.all()
-
-        area = self.request.GET.get('area')
-        name = self.request.GET.get('name')
-        number = self.request.GET.get('number')
-        
-        query = Q()
-        if area and len(area) > 0:
-            query |= Q(area__name__icontains=area)
-
-        if name and len(name) > 0:
-            words = re.split(r"[-;,.\s]\s*", name)
+        keyword = self.request.GET.get('keyword')
+        if keyword and len(keyword) > 0:
+            words = re.split(r"[-;,.\s]\s*", keyword)
+            query = Q()
             for word in words:
-                query |= Q(name__icontains=word)
+                query |= Q(area__name__icontains=word) | Q(name__icontains=word)
+                if word.isnumeric():
+                    query |= Q(number_now=int(word))
+            queryset=queryset.filter(query).distinct()
 
-        if number and len(number) > 0:
-            query |= Q(number_now=number)
-            
-        queryset=queryset.filter(query).distinct()
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
