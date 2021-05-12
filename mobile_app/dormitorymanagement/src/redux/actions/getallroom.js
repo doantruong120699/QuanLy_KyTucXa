@@ -18,7 +18,7 @@ export const getallroom = () => async (dispatch) => {
     //         type: LOGIN_SUCCESS, 
     //         payload: result.data
     //     });
-    // }
+    // }z
     // catch(e) {
     //     const msg = _.get(error.response, 'data.msg') || "Cant't connect network";
     //     dispatch({
