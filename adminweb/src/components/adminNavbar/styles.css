@@ -6,7 +6,6 @@
 }
 nav {
   display: flex;
-  justify-content: space-around;
   align-items: center;
   min-height: 8vh;
   background-color: #5d4954;
@@ -16,7 +15,8 @@ nav {
   color: aliceblue;
   text-transform: capitalize;
   letter-spacing: 5px;
-  padding-left: 0px;
+  margin-right: 400px;
+  padding-left: 50px;
 }
 .nav-links {
   display: flex;

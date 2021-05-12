@@ -54,6 +54,7 @@ const AdminNavbar = () => {
           </div>
         </div>
       </ul>
+
       <div className="burger" onClick={handleBurgerClick}>
         <div className="line1"></div>
         <div className="line2"></div>
