@@ -70,25 +70,27 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # def retrieve(self, request, **kwargs):
-    #     try:
-    #         noti = Notification.objects.get(public_id=kwargs['public_id'])
-    #         serializer = NotificationListSerializer(noti)
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
-    #     except Exception as e:
-    #         print(e)
-    #         return Response({'detail': 'Notification Not Found'}, status=status.HTTP_404_NOT_FOUND)
-
+    def retrieve(self, request, **kwargs):
+        try:
+            request_regis = Contract.objects.get(public_id=kwargs['public_id'])
+            serializer = ContractRegistationSerializer(request_regis)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, **kwargs):
         try:
             regis_request = Contract.objects.get(public_id=kwargs['public_id'])
             if regis_request.is_accepted != None:
-                return Response({'detail': 'This Request accepted!'}, status=statu.HTTP_200_OK)
+                return Response({'detail': 'This Request accepted!'}, status=status.HTTP_200_OK)
             else:
                 regis_request.is_accepted = True
                 regis_request.is_expried = False
                 regis_request.save()
+                regis_request.room.number_now = regis_request.room.number_now + 1
+                regis_request.room.save()
+
                 return Response({'detail': 'Accept Successful'}, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
@@ -102,18 +104,29 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 list_request = serializer.data.get('list_request')
                 data = {}
+                data['status'] = 'All Successful!'
+                data_accepted = []
+                data_room_full = []
                 for index, pub_id in enumerate(list_request):
                     regis_request = Contract.objects.get(public_id=pub_id)
                     if regis_request.is_accepted != None:
-                        data[index] = 'id: ' + pub_id + ' - this Request accepted!'
+                        data_accepted.append(pub_id)
                     else:
                         regis_request.is_accepted = True
                         regis_request.is_expried = False
-                        regis_request.save()
-                if data:
-                    return Response({'detail': 'Some error!', 'request-error':data}, status=status.HTTP_200_OK)
-                else:
-                    return Response({'detail': 'Accept Successful!'}, status=status.HTTP_200_OK)
+                        if regis_request.room.number_now < 8:
+                            regis_request.room.number_now = regis_request.room.number_now + 1
+                            regis_request.room.save()
+                            regis_request.save()
+                        else:
+                            data_room_full.append(pub_id)
+                if len(data_accepted) > 0:
+                    data['status'] = 'Some error!'
+                    data['request-accepted'] = data_accepted
+                if len(data_room_full) > 0:
+                    data['status'] = 'Some error!'
+                    data['room-full'] = data_room_full
+                return Response({'response': data}, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             pass

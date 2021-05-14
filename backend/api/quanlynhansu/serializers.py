@@ -7,7 +7,7 @@ from api.models import *
 from api.serializers import AreaSerializer
 from datetime import date
 from datetime import datetime
-from api.room.serializers import UserSerializer
+from api.room.serializers import *
 from api.serializers import *
 
 class NotificationListSerializer(serializers.ModelSerializer):
@@ -39,8 +39,17 @@ class ProfileSinhVienSerializer(serializers.ModelSerializer):
             'my_class',
         ]
 
+class RoomSerializer(serializers.ModelSerializer):
+    typeroom = TypeRoomSerializer(required=False)
+    area = AreaSerializer(required=False)
+
+    class Meta:
+        model = Room
+        fields = ['id', 'name', 'number_now', 'typeroom', 'area', 'status'] 
+
 class ContractRegistationSerializer(serializers.ModelSerializer):
     profile = ProfileSinhVienSerializer()
+    room = RoomSerializer()
     class Meta:
         model = Contract
         fields = [
