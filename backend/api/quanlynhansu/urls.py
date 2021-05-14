@@ -30,7 +30,13 @@ accept_registration_request = ContractRegistationViewSet.as_view({
 accept_list_request = ContractRegistationViewSet.as_view({
     'post': 'accept_list_request',
 })
-
+# =========== Schedule ===========
+schedule = DailyScheduleViewSet.as_view({
+    'post' : 'post',
+})
+update_schedule = DailyScheduleViewSet.as_view({
+    'put' : 'update',
+})
 urlpatterns = [ 
     # ========== notification
     path('notifications/', list_notification, name = 'list_notification'),
@@ -40,4 +46,7 @@ urlpatterns = [
     path('registrations/<str:public_id>/', detail_registration_room, name = 'detail_registration_room'),
     path('registrations/<str:public_id>/', accept_registration_request, name = 'accept_registration_request'),
     path('registrations/', accept_list_request, name = 'accept_list_request'),
+    # ========== Schedule ========
+    path('schedules/', schedule, name = 'schedule'),
+    path('schedules/<str:public_id>/', update_schedule, name = 'update_schedule'),
 ]
