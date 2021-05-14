@@ -16,6 +16,7 @@ from .serializers import *
 from api import status_http
 from api.permissions import *
 from django.http import JsonResponse
+import shortuuid
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
@@ -132,6 +133,43 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             pass
         return Response({'detail': 'Error!'}, status=status.HTTP_400_BAD_REQUEST)
                 
+class DailyScheduleViewSet(viewsets.ModelViewSet):
+    serializer_class = DailyScheduleSerializer
+    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+    lookup_field = 'public_id'
+
+    def get_queryset(self):
+        return DailySchedule.objects.all().order_by('-created_at')
+
+    def retrieve(self, request, **kwargs):
+        try:
+            request_regis = Contract.objects.get(public_id=kwargs['public_id'])
+            serializer = ContractRegistationSerializer(request_regis)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, *args, **kwargs):
+        serializer = DailyScheduleSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            save = serializer.create(request.data)
+            if save:
+                return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
+        return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, public_id, *args, **kwargs):
+        try:
+            dailySchedule = DailySchedule.objects.get(public_id=public_id)
+            serializer = DailyScheduleUpdateSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                update = serializer.update(validated_data=request.data, instance=dailySchedule)
+                if update:
+                    return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
+            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)        
+        except Exception as e:
+            print(e)  
+            return Response({'status': 'fail', 'notification' : 'Error'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
