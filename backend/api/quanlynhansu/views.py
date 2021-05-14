@@ -87,7 +87,7 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
                 return Response({'detail': 'This Request accepted!'}, status=status.HTTP_200_OK)
             else:
                 regis_request.is_accepted = True
-                regis_request.is_expried = False
+                regis_request.is_expired = False
                 regis_request.save()
                 regis_request.room.number_now = regis_request.room.number_now + 1
                 regis_request.room.save()
@@ -114,7 +114,7 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
                         data_accepted.append(pub_id)
                     else:
                         regis_request.is_accepted = True
-                        regis_request.is_expried = False
+                        regis_request.is_expired = False
                         if regis_request.room.number_now < 8:
                             regis_request.room.number_now = regis_request.room.number_now + 1
                             regis_request.room.save()
@@ -132,6 +132,51 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             print(e)
             pass
         return Response({'detail': 'Error!'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # ==== Deny List Request ====
+    @action(methods=["POST"], detail=False, url_path="deny_request", url_name="deny_request")
+    def deny_request(self, request, *args, **kwargs):
+        try:
+            regis_request = Contract.objects.get(public_id=kwargs['public_id'])
+            if regis_request.is_accepted != None:
+                return Response({'detail': 'This Request denied!'}, status=status.HTTP_200_OK)
+            else:
+                regis_request.is_accepted = False
+                regis_request.is_expired = True
+                regis_request.save()
+
+                return Response({'detail': 'Deny Successful'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Deny Fail'}, status=status.HTTP_404_NOT_FOUND)
+
+    # ==== Deny List Request ====
+    @action(methods=["POST"], detail=False, url_path="deny_list_request", url_name="deny_list_request")
+    def deny_list_request(self, request, *args, **kwargs):
+        try:
+            serializer = ListRequestSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                list_request = serializer.data.get('list_request')
+                data = {}
+                data['status'] = 'All Successful!'
+                data_denied = []
+                for index, pub_id in enumerate(list_request):
+                    regis_request = Contract.objects.get(public_id=pub_id)
+                    if regis_request.is_accepted != None:
+                        data_denied.append(pub_id)
+                    else:
+                        regis_request.is_accepted = False
+                        regis_request.is_expired = True
+                        regis_request.save()
+                if len(data_denied) > 0:
+                    data['status'] = 'Some error!'
+                    data['request-denied'] = data_denied
+                return Response({'response': data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            pass
+        return Response({'detail': 'Error!'}, status=status.HTTP_400_BAD_REQUEST)
+    
                 
 class DailyScheduleViewSet(viewsets.ModelViewSet):
     serializer_class = DailyScheduleSerializer
