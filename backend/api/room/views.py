@@ -185,7 +185,6 @@ class ContractViewSet(viewsets.ModelViewSet):
             save = serializer.create(request.data)
             if save:
                 return Response({'status': 'successful', 'notification' : 'Save successful!'}, status=status.HTTP_201_CREATED)
-        print(list(serializer.errors.values())[0][0])
         return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
 
     # ==== Get detail contract ====
