@@ -60,7 +60,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
                     return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_200_OK)
             return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
         except:
-            return Response({'status': 'fail', 'notification' : 'Server Error!'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'status': 'fail', 'notification' : 'Not Found Notification!'}, status=status.HTTP_404_NOT_FOUND)
     
     def destroy(self, request, public_id, format=None):
         try:
