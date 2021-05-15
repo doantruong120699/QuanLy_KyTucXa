@@ -12,18 +12,66 @@ from api.serializers import *
 required_message = 'This Field is required!'
 
 class NotificationListSerializer(serializers.ModelSerializer):
-    created_by = UserSerializer()
+    public_id = serializers.CharField(required=False)
+    title = serializers.CharField(required=True)
+    content = serializers.CharField(required=True)
+    is_display = serializers.BooleanField(required=False)
+
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
     class Meta:
         model = Notification
         fields = [
             'public_id',
-            'created_by',
             'title',
             'content',
-            'created_at',
+            'is_display',
             'last_update',
+            'created_at',
+            'created_by',
             'updated_by',
         ]
+
+    # Get current user login
+
+    def _current_user(self):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
+        return False
+
+    def create(self, validated_data):
+        try:
+            current_user = self._current_user()
+            model = Notification.objects.create(
+                public_id=shortuuid.uuid(),
+                title=validated_data['title'],
+                content=validated_data['content'],
+                created_by=current_user
+            )
+            is_display = validated_data['is_display']
+            if is_display:
+                model.is_display = is_display
+            model.save()
+            return True
+        except:
+            pass
+        return False
+
+    def update(self, instance, validated_data):
+        try:
+            current_user = self._current_user()
+            instance.title = validated_data.get('title', instance.title)
+            instance.content = validated_data.get('content', instance.content)
+            instance.is_display = validated_data.get('is_display', instance.is_display)
+            print(current_user)
+            instance.updated_by = current_user
+            instance.save()
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
 
 class ProfileSinhVienSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
