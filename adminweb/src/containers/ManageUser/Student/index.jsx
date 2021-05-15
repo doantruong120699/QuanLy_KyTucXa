@@ -423,9 +423,12 @@ export default function Student() {
     },
   ];
   const history = useHistory();
+  const [deletePeople, setDeletePeople] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalNotiVisible, setIsModalNotiVisible] = useState(false);
   const hideModal = () => {
     setIsModalVisible(false);
+    setIsModalNotiVisible(false);
   };
   const AddButton = withStyles((theme) => ({
     root: {
@@ -500,6 +503,9 @@ export default function Student() {
       activeDate: "22/5/2020",
     },
   ];
+  const handleDeletePeople = (params) => {
+    console.log("params", params);
+  };
   const convertDataForTable = (data) => {
     return data.map((n) => ({
       name: n.lastName + " " + n.firstName,
@@ -532,20 +538,41 @@ export default function Student() {
         sort: true,
       },
     },
+    {
+      name: "",
+      label: "",
+      options: {
+        customBodyRender: (value) => {
+          return (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={(params) => handleDeletePeople}
+              style={{ marginLeft: "20px" }}
+            >
+              Xoá
+            </Button>
+          );
+        },
+      },
+    },
   ];
   const handleClickAddPeople = () => {
     console.log("Add people");
   };
-  const handleClickDeletePeople = () => {
-    console.log("Delete people");
-  };
+
   const options = {
     filterType: "textField",
     customFooter: () => {
       return;
     },
+    selectableRows: false,
     customHeadRender: () => {
       return null;
+    },
+    onRowClick: (params,rowMeta) => {
+      console.log("params", params);
+      console.log("event", rowMeta);
     },
   };
   const dataNotification = [
@@ -557,11 +584,77 @@ export default function Student() {
       createdDate: "05/09/2021",
     },
   ];
+  const columnsNoti = [
+    {
+      name: "id",
+      label: "ID",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "request",
+      label: "Email người gửi",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "roomRequested",
+      label: "Phòng",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "area",
+      label: "Khu",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "createdDate",
+      label: "Ngày gửi yêu cầu",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "",
+      label: "",
+      options: {
+        customBodyRender: (value) => {
+          return (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={(params) => handleClickAddPeople}
+              style={{ marginLeft: "20px" }}
+            >
+              Xác nhận
+            </Button>
+          );
+        },
+      },
+    },
+  ];
+  const handleClickAddPeopleWithParams = (params) => {
+    console.log("AAAAAAAA", params);
+  };
+  const handleOpenNotiModal = () => {
+    setIsModalNotiVisible(true);
+  };
   return (
     <div className="style-background-container">
       <Box>
         <Box
-        className={"notification"}
+          className={"notification"}
           display={dataNotification.length > 0 ? "block" : "none"}
           boxShadow={1}
           borderRadius={5}
@@ -571,7 +664,8 @@ export default function Student() {
           width={350}
           textAlign="center"
           right={5}
-          style={{cursor:"pointer"}}
+          style={{ cursor: "pointer" }}
+          onClick={handleOpenNotiModal}
         >
           <NotificationsIcon />
           <span
@@ -579,6 +673,22 @@ export default function Student() {
           >{`Có ${dataNotification.length} yêu cầu mới `}</span>
         </Box>
       </Box>
+      <ReactModal
+        isOpen={isModalNotiVisible}
+        onRequestClose={hideModal}
+        style={customStyles}
+      >
+        <div>
+          <MuiThemeProvider theme={getMuiTheme()}>
+            <MUIDataTable
+              title={"Yêu cầu vào phòng"}
+              data={dataNotification}
+              columns={columnsNoti}
+              options={options}
+            />
+          </MuiThemeProvider>
+        </div>
+      </ReactModal>
       {dataArea &&
         dataArea.map((area, index) => {
           return (
@@ -619,7 +729,7 @@ export default function Student() {
                           <Button
                             variant="contained"
                             color="primary"
-                            onClick={handleClickAddPeople}
+                            onClick={(params) => handleClickAddPeopleWithParams}
                           >
                             Thêm người
                           </Button>

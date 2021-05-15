@@ -29,7 +29,6 @@ class PaymentMethodSerializer(serializers.ModelSerializer):
         model = PaymentMethod
         fields = ['id', 'name', 'bank_number'] 
 
-
 class RoomListSerializer(serializers.ModelSerializer):
     typeroom = TypeRoomSerializer(required=False)
     area = AreaSerializer(required=False)
@@ -142,8 +141,6 @@ class ContractSerializer(serializers.ModelSerializer):
         if request:
             return request.user
         return False
-
-
 
 class ContractRegistationSerializer(serializers.ModelSerializer):
     class Meta:

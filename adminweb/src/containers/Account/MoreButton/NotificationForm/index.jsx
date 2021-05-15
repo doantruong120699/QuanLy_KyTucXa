@@ -11,10 +11,10 @@ import {
 } from "@material-ui/core/styles";
 
 import TextField from "@material-ui/core/TextField";
-import { getAuth } from "../../../../../utilities/helper";
+import { getAuth } from "../../../../utilities/helper";
 import { useState } from "react";
 
-export default function NotificationForm() {
+export default function NotificationForm(rowUser) {
   const user = getAuth();
   const [dataSend, setDataSend] = useState({
     from: "",
@@ -22,7 +22,7 @@ export default function NotificationForm() {
     notification: "",
   });
   const handleClick = () => {
-    console.log("Hello");
+    console.log("Hello", rowUser);
   };
   const SendButton = withStyles((theme) => ({
     root: {
@@ -61,6 +61,8 @@ export default function NotificationForm() {
           label="Đến"
           name={"to"}
           onChange={handleChange}
+          defaultValue={rowUser.rowUser.account}
+          disabled
           placeholder="Email người nhận"
           variant="outlined"
           size="small"
