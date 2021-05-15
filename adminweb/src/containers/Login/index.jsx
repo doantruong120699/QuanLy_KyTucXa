@@ -93,7 +93,7 @@ const Login = () => {
       LoginUser(user, (output) => {
         if (output && output.access) {
           setAuth(output.access);
-          history.push(ROUTER.ROUTE_MANAGE_USER);
+          history.push(ROUTER.ROUTE_OVERVIEW);
         } else {
           const newAccountState = { ...errorState.accountTxt };
           newAccountState.isInputValid = false;

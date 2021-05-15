@@ -10,6 +10,8 @@ from collections import OrderedDict
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import viewsets
+import re
+from datetime import datetime, timedelta
 
 from api.models import *
 from .serializers import *
@@ -34,6 +36,15 @@ class NhanVienViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = User.objects.filter(groups__name=nhanvien_group).order_by('id')
+
+        keyword = self.request.GET.get('keyword')
+        if keyword and len(keyword) > 0:
+            words = re.split(r"[-;,.\s]\s*", keyword)
+            query = Q()
+            for word in words:
+                query |= Q(first_name__icontains=word)
+                query |= Q(last_name__icontains=word)
+            queryset=queryset.filter(query).distinct()
                    
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -113,28 +124,28 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
     
     def day_week(self, i):
         switcher={
-                'Mon':0,
-                'Tue':1,
-                'Wed':2,
-                'Thu':3,
-                'Fri':4,
-                'Sat':5,
-                'Sun':6,
+                'Sun':0,
+                'Mon':1,
+                'Tue':2,
+                'Wed':3,
+                'Thu':4,
+                'Fri':5,
+                'Sat':6,
             }
         return switcher.get(i,"Invalid day of week")
 
     def list(self, request, *args, **kwargs):
-        _list = DailySchedule.objects.filter(week=kwargs['week']).order_by('id')
+        _list = DailySchedule.objects.filter(week=kwargs['week']).order_by('shift__order')
         serializer = DailyScheduleListSerializer(_list, many=True)
         data = serializer.data
 
         weekday = serializer.data[0]['shift']['weekdays']
         d =  str(serializer.data[0]['year'])+"-"+'W'+str(serializer.data[0]['week'])
-        monday = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w")
+        sunday = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w") - timedelta(days=1)
 
         for item in range(len(data)):
             day_of_week = data[item]['shift']['weekdays']
-            day_shift = monday + datetime.timedelta(days=self.day_week(day_of_week))
+            day_shift = sunday + datetime.timedelta(days=self.day_week(day_of_week))
             data[item]['shift']['date'] = day_shift.date()
         return Response(data, status=status.HTTP_200_OK)
 

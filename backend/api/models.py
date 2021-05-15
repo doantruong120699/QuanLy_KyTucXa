@@ -16,13 +16,6 @@ def unique_slugify(instance, slug):
         unique_slug = slug + get_random_string(length=4)
     return unique_slug
 
-# ==============================
-# === Custom cities_light model ===
-class VietNamProvince(models.Model):
-    province = ProvinceEnum
-# === custom cities_light model ===
-# ==============================
-
 class Faculty(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
     slug = models.CharField(max_length=200, null=True, unique=True)  
@@ -144,8 +137,8 @@ class Contract(models.Model):
     end_at = models.DateField(null=True, blank=True)
     payment_method = models.ForeignKey(PaymentMethod, related_name = 'contract_payment_method', on_delete=models.SET_NULL, blank=True, null=True)
     
-    is_accepted = models.BooleanField(null=True)
-    is_expired = models.BooleanField(null=True)
+    is_accepted = models.BooleanField(null=True, blank=True)
+    is_expired = models.BooleanField(null=True, blank=True)
     note = models.TextField(null=True, blank=True)
     price = models.FloatField(default=0)
     is_paid = models.BooleanField(null=True)
@@ -167,7 +160,8 @@ class Notification(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     updated_by = models.ForeignKey(User, related_name = 'notification_updated_by', on_delete=models.CASCADE, blank=True, null=True)
-    
+    is_display = models.BooleanField(default=True, null=True, blank=True)
+
     def __str__(self):
         return self.title
 #  Ca truc
@@ -187,11 +181,16 @@ class Shift(models.Model):
     end_at = models.TimeField(null=True, blank=True)
     slug = models.CharField(max_length=255, null=True, unique=True)
 
+    ORDER_CHOICES = []
+    for r in range(1, 22):
+        ORDER_CHOICES.append((r,r))
+    order = models.IntegerField(_('order'), choices=ORDER_CHOICES, null=True, blank=True)
+
     class Meta:
-        ordering = ('id',)
+        ordering = ('order',)
 
     def __str__(self):
-        return self.name + ' - ' +  self.weekdays
+        return self.name + ' - ' +  self.get_weekdays_display()
 
 class DailySchedule(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
@@ -273,3 +272,25 @@ class Bill(models.Model):
     def __str__(self):
         return self.water_electrical.room.name + ' - ' + str(self.is_paid)
 
+class Service(models.Model):
+    public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(null=True, blank=True) 
+    price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    
+class TypeExpense(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(null=True, blank=True) 
+    slug = models.CharField(max_length=200, null=True, unique=True)  
+
+class Expense(models.Model):
+    public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    type_expense = models.ForeignKey(TypeExpense, related_name = 'type_expense', on_delete=models.CASCADE, blank=True, null=True)
+    description = models.TextField(null=True, blank=True) 
+    price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    user_paid = models.ForeignKey(Profile, related_name = 'expense_user_paid', on_delete=models.CASCADE, blank=True, null=True)
+    time_paid = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)

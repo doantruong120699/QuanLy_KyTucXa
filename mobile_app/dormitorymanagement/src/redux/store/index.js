@@ -7,13 +7,14 @@ import {
   changepassword, 
   getprofile, 
   allstudent, 
-  allstaff, 
-  setbackgroundcolor, 
+  allstaff,  
   getarea,
   getclass, 
   getfaculty,
   getposition,
-  changeprofile
+  changeprofile,
+  getnotification,
+  registrationroom,
 } from '../reducer/index';
 import thunkMiddleware from 'redux-thunk';
 
@@ -26,12 +27,13 @@ const AppReduces = combineReducers({
   getprofile,
   allstudent,
   allstaff,
-  setbackgroundcolor,
   getarea,
   getclass, 
   getfaculty,
   getposition,
-  changeprofile
+  changeprofile,
+  getnotification,
+  registrationroom,
 });
 
 const rootReducer = (state, action) => {
