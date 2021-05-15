@@ -16,6 +16,7 @@ from .serializers import *
 from api import status_http
 from api.permissions import *
 from django.http import JsonResponse
+import shortuuid
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
@@ -40,6 +41,35 @@ class NotificationViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
+    def post(self, request, *args, **kwargs):
+        serializer = NotificationListSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            save = serializer.create(request.data)
+            if save:
+                return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
+        return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, public_id, format=None):
+        try:
+            queryset = Notification.objects.get(public_id=public_id)
+            datas = request.data
+            serializer = NotificationListSerializer(queryset, data=datas, context={'request': request})
+            if serializer.is_valid():
+                save = serializer.save()
+                if save:
+                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_200_OK)
+            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({'status': 'fail', 'notification' : 'Not Found Notification!'}, status=status.HTTP_404_NOT_FOUND)
+    
+    def destroy(self, request, public_id, format=None):
+        try:
+            queryset = Notification.objects.get(public_id=public_id)
+            queryset.delete()
+            return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+        except:
+            return Response({'status': 'fail', 'notification' : 'Notification not found!'}, status=status.HTTP_404_NOT_FOUND)
+
     def retrieve(self, request, **kwargs):
         try:
             noti = Notification.objects.get(public_id=kwargs['public_id'])
@@ -47,7 +77,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            return Response({'detail': 'Notification Not Found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'status': 'fail', 'notification' : 'Notification not found!'}, status=status.HTTP_404_NOT_FOUND)
 
 class ContractRegistationViewSet(viewsets.ModelViewSet):
     serializer_class = ContractRegistationSerializer
@@ -86,7 +116,7 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
                 return Response({'detail': 'This Request accepted!'}, status=status.HTTP_200_OK)
             else:
                 regis_request.is_accepted = True
-                regis_request.is_expried = False
+                regis_request.is_expired = False
                 regis_request.save()
                 regis_request.room.number_now = regis_request.room.number_now + 1
                 regis_request.room.save()
@@ -113,7 +143,7 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
                         data_accepted.append(pub_id)
                     else:
                         regis_request.is_accepted = True
-                        regis_request.is_expried = False
+                        regis_request.is_expired = False
                         if regis_request.room.number_now < 8:
                             regis_request.room.number_now = regis_request.room.number_now + 1
                             regis_request.room.save()
@@ -131,7 +161,88 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             print(e)
             pass
         return Response({'detail': 'Error!'}, status=status.HTTP_400_BAD_REQUEST)
-                
+
+    # ==== Deny List Request ====
+    @action(methods=["POST"], detail=False, url_path="deny_request", url_name="deny_request")
+    def deny_request(self, request, *args, **kwargs):
+        try:
+            regis_request = Contract.objects.get(public_id=kwargs['public_id'])
+            if regis_request.is_accepted != None:
+                return Response({'detail': 'This Request denied!'}, status=status.HTTP_200_OK)
+            else:
+                regis_request.is_accepted = False
+                regis_request.is_expired = True
+                regis_request.save()
+
+                return Response({'detail': 'Deny Successful'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Deny Fail'}, status=status.HTTP_404_NOT_FOUND)
+
+    # ==== Deny List Request ====
+    @action(methods=["POST"], detail=False, url_path="deny_list_request", url_name="deny_list_request")
+    def deny_list_request(self, request, *args, **kwargs):
+        try:
+            serializer = ListRequestSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                list_request = serializer.data.get('list_request')
+                data = {}
+                data['status'] = 'All Successful!'
+                data_denied = []
+                for index, pub_id in enumerate(list_request):
+                    regis_request = Contract.objects.get(public_id=pub_id)
+                    if regis_request.is_accepted != None:
+                        data_denied.append(pub_id)
+                    else:
+                        regis_request.is_accepted = False
+                        regis_request.is_expired = True
+                        regis_request.save()
+                if len(data_denied) > 0:
+                    data['status'] = 'Some error!'
+                    data['request-denied'] = data_denied
+                return Response({'response': data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            pass
+        return Response({'detail': 'Error!'}, status=status.HTTP_400_BAD_REQUEST)
+         
+class DailyScheduleViewSet(viewsets.ModelViewSet):
+    serializer_class = DailyScheduleSerializer
+    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+    lookup_field = 'public_id'
+
+    def get_queryset(self):
+        return DailySchedule.objects.all().order_by('-created_at')
+
+    def retrieve(self, request, **kwargs):
+        try:
+            request_regis = Contract.objects.get(public_id=kwargs['public_id'])
+            serializer = ContractRegistationSerializer(request_regis)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, *args, **kwargs):
+        serializer = DailyScheduleSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            save = serializer.create(request.data)
+            if save:
+                return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
+        return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, public_id, *args, **kwargs):
+        try:
+            dailySchedule = DailySchedule.objects.get(public_id=public_id)
+            serializer = DailyScheduleUpdateSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                update = serializer.update(validated_data=request.data, instance=dailySchedule)
+                if update:
+                    return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
+            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)        
+        except Exception as e:
+            print(e)  
+            return Response({'status': 'fail', 'notification' : 'Error'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

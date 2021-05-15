@@ -160,7 +160,8 @@ class Notification(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     updated_by = models.ForeignKey(User, related_name = 'notification_updated_by', on_delete=models.CASCADE, blank=True, null=True)
-    
+    is_display = models.BooleanField(default=True, null=True, blank=True)
+
     def __str__(self):
         return self.title
 #  Ca truc
