@@ -72,7 +72,6 @@ class NotificationListSerializer(serializers.ModelSerializer):
             print(e)
             return False
 
-
 class ProfileSinhVienSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
     my_class = ClassSerializer(required=False)
