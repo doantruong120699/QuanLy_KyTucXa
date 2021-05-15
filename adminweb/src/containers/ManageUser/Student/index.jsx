@@ -423,6 +423,7 @@ export default function Student() {
     },
   ];
   const history = useHistory();
+  const [deletePeople, setDeletePeople] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalNotiVisible, setIsModalNotiVisible] = useState(false);
   const hideModal = () => {
@@ -502,6 +503,9 @@ export default function Student() {
       activeDate: "22/5/2020",
     },
   ];
+  const handleDeletePeople = (params) => {
+    console.log("params", params);
+  };
   const convertDataForTable = (data) => {
     return data.map((n) => ({
       name: n.lastName + " " + n.firstName,
@@ -534,40 +538,40 @@ export default function Student() {
         sort: true,
       },
     },
+    {
+      name: "",
+      label: "",
+      options: {
+        customBodyRender: (value) => {
+          return (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={(params) => handleDeletePeople}
+              style={{ marginLeft: "20px" }}
+            >
+              Xoá
+            </Button>
+          );
+        },
+      },
+    },
   ];
   const handleClickAddPeople = () => {
     console.log("Add people");
   };
-  const handleClickDeletePeople = () => {
-    console.log("Delete people");
-  };
+
   const options = {
     filterType: "textField",
     customFooter: () => {
       return;
     },
+    selectableRows: false,
     customHeadRender: () => {
       return null;
     },
-    onRowClick: (rowData, rowState) => {
-      console.log("rowData", rowData, "rowState", rowState);
-    },
-    onRowSelectionChange: (
-      currentRowsSelected,
-      allRowsSelected,
-      rowsSelected,
-      params
-    ) => {
-      console.log(
-        "currentRowsSelected",
-        currentRowsSelected,
-        "allRowsSelected",
-        allRowsSelected,
-        "rowsSelected",
-        rowsSelected,
-        "params",
-        params
-      );
+    onRowClick: (params) => {
+      console.log("params", params);
     },
   };
   const dataNotification = [
@@ -597,7 +601,7 @@ export default function Student() {
       },
     },
     {
-      name: "room",
+      name: "roomRequested",
       label: "Phòng",
       options: {
         filter: true,
@@ -620,9 +624,27 @@ export default function Student() {
         sort: true,
       },
     },
+    {
+      name: "",
+      label: "",
+      options: {
+        customBodyRender: (value) => {
+          return (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={(params) => handleClickAddPeople}
+              style={{ marginLeft: "20px" }}
+            >
+              Xác nhận
+            </Button>
+          );
+        },
+      },
+    },
   ];
-  const handleRowSelectionChange = () => {
-    console.log("AAAAAAAA");
+  const handleClickAddPeopleWithParams = (params) => {
+    console.log("AAAAAAAA", params);
   };
   const handleOpenNotiModal = () => {
     setIsModalNotiVisible(true);
@@ -706,7 +728,7 @@ export default function Student() {
                           <Button
                             variant="contained"
                             color="primary"
-                            onClick={handleClickAddPeople}
+                            onClick={(params) => handleClickAddPeopleWithParams}
                           >
                             Thêm người
                           </Button>

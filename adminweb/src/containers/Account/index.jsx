@@ -1,7 +1,13 @@
 import MUIDataTable from "mui-datatables";
 import Box from "@material-ui/core/Box";
+import React, { useState } from "react";
+
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import AddBoxIcon from "@material-ui/icons/AddBox";
+import ReactModal from "react-modal";
+import AddAccount from "./AddAccount";
 
 export default function Account() {
   const data = [
@@ -159,10 +165,41 @@ export default function Account() {
     filterType: "textField",
   };
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const hideModal = () => {
+    setIsModalVisible(false);
+  };
+  const handleAddAccount = () => {
+    setIsModalVisible(true);
+  };
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "53%",
+      right: "50%",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+    },
+    overlay: { zIndex: 1000 },
+  };
   return (
     <div className="account_page">
-      <Box marginBottom={10}>
+      <Box marginBottom={5}>
         <Typography variant="h4">Tài Khoản</Typography>
+      </Box>
+      <Box marginBottom={5}>
+        <Button
+          startIcon={<AddBoxIcon />}
+          style={{
+            backgroundColor: "#005CC8",
+            width: "200px",
+            color: "white",
+          }}
+          onClick={handleAddAccount}
+        >
+          Thêm Tài Khoản
+        </Button>
       </Box>
       <Box marginLeft={0}>
         <MuiThemeProvider theme={getMuiTheme()}>
@@ -174,6 +211,13 @@ export default function Account() {
           />
         </MuiThemeProvider>
       </Box>
+      <ReactModal
+        isOpen={isModalVisible}
+        onRequestClose={hideModal}
+        style={customStyles}
+      >
+        <AddAccount />
+      </ReactModal>
     </div>
   );
 }
