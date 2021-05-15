@@ -362,7 +362,7 @@ export default function Budget() {
         <Box component="div">
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
-              title={"Account List"}
+              title={selectedOption === "in" ? "Bảng thu" : "Bảng chi"}
               data={selectedOption === "in" ? gridInData : gridOutData}
               columns={columns}
               options={options}

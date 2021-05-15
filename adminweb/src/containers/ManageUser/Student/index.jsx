@@ -570,8 +570,9 @@ export default function Student() {
     customHeadRender: () => {
       return null;
     },
-    onRowClick: (params) => {
+    onRowClick: (params,rowMeta) => {
       console.log("params", params);
+      console.log("event", rowMeta);
     },
   };
   const dataNotification = [
