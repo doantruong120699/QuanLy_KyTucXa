@@ -1,16 +1,19 @@
 import * as types from "../constants";
 import store from "../store";
-export async function changePass(data, token, resolve = () => {}) {
+
+const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
+
+export async function changePass(data, resolve = () => {}) {
   store.dispatch({
     type: types.CHANGE_PASS_API,
   });
   try {
     const response = await fetch(
-      "http://127.0.0.1:8000/api/account/change-password/",
+      `${REACT_APP_BASE_API}account/change-password/`,
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${JSON.parse(token)}`,
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },

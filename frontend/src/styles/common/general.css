@@ -290,8 +290,17 @@
 .text-is-pink {
   color: #fe6276;
 }
+.text-is-red {
+  color: #e15b69;
+}
+.text-is-blue {
+  color: #003eff;
+}
 .text-is-grey {
   color: #7b8191;
+}
+.text-is-green {
+  color: #82ce34;
 }
 .text-is-white {
   color: #fff;
@@ -312,4 +321,7 @@
 }
 .icon-white-active:hover {
   color: #7b8191;
+}
+.inline-block {
+  display: inline-block;
 }

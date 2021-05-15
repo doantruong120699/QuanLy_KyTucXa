@@ -8,5 +8,28 @@ import Avatar from './avatar/Avatar';
 import HomePage from './home/HomePage';
 import ProfileSV from './student/ProfileSV';
 import RoomDetail from './student/RoomDetail';
+import ProfileNV from './staff/ProfileNV';
+import AllStudent from './showstudent/AllStudent';
+import AllStaff from './showstaff/AllStaff';
+import ChangeProfile from './changeprofile/ChangeProfile';
+import Notification from './notification/Notification';
+import Schedule from './staff/Schedule';
 
-export { Login, ChangePassword, ForgotPassword, AppBar, ShowAllRoom, Dashboard, Avatar, HomePage, ProfileSV, RoomDetail };
+export {
+  Login,
+  ChangePassword,
+  ForgotPassword,
+  AppBar,
+  ShowAllRoom,
+  Dashboard,
+  Avatar,
+  HomePage,
+  ProfileSV,
+  ProfileNV,
+  AllStudent,
+  AllStaff,
+  ChangeProfile,
+  Notification,
+  RoomDetail,
+  Schedule,
+};

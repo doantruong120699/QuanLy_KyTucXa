@@ -1,6 +1,6 @@
 import {actionType} from '../actionType';
 import {storeData, getData} from '../../utils/asyncStorage';
-// import axios from 'axios';
+import axios from 'axios';
 import {apiUrl} from '../../api/api';
 
 const {GET_ALL_ROOM, GET_ALL_ROOM_SUCCESS, GET_ALL_ROOM_FAIL} = actionType;
@@ -18,7 +18,7 @@ export const getallroom = () => async (dispatch) => {
     //         type: LOGIN_SUCCESS, 
     //         payload: result.data
     //     });
-    // }
+    // }z
     // catch(e) {
     //     const msg = _.get(error.response, 'data.msg') || "Cant't connect network";
     //     dispatch({

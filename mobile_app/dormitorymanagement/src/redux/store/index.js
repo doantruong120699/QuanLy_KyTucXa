@@ -1,5 +1,21 @@
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { login, getallroom, searchroom, mainmenu, changepassword } from '../reducer/index';
+import { 
+  login, 
+  getallroom, 
+  searchroom, 
+  mainmenu, 
+  changepassword, 
+  getprofile, 
+  allstudent, 
+  allstaff,  
+  getarea,
+  getclass, 
+  getfaculty,
+  getposition,
+  changeprofile,
+  getnotification,
+  registrationroom,
+} from '../reducer/index';
 import thunkMiddleware from 'redux-thunk';
 
 const AppReduces = combineReducers({
@@ -8,6 +24,16 @@ const AppReduces = combineReducers({
   searchroom,
   mainmenu,
   changepassword,
+  getprofile,
+  allstudent,
+  allstaff,
+  getarea,
+  getclass, 
+  getfaculty,
+  getposition,
+  changeprofile,
+  getnotification,
+  registrationroom,
 });
 
 const rootReducer = (state, action) => {

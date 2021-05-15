@@ -28,7 +28,7 @@ const EmployeePage = () => {
   }
 
   function handleFilterChange(newFilters) {
-    setFilter({ ...filter, page: 1, title_like: newFilters.searchTerm });
+    setFilter({ ...filter, page: 1, keyword: newFilters.searchTerm });
   }
 
   useEffect(() => {
@@ -47,7 +47,8 @@ const EmployeePage = () => {
         setPagination(pagination);
       }
     });
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
   return (
     <div>
       <div className="col col-full style-background-container">

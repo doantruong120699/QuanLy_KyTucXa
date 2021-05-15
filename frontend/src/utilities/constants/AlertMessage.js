@@ -10,3 +10,6 @@ export const WRONG_CURRENT_PASSWORD = "Mật khẩu hiện tại không đúng!"
 export const NAME_INVALID = "Tên không hợp lệ!";
 export const PHONE_NUMBER_INVALID = "Số điện thoại không hợp lệ!";
 export const IDENTIFICATION_INVALID = "Số CMND không hợp lệ!";
+export const UNSIGNED_ROOM = "Bạn chưa đăng kí phòng!";
+export const SUCCESSFULLY_RESET_PASSWORD = "Đổi mật khẩu thành công!";
+export const SYSTEM_ERROR = "Lỗi hệ thống!";

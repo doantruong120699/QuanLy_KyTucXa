@@ -16,6 +16,7 @@ from .serializers import *
 from api import status_http
 from api.permissions import *
 from django.http import JsonResponse
+import re
 
 class TypeRoomViewSet(viewsets.ModelViewSet):
     queryset = TypeRoom.objects.all()
@@ -47,6 +48,7 @@ class PaymentMethodViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         payment_method = list(PaymentMethod.objects.values().order_by('id'))
         return JsonResponse(payment_method, safe=False, status=status.HTTP_200_OK)
+
 class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomListSerializer
     # permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
@@ -54,11 +56,6 @@ class RoomViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Room.objects.all().order_by('-created_at')
-
-    # def get_permissions(self):
-    #     if self.action == 'get_all_room':
-    #         return [IsAuthenticated(), IsQuanLyNhanSu(),]
-    #     return [IsAuthenticated(), IsQuanLyNhanSu(),]
 
     def list(self, request, *args, **kwargs):
         snippets = Snippet.objects.all()
@@ -93,11 +90,21 @@ class RoomViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Room Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
-    # get list all lesson 
+    # get list all room 
     @action(methods=["GET"], detail=False, url_path="get_all_room", url_name="get_all_room")
     def get_all_room(self, request, *args, **kwargs):
-        list_room = (Room.objects.all())
-        page = self.paginate_queryset(list_room)
+        queryset = Room.objects.all()
+        keyword = self.request.GET.get('keyword')
+        if keyword and len(keyword) > 0:
+            words = re.split(r"[-;,.\s]\s*", keyword)
+            query = Q()
+            for word in words:
+                query |= Q(area__name__icontains=word) | Q(name__icontains=word)
+                if word.isnumeric():
+                    query |= Q(number_now=int(word))
+            queryset=queryset.filter(query).distinct()
+
+        page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
@@ -132,7 +139,6 @@ class RoomViewSet(viewsets.ModelViewSet):
         try:
             area = kwargs['slug']
             queryset = Room.objects.filter(area__slug = area)
-            # print(queryset)
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)

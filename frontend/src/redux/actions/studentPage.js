@@ -1,12 +1,15 @@
 import * as types from "../constants";
 import store from "../store";
+
+const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
+
 export async function getStudents(params, resolve = () => {}) {
   store.dispatch({
     type: types.GET_STUDENTS_API,
   });
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/api/students/get-all-student/?${params}`,
+      `${REACT_APP_BASE_API}students/get-all-student/?${params}`,
       {
         method: "GET",
         headers: {
@@ -35,17 +38,14 @@ export async function getDetailedStudent(slug, resolve = () => {}) {
     type: types.GET_STUDENTS_API,
   });
   try {
-    const response = await fetch(
-      `http://127.0.0.1:8000/api/students/${slug}/`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
+    const response = await fetch(`${REACT_APP_BASE_API}students/${slug}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
     const data = await response.json();
     resolve(data);
     store.dispatch({
