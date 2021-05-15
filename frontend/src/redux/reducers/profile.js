@@ -14,6 +14,7 @@ export default function reducer(state = initialState, actions) {
     case types.GET_FACULTIES_API:
     case types.GET_GRADE_API:
     case types.GET_MY_SCHEDULE_API:
+    case types.POST_UPDATE_MY_PROFILE_API:
       return {
         ...state,
         loading: true,
@@ -29,6 +30,7 @@ export default function reducer(state = initialState, actions) {
     case types.GET_FACULATIE_API_FAIL:
     case types.GET_GRADE_API_FAIL:
     case types.GET_MY_SCHEDULE_API_FAIL:
+    case types.POST_UPDATE_MY_PROFILE_API_FAIL:
       return {
         ...state,
         error: actions.payload,
@@ -47,6 +49,7 @@ export default function reducer(state = initialState, actions) {
         loading: false,
       };
     case types.GET_MY_SCHEDULE_API_SUCCEED:
+    case types.POST_UPDATE_MY_PROFILE_API_SUCCEED:
       return {
         ...state,
         error: actions.payload,

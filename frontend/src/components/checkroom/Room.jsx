@@ -18,10 +18,12 @@ const Room = (props) => {
   }
 
   return (
-    <div className="col col-full style-roomOfArea style-sm-box">
+    <div
+      className="col col-full style-roomOfArea style-sm-box"
+      onClick={getDetails}
+    >
       <div className="col col-full justify-content-sb text-20 pd-8">
         <span className="bold-text">{name}</span>
-        <i className="fi-rr-info" onClick={getDetails}></i>
       </div>
       <div>{listStudentIcons}</div>
     </div>

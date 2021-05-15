@@ -1,12 +1,12 @@
 import * as types from "../constants";
 import store from "../store";
-export async function getEmployees(resolve = () => {}) {
+export async function getEmployees(params, resolve = () => {}) {
   store.dispatch({
     type: types.GET_EMPLOYEES_API,
   });
   try {
     const response = await fetch(
-      "http://127.0.0.1:8000/api/staffs/get-all-staff/",
+      `http://127.0.0.1:8000/api/staffs/get-all-staff/?${params}`,
       {
         method: "GET",
         headers: {

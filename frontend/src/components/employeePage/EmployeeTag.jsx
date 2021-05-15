@@ -6,21 +6,17 @@ const EmployeeTag = (props) => {
   const history = useHistory();
   const { slug, name, email, phone } = props;
   return (
-    <div className="col col-full style-lg-box bg-color-white ">
+    <div
+      className="col col-full style-lg-box bg-color-white style-employee-tag"
+      onClick={() =>
+        history.push(
+          `${ROUTER.ROUTE_EMPLOYEES}${ROUTER.ROUTE_DETAILED_EMPLOYEES}/${slug}`
+        )
+      }
+    >
       <div className="col col-full justify-content-ct style-avatar-container">
         <div className="col col-half mg-16">
           <img className="style-img" src={avatar} alt="" />
-          <div className="style-more-detail pl-4 pt-4">
-            <i
-              className="fi-rr-menu-dots-vertical text-20 text-is-grey"
-              style={{ cursor: "pointer" }}
-              onClick={() =>
-                history.push(
-                  `${ROUTER.ROUTE_EMPLOYEES}${ROUTER.ROUTE_DETAILED_EMPLOYEES}/${slug}`
-                )
-              }
-            />
-          </div>
         </div>
       </div>
       <div className="col col-full justify-content-ct pd-8">

@@ -12,8 +12,8 @@
   background-color: #ffaa2b;
   color: #fff;
 }
-.style-roomOfArea i:hover {
-  color: #717479;
+.style-roomOfArea:hover {
+  box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
 }
 .style-student {
   margin: 5px;
@@ -27,7 +27,7 @@
 .style-sm-tag i:hover {
   color: #e5e5e5;
 }
-.style-room-registration{
+.style-room-registration {
   position: absolute;
   right: 48px;
   bottom: 48px;

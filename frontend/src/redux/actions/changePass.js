@@ -1,7 +1,6 @@
 import * as types from "../constants";
 import store from "../store";
 export async function changePass(data, token, resolve = () => {}) {
-  console.log(data);
   store.dispatch({
     type: types.CHANGE_PASS_API,
   });

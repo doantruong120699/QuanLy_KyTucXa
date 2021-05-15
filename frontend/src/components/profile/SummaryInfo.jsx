@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Button from "../common/Button";
-import EditEmployeeProfile from "./EditEmployeeProfile";
+import EditProfile from "./EditProfile";
 import * as AlertMessage from "../../utilities/constants/AlertMessage";
 import { changePass } from "../../redux/actions/changePass";
 import validate from "../../utilities/regex";
 import ChangePass from "./ChangePass";
 const SummaryInfo = (props) => {
-  const { dataRender, isEmployee, studyInfo } = props;
+  const { dataRender, updateOrigin } = props;
 
   const [errorState, setError] = useState({
     curPass: {
@@ -62,8 +62,10 @@ const SummaryInfo = (props) => {
         confirm_password: errorState.newPass.value,
       };
       var token = localStorage.getItem("token");
+
       changePass(data, token, (output) => {
         if (output) {
+          alert(output.message);
           closeChangePassModal();
         } else {
           const curPassState = { ...errorState.newPass };
@@ -134,7 +136,7 @@ const SummaryInfo = (props) => {
       <div className="col col-full justify-content-sb ml-8">
         <div>
           <span className="text-is-purple-gradient style-profile-name">
-            {dataRender.firstName.value}{" "}
+            {dataRender.firstName.value}
           </span>
         </div>
         <i
@@ -165,7 +167,7 @@ const SummaryInfo = (props) => {
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-fingerprint"></i>
-        <span>{dataRender.phone.value}</span>
+        <span>{dataRender.identification.value}</span>
       </div>
       <div className="col col-third style-profile-changepass-btn">
         <Button
@@ -181,14 +183,13 @@ const SummaryInfo = (props) => {
           handleInput={handleInput}
           savePass={savePass}
         />
-        <EditEmployeeProfile
+        <EditProfile
           open={openEdit}
           onClose={closeEditModal}
           handleInput={handleInput}
-          isEmployee={isEmployee}
           dataRender={dataRender}
-          studyInfo={studyInfo}
-        />
+          updateOrigin={updateOrigin}
+        /> 
       </div>
     </div>
   );
