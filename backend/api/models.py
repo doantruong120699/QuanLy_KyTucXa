@@ -203,10 +203,6 @@ class DailySchedule(models.Model):
     for r in range(2010, (datetime.datetime.now().year+1)):
         YEAR_CHOICES.append((r,r))
 
-    YEAR_CHOICES = []
-    for r in range(2010, (datetime.datetime.now().year+1)):
-        YEAR_CHOICES.append((r,r))
-
     WEEk_CHOICES = []
     d = (datetime.datetime.now().isocalendar()[1])
     for r in range(d, 53):
@@ -223,51 +219,117 @@ class DailySchedule(models.Model):
         return self.title + ' (week:  ' + str(self.week) + ' - ' + str(self.shift) + ' - ' + str(self.staff.username) + ')'
 
 # ============================================
+class WaterElectricalUnitPrice(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    # 
+    water_unit_price_level1 = models.PositiveIntegerField(default=0, null=True, blank=True)
+    water_unit_price_level2 = models.PositiveIntegerField(default=0, null=True, blank=True)
+    water_unit_price_level3 = models.PositiveIntegerField(default=0, null=True, blank=True)
+    water_unit_price_level4 = models.PositiveIntegerField(default=0, null=True, blank=True)
+    # 
+    electrical_unit_price_level1 = models.PositiveIntegerField(default=0, null=True, blank=True)
+    electrical_unit_price_level2 = models.PositiveIntegerField(default=0, null=True, blank=True)
+    electrical_unit_price_level3 = models.PositiveIntegerField(default=0, null=True, blank=True)
+    electrical_unit_price_level4 = models.PositiveIntegerField(default=0, null=True, blank=True)
+    electrical_unit_price_level5 = models.PositiveIntegerField(default=0, null=True, blank=True)
+    electrical_unit_price_level6 = models.PositiveIntegerField(default=0, null=True, blank=True)
+    # 
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
 
 class WaterElectrical(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
     room = models.ForeignKey(Room, related_name = 'water_electrical_room', on_delete=models.SET_NULL, blank=True, null=True)
     # 
-    new_index_eclectrical = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
-    old_index_electrical = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    new_index_eclectrical = models.PositiveIntegerField(default=0, null=True, blank=True)
+    old_index_electrical = models.PositiveIntegerField(default=0, null=True, blank=True)
     # 
-    new_index_water = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
-    old_index_water = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    new_index_water = models.PositiveIntegerField(default=0, null=True, blank=True)
+    old_index_water = models.PositiveIntegerField(default=0, null=True, blank=True)
     # 
     # Only yyyy-mm
-    time = models.DateField(max_length=50, null=True, blank=True) 
+    # time = models.DateField(max_length=50, null=True, blank=True) 
+    d = datetime.datetime.now()
+    YEAR_CHOICES = []
+    for r in range(d.year - 1, d.year + 1):
+        YEAR_CHOICES.append((r,r))
+
+    MONTH_CHOICES = []
+    for r in range(d.month - 1, 13):
+        MONTH_CHOICES.append((r,r))
+
+    month = models.IntegerField(_('month'), choices=MONTH_CHOICES, default=datetime.datetime.now().isocalendar()[1] + 1)
+    year = models.IntegerField(_('year'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     # 
-    water_unit_price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
-    electrical_unit_price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    # water_unit_price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    # electrical_unit_price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    water_electrical_unit_price = models.ForeignKey(WaterElectricalUnitPrice, related_name = 'water_electrical_unit_price', on_delete=models.SET_NULL, blank=True, null=True)
     # 
-    price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    water_price = models.PositiveIntegerField(default=0, null=True, blank=True)
+    electrical_price = models.PositiveIntegerField(default=0, null=True, blank=True)
     # 
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name = 'water_electrical_created_by', on_delete=models.CASCADE, blank=True, null=True)
     updated_by = models.ForeignKey(User, related_name = 'water_electrical_updated_by', on_delete=models.CASCADE, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        # if not self.price:
-        electrical = self.new_index_eclectrical - self.old_index_electrical
-        water = self.new_index_water - self.old_index_water
-        self.price = electrical*self.electrical_unit_price + water*self.water_unit_price
+        # Electrical Price:
+        electrical = (self.new_index_eclectrical - self.old_index_electrical)
+        if electrical <= 50:
+            self.electrical_price = electrical*self.water_electrical_unit_price.electrical_unit_price_level1
+
+        elif electrical > 50 and electrical <= 100:
+            self.electrical_price = 50*self.water_electrical_unit_price.electrical_unit_price_level1 + (electrical-50)*self.water_electrical_unit_price.electrical_unit_price_level2
+
+        elif electrical > 100 and electrical <= 200:
+            self.electrical_price = 50*self.water_electrical_unit_price.electrical_unit_price_level1 + 50*self.water_electrical_unit_price.electrical_unit_price_level2 + (electrical-100)*self.water_electrical_unit_price.electrical_unit_price_level3
+        
+        elif electrical > 200 and electrical <= 300:
+            self.electrical_price = 50*self.water_electrical_unit_price.electrical_unit_price_level1 + 50*self.water_electrical_unit_price.electrical_unit_price_level2 + 100*self.water_electrical_unit_price.electrical_unit_price_level3 + (electrical-200)*self.water_electrical_unit_price.electrical_unit_price_level4
+        
+        elif electrical > 300 and electrical <= 400:
+            self.electrical_price = 50*self.water_electrical_unit_price.electrical_unit_price_level1 + 50*self.water_electrical_unit_price.electrical_unit_price_level2 + 100*self.water_electrical_unit_price.electrical_unit_price_level3 + 100*self.water_electrical_unit_price.electrical_unit_price_level4 + (electrical-300)*self.water_electrical_unit_price.electrical_unit_price_level5
+
+        else:
+            self.electrical_price = 50*self.water_electrical_unit_price.electrical_unit_price_level1 + 50*self.water_electrical_unit_price.electrical_unit_price_level2 + 100*self.water_electrical_unit_price.electrical_unit_price_level3 + 100*self.water_electrical_unit_price.electrical_unit_price_level4 + 100*self.water_electrical_unit_price.electrical_unit_price_level5 + (electrical-400)*self.water_electrical_unit_price.electrical_unit_price_level6
+
+        # Water Price
+        water = (self.new_index_water - self.old_index_water)/1000
+        level = water//10 + 1
+        if level == 1:
+            self.water_price = water*self.water_electrical_unit_price.water_unit_price_level1 
+        
+        elif level == 2:
+            self.water_price = 10*self.water_electrical_unit_price.water_unit_price_level1 + (water-10)*self.water_electrical_unit_price.water_unit_price_level2
+        
+        elif level == 3:    
+            self.water_price = 10*self.water_electrical_unit_price.water_unit_price_level1 + 10*self.water_electrical_unit_price.water_unit_price_level2  + (water-20)*self.water_electrical_unit_price.water_unit_price_level3
+        
+        else:
+            self.water_price = 10*self.water_electrical_unit_price.water_unit_price_level1 + 10*self.water_electrical_unit_price.water_unit_price_level2  + 10*self.water_electrical_unit_price.water_unit_price_level3  + (water-30)*self.water_electrical_unit_price.water_unit_price_level4
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.room.name + ' - ' + str(self.time) + ' - ' + str(self.price) 
+        return self.room.name + ' - (' + str(self.month) + '/' + str(self.year) + ') - ' + str(self.water_price)  + ' - ' + str(self.electrical_price) 
 
 class Bill(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
     water_electrical = models.ForeignKey(WaterElectrical, related_name = 'bill_water_electrical', on_delete=models.SET_NULL, blank=True, null=True)
-
-    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
 
     payment_method = models.ForeignKey(PaymentMethod, related_name = 'bill_payment_method', on_delete=models.SET_NULL, blank=True, null=True)
     is_paid = models.BooleanField(default=False)
 
     sinhvien_paid = models.ForeignKey(Profile, related_name = 'bill_sinhvien_paid', on_delete=models.CASCADE, blank=True, null=True)
     time_paid = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name = 'bill_created_by', on_delete=models.CASCADE, blank=True, null=True)
+    updated_by = models.ForeignKey(User, related_name = 'bill_updated_by', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.water_electrical.room.name + ' - ' + str(self.is_paid)

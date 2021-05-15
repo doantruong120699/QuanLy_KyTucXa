@@ -7,14 +7,6 @@ from rest_framework import permissions
 from .views import *
 
 
-# ========== notification
-# list_notification = NotificationViewSet.as_view({
-#     'get': 'list',
-# })
-# detail_notification = NotificationViewSet.as_view({
-#     'get': 'retrieve',
-# })
-
 # ========== Accept registration
 list_registration_room = ContractRegistationViewSet.as_view({
     'get': 'list',
