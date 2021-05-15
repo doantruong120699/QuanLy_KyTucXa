@@ -14,6 +14,7 @@ const DetailStudent = () => {
         setStudent(output);
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="style-background-container">

@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-
-import { profile as GetProfile } from "../redux/actions/profile";
+import { profile as GetProfile, updateProfile } from "../redux/actions/profile";
 import Avatar from "../components/profile/Avatar";
 import SummaryInfo from "../components/profile/SummaryInfo";
 import StudyInfo from "../components/profile/StudyInfo";
@@ -11,6 +10,10 @@ import EmployeeInfo from "../components/profile/EmployeeInfo";
 import { getAuth } from "../utilities/helper";
 import { getHandledEmployeeDataRender } from "../utilities/dataRender/profile";
 import { actFetchTitleNavigation } from "../redux/actions/dashboard";
+import { changePass } from "../redux/actions/changePass";
+import Alertness from "../components/common/Alertness";
+import * as ALERTMESSAGE from "../utilities/constants/AlertMessage";
+import * as APIALERTMESSAGE from "../utilities/constants/APIAlertMessage";
 const Profile = () => {
   const [profileState, setProfile] = useState({
     profile: null,
@@ -22,6 +25,17 @@ const Profile = () => {
 
   const [filter, setFilter] = useState({ profile: profileState.profile });
 
+  const [open, setOpen] = useState(false);
+
+  const [notification, setNotification] = useState({
+    type: "",
+    content: "",
+  });
+
+  const onClose = () => setOpen(false);
+
+  const onOpen = () => setOpen(true);
+
   const updateOrigin = (data) => {
     setFilter({
       profile: getHandledEmployeeDataRender(data),
@@ -29,6 +43,7 @@ const Profile = () => {
   };
 
   const isEmployee = getAuth().group[0] === "nhanvien_group";
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -52,6 +67,67 @@ const Profile = () => {
     GetProfileUser();
   }, [filter]);
 
+  const updateUserProfile = (data) => {
+    
+    updateProfile(data, (output) => {
+      if (output) {
+        switch (output.message) {
+          case APIALERTMESSAGE.UPDATE_PROFILE_SUCCESSFULLY:
+            setNotification({
+              type: "type-success",
+              content: ALERTMESSAGE.SUCCESSFULLY_RESET_PASSWORD,
+            });
+            break;
+          default:
+            setNotification({
+              type: "type-error",
+              content: ALERTMESSAGE.SYSTEM_ERROR,
+            });
+            break;
+        }
+      } else {
+        setNotification({
+          type: "type-error",
+          content: ALERTMESSAGE.SYSTEM_ERROR,
+        });
+      }
+      onOpen();
+    });
+  };
+
+  const changeUserPassword = (data) => {
+    changePass(data, (output) => {
+      if (output) {
+        switch (output.message) {
+          case APIALERTMESSAGE.CHANGE_PASS_SUCCESSFULLY:
+            setNotification({
+              type: "type-success",
+              content: ALERTMESSAGE.SUCCESSFULLY_RESET_PASSWORD,
+            });
+            break;
+          case APIALERTMESSAGE.INCORRECT_PASSWORD:
+            setNotification({
+              type: "type-error",
+              content: ALERTMESSAGE.PASSWORD_DIFFERENT,
+            });
+            break;
+          default:
+            setNotification({
+              type: "type-error",
+              content: ALERTMESSAGE.SYSTEM_ERROR,
+            });
+            break;
+        }
+        onOpen();
+      } else {
+        setNotification({
+          type: "type-error",
+          content: ALERTMESSAGE.SYSTEM_ERROR,
+        });
+      }
+    });
+  };
+
   return (
     <div>
       {profileState.profile && (
@@ -64,6 +140,8 @@ const Profile = () => {
               <SummaryInfo
                 dataRender={profileState.profile}
                 updateOrigin={updateOrigin}
+                updateUserProfile={updateUserProfile}
+                changeUserPassword={changeUserPassword}
               />
             </div>
           </div>
@@ -91,6 +169,14 @@ const Profile = () => {
           )}
         </div>
       )}
+      <div>
+        <Alertness
+          open={open}
+          onClose={onClose}
+          type={notification.type}
+          content={notification.content}
+        />
+      </div>
     </div>
   );
 };

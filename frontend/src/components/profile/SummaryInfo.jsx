@@ -2,30 +2,19 @@ import React, { useState } from "react";
 import Button from "../common/Button";
 import EditProfile from "./EditProfile";
 import * as AlertMessage from "../../utilities/constants/AlertMessage";
-import { changePass } from "../../redux/actions/changePass";
 import validate from "../../utilities/regex";
 import ChangePass from "./ChangePass";
-const SummaryInfo = (props) => {
-  const { dataRender, updateOrigin } = props;
+import { getFormResetPass } from "../../utilities/dataRender/password";
 
-  const [errorState, setError] = useState({
-    curPass: {
-      isHidden: true,
-      isInputValid: true,
-      value: "",
-      errorMessage: "",
-    },
-    newPass: {
-      isHidden: true,
-      isInputValid: true,
-      value: "",
-      errorMessage: "",
-    },
-  });
+const SummaryInfo = (props) => {
+  const { dataRender, updateOrigin, updateUserProfile, changeUserPassword } =
+    props;
+
+  const [errorState, setError] = useState(getFormResetPass());
 
   const validPasswordInput = (checkingValue) => {
     const isValidPass = validate.password(checkingValue);
-    if (isValidPass === null) {
+    if (!isValidPass) {
       return {
         isInputValid: false,
         isErrorHidden: false,
@@ -61,30 +50,9 @@ const SummaryInfo = (props) => {
         old_password: errorState.curPass.value,
         confirm_password: errorState.newPass.value,
       };
-      var token = localStorage.getItem("token");
-
-      changePass(data, token, (output) => {
-        if (output) {
-          alert(output.message);
-          closeChangePassModal();
-        } else {
-          const curPassState = { ...errorState.newPass };
-          curPassState.isInputValid = false;
-          curPassState.isHidden = false;
-          curPassState.errorMessage = AlertMessage.PASSWORD_DIFFERENT;
-
-          const newPassState = { ...errorState.newPass };
-          newPassState.isInputValid = false;
-          newPassState.isHidden = true;
-          newPassState.errorMessage = newPassError.errorMessage;
-
-          setError({
-            ...errorState,
-            curPass: curPassState,
-            newPass: newPassState,
-          });
-        }
-      });
+      
+      closeChangePassModal();
+      changeUserPassword(data);
     }
 
     const curPassState = { ...errorState.curPass };
@@ -105,30 +73,18 @@ const SummaryInfo = (props) => {
   };
 
   const [openChangePass, setOpenChangePass] = useState(false);
-  const closeChangePassModal = () => {
-    setError({
-      curPass: {
-        isHidden: true,
-        isInputValid: true,
-        value: "",
-        errorMessage: "",
-      },
-      newPass: {
-        isHidden: true,
-        isInputValid: true,
-        value: "",
-        errorMessage: "",
-      },
-    });
 
+  const closeChangePassModal = () => {
+    setError(getFormResetPass());
     setOpenChangePass(false);
   };
+
   const openChangePassModal = () => setOpenChangePass(true);
 
   const [openEdit, setOpenEdit] = useState(false);
-  const closeEditModal = () => {
-    setOpenEdit(false);
-  };
+
+  const closeEditModal = () => setOpenEdit(false);
+
   const openEditModal = () => setOpenEdit(true);
 
   return (
@@ -189,7 +145,8 @@ const SummaryInfo = (props) => {
           handleInput={handleInput}
           dataRender={dataRender}
           updateOrigin={updateOrigin}
-        /> 
+          updateUserProfile={updateUserProfile}
+        />
       </div>
     </div>
   );

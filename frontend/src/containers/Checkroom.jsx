@@ -21,20 +21,20 @@ const Checkroom = () => {
 
   const [pagination, setPagination] = useState({
     page: 1,
-    page_size: 10,
+    page_size: 20,
     totals: 1,
   });
 
   const [filter, setFilter] = useState({
-    number: 1,
+    page: 1,
   });
 
   function handlePageChange(newPage) {
-    setFilter({ ...filter, number: newPage });
+    setFilter({ ...filter, page: newPage });
   }
 
   function handleFilterChange(newFilters) {
-    setFilter({ ...filter, number: 1, name: newFilters.searchTerm });
+    setFilter({ ...filter, page: 1, keyword: newFilters.searchTerm });
   }
 
   useEffect(() => {

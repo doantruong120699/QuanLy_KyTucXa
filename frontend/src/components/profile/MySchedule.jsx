@@ -19,11 +19,13 @@ const MySchedule = () => {
 
   useEffect(() => {
     const currentWeek = moment().tz("Asia/Ho_Chi_Minh").format("w") - 1;
+    
     getSchedule(currentWeek, (output) => {
       if (output) {
         setSchedule({ ...myScheduleState, data: getTaskList(output) });
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const resources = [

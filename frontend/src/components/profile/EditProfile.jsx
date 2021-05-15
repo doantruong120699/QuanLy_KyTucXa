@@ -5,10 +5,9 @@ import FormError from "../common/FormError";
 import InputField from "../common/InputField";
 import validate from "../../utilities/regex";
 import { getRawEmployeeDataRender } from "../../utilities/dataRender/profile";
-import { updateProfile } from "../../redux/actions/profile";
 
 const EditEmployeeProfile = (props) => {
-  const { open, onClose, dataRender,updateOrigin } = props;
+  const { open, onClose, dataRender, updateOrigin, updateUserProfile } = props;
 
   const [infoState, setInfo] = useState(dataRender);
 
@@ -21,6 +20,7 @@ const EditEmployeeProfile = (props) => {
 
   const validateEditedinfo = () => {
     let tempEditData = { ...infoState };
+
     Object.keys(infoState).forEach((value) => {
       if (
         dataRender[value].validateType &&
@@ -47,11 +47,7 @@ const EditEmployeeProfile = (props) => {
     ) {
       const data = getRawEmployeeDataRender(infoState);
       updateOrigin(data);
-      updateProfile(data, (output) => {
-        if (output) {
-          alert(output.message);
-        }
-      });
+      updateUserProfile(data);
       onClose();
     }
   };

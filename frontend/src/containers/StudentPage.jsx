@@ -18,8 +18,8 @@ const StudentPage = () => {
 
   const [pagination, setPagination] = useState({
     page: 1,
-    page_size: 10,
-    totals: 11,
+    page_size: 20,
+    totals: 1,
   });
 
   const [filter, setFilter] = useState({
@@ -31,12 +31,12 @@ const StudentPage = () => {
   }
 
   function handleFilterChange(newFilters) {
-    setFilter({ ...filter, page: 1, title_like: newFilters.searchTerm });
+    setFilter({ ...filter, page: 1, keyword: newFilters.searchTerm });
   }
 
   useEffect(() => {
     const paramsString = queryString.stringify(filter);
-
+    
     dispatch(actFetchTitleNavigation(Titlelist.NAVIGATION_TITLE[2].title));
 
     getStudents(paramsString, (output) => {
@@ -50,7 +50,8 @@ const StudentPage = () => {
         setPagination(pagination);
       }
     });
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filter]);
   return (
     <div className="style-background-container">
       <div className="col col-full">

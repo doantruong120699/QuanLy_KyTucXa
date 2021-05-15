@@ -14,9 +14,13 @@ export default function Financial() {
   return (
     <div style={{ fontSize: "30px" }}>
       <Tabs>
-        <TabList style={{ borderBottom: "none", marginBottom: "50px" }}>
-          <Tab>Thu Chi</Tab>
-          <Tab>Tiền Điện Nước</Tab>
+        <TabList style={{ borderBottom: "none", marginBottom: "20px" }}>
+          <Tab>
+            <span style={{ fontSize: "20px" }}>Thu Chi</span>
+          </Tab>
+          <Tab>
+            <span style={{ fontSize: "20px" }}>Tiền Điện Nước</span>
+          </Tab>
         </TabList>
         <TabPanel>
           <Budget />
