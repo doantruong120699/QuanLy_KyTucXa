@@ -18,6 +18,39 @@ from api.permissions import *
 from django.http import JsonResponse
 
 
+class WaterElectricalUnitPriceViewSet(viewsets.ModelViewSet):
+    serializer_class = WaterElectricalUnitPriceSerializer
+    # permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
+    lookup_field = 'public_id'
+
+    def get_queryset(self):
+        return WaterElectricalUnitPrice.objects.all().order_by('-created_at')
+
+    def list(self, request, *args, **kwargs):
+        try:
+            _list = WaterElectricalUnitPrice.objects.all().order_by('-created_at')
+            page = self.paginate_queryset(_list)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, **kwargs):
+        try:
+            query = WaterElectricalUnitPrice.objects.get(id=kwargs['id'])
+            serializer = WaterElectricalUnitPriceSerializer(query)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'status': 'fail', 'notification' : 'Water and Electrical Unit Price not found!'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
 class FinancalRoomInAreaViewSet(viewsets.ModelViewSet):
     serializer_class = FinancalRoomInAreaSerializer
     permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
