@@ -8,12 +8,12 @@ from .views import *
 
 
 # ========== notification
-list_notification = NotificationViewSet.as_view({
-    'get': 'list',
-})
-detail_notification = NotificationViewSet.as_view({
-    'get': 'retrieve',
-})
+# list_notification = NotificationViewSet.as_view({
+#     'get': 'list',
+# })
+# detail_notification = NotificationViewSet.as_view({
+#     'get': 'retrieve',
+# })
 
 # ========== Accept registration
 list_registration_room = ContractRegistationViewSet.as_view({
@@ -45,10 +45,25 @@ schedule = DailyScheduleViewSet.as_view({
 update_schedule = DailyScheduleViewSet.as_view({
     'put' : 'update',
 })
+
+# =========== Notification =========
+# list - create
+notification_list = NotificationViewSet.as_view({
+    'get': 'list',
+    'post': 'post'
+})
+# detail - update - delete
+notification_detail = NotificationViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    # 'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
 urlpatterns = [ 
     # ========== notification
-    path('notifications/', list_notification, name = 'list_notification'),
-    path('notifications/<str:public_id>/', detail_notification, name = 'detail_notification'),
+    path('notifications/', notification_list, name = 'notification_list'),
+    path('notifications/<str:public_id>/', notification_detail, name = 'notification_detail'),
     # ========= Request Registration
     path('list-registrations/', list_registration_room, name = 'list_registration_room'),
     path('registrations/<str:public_id>/', detail_registration_room, name = 'detail_registration_room'),

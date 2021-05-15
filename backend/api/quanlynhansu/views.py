@@ -41,6 +41,35 @@ class NotificationViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
+    def post(self, request, *args, **kwargs):
+        serializer = NotificationListSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            save = serializer.create(request.data)
+            if save:
+                return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
+        return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, public_id, format=None):
+        try:
+            queryset = Notification.objects.get(public_id=public_id)
+            datas = request.data
+            serializer = NotificationListSerializer(queryset, data=datas, context={'request': request})
+            if serializer.is_valid():
+                save = serializer.save()
+                if save:
+                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_200_OK)
+            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({'status': 'fail', 'notification' : 'Server Error!'}, status=status.HTTP_404_NOT_FOUND)
+    
+    def destroy(self, request, public_id, format=None):
+        try:
+            queryset = Notification.objects.get(public_id=public_id)
+            queryset.delete()
+            return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+        except:
+            return Response({'status': 'fail', 'notification' : 'Notification not found!'}, status=status.HTTP_404_NOT_FOUND)
+
     def retrieve(self, request, **kwargs):
         try:
             noti = Notification.objects.get(public_id=kwargs['public_id'])
@@ -48,7 +77,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            return Response({'detail': 'Notification Not Found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'status': 'fail', 'notification' : 'Notification not found!'}, status=status.HTTP_404_NOT_FOUND)
 
 class ContractRegistationViewSet(viewsets.ModelViewSet):
     serializer_class = ContractRegistationSerializer
@@ -176,8 +205,7 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             print(e)
             pass
         return Response({'detail': 'Error!'}, status=status.HTTP_400_BAD_REQUEST)
-    
-                
+         
 class DailyScheduleViewSet(viewsets.ModelViewSet):
     serializer_class = DailyScheduleSerializer
     permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
