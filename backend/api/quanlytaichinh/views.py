@@ -157,3 +157,68 @@ class WaterElectricalViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'status': 'fail', 'notification' : 'Water Electrical not found!'}, status=status.HTTP_404_NOT_FOUND)
 
+class BillViewSet(viewsets.ModelViewSet):
+    serializer_class = BillSerializer
+    permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
+    lookup_field = 'public_id'
+
+    def get_queryset(self):
+        return Bill.objects.all().order_by('-created_at')
+
+    def list(self, request, *args, **kwargs):
+        try:
+            area = Area.objects.get(slug=kwargs['slug'])
+            time = kwargs['time'] + '-01'
+            time = datetime.fromisoformat(time)
+            # Number now in room >=0 
+            room_in_area = Room.objects.filter(area=area).order_by('-id')
+            _list = Bill.objects.filter(water_electrical__room__in=room_in_area, 
+                                                              water_electrical__year=time.year,
+                                                              water_electrical__month=time.month)
+            _list = _list.filter(is_delete=False)
+            page = self.paginate_queryset(_list)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, public_id, format=None):
+        try:
+            queryset = Bill.objects.filter(Q(public_id=public_id) & Q(is_delete=False))
+            if len(queryset) > 0:
+                queryset = queryset.first()
+                datas = request.data
+                serializer = BillUpdateSerializer(queryset, data=datas, context={'request': request})
+                if serializer.is_valid():
+                    save = serializer.update(instance=queryset, validated_data=request.data)
+                    if save:
+                        return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
+                print(serializer.errors)
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Bill Not Found!'}, status=status.HTTP_404_NOT_FOUND)
+    
+    def destroy(self, request, public_id, format=None):
+        try:
+            queryset = Bill.objects.get(public_id=public_id)
+            queryset.is_delete = True
+            queryset.save()
+            return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+        except:
+            return Response({'status': 'fail', 'notification' : 'Bill not found!'}, status=status.HTTP_404_NOT_FOUND)
+
+    def retrieve(self, request, public_id, **kwargs):
+        try:
+            queryset = Bill.objects.filter(Q(public_id=public_id) & Q(is_delete=False))
+            if len(queryset) > 0:
+                serializer = BillDetailSerializer(queryset.first())
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Bill not found!'}, status=status.HTTP_404_NOT_FOUND)
