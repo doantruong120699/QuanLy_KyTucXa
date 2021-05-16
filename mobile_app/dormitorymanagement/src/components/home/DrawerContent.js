@@ -3,8 +3,9 @@ import { View, Text, StyleSheet, Image, ToastAndroid } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Drawer, Title } from 'react-native-paper';
-import { allstaff, allstudent, mainmenu, getallroom, getarea } from '../../redux/actions/index';
+import { allstaff, allstudent, mainmenu, getallroom, getarea, getnotification, getcalendar } from '../../redux/actions/index';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 class DrawerContent extends Component {
   getStyle(status) {
@@ -51,7 +52,7 @@ class DrawerContent extends Component {
                 }}
               />
               <DrawerItem
-                style={this.getStyle('Xemphong')}
+                style={this.getStyle('ShowAllRoom')}
                 icon={({ color, size }) => (
                   <FontAwesome5
                     color={color}
@@ -68,13 +69,13 @@ class DrawerContent extends Component {
                     this.showToast(this.props.msgRoom);
                   }
                   else {
-                    this.props.mainmenu('Xemphong');
+                    this.props.mainmenu('ShowAllRoom');
                     this.props.navigation.navigate("ShowAllRoom");
                   }   
                 }}
               />
               <DrawerItem
-                style={this.getStyle('Sinhvien')}
+                style={this.getStyle('AllStudent')}
                 icon={({ color, size }) => (
                   <FontAwesome5
                     color={color}
@@ -90,13 +91,13 @@ class DrawerContent extends Component {
                     this.showToast(this.props.msgSV);
                   }
                   else {
-                    this.props.mainmenu('Sinhvien');
+                    this.props.mainmenu('AllStudent');
                     this.props.navigation.navigate("AllStudent");
                   }                
                 }}
               />
               <DrawerItem
-                style={this.getStyle('Nhanvien')}
+                style={this.getStyle('AllStaff')}
                 icon={({ color, size }) => (
                   <FontAwesome5
                     color={color}
@@ -113,12 +114,12 @@ class DrawerContent extends Component {
                   }
                   else {
                     this.props.navigation.navigate("AllStaff");
-                    this.props.mainmenu('Nhanvien');
+                    this.props.mainmenu('AllStaff');
                   }      
                 }}
               />
               <DrawerItem
-                style={this.getStyle('Dichvu')}
+                style={this.getStyle('Schedule')}
                 icon={({ color, size }) => (
                   <FontAwesome5
                     color={color}
@@ -127,14 +128,21 @@ class DrawerContent extends Component {
                     style={styles.iconMenu}
                   />
                 )}
-                label="Dịch vụ"
-                onPress={() => {
-                  this.props.mainmenu('Dichvu');
-                  this.props.navigation.navigate("ChangePassword");
+                label="Schedule"
+                onPress={async () => {
+                  let week = moment().format("w") - 1;
+                  await this.props.getcalendar(week);
+                  if (this.props.msgCalendar != "Success") {
+                    this.showToast(this.props.msgCalendar);
+                  }
+                  else {
+                    this.props.navigation.navigate("Schedule");
+                    this.props.mainmenu('Schedule');
+                  } 
                 }}
               />
               <DrawerItem
-                style={this.getStyle('Thongbao')}
+                style={this.getStyle('Notification')}
                 icon={({ color, size }) => (
                   <FontAwesome5
                     color={color}
@@ -144,9 +152,15 @@ class DrawerContent extends Component {
                   />
                 )}
                 label="Thông báo"
-                onPress={() => {
-                  this.props.mainmenu('Thongbao');
-                  this.props.navigation.navigate("Notification");
+                onPress={async () => {
+                  await this.props.getnotification(1);
+                  if (this.props.msgNotification != "Success") {
+                    this.showToast(this.props.msgNotification);
+                  }
+                  else {
+                    this.props.navigation.navigate("Notification");
+                    this.props.mainmenu('Notification');
+                  }    
                 }}
               />
             </Drawer.Section>
@@ -168,6 +182,8 @@ const mapDispatchToProps = {
   allstaff,
   getallroom,
   getarea,
+  getnotification,
+  getcalendar,
 }
 function mapStateToProps(state) {
   return {
@@ -177,6 +193,7 @@ function mapStateToProps(state) {
     msgSV: state.allstudent.msg,
     msgNotification: state.getnotification.msg,
     msgRoom: state.getallroom.msg,
+    msgCalendar: state.getcalendar.msg,
   }
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DrawerContent);
@@ -189,8 +206,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 10,
     flexDirection: 'row',
-  },
-  drawerSection: {
   },
   logoSchool: {
     paddingLeft: 5,
@@ -215,15 +230,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 18,
   },
-  topDrawerSection: {
-    // borderTopColor: 'black',
-    // borderBottomColor: 'black',
-    // borderTopWidth: 1,   
-    // borderBottomWidth: 1, 
-  },
   bottomView: {
-    // borderTopColor: 'black',
-    // borderTopWidth: 1,
     marginBottom: 15,
   },
   textBottom1: {

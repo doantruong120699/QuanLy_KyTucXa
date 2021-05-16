@@ -3,31 +3,25 @@ import { apiUrl } from '../../api/api';
 import axios from 'axios';
 import { storeData, getData } from '../../utils/asyncStorage';
 
-const { GET_NOTIFICATION_SUCCESS, GET_NOTIFICATION_FAIL } = actionType;
-const { GET_NOTIFICATION } = apiUrl;
-export const getnotification = (page) => async (dispatch) => {
+const { GET_CALENDAR_STAFF_SUCCESS, GET_CALENDAR_STAFF_FAIL } = actionType;
+const { GET_CALENDAR_STAFF_URL } = apiUrl;
+export const getcalendar = (week) => async (dispatch) => {
   let result;
   try {
     let token = await getData('token');
     let config = {
       headers: { 'Authorization': 'Bearer ' + token }
     }
-    if (page != 1) {
-      result = await axios.get(GET_NOTIFICATION + "?page=" + page, config);
-    }
-    else {
-      result = await axios.get(GET_NOTIFICATION, config);
-    }
+    result = await axios.get(GET_CALENDAR_STAFF_URL + week + "/", config);
     dispatch({
-      type: GET_NOTIFICATION_SUCCESS,
+      type: GET_CALENDAR_STAFF_SUCCESS,
       payload: result.data,
       msg: 'Success',
     });
   }
   catch (error) {
-    console.log(error);
     dispatch({
-      type: GET_NOTIFICATION_FAIL,
+      type: GET_CALENDAR_STAFF_FAIL,
       msg: 'Không thể kết nối tới máy chủ'
     });
   }

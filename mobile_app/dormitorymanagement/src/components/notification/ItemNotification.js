@@ -34,14 +34,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(ItemNotification);
 
 const styles = StyleSheet.create({
   container: {
-    //   backgroundColor: 'rgba(52, 52, 52, 0.8)',
     flex: 1,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-    marginTop: 10,
-    padding: 2,
+    padding: 5,
   },
   viewData: {
     width: '80%',

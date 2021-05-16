@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { getarea, getclass, getfaculty } from '../../redux/actions/index';
+import { styleBtnComeBack, styleImgBg } from '../../styles/index';
 
 class ProfileSV extends Component {
   constructor(props) {
@@ -22,18 +23,15 @@ class ProfileSV extends Component {
     console.log(data);
     return (
       <View style={styles.container}>
-        <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
-          <View style={styles.comeBack}>
-            <TouchableOpacity style={styles.buttonComback} onPress={this.goBack}>
-              <FontAwesome5 style={styles.iconUndo} name="undo" />
+        <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
+          <View style={styleBtnComeBack.comeBack}>
+            <TouchableOpacity style={styleBtnComeBack.buttonComback} onPress={this.goBack}>
+              <FontAwesome5 style={styleBtnComeBack.iconUndo} name="long-arrow-alt-left" />
             </TouchableOpacity>
-            <Text style={styles.text}>PROFILE</Text>
+            <Text style={styles.text}>THÔNG TIN CÁ NHÂN</Text>
           </View>
           <View style={styles.container_child}>
             <View style={styles.formProfile}>
-              <View>
-                <Text style={styles.textProfile}>PROFILE</Text>
-              </View>
               <View style={styles.viewInfo}>
                 <Text style={styles.title}>Email:</Text>
                 <Text style={styles.info}>{data.email}</Text>
@@ -97,29 +95,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  imageBackground: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  comeBack: {
-    position: 'relative',
-    flex: 1,
-    height: '100%',
-    width: '100%',
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonComback: {
-    position: 'absolute',
-    left: '5%',
-  },
-  iconUndo: {
-    fontSize: 20,
-  },
   text: {
     fontWeight: 'bold',
     fontSize: 20,
@@ -137,23 +112,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     elevation: 7,
   },
-  textProfile: {
-    textAlign: 'center',
-    marginTop: 5,
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
   viewInfo: {
     marginTop: 10,
-    marginLeft: 50,
+    marginLeft: 30,
     flexDirection: 'row',
   },
   title: {
     fontWeight: 'bold',
     width: '25%',
-  },
-  info: {
-    // marginLeft: 20,
   },
   viewButton: {
     flexDirection: 'row',
@@ -162,10 +128,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    backgroundColor: 'blue',
+    padding: 10,
+    backgroundColor: '#5f6ff6',
     margin: 5,
-    width: '40%',
-    height: '35%',
+    marginTop: 10,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
