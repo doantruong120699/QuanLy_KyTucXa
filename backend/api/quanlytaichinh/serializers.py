@@ -7,6 +7,8 @@ from api.models import *
 from api.serializers import AreaSerializer
 from api.serializers import *
 from api.room.serializers import *
+from api.serializers import *
+from api.sinhvien.serializers import *
 from datetime import date
 from datetime import datetime
 from django.db.models import Q
@@ -54,6 +56,7 @@ class WaterElectricalSerializer(serializers.ModelSerializer):
     
     created_by = UserSerializer(required=False)
     updated_by = UserSerializer(required=False)
+
     class Meta:
         model = WaterElectrical
         fields = [
@@ -238,3 +241,147 @@ class WaterElectricalDetailSerializer(serializers.ModelSerializer):
             'created_by',
             'updated_by',
         ]
+
+class RoomInListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = [
+            'name', 
+            'slug',
+            'number_now',
+        ]
+
+class WaterElectricalInListSerializer(serializers.ModelSerializer):
+    room = RoomInListSerializer()
+    class Meta:
+        model = WaterElectrical
+        fields = [
+            'public_id',
+            'room',
+            'month',
+            'year',
+            'water_price',
+            'electrical_price',
+        ]
+
+class FacultyBillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Faculty
+        fields = ["name"]
+
+class ClassBillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = ["name"]
+
+class ProfileInListBillSerializer(serializers.ModelSerializer):
+    faculty = FacultyBillSerializer(required=False)
+    my_class = ClassBillSerializer(required=False)
+    user = UserSerializer(required=False)
+    class Meta:
+        model = Profile
+        fields = [
+            'user',
+            'gender',
+            'phone',
+            'public_id',
+            'faculty',
+            'my_class'
+        ]
+
+
+class BillSerializer(serializers.ModelSerializer):
+    water_electrical = WaterElectricalInListSerializer(required=False)
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+    sinhvien_paid = ProfileInListBillSerializer(required=False)
+    class Meta:
+        model = Bill
+        fields = [
+            'public_id', 
+            'water_electrical',
+            'payment_method',
+            'is_paid',
+            'time_paid',
+            'sinhvien_paid',
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+
+class BillUpdateSerializer(serializers.ModelSerializer):
+    water_electrical = WaterElectricalInListSerializer(required=False)
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+    # sinhvien_paid = UserSerializer(required=False)
+    class Meta:
+        model = Bill
+        fields = [
+            'public_id', 
+            'water_electrical',
+            'payment_method',
+            'is_paid',
+            'time_paid',
+            'sinhvien_paid',
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+
+    def _current_user(self):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
+        return False
+
+    def update(self, instance, validated_data):
+        try:
+            current_user = self._current_user()
+            sinhvien_paid = Profile.objects.get(pk=validated_data['sinhvien_paid'])
+            instance.is_paid = validated_data.get('is_paid', instance.is_paid)
+            instance.time_paid = validated_data.get('time_paid', instance.time_paid)
+            instance.sinhvien_paid = sinhvien_paid
+            instance.updated_by = current_user
+            instance.save()
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    def validate(self, data):
+        """
+        validate data
+        """
+        if 'is_paid' not in data:
+            raise serializers.ValidationError({'is_paid' : required_message})
+        if 'time_paid' not in data:
+            raise serializers.ValidationError({'time_paid' : required_message})
+        if 'sinhvien_paid' not in data:
+            raise serializers.ValidationError({'sinhvien_paid' : required_message})
+        return data
+
+class BillDetailSerializer(serializers.ModelSerializer):
+    water_electrical = WaterElectricalDetailSerializer()
+    payment_method = PaymentMethodSerializer()
+    created_by = UserSerializer()
+    updated_by = UserSerializer()
+    sinhvien_paid = ProfileInListBillSerializer()
+    class Meta:
+        model = Bill
+        fields = [
+            'public_id', 
+            'water_electrical',
+            'payment_method',
+            'is_paid',
+            'sinhvien_paid',
+            'time_paid',
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+
+
+

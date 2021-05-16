@@ -41,6 +41,9 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
         for g in user_obj.groups.all():
             gr.append(g.name)
         token['group'] = gr
+        profile = Profile.objects.get(user=user_obj)
+        profile.token = token
+        profile.save()
         return token
 
     def validate(self, attrs):
@@ -57,6 +60,7 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MySimpleJWTSerializer
+    # print(serializer_class)
 
 # API Change Password
 class ChangePasswordSerializer(serializers.ModelSerializer):
