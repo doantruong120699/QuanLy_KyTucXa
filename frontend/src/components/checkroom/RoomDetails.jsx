@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { getRoomDetails } from "../../redux/actions/checkroom";
+import { getRoomDetails, registerRoom } from "../../redux/actions/checkroom";
 import Button from "../common/Button";
 import RoomRegistration from "./RoomRegistration";
 import { getAuth } from "../../utilities/helper";
 import roomImg from "../../assets/images/room/bedroom.jpg";
 import * as ROUTER from "../../utilities/constants/router";
+import * as ALERTMESSAGE from "../../utilities/constants/AlertMessage";
+import * as APIALERTMESSAGE from "../../utilities/constants/APIAlertMessage";
+import Alertness from "../common/Alertness";
 
 const RoomDetails = () => {
   const { roomID } = useParams();
@@ -14,11 +17,22 @@ const RoomDetails = () => {
 
   const [roomState, setRoom] = useState();
 
-  const [openState, setOpen] = useState(false);
+  const [modal, setModal] = useState(false);
 
-  const setOpenModal = () => setOpen(true);
+  const setOpenModal = () => setModal(true);
 
-  const setCloseModal = () => setOpen(false);
+  const setCloseModal = () => setModal(false);
+
+  const [open, setOpen] = useState(false);
+
+  const [notification, setNotification] = useState({
+    type: "",
+    content: "",
+  });
+
+  const onClose = () => setOpen(false);
+
+  const onOpen = () => setOpen(true);
 
   const isEmployee = getAuth().group[0] === "nhanvien_group";
 
@@ -31,6 +45,44 @@ const RoomDetails = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const registerUserRoom = (data) => {
+    registerRoom(data, (output) => {
+      if (output) {
+        switch (output.notification) {
+          case APIALERTMESSAGE.INVALID_TIME:
+            setNotification({
+              type: "type-error",
+              content: ALERTMESSAGE.INVALID_TIME,
+            });
+            break;
+          case APIALERTMESSAGE.UNAUTHORIZED_ROOM:
+            setNotification({
+              type: "type-error",
+              content: ALERTMESSAGE.UNAUTHORIZED_ROOM,
+            });
+            break;
+          case APIALERTMESSAGE.REGISTER_SUCCESSFULLY:
+            setNotification({
+              type: "type-success",
+              content: ALERTMESSAGE.REGISTER_SUCCESSFULLY,
+            });
+            break;
+          default:
+            setNotification({
+              type: "type-error",
+              content: ALERTMESSAGE.SYSTEM_ERROR,
+            });
+            break;
+        }
+      } else {
+        setNotification({
+          type: "type-error",
+          content: ALERTMESSAGE.SYSTEM_ERROR,
+        });
+      }
+      onOpen();
+    });
+  };
   return (
     <div className="style-background-container">
       {roomState && (
@@ -100,11 +152,20 @@ const RoomDetails = () => {
             </div>
           )}
           <RoomRegistration
-            open={openState}
+            open={modal}
             onClose={setCloseModal}
             name={roomState.name}
             id={roomState.id}
+            registerRoom={registerUserRoom}
           />
+          <div>
+            <Alertness
+              open={open}
+              onClose={onClose}
+              type={notification.type}
+              content={notification.content}
+            />
+          </div>
         </div>
       )}
     </div>

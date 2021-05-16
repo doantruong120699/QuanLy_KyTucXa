@@ -35,7 +35,7 @@ const AdminNavbar = () => {
         </div>
         <div>
           <li>
-            <a href="#" style={{ fontSize: "20px" }}>
+            <a href="/account" style={{ fontSize: "20px" }}>
               Tài khoản
             </a>
           </li>

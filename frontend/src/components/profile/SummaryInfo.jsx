@@ -5,6 +5,7 @@ import * as AlertMessage from "../../utilities/constants/AlertMessage";
 import validate from "../../utilities/regex";
 import ChangePass from "./ChangePass";
 import { getFormResetPass } from "../../utilities/dataRender/password";
+import moment from "moment";
 
 const SummaryInfo = (props) => {
   const { dataRender, updateOrigin, updateUserProfile, changeUserPassword } =
@@ -50,7 +51,7 @@ const SummaryInfo = (props) => {
         old_password: errorState.curPass.value,
         confirm_password: errorState.newPass.value,
       };
-      
+
       closeChangePassModal();
       changeUserPassword(data);
     }
@@ -92,7 +93,7 @@ const SummaryInfo = (props) => {
       <div className="col col-full justify-content-sb ml-8">
         <div>
           <span className="text-is-purple-gradient style-profile-name">
-            {dataRender.firstName.value}
+            {dataRender.firstName.value} {dataRender.lastName.value}
           </span>
         </div>
         <i
@@ -115,7 +116,7 @@ const SummaryInfo = (props) => {
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-bold"></i>
-        <span>{dataRender.birthday.value}</span>
+        <span>{moment(dataRender.birthday.value).format("DD/MM/YYYY")}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-smartphone"></i>

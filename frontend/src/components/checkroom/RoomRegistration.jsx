@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import Button from "../common/Button";
 import Popup from "reactjs-popup";
 import InputField from "../common/InputField";
-import { getPaymentMethods, registerRoom } from "../../redux/actions/checkroom";
+import { getPaymentMethods } from "../../redux/actions/checkroom";
 import moment from "moment";
 const RoomRegistration = (props) => {
-  const { open, onClose, name, id } = props;
+  const { open, onClose, name, id, registerRoom } = props;
 
   const [resgistrationState, setRegistration] = useState({
     room: id,
@@ -29,13 +29,7 @@ const RoomRegistration = (props) => {
   }, []);
 
   const register = () => {
-    registerRoom(resgistrationState, (output) => {
-      if (output) {
-        alert(output.notification);
-      } else {
-        alert("Lỗi hệ thống");
-      }
-    });
+    registerRoom(resgistrationState);
     onClose();
   };
   return (

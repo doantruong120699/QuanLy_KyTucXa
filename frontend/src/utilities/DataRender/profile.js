@@ -21,13 +21,7 @@ function getHandledEmployeeDataRender(origin) {
       errorMessage: AlertMessage.NAME_INVALID,
     },
     email: {
-      title: "Email",
       value: origin.email,
-      type: "text",
-      validateType: "email",
-      isValid: true,
-      isHidden: true,
-      errorMessage: AlertMessage.EMAIL_INVALID,
     },
     birthday: {
       value: moment(new Date(origin.profile.birthday)).format("YYYY-MM-DD"),
@@ -77,6 +71,7 @@ function getHandledEmployeeDataRender(origin) {
     },
   };
 }
+
 function getRawEmployeeDataRender(data) {
   return {
     email: data.email.value,
