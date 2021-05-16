@@ -19,6 +19,23 @@ list_unit_price = WaterElectricalUnitPriceViewSet.as_view({
 detail_unit_price = WaterElectricalUnitPriceViewSet.as_view({
     'get': 'retrieve',
 })
+# list - create
+# water_electrical_list = WaterElectricalViewSet.as_view({
+#     'get': 'list',
+# })
+
+# =========== water_electrical =========
+# list - create
+water_electrical_list = WaterElectricalViewSet.as_view({
+    'get': 'list',
+    'post': 'post'
+})
+# detail - update - delete
+water_electrical_detail = WaterElectricalViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'delete': 'destroy'
+})
 
 urlpatterns = [ 
     # ========== room
@@ -26,4 +43,8 @@ urlpatterns = [
     # ========== water electrical unit price
     path('water-electrical-unit-price/', list_unit_price, name = 'list_unit_price'),
     path('water-electrical-unit-price/<int:id>/', detail_unit_price, name = 'detail_unit_price'),
+     # ========== Water electrical
+    path('water-electricals/<slug:slug>/<str:time>/', water_electrical_list, name = 'water_electrical_list'),
+    path('water-electricals/', water_electrical_list, name = 'water_electrical_list'),
+    path('water-electricals/<str:public_id>/', water_electrical_detail, name = 'water_electrical_detail'),
 ]
