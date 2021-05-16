@@ -96,21 +96,6 @@ const EditEmployeeProfile = (props) => {
           </div>
           <div className="col col-full mt-8">
             <FormError
-              isHidden={infoState.email.isHidden}
-              errorMessage={dataRender.email.errorMessage}
-            />
-            <InputField
-              name="email"
-              isValid={infoState.email.isValid}
-              value={infoState.email.value}
-              type={dataRender.email.type}
-              placeholder={dataRender.email.title}
-              onChange={handleInput}
-              autocomplete="off"
-            />
-          </div>
-          <div className="col col-full mt-8">
-            <FormError
               isHidden={infoState.birthday.isHidden}
               errorMessage={dataRender.birthday.errorMessage}
             />

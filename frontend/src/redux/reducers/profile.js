@@ -1,3 +1,4 @@
+import { getAuth } from "../../utilities/helper";
 import * as types from "../constants";
 
 const initialState = {
@@ -6,6 +7,8 @@ const initialState = {
   grade: {},
   error: {},
   loading: false,
+  schedule: [],
+  user: getAuth(),
 };
 
 export default function reducer(state = initialState, actions) {
@@ -49,6 +52,14 @@ export default function reducer(state = initialState, actions) {
         loading: false,
       };
     case types.GET_MY_SCHEDULE_API_SUCCEED:
+      return {
+        ...state,
+        schedule: actions.payload,
+        loading: false,
+      };
+    case types.FETCH_NAV_USER: {
+      return { ...state, user: actions.user };
+    }
     case types.POST_UPDATE_MY_PROFILE_API_SUCCEED:
       return {
         ...state,

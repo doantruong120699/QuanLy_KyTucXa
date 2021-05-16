@@ -7,11 +7,14 @@ import Pagination from "../components/common/Pagination";
 import {
   actFetchTitleNavigation,
   getNotifications,
+  getDashboard,
 } from "../redux/actions/dashboard";
 const Dashboard = () => {
   const dispatch = useDispatch();
 
   const [notifications, setNotification] = useState();
+
+  const [dashboard, setDashboard] = useState();
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -43,54 +46,63 @@ const Dashboard = () => {
         }
       });
 
+    const GetDashboard = () =>
+      getDashboard((output) => {
+        if (output) {
+          setDashboard(output);
+        }
+      });
+    GetDashboard();
     GetNotifications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
   return (
     <div className="style-background-container">
-      {notifications && (
-        <div>
+      <div>
+        {dashboard && (
           <div className="col col-half">
             <div className="col col-full">
               <div className="col col-half">
                 <InfoContainer
-                  number={"9,825"}
-                  title={"Students"}
-                  iconStyle={"fi-sr-users"}
-                  color={"#c71cca"}
-                  increasedPercent="+0,5"
-                />
-              </div>
-              <div className="col col-half">
-                <InfoContainer
-                  number={"9,825"}
-                  title={"Teachers"}
+                  number={dashboard.student.total}
+                  title={"Tổng số sinh viên"}
                   iconStyle={"fi-sr-graduation-cap"}
-                  color={"#0a3dbd"}
-                  increasedPercent="+0,5"
+                  color={"#c71cca"}
+                  increasedPercent={dashboard.student["cur-month"]}
                 />
               </div>
               <div className="col col-half">
                 <InfoContainer
-                  number={"9,825"}
-                  title={"Rooms"}
+                  number={dashboard.staff.total}
+                  title={"Tổng số nhân viên"}
+                  iconStyle={"fi-sr-users"}
+                  color={"#0a3dbd"}
+                  increasedPercent={dashboard.staff["cur-month"]}
+                />
+              </div>
+              <div className="col col-half">
+                <InfoContainer
+                  number={dashboard.room.total}
+                  title={"Tổng số phòng"}
                   iconStyle={"fi-sr-school"}
                   color={"#2bc155"}
-                  increasedPercent="+0,5"
+                  increasedPercent={null}
                 />
               </div>
               <div className="col col-half">
                 <InfoContainer
-                  number={"9,825"}
-                  title={"Events"}
-                  iconStyle={"fi-sr-flag"}
+                  number={dashboard["room-available"]}
+                  title={"Phòng trống"}
+                  iconStyle={"fi-sr-checkbox"}
                   color={"#ff6275"}
-                  increasedPercent="+0,5"
+                  increasedPercent={null}
                 />
               </div>
             </div>
             <div></div>
           </div>
+        )}
+        {notifications && (
           <div className="col col-half">
             <div className="notificationsContainer style-lg-box">
               <p className="style-notiTitle">
@@ -120,8 +132,8 @@ const Dashboard = () => {
               />
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

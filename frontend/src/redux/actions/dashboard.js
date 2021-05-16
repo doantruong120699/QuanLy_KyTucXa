@@ -30,6 +30,33 @@ export async function getNotifications(resolve = () => {}) {
   }
 }
 
+export async function getDashboard(resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_DASHBOARD_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}dashboard/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data = await response.json();
+    resolve(data);
+    store.dispatch({
+      payload: data,
+      type: types.GET_DASHBOARD_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_DASHBOARD_API_FAIL,
+    });
+  }
+}
+
 export const actFetchTitleNavigation = (title) => {
   return {
     type: types.FETCH_NAV_TITLE,
