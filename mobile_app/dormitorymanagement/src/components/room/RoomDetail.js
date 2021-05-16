@@ -7,6 +7,7 @@ import DatePicker from 'react-native-date-picker';
 import { Picker } from '@react-native-picker/picker';
 import moment from 'moment';
 import { registrationroom } from '../../redux/actions/index';
+import { styleBtnComeBack, styleImgBg } from '../../styles/index';
 
 class RoomDetail extends Component {
   constructor(props) {
@@ -47,6 +48,8 @@ class RoomDetail extends Component {
       await this.props.registrationroom(data);
       if (this.props.msg != 'Success') {
         this.showToast(this.props.msg);
+      } else {
+        this.showToast('Đăng ký phòng thành công');
       }
       this.closeDetail();
     }
@@ -58,7 +61,7 @@ class RoomDetail extends Component {
     const item = this.props.route.params.item;
     return (
       <View style={styles.container}>
-        <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
+        <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
         <View style={styles.centeredView}>
           <Modal
             animationType="slide"
@@ -116,9 +119,9 @@ class RoomDetail extends Component {
             </View>
           </Modal>
         </View>  
-        <View style={styles.comeBack}>
-          <TouchableOpacity onPress={this.goBack}>
-            <FontAwesome5 style={styles.iconUndo} name="long-arrow-alt-left" />
+        <View style={styleBtnComeBack.comeBack}>
+          <TouchableOpacity style={styleBtnComeBack.buttonComback} onPress={this.goBack}>
+            <FontAwesome5 style={styleBtnComeBack.iconUndo} name="long-arrow-alt-left" />
           </TouchableOpacity>
           <Text style={styles.text}>ROOM DETAIL</Text>
         </View>
@@ -179,12 +182,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  imageBackground: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   comeBack: {
     flex: 1,
     height: '100%',
@@ -199,8 +196,6 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: 'bold',
     fontSize: 20,
-    paddingLeft: '20%',
-    paddingTop: '3%',
   },
   container_child: {
     flex: 9,
@@ -214,12 +209,6 @@ const styles = StyleSheet.create({
     width: '80%',
     borderRadius: 20,
     elevation: 7,
-  },
-  textProfile: {
-    textAlign: 'center',
-    marginTop: 5,
-    fontSize: 20,
-    fontWeight: 'bold',
   },
   viewInfo: {
     marginTop: 10,

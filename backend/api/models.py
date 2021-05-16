@@ -52,6 +52,7 @@ class Area(models.Model):
     
     def __str__(self):
         return self.name
+
 class Profile(models.Model):
     user = models.OneToOneField(User,related_name = 'user_profile', on_delete=models.CASCADE, primary_key=True)
     public_id = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -66,7 +67,7 @@ class Profile(models.Model):
     my_class = models.ForeignKey(Class, related_name = 'class_profile', on_delete=models.SET_NULL, blank=True, null=True)
     position = models.ForeignKey(Position, related_name = 'position_profile', on_delete=models.SET_NULL, blank=True, null=True)
     area = models.ForeignKey(Area, related_name = 'area_profile', on_delete=models.SET_NULL, blank=True, null=True)
-    token = models.CharField(max_length=100, null=True)
+    token = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ('user',)
@@ -87,6 +88,7 @@ class TypeRoom(models.Model):
 
     def __str__(self):
         return self.name
+
 class Room(models.Model):
     STATUS = Choices(
         ('A', _('Available')),
@@ -330,6 +332,8 @@ class Bill(models.Model):
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     created_by = models.ForeignKey(User, related_name = 'bill_created_by', on_delete=models.CASCADE, blank=True, null=True)
     updated_by = models.ForeignKey(User, related_name = 'bill_updated_by', on_delete=models.CASCADE, blank=True, null=True)
+
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
 
     def __str__(self):
         return self.water_electrical.room.name + ' - ' + str(self.is_paid)

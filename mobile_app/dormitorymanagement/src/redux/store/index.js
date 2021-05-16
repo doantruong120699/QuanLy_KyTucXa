@@ -15,6 +15,8 @@ import {
   changeprofile,
   getnotification,
   registrationroom,
+  dashboard,
+  getcalendar,
 } from '../reducer/index';
 import thunkMiddleware from 'redux-thunk';
 
@@ -34,6 +36,8 @@ const AppReduces = combineReducers({
   changeprofile,
   getnotification,
   registrationroom,
+  dashboard,
+  getcalendar,
 });
 
 const rootReducer = (state, action) => {

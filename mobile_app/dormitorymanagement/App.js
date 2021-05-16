@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
 import { store } from './src/redux/store';
 import 'react-native-gesture-handler';
-import { Login, HomePage, ProfileSV, ProfileNV, ChangePassword, ChangeProfile, RoomDetail, Schedule, ShowAllRoom } from './src/components/index';
+import { Login, HomePage, ProfileSV, ProfileNV, ChangePassword, ChangeProfile, RoomDetail, ShowAllRoom, ForgotPassword } from './src/components/index';
 // 
 const Stack = createStackNavigator();
 class App extends Component {
@@ -25,7 +25,7 @@ class App extends Component {
             <Stack.Screen name="ChangeProfile" component={ChangeProfile} />
             <Stack.Screen name="ShowAllRoom" component={ShowAllRoom} />
             <Stack.Screen name="RoomDetail" component={RoomDetail} />
-            <Stack.Screen name="Schedule" component={Schedule} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>
