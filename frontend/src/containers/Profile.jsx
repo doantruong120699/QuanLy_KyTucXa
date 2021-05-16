@@ -1,21 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-
-import {
-  profile as GetProfile,
-  faculty as GetFaculties,
-  grade as GetGrades,
-} from "../redux/actions/profile";
+import { profile as GetProfile, updateProfile } from "../redux/actions/profile";
 import Avatar from "../components/profile/Avatar";
 import SummaryInfo from "../components/profile/SummaryInfo";
 import StudyInfo from "../components/profile/StudyInfo";
 import RoomInfo from "../components/profile/RoomInfo";
 import EmployeeInfo from "../components/profile/EmployeeInfo";
 import { getAuth } from "../utilities/helper";
-import ProfileContext from "../components/profile/ProfileContext";
-import { getHandledDataRender } from "../components/profile/DataRender";
+import { getHandledEmployeeDataRender } from "../utilities/dataRender/profile";
 import { actFetchTitleNavigation } from "../redux/actions/dashboard";
+import { changePass } from "../redux/actions/changePass";
+import Alertness from "../components/common/Alertness";
+import * as ALERTMESSAGE from "../utilities/constants/AlertMessage";
+import * as APIALERTMESSAGE from "../utilities/constants/APIAlertMessage";
 const Profile = () => {
   const [profileState, setProfile] = useState({
     profile: null,
@@ -24,63 +22,115 @@ const Profile = () => {
     area: null,
     room: null,
   });
-  const [studyState, setStudy] = useState({
-    faculty: null,
-    grade: null,
+
+  const [filter, setFilter] = useState({ profile: profileState.profile });
+
+  const [open, setOpen] = useState(false);
+
+  const [notification, setNotification] = useState({
+    type: "",
+    content: "",
   });
 
+  const onClose = () => setOpen(false);
+
+  const onOpen = () => setOpen(true);
+
   const updateOrigin = (data) => {
-    setProfile({ ...profileState, profile: getHandledDataRender(data) });
+    setFilter({
+      profile: getHandledEmployeeDataRender(data),
+    });
   };
 
   const isEmployee = getAuth().group[0] === "nhanvien_group";
+
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(actFetchTitleNavigation("Thông tin cá nhân"));
+
     const GetProfileUser = () => {
       GetProfile((output) => {
         if (output) {
           setProfile({
-            profile: getHandledDataRender(output),
+            profile: getHandledEmployeeDataRender(output),
             username: output.username,
-            position: output.profile.position.name,
-            area: output.profile.area.name,
+            position: output.profile.position
+              ? output.profile.position.name
+              : null,
+            area: output.profile.area ? output.profile.area.name : null,
             room: output.room,
           });
         }
       });
     };
-
-    let studyInfo = { faculty: null, grade: null };
-    const GetAllFaculties = () => {
-      GetFaculties((output) => {
-        if (output) {
-          studyInfo.faculty = output;
-        }
-      });
-    };
-
-    const GetAllGrades = () => {
-      GetGrades((output) => {
-        if (output) {
-          studyInfo.grade = output;
-        }
-      });
-    };
-    GetAllFaculties();
-    GetAllGrades();
-    setStudy(studyInfo);
     GetProfileUser();
-  }, []);
-  const { profile } = profileState;
+  }, [filter]);
+
+  const updateUserProfile = (data) => {
+    
+    updateProfile(data, (output) => {
+      if (output) {
+        switch (output.message) {
+          case APIALERTMESSAGE.UPDATE_PROFILE_SUCCESSFULLY:
+            setNotification({
+              type: "type-success",
+              content: ALERTMESSAGE.SUCCESSFULLY_RESET_PASSWORD,
+            });
+            break;
+          default:
+            setNotification({
+              type: "type-error",
+              content: ALERTMESSAGE.SYSTEM_ERROR,
+            });
+            break;
+        }
+      } else {
+        setNotification({
+          type: "type-error",
+          content: ALERTMESSAGE.SYSTEM_ERROR,
+        });
+      }
+      onOpen();
+    });
+  };
+
+  const changeUserPassword = (data) => {
+    changePass(data, (output) => {
+      if (output) {
+        switch (output.message) {
+          case APIALERTMESSAGE.CHANGE_PASS_SUCCESSFULLY:
+            setNotification({
+              type: "type-success",
+              content: ALERTMESSAGE.SUCCESSFULLY_RESET_PASSWORD,
+            });
+            break;
+          case APIALERTMESSAGE.INCORRECT_PASSWORD:
+            setNotification({
+              type: "type-error",
+              content: ALERTMESSAGE.PASSWORD_DIFFERENT,
+            });
+            break;
+          default:
+            setNotification({
+              type: "type-error",
+              content: ALERTMESSAGE.SYSTEM_ERROR,
+            });
+            break;
+        }
+        onOpen();
+      } else {
+        setNotification({
+          type: "type-error",
+          content: ALERTMESSAGE.SYSTEM_ERROR,
+        });
+      }
+    });
+  };
+
   return (
-    <ProfileContext.Provider
-      value={{
-        profile,
-        updateOrigin: updateOrigin.bind(this),
-      }}
-    >
-      {profileState.profile && studyState.faculty && studyState.grade && (
+    <div>
+      {profileState.profile && (
         <div className="style-background-container">
           <div className="col col-full">
             <div className="col col-third justify-content-ct">
@@ -89,8 +139,9 @@ const Profile = () => {
             <div className="col col-two-third">
               <SummaryInfo
                 dataRender={profileState.profile}
-                isEmployee={isEmployee}
-                studyInfo={studyState}
+                updateOrigin={updateOrigin}
+                updateUserProfile={updateUserProfile}
+                changeUserPassword={changeUserPassword}
               />
             </div>
           </div>
@@ -118,7 +169,15 @@ const Profile = () => {
           )}
         </div>
       )}
-    </ProfileContext.Provider>
+      <div>
+        <Alertness
+          open={open}
+          onClose={onClose}
+          type={notification.type}
+          content={notification.content}
+        />
+      </div>
+    </div>
   );
 };
 export default React.memo(Profile);

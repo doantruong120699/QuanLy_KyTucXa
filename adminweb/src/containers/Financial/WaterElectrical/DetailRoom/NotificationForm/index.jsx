@@ -12,9 +12,15 @@ import {
 
 import TextField from "@material-ui/core/TextField";
 import { getAuth } from "../../../../../utilities/helper";
+import { useState } from "react";
 
 export default function NotificationForm() {
   const user = getAuth();
+  const [dataSend, setDataSend] = useState({
+    from: "",
+    to: "",
+    notification: "",
+  });
   const handleClick = () => {
     console.log("Hello");
   };
@@ -28,7 +34,11 @@ export default function NotificationForm() {
       width: "100px",
     },
   }))(Button);
-
+  const handleChange = (event) => {
+    const name = event.target.name;
+    const data = event.target.value;
+    setDataSend({ ...dataSend, [name]: data });
+  };
   return (
     <Box>
       <Box>
@@ -38,8 +48,10 @@ export default function NotificationForm() {
         <TextField
           id="outlined-helperText"
           label="Từ"
+          name={"from"}
           defaultValue={`${user.first_name} ${user.last_name}`}
           variant="outlined"
+          onChange={handleChange}
           size="small"
         />
       </Box>
@@ -47,6 +59,8 @@ export default function NotificationForm() {
         <TextField
           id="outlined-helperText"
           label="Đến"
+          name={"to"}
+          onChange={handleChange}
           placeholder="Email người nhận"
           variant="outlined"
           size="small"
@@ -57,6 +71,8 @@ export default function NotificationForm() {
           id="outlined-helperText"
           label="Thông báo"
           placeholder="Thông báo"
+          onChange={handleChange}
+          name={"notification"}
           variant="outlined"
           fullWidth
           rows={4}

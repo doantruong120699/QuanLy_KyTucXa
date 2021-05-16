@@ -7,19 +7,25 @@ import {
 } from "@material-ui/core/colors";
 
 export function getTaskList(data) {
+  console.log(data);
   let result = [];
   const setColor = new Map();
   var j = 0;
   data.forEach((element) => {
+    var endDate = new Date(`${element.shift.date}T${element.shift.end_at}`);
+
     if (!setColor.has(element.staff.username)) {
       setColor.set(element.staff.username, colorData[j++].id);
+    }
+    if (element.shift.id === 3) {
+      endDate.setDate(endDate.getDate() + 1);
     }
     result.push({
       shiftID: element.id,
       title: element.staff.first_name + " " + element.staff.last_name,
       colorID: setColor.get(element.staff.username),
       startDate: new Date(`${element.shift.date}T${element.shift.start_at}`),
-      endDate: new Date(`${element.shift.date}T${element.shift.end_at}`),
+      endDate: endDate,
     });
   });
   return result;

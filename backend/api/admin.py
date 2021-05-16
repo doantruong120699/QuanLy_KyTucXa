@@ -3,7 +3,6 @@ from .models import *
 
 # Register your models here.
 admin.site.register(Profile)
-admin.site.register(VietNamProvince)
 admin.site.register(Faculty)
 admin.site.register(Class)
 admin.site.register(Position)
@@ -15,5 +14,9 @@ admin.site.register(Contract)
 admin.site.register(Notification)
 admin.site.register(Shift)
 admin.site.register(DailySchedule)
+admin.site.register(WaterElectricalUnitPrice)
 admin.site.register(WaterElectrical)
 admin.site.register(Bill)
+admin.site.register(TypeExpense)
+admin.site.register(Service)
+admin.site.register(Expense)

@@ -10,7 +10,8 @@ import {
   withStyles,
 } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-
+import Box from "@material-ui/core/Box";
+import NotificationsIcon from "@material-ui/icons/Notifications";
 import "./styles.css";
 import React, { useState } from "react";
 import ReactModal from "react-modal";
@@ -422,14 +423,17 @@ export default function Student() {
     },
   ];
   const history = useHistory();
+  const [deletePeople, setDeletePeople] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalNotiVisible, setIsModalNotiVisible] = useState(false);
   const hideModal = () => {
     setIsModalVisible(false);
+    setIsModalNotiVisible(false);
   };
   const AddButton = withStyles((theme) => ({
     root: {
       width: "100px",
-      marginRight:"20px"
+      marginRight: "20px",
     },
   }))(Button);
   const DeleteButton = withStyles((theme) => ({
@@ -499,6 +503,9 @@ export default function Student() {
       activeDate: "22/5/2020",
     },
   ];
+  const handleDeletePeople = (params) => {
+    console.log("params", params);
+  };
   const convertDataForTable = (data) => {
     return data.map((n) => ({
       name: n.lastName + " " + n.firstName,
@@ -531,25 +538,157 @@ export default function Student() {
         sort: true,
       },
     },
+    {
+      name: "",
+      label: "",
+      options: {
+        customBodyRender: (value) => {
+          return (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={(params) => handleDeletePeople}
+              style={{ marginLeft: "20px" }}
+            >
+              Xoá
+            </Button>
+          );
+        },
+      },
+    },
   ];
   const handleClickAddPeople = () => {
     console.log("Add people");
   };
-  const handleClickDeletePeople = () => {
-    console.log("Delete people");
-  };
+
   const options = {
     filterType: "textField",
     customFooter: () => {
       return;
     },
+    selectableRows: false,
     customHeadRender: () => {
       return null;
     },
+    onRowClick: (params,rowMeta) => {
+      console.log("params", params);
+      console.log("event", rowMeta);
+    },
   };
-
+  const dataNotification = [
+    {
+      id: 1,
+      request: "requestRoom@demailam.com",
+      roomRequested: 101,
+      area: "A",
+      createdDate: "05/09/2021",
+    },
+  ];
+  const columnsNoti = [
+    {
+      name: "id",
+      label: "ID",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "request",
+      label: "Email người gửi",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "roomRequested",
+      label: "Phòng",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "area",
+      label: "Khu",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "createdDate",
+      label: "Ngày gửi yêu cầu",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "",
+      label: "",
+      options: {
+        customBodyRender: (value) => {
+          return (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={(params) => handleClickAddPeople}
+              style={{ marginLeft: "20px" }}
+            >
+              Xác nhận
+            </Button>
+          );
+        },
+      },
+    },
+  ];
+  const handleClickAddPeopleWithParams = (params) => {
+    console.log("AAAAAAAA", params);
+  };
+  const handleOpenNotiModal = () => {
+    setIsModalNotiVisible(true);
+  };
   return (
     <div className="style-background-container">
+      <Box>
+        <Box
+          className={"notification"}
+          display={dataNotification.length > 0 ? "block" : "none"}
+          boxShadow={1}
+          borderRadius={5}
+          backgroundColor={"palevioletred"}
+          marginBottom={5}
+          color="red"
+          width={350}
+          textAlign="center"
+          right={5}
+          style={{ cursor: "pointer" }}
+          onClick={handleOpenNotiModal}
+        >
+          <NotificationsIcon />
+          <span
+            style={{ marginLeft: "5px" }}
+          >{`Có ${dataNotification.length} yêu cầu mới `}</span>
+        </Box>
+      </Box>
+      <ReactModal
+        isOpen={isModalNotiVisible}
+        onRequestClose={hideModal}
+        style={customStyles}
+      >
+        <div>
+          <MuiThemeProvider theme={getMuiTheme()}>
+            <MUIDataTable
+              title={"Yêu cầu vào phòng"}
+              data={dataNotification}
+              columns={columnsNoti}
+              options={options}
+            />
+          </MuiThemeProvider>
+        </div>
+      </ReactModal>
       {dataArea &&
         dataArea.map((area, index) => {
           return (
@@ -584,17 +723,16 @@ export default function Student() {
                         <div
                           style={{
                             textAlign: "center",
-                            marginTop:"20px"
+                            marginTop: "20px",
                           }}
                         >
                           <Button
                             variant="contained"
                             color="primary"
-                            onClick={handleClickAddPeople}
+                            onClick={(params) => handleClickAddPeopleWithParams}
                           >
                             Thêm người
                           </Button>
-                         
                         </div>
                       </div>
                     </ReactModal>

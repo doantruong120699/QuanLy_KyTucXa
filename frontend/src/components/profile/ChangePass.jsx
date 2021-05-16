@@ -18,7 +18,7 @@ const ChangePass = (props) => {
             <InputField
               name="curPass"
               isValid={errorState.curPass.isInputValid}
-              type="text"
+              type="password"
               placeholder="Mật khẩu hiện tại"
               onChange={handleInput}
               autocomplete="off"
@@ -32,7 +32,7 @@ const ChangePass = (props) => {
             <InputField
               name="newPass"
               isValid={errorState.newPass.isInputValid}
-              type="text"
+              type="password"
               placeholder="Mật khẩu mới"
               onChange={handleInput}
               autocomplete="off"

@@ -8,8 +8,8 @@ import {
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { getSchedule } from "../../redux/actions/profile";
-import { colorData, getTaskList } from "../../utilities/DataRender/schedule";
-import moment from "moment";
+import { colorData, getTaskList } from "../../utilities/dataRender/schedule";
+import moment from "moment-timezone";
 
 const MySchedule = () => {
   const [myScheduleState, setSchedule] = useState({
@@ -18,12 +18,14 @@ const MySchedule = () => {
   });
 
   useEffect(() => {
-    const currentWeek = moment().format("w") - 1;
+    const currentWeek = moment().tz("Asia/Ho_Chi_Minh").format("w") - 1;
+    
     getSchedule(currentWeek, (output) => {
       if (output) {
         setSchedule({ ...myScheduleState, data: getTaskList(output) });
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const resources = [

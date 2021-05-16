@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { getRoomDetails } from "../../redux/actions/checkroom";
 import Button from "../common/Button";
 import RoomRegistration from "./RoomRegistration";
 import { getAuth } from "../../utilities/helper";
 import roomImg from "../../assets/images/room/bedroom.jpg";
+import * as ROUTER from "../../utilities/constants/router";
 
 const RoomDetails = () => {
   const { roomID } = useParams();
+
+  const history = useHistory();
 
   const [roomState, setRoom] = useState();
 
@@ -25,6 +28,7 @@ const RoomDetails = () => {
         setRoom(output);
       }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -71,7 +75,15 @@ const RoomDetails = () => {
                       <p className="text-12">{student.my_class_id}</p>
                     </div>
                     <div className="col col-third text-align-ct text-20 pt-8">
-                      <i className="fi-rr-search-alt"></i>
+                      <i
+                        className="fi-rr-search-alt"
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          history.push(
+                            `${ROUTER.ROUTE_STUDENTS}${ROUTER.ROUTE_DETAILED_STUDENTS}/${student.public_id}`
+                          )
+                        }
+                      ></i>
                     </div>
                   </div>
                 </div>

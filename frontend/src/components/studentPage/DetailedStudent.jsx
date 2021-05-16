@@ -14,6 +14,7 @@ const DetailStudent = () => {
         setStudent(output);
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="style-background-container">
@@ -27,8 +28,8 @@ const DetailStudent = () => {
           <div className="col col-two-third style-lg-box bg-color-white">
             <div className="col col-full align-item-ct">
               <div className="col col-half pl-16">
-                <h2 className="pd-16">Thông tin nhân viên</h2>
-                <div className="col col-full ml-8">
+                <h2 className="pt-8 pb-8">Thông tin sinh viên</h2>
+                <div className="col col-full">
                   <span className="text-is-purple-gradient style-profile-name">
                     {studentState.first_name} {studentState.last_name}
                   </span>
@@ -55,7 +56,7 @@ const DetailStudent = () => {
             </div>
           </div>
           <div className="col col-full style-lg-box bg-color-white style-profile-room mt-48 pd-24">
-            <span className="style-notiTitle">Thông tin công việc</span>
+            <h2 className="">Thông tin công việc</h2>
             <div className="col col-full pt-8">
               <span className="text-is-bold">Mã số sinh viên: </span>
               <span>{studentState.username}</span>

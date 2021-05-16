@@ -5,7 +5,6 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import { makeStyles } from "@material-ui/core/styles";
 import ReactModal from "react-modal";
@@ -46,6 +45,7 @@ export default function DetailRoom() {
     created_at: "2021-03-15T14:40:15.339962Z",
     last_update: "2021-03-18T15:36:20.411397Z",
   };
+ 
   const isFull = data.number_now === data.typeroom.number_max;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const hideModal = () => {
@@ -66,6 +66,7 @@ export default function DetailRoom() {
   };
   return (
     <div className={classes.root}>
+     
       <Grid container spacing={3}>
         <Grid item xs={6}>
           <Paper
@@ -116,7 +117,10 @@ export default function DetailRoom() {
         </Grid>
         <Grid item xs={6}>
           <Paper className={classes.paper} style={{ fontSize: "24px" }}>
-            {data.typeroom.price}
+            {new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(data.typeroom.price)}
           </Paper>
         </Grid>
         <Grid item xs={6}>
