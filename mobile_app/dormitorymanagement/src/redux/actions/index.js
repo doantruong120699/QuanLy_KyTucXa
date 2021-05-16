@@ -13,6 +13,8 @@ import { getfaculty } from './getfaculty';
 import { changeprofile } from './changeprofile';
 import { getnotification } from './getnotification';
 import { registrationroom } from './registrationroom';
+import { dashboard } from './dashboard';
+import { getcalendar } from './getcalendar';
 
 export { 
     allstaff, 
@@ -30,4 +32,6 @@ export {
     changeprofile,
     getnotification,
     registrationroom,
+    dashboard,
+    getcalendar,
 };
