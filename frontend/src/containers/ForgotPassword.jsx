@@ -3,6 +3,7 @@ import InputField from "../components/common/InputField";
 import FormError from "../components/common/FormError";
 import Button from "../components/common/Button";
 import * as AlertMessage from "../utilities/constants/AlertMessage";
+import { sendEmail } from "../redux/actions/login";
 
 const ForgotPassword = () => {
   const [errorState, setError] = useState({
@@ -42,13 +43,15 @@ const ForgotPassword = () => {
   const submit = (event) => {
     event.preventDefault();
 
-    let {
-      isEmailInputValid,
-      isEmailErrorHidden,
-      emailErrorMessage,
-    } = validEmailInput(errorState.email.value);
+    let { isEmailInputValid, isEmailErrorHidden, emailErrorMessage } =
+      validEmailInput(errorState.email.value);
 
     if (isEmailInputValid) {
+      sendEmail(errorState.email.value, (output) => {
+        if (output) {
+          console.log(output);
+        }
+      });
       isEmailInputValid = false;
       isEmailErrorHidden = false;
       emailErrorMessage = AlertMessage.EMAIL_UNAVAILABLE;

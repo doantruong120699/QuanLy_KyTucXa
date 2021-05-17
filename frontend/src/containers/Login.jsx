@@ -4,15 +4,17 @@ import Button from "../components/common/Button";
 import InputField from "../components/common/InputField";
 import * as AlertMessage from "../utilities/constants/AlertMessage";
 import { login as LoginUser } from "../redux/actions/login";
-import { useSelector } from "react-redux";
-import { setAuth } from "../utilities/helper";
+import { useSelector, useDispatch } from "react-redux";
+import { getAuth, setAuth } from "../utilities/helper";
 import * as ROUTER from "../utilities/constants/router";
 
 import { Link, useHistory } from "react-router-dom";
+import { actFetchUserNavigation } from "../redux/actions/profile";
 const Login = () => {
-
   const isDisable = useSelector((state) => state.login.loading);
-  
+
+  const dispatch = useDispatch();
+
   let history = useHistory();
   const [errorState, setError] = useState({
     accountTxt: {
@@ -74,17 +76,11 @@ const Login = () => {
   const login = (event) => {
     event.preventDefault();
 
-    var {
-      isAccountInputValid,
-      isAccountErrorHidden,
-      accountErrorMessage,
-    } = validAccountInput(errorState.accountTxt.value);
+    var { isAccountInputValid, isAccountErrorHidden, accountErrorMessage } =
+      validAccountInput(errorState.accountTxt.value);
 
-    var {
-      isPassInputValid,
-      isPassErrorHidden,
-      passErrorMessage,
-    } = validPasswordInput(errorState.passwordTxt.value);
+    var { isPassInputValid, isPassErrorHidden, passErrorMessage } =
+      validPasswordInput(errorState.passwordTxt.value);
 
     if (isAccountInputValid && isPassInputValid) {
       const user = {
@@ -94,6 +90,9 @@ const Login = () => {
       LoginUser(user, (output) => {
         if (output && output.access) {
           setAuth(output.access);
+
+          dispatch(actFetchUserNavigation(getAuth()));
+
           history.push(ROUTER.ROUTE_DASHBOARD);
         } else {
           const newAccountState = { ...errorState.accountTxt };

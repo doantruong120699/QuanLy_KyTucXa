@@ -11,7 +11,7 @@ export async function changePass(data, resolve = () => {}) {
     const response = await fetch(
       `${REACT_APP_BASE_API}account/change-password/`,
       {
-        method: "POST",
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
           "Content-Type": "application/json",
