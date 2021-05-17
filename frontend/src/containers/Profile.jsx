@@ -18,6 +18,7 @@ import { changePass } from "../redux/actions/changePass";
 import Alertness from "../components/common/Alertness";
 import * as ALERTMESSAGE from "../utilities/constants/AlertMessage";
 import * as APIALERTMESSAGE from "../utilities/constants/APIAlertMessage";
+
 const Profile = () => {
   const [profileState, setProfile] = useState({
     profile: null,
@@ -56,6 +57,7 @@ const Profile = () => {
     const GetProfileUser = () => {
       GetProfile((output) => {
         if (output) {
+          console.log(output);
           setProfile({
             profile: getHandledEmployeeDataRender(output),
             username: output.username,
@@ -81,7 +83,7 @@ const Profile = () => {
             user.last_name = data.last_name;
 
             dispatch(actFetchUserNavigation(user));
-            
+
             setNotification({
               type: "type-success",
               content: ALERTMESSAGE.UPDATE_PROFILE_SUCCESSFULLY,
