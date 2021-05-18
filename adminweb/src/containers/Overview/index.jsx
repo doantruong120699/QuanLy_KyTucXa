@@ -144,7 +144,7 @@ export default function Overview() {
   //const data =
   return (
     <Grow in={true} timeout={1000} style={{ transformOrigin: "10 10 10" }}>
-      <Box style={{ transform: "scale(1)" }}>
+      <Box style={{ transform: "scale(1)"}}>
         {data.map((n) => {
           return (
             <CircularProgressWithLabel
