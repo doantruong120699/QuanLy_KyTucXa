@@ -12,9 +12,10 @@ const Employee = () => {
     week.push({ value: i, label: i + "" });
     i++;
   }
+
   const [valueSelected, setValueSelected] = useState();
   const [isEdit, setIsEdit] = useState(false);
-  const [putData, setPutData] = useState([
+  const [initData, setInitData] = useState([
     {
       title: "Ca trực",
       content: "abc",
@@ -46,7 +47,9 @@ const Employee = () => {
       staff: 4,
     },
   ]);
+  const [putData, setPutData] = useState([]);
   const [postData, setPostData] = useState([]);
+
   const renderTableHeader = () => {
     return (
       <div>
@@ -76,11 +79,11 @@ const Employee = () => {
               options={employeeOption}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "01")?.staff
+                  index.staff === initData.find((i) => i.shift === "01")?.staff
               )}
               selectedValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "01")?.staff
+                  index.staff === initData.find((i) => i.shift === "01")?.staff
               )}
               value={valueSelected}
               onChange={handleValueChange}
@@ -92,14 +95,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "01")?.title
+                  index.label === initData.find((i) => i.shift === "01")?.title
               )}
             />
             <Input
               id="01"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "01")?.content}
+              defaultValue={initData.find((i) => i.shift === "01")?.content}
             />
           </td>
           <td key={1}>
@@ -109,7 +112,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "04")?.staff
+                  index.staff === initData.find((i) => i.shift === "04")?.staff
               )}
             />
             <Select
@@ -119,14 +122,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "04")?.title
+                  index.label === initData.find((i) => i.shift === "04")?.title
               )}
             />
             <Input
               id="04"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "04")?.content}
+              defaultValue={initData.find((i) => i.shift === "04")?.content}
             />
           </td>
           <td key={1}>
@@ -136,7 +139,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "07")?.staff
+                  index.staff === initData.find((i) => i.shift === "07")?.staff
               )}
             />{" "}
             <Select
@@ -146,14 +149,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "07")?.title
+                  index.label === initData.find((i) => i.shift === "07")?.title
               )}
             />
             <Input
               id="07"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "07")?.content}
+              defaultValue={initData.find((i) => i.shift === "07")?.content}
             />
           </td>
           <td key={1}>
@@ -163,7 +166,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "10")?.staff
+                  index.staff === initData.find((i) => i.shift === "10")?.staff
               )}
             />{" "}
             <Select
@@ -173,14 +176,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "10")?.title
+                  index.label === initData.find((i) => i.shift === "10")?.title
               )}
             />
             <Input
               id="10"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "10")?.content}
+              defaultValue={initData.find((i) => i.shift === "10")?.content}
             />
           </td>
           <td key={1}>
@@ -190,7 +193,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "13")?.staff
+                  index.staff === initData.find((i) => i.shift === "13")?.staff
               )}
             />{" "}
             <Select
@@ -200,14 +203,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "13")?.title
+                  index.label === initData.find((i) => i.shift === "13")?.title
               )}
             />
             <Input
               id="13"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "13")?.content}
+              defaultValue={initData.find((i) => i.shift === "13")?.content}
             />
           </td>
           <td key={1}>
@@ -217,7 +220,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "16")?.staff
+                  index.staff === initData.find((i) => i.shift === "16")?.staff
               )}
             />{" "}
             <Select
@@ -227,14 +230,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "16")?.title
+                  index.label === initData.find((i) => i.shift === "16")?.title
               )}
             />
             <Input
               id="16"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "16")?.content}
+              defaultValue={initData.find((i) => i.shift === "16")?.content}
             />
           </td>
           <td key={1}>
@@ -244,7 +247,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "19")?.staff
+                  index.staff === initData.find((i) => i.shift === "19")?.staff
               )}
             />{" "}
             <Select
@@ -254,14 +257,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "19")?.title
+                  index.label === initData.find((i) => i.shift === "19")?.title
               )}
             />
             <Input
               id="19"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "19")?.content}
+              defaultValue={initData.find((i) => i.shift === "19")?.content}
             />
           </td>
         </tr>
@@ -274,7 +277,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "02")?.staff
+                  index.staff === initData.find((i) => i.shift === "02")?.staff
               )}
             />{" "}
             <Select
@@ -284,14 +287,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "02")?.title
+                  index.label === initData.find((i) => i.shift === "02")?.title
               )}
             />{" "}
             <Input
               id="02"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "02")?.content}
+              defaultValue={initData.find((i) => i.shift === "02")?.content}
             />
           </td>
           <td key={1}>
@@ -301,7 +304,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "05")?.staff
+                  index.staff === initData.find((i) => i.shift === "05")?.staff
               )}
             />{" "}
             <Select
@@ -311,14 +314,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "05")?.title
+                  index.label === initData.find((i) => i.shift === "05")?.title
               )}
             />
             <Input
               id="05"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "05")?.content}
+              defaultValue={initData.find((i) => i.shift === "05")?.content}
             />
           </td>
           <td key={1}>
@@ -328,7 +331,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "08")?.staff
+                  index.staff === initData.find((i) => i.shift === "08")?.staff
               )}
             />{" "}
             <Select
@@ -338,14 +341,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "08")?.title
+                  index.label === initData.find((i) => i.shift === "08")?.title
               )}
             />
             <Input
               id="08"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "08")?.content}
+              defaultValue={initData.find((i) => i.shift === "08")?.content}
             />
           </td>
           <td key={1}>
@@ -355,7 +358,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "11")?.staff
+                  index.staff === initData.find((i) => i.shift === "11")?.staff
               )}
             />{" "}
             <Select
@@ -365,14 +368,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "11")?.title
+                  index.label === initData.find((i) => i.shift === "11")?.title
               )}
             />
             <Input
               id="11"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "11")?.content}
+              defaultValue={initData.find((i) => i.shift === "11")?.content}
             />
           </td>
           <td key={1}>
@@ -382,7 +385,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "14")?.staff
+                  index.staff === initData.find((i) => i.shift === "14")?.staff
               )}
             />{" "}
             <Select
@@ -392,14 +395,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "14")?.title
+                  index.label === initData.find((i) => i.shift === "14")?.title
               )}
             />
             <Input
               id="14"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "14")?.content}
+              defaultValue={initData.find((i) => i.shift === "14")?.content}
             />
           </td>
           <td key={1}>
@@ -409,7 +412,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "17")?.staff
+                  index.staff === initData.find((i) => i.shift === "17")?.staff
               )}
             />{" "}
             <Select
@@ -419,14 +422,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "17")?.title
+                  index.label === initData.find((i) => i.shift === "17")?.title
               )}
             />
             <Input
               id="17"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "17")?.content}
+              defaultValue={initData.find((i) => i.shift === "17")?.content}
             />
           </td>
           <td key={1}>
@@ -436,7 +439,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "20")?.staff
+                  index.staff === initData.find((i) => i.shift === "20")?.staff
               )}
             />{" "}
             <Select
@@ -446,14 +449,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "20")?.title
+                  index.label === initData.find((i) => i.shift === "20")?.title
               )}
             />
             <Input
               id="20"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "20")?.content}
+              defaultValue={initData.find((i) => i.shift === "20")?.content}
             />
           </td>
         </tr>
@@ -466,7 +469,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "03")?.staff
+                  index.staff === initData.find((i) => i.shift === "03")?.staff
               )}
             />{" "}
             <Select
@@ -476,14 +479,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "03")?.title
+                  index.label === initData.find((i) => i.shift === "03")?.title
               )}
             />
             <Input
               id="03"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "03")?.content}
+              defaultValue={initData.find((i) => i.shift === "03")?.content}
             />{" "}
           </td>
           <td key={1}>
@@ -493,7 +496,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "06")?.staff
+                  index.staff === initData.find((i) => i.shift === "06")?.staff
               )}
             />{" "}
             <Select
@@ -503,14 +506,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "06")?.title
+                  index.label === initData.find((i) => i.shift === "06")?.title
               )}
             />
             <Input
               id="06"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "06")?.content}
+              defaultValue={initData.find((i) => i.shift === "06")?.content}
             />
           </td>
           <td key={1}>
@@ -520,7 +523,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "09")?.staff
+                  index.staff === initData.find((i) => i.shift === "09")?.staff
               )}
             />{" "}
             <Select
@@ -530,14 +533,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "09")?.title
+                  index.label === initData.find((i) => i.shift === "09")?.title
               )}
             />
             <Input
               id="09"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "09")?.content}
+              defaultValue={initData.find((i) => i.shift === "09")?.content}
             />
           </td>
           <td key={1}>
@@ -547,7 +550,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "12")?.staff
+                  index.staff === initData.find((i) => i.shift === "12")?.staff
               )}
             />{" "}
             <Select
@@ -557,14 +560,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "12")?.title
+                  index.label === initData.find((i) => i.shift === "12")?.title
               )}
             />
             <Input
               id="12"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "12")?.content}
+              defaultValue={initData.find((i) => i.shift === "12")?.content}
             />
           </td>
           <td key={1}>
@@ -574,7 +577,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "15")?.staff
+                  index.staff === initData.find((i) => i.shift === "15")?.staff
               )}
             />{" "}
             <Select
@@ -584,14 +587,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "15")?.title
+                  index.label === initData.find((i) => i.shift === "15")?.title
               )}
             />
             <Input
               id="15"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "15")?.content}
+              defaultValue={initData.find((i) => i.shift === "15")?.content}
             />
           </td>
           <td key={1}>
@@ -601,7 +604,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "18")?.staff
+                  index.staff === initData.find((i) => i.shift === "18")?.staff
               )}
             />{" "}
             <Select
@@ -611,14 +614,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "18")?.title
+                  index.label === initData.find((i) => i.shift === "18")?.title
               )}
             />
             <Input
               id="18"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "18")?.content}
+              defaultValue={initData.find((i) => i.shift === "18")?.content}
             />
           </td>
           <td key={1}>
@@ -628,7 +631,7 @@ const Employee = () => {
               onChange={handleValueChange}
               defaultValue={employeeOption.find(
                 (index) =>
-                  index.staff === putData.find((i) => i.shift === "21")?.staff
+                  index.staff === initData.find((i) => i.shift === "21")?.staff
               )}
             />{" "}
             <Select
@@ -638,14 +641,14 @@ const Employee = () => {
               placeholder="Loại công việc"
               defaultValue={typeOption.find(
                 (index) =>
-                  index.label === putData.find((i) => i.shift === "21")?.title
+                  index.label === initData.find((i) => i.shift === "21")?.title
               )}
             />
             <Input
               id="21"
               placeholder="Ghi chú"
               onChange={handleInputChange}
-              defaultValue={putData.find((i) => i.shift === "21")?.content}
+              defaultValue={initData.find((i) => i.shift === "21")?.content}
             />
           </td>
         </tr>
@@ -664,18 +667,22 @@ const Employee = () => {
     { staff: 6, label: "Nguyen Van A" },
   ];
   const handleTypeChange = (params, name) => {
-    var temp = putData.find((index) => index.shift === name.name);
+    var temp = initData.find((index) => index.shift === name.name);
     if (temp) {
-      setPutData(
-        [...putData].map((object) => {
-          if (object.shift === name.name) {
-            return {
-              ...object,
-              title: params.label,
-            };
-          } else return object;
-        })
-      );
+      var tempPut = putData.find((index) => index.shift === name.name);
+      if (tempPut) {
+        setPutData(
+          [...putData].map((object) => {
+            if (object.shift === name.name) {
+              return {
+                ...object,
+                title: params.label,
+              };
+            } else return object;
+          })
+        );
+      } else
+        setPutData([...putData, { shift: name.name, title: params.label }]);
     } else {
       var tempPost = postData.find((index) => index.shift === name.name);
 
@@ -701,18 +708,22 @@ const Employee = () => {
   };
   const handleValueChange = (params, name) => {
     setIsEdit(true);
-    var temp = putData.find((index) => index.shift === name.name);
+    var temp = initData.find((index) => index.shift === name.name);
     if (temp) {
-      setPutData(
-        [...putData].map((object) => {
-          if (object.shift === name.name) {
-            return {
-              ...object,
-              staff: params.staff,
-            };
-          } else return object;
-        })
-      );
+      var tempPut = putData.find((index) => index.shift === name.name);
+      if (tempPut) {
+        setPutData(
+          [...putData].map((object) => {
+            if (object.shift === name.name) {
+              return {
+                ...object,
+                staff: params.staff,
+              };
+            } else return object;
+          })
+        );
+      } else
+        setPutData([...putData, { shift: name.name, staff: params.staff }]);
     } else {
       var tempPost = postData.find((index) => index.shift === name.name);
 
@@ -736,19 +747,25 @@ const Employee = () => {
   };
   const handleInputChange = (params, value) => {
     setIsEdit(true);
-    var temp = putData.find((index) => index.shift === params.target.id);
+    var temp = initData.find((index) => index.shift === params.target.id);
     if (temp) {
-      console.log("putData");
-      setPutData(
-        [...putData].map((object) => {
-          if (object.shift === params.target.id) {
-            return {
-              ...object,
-              content: params.target.value,
-            };
-          } else return object;
-        })
-      );
+      var tempPut = putData.find((index) => index.shift === params.target.id);
+      if (tempPut) {
+        setPutData(
+          [...putData].map((object) => {
+            if (object.shift === params.target.id) {
+              return {
+                ...object,
+                content: params.target.value,
+              };
+            } else return object;
+          })
+        );
+      } else
+        setPutData([
+          ...putData,
+          { shift: params.target.id, content: params.target.value },
+        ]);
     } else {
       console.log("postData");
       var tempPost = postData.find((index) => index.shift === params.target.id);
@@ -800,6 +817,7 @@ const Employee = () => {
     //   }
     // });
   };
+  console.log("Put Data", putData);
   return (
     <div>
       <div>
