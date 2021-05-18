@@ -10,16 +10,16 @@ const EmployeeInfo = (props) => {
   return (
     <div className="col col-full style-lg-box bg-color-white style-profile-room">
       <span className="style-notiTitle">Thông tin công việc</span>
-      <div className="col col-full pt-8">
-        <span className="text-is-bold">Chức vụ: </span>
+      <div className="col col-full pt-8 pl-16">
+        <span>Chức vụ: </span>
         <span>{position}</span>
       </div>
-      <div className="col col-full pt-8">
-        <span className="text-is-bold">Mã số nhân viên: </span>
+      <div className="col col-full pt-8 pl-16">
+        <span>Mã số nhân viên: </span>
         <span>{username}</span>
       </div>
-      <div className="col col-full pt-8">
-        <span className="text-is-bold">Khu: </span>
+      <div className="col col-full pt-8 pl-16">
+        <span>Khu: </span>
         <span>{area}</span>
       </div>
       <div className="col col-third style-detail-btn">

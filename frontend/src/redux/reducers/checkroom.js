@@ -2,6 +2,7 @@ import * as types from "../constants";
 
 const initialState = {
   listRoom: {},
+  searchRoom: [],
   currentRoom: {},
   paymentMethods: {},
   registrationError: {},

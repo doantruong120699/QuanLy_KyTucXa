@@ -1,19 +1,15 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import Popup from "reactjs-popup";
 import Button from "../common/Button";
 import FormError from "../common/FormError";
 import InputField from "../common/InputField";
 import validate from "../../utilities/regex";
-import ProfileContext from "./ProfileContext";
-import { getRawDataRender } from "./DataRender";
+import { getRawEmployeeDataRender } from "../../utilities/dataRender/profile";
 
 const EditEmployeeProfile = (props) => {
-  const { open, onClose, dataRender, studyInfo } = props;
+  const { open, onClose, dataRender, updateOrigin, updateUserProfile } = props;
 
   const [infoState, setInfo] = useState(dataRender);
-
-  const context = useContext(ProfileContext);
-
 
   const handleInput = (event) => {
     const { name, value } = event.target;
@@ -24,6 +20,7 @@ const EditEmployeeProfile = (props) => {
 
   const validateEditedinfo = () => {
     let tempEditData = { ...infoState };
+
     Object.keys(infoState).forEach((value) => {
       if (
         dataRender[value].validateType &&
@@ -48,9 +45,9 @@ const EditEmployeeProfile = (props) => {
       infoState.identification.isValid &&
       infoState.phone.isValid
     ) {
-      const data = getRawDataRender(infoState);
-      const { updateOrigin } = context;
+      const data = getRawEmployeeDataRender(infoState);
       updateOrigin(data);
+      updateUserProfile(data);
       onClose();
     }
   };
@@ -96,21 +93,6 @@ const EditEmployeeProfile = (props) => {
                 autocomplete="off"
               />
             </div>
-          </div>
-          <div className="col col-full mt-8">
-            <FormError
-              isHidden={infoState.email.isHidden}
-              errorMessage={dataRender.email.errorMessage}
-            />
-            <InputField
-              name="email"
-              isValid={infoState.email.isValid}
-              value={infoState.email.value}
-              type={dataRender.email.type}
-              placeholder={dataRender.email.title}
-              onChange={handleInput}
-              autocomplete="off"
-            />
           </div>
           <div className="col col-full mt-8">
             <FormError
@@ -171,30 +153,6 @@ const EditEmployeeProfile = (props) => {
               onChange={handleInput}
               autocomplete="off"
             />
-          </div>
-          <div className="col col-full">
-            <div className="col col-half pr-4">
-              <select name="faculty" id="faculty" onChange={handleInput}>
-                {studyInfo.faculty.map((data, index) => {
-                  return (
-                    <option key={index} value={data.id}>
-                      {data.name}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-            <div className="col col-half pl-4">
-              <select name="grade" id="grade" onChange={handleInput}>
-                {studyInfo.grade.map((data, index) => {
-                  return (
-                    <option key={index} value={data.id}>
-                      {data.name}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
           </div>
           <div className="col col-full mt-24">
             <div className="col col-half">

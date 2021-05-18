@@ -7,10 +7,12 @@ const InfoContainer = (props) => {
     >
       <div className="style-valueInfo">
         <p className="style-numberInfo">{number}</p>
-        <p className="style-titleInfo">Total {title}</p>
-        <p className="style-increasedPercent">
-          {increasedPercent}% than last month
-        </p>
+        <p className="style-titleInfo">{title}</p>
+        {increasedPercent !== null && (
+          <p className="style-increasedPercent">
+            Thêm mới tháng này: {increasedPercent}
+          </p>
+        )}
       </div>
       <div className="style-iconInfo">
         <i className={iconStyle} />

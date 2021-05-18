@@ -4,6 +4,7 @@ import { View, TouchableOpacity, TextInput, Text, StyleSheet, ImageBackground, T
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { changeprofile } from '../../redux/actions/index';
 import DatePicker from 'react-native-date-picker';
+import { styleBtnComeBack, styleImgBg } from '../../styles/index';
 
 class ChangeProfile extends Component {
   constructor(props) {
@@ -71,10 +72,10 @@ class ChangeProfile extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
-          <View style={styles.comeBack}>
-            <TouchableOpacity style={styles.buttonComback} onPress={this.goBack}>
-              <FontAwesome5 style={styles.iconUndo} name="undo" />
+        <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
+          <View style={styleBtnComeBack.comeBack}>
+            <TouchableOpacity style={styleBtnComeBack.buttonComback} onPress={this.goBack}>
+              <FontAwesome5 style={styleBtnComeBack.iconUndo} name="long-arrow-alt-left" />
             </TouchableOpacity>
             <Text style={styles.text}>ĐỔI THÔNG TIN</Text>
           </View>
@@ -184,29 +185,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  imageBackground: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  comeBack: {
-    position: 'relative',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-    height: '100%',
-    width: '100%',
-    backgroundColor: 'white',
-    flexDirection: 'row',
-  },
-  buttonComback: {
-    position: 'absolute',
-    left: '5%',
-  },
-  iconUndo: {
-    fontSize: 20,
-  },
   text: {
     fontWeight: 'bold',
     fontSize: 20,
@@ -262,6 +240,5 @@ const styles = StyleSheet.create({
   datePicker: {
     flex: 1,
     height: 40,
-    fontSize: 10,
   }
 });

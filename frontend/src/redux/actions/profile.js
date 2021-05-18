@@ -1,12 +1,15 @@
 import * as types from "../constants";
 import store from "../store";
+
+const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
+
 export async function profile(resolve = () => {}) {
   store.dispatch({
     type: types.GET_PROFILE_API,
   });
   try {
     const response = await fetch(
-      "http://127.0.0.1:8000/api/account/get-user-profile/",
+      `${REACT_APP_BASE_API}account/get-user-profile/`,
       {
         method: "GET",
         headers: {
@@ -34,7 +37,7 @@ export async function faculty(resolve = () => {}) {
     type: types.GET_FACULTIES_API,
   });
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/faculty/", {
+    const response = await fetch(`${REACT_APP_BASE_API}faculty/`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
@@ -60,7 +63,7 @@ export async function grade(resolve = () => {}) {
     type: types.GET_GRADE_API,
   });
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/class/", {
+    const response = await fetch(`${REACT_APP_BASE_API}class/`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
@@ -81,13 +84,14 @@ export async function grade(resolve = () => {}) {
     });
   }
 }
+
 export async function getSchedule(week, resolve = () => {}) {
   store.dispatch({
     type: types.GET_MY_SCHEDULE_API,
   });
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/api/daily-schedules/${week}/`,
+      `${REACT_APP_BASE_API}daily-schedules/${week}/`,
       {
         method: "GET",
         headers: {
@@ -110,3 +114,41 @@ export async function getSchedule(week, resolve = () => {}) {
     });
   }
 }
+
+export async function updateProfile(profile, resolve = () => {}) {
+  store.dispatch({
+    type: types.POST_UPDATE_MY_PROFILE_API,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}account/update-user-profile/`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(profile),
+      }
+    );
+    const data = await response.json();
+    resolve(data);
+    store.dispatch({
+      payload: data,
+      type: types.POST_UPDATE_MY_PROFILE_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.POST_UPDATE_MY_PROFILE_API_FAIL,
+    });
+  }
+}
+
+export const actFetchUserNavigation = (user) => {
+  return {
+    type: types.FETCH_NAV_USER,
+    user,
+  };
+};

@@ -4,9 +4,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { connect } from 'react-redux';
 import { getallroom } from '../../redux/actions/getallroom';
 class Room extends Component {
-
   render() {
-
     const RenderPeople = (number) => {
       var listPeople = [];
       for (let i = 0; i < number; i++) {
@@ -15,14 +13,13 @@ class Room extends Component {
       while (number < 8) {
         listPeople.push(<FontAwesome5 style={styles.iconPeople} name="user-plus" />)
         number++;
-
       }
       return listPeople;
     }
     //const { status } = this.props.myRoom;
     const icon = this.props.myRoom.number_now !== 8 ? 'check-circle' : 'ban';
     return (
-      <View >
+      <View>
         <TouchableOpacity onPress={this.props.onClick}>
           <View style={styles.item}>
             <FontAwesome5 style={styles.iconItem} name={icon} />
@@ -48,12 +45,6 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps)(Room);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
   item: {
     marginLeft: 20,
     marginRight: 20,

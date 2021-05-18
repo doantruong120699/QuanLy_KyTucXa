@@ -27,7 +27,7 @@ function CircularProgressWithLabel(props) {
         position="relative"
         display="inline-flex"
         boxShadow={2}
-        height={400}
+        height={450}
         width={300}
         justifyContent="center"
         marginRight={"20px"}
@@ -403,12 +403,7 @@ export default function WaterElectrical() {
   return (
     <Box paddingRight={15} style={{ width: "100%" }}>
       <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
-        <Box>
-          <Box marginBottom={10}>
-            <Typography className={"water-title"}>
-              Quản lý tiền điện nước của kí túc xá:
-            </Typography>
-          </Box>
+        <Box style={{ display: "flex", justifyContent: "space-between" }}>
           {data.map((n) => {
             const array = n.room;
             const paid = array.filter((m) => m.isPaid === true);

@@ -2,12 +2,33 @@ import * as TypeActions from "../constants";
 
 const initialState = {
   title: "Dashboard",
+  notifications: [],
+  error: {},
+  loading: false,
 };
 
-function dashboard(state = initialState, action) {
-  switch (action.type) {
+function dashboard(state = initialState, actions) {
+  switch (actions.type) {
+    case TypeActions.GET_NOTIFICATIONS_API:
+      return {
+        ...state,
+        loading: true,
+        error: {},
+      };
+    case TypeActions.GET_NOTIFICATIONS_API_SUCCEED:
+      return {
+        ...state,
+        notifications: actions.payload,
+        loading: false,
+      };
+    case TypeActions.GET_NOTIFICATIONS_API_FAIL:
+      return {
+        ...state,
+        error: actions.payload,
+        loading: false,
+      };
     case TypeActions.FETCH_NAV_TITLE: {
-      return { ...state, title: action.title };
+      return { ...state, title: actions.title };
     }
     default: {
       return state;

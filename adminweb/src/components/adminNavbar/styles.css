@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@300;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;700&display=swap');
 * {
   margin: 0px;
   padding: 0px;
@@ -14,9 +14,8 @@ nav {
   font-size: 25px;
   color: aliceblue;
   text-transform: capitalize;
-  letter-spacing: 5px;
-  margin-right: 400px;
-  padding-left: 50px;
+  letter-spacing: 2px;
+  padding-left: 0px;
 }
 .nav-links {
   display: flex;
@@ -25,7 +24,6 @@ nav {
 }
 .nav-links li {
   list-style: none;
-  width: 200px;
 }
 .nav-links a {
   color: aliceblue;
@@ -56,9 +54,6 @@ nav {
 @media screen and (max-width: 1408px) {
   .nav-links {
     width: 60%;
-  }
-  .user {
-    display: none;
   }
 }
 @media screen and (max-width: 1600px) {

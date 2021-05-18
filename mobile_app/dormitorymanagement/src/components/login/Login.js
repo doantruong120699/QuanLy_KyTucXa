@@ -2,10 +2,11 @@ import React, { Component, useState } from 'react';
 import { ImageBackground, StyleSheet, View, Text, TouchableOpacity, ToastAndroid } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { login } from '../../redux/actions/login';
-import { AppBar } from '../index';
+import { login, dashboard } from '../../redux/actions/index';
+import { storeData, getData } from '../../utils/asyncStorage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { getData } from '../../utils/asyncStorage';
+import HomePage from '../home/HomePage';
+import { styleImgBg, styleInput } from '../../styles/index';
 
 class Login extends Component {
   constructor(props) {
@@ -37,7 +38,7 @@ class Login extends Component {
       this.showToast('Chưa nhập tài khoản hoặc mật khẩu');
       return;
     }
-    const data = { "username": "tmquang@gmail.com", "password": "quang1999" };
+    const data = { "username": "doantruong", "password": "123QWE!@#" };
     await this.props.login(data);
     const token = await getData('token');
     const role = await getData('role');
@@ -47,6 +48,7 @@ class Login extends Component {
     }
     else {
       this.showToast('Đăng nhập thành công');
+      await this.props.dashboard();
       this.props.navigation.navigate("HomePage");
     }
   };
@@ -62,26 +64,25 @@ class Login extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
+        <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <View style={styles.container_child}>
             <View style={styles.formLogin}>
               <Text style={styles.textLogin}>ĐĂNG NHẬP</Text>
-              <Text style={styles.text}>Có thể đăng nhập bằng tài khoản sinh viên:</Text>
-              <View style={styles.inputView}>
+              <View style={styleInput.inputView}>
                 <TextInput
                   underlineColorAndroid="transparent"
                   onChangeText={this.changeTextUsername}
                   value='asdquang111@gmail.com'
-                  style={styles.inputText}
+                  style={styleInput.inputText}
                   placeholder="Tài khoản"
                   placeholderTextColor="#808080"
                 />
               </View>
-              <View style={styles.inputViewPassword}>
+              <View style={[styleInput.inputView, styles.inputViewPassword]}>
                 <TextInput
                   underlineColorAndroid="transparent"
                   onChangeText={this.changeTextPassword}
-                  style={styles.inputTextPassword}
+                  style={styleInput.inputText}
                   value='quang1999'
                   placeholder="Mật khẩu"
                   placeholderTextColor="#808080"
@@ -116,6 +117,7 @@ class Login extends Component {
 
 const mapDispatchToProps = {
   login,
+  dashboard
 };
 function mapStateToProps(state) {
   return {
@@ -131,20 +133,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     flexDirection: "column",
-  },
-  appbar: {
-    flex: 1,
-    backgroundColor: 'white',
-    elevation: 7,
-    borderRadius: 20,
-    marginTop: '3%',
-  },
-  imageBackground: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    // resizeMode: "cover",
-    alignItems: 'center',
   },
   container_child: {
     flex: 9,
@@ -167,11 +155,6 @@ const styles = StyleSheet.create({
     marginTop: '3%',
     marginBottom: '7%',
   },
-  text: {
-    marginBottom: '5%',
-    fontSize: 10,
-    textAlign: 'center',
-  },
   inputView: {
     width: '80%',
     backgroundColor: '#f5f5f5',
@@ -189,18 +172,7 @@ const styles = StyleSheet.create({
   inputViewPassword: {
     position: 'relative',
     alignSelf: 'stretch',
-    justifyContent: 'center',
-    width: '80%',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 25,
-    height: 40,
-    marginBottom: '3%',
-    marginLeft: '10%',
-    padding: 20,
-  },
-  inputTextPassword: {
-    height: 40,
-    color: 'black',
+    marginBottom: '5%',
   },
   touchableShowPassword: {
     position: 'absolute',
@@ -212,7 +184,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconeye: {
-    // resizeMode: 'contain',
     height: '100%',
     width: '100%',
   },
@@ -240,10 +211,4 @@ const styles = StyleSheet.create({
   loginText: {
     color: 'white',
   },
-  iconuser: {
-    color: 'black',
-    fontSize: 15,
-    // marginLeft: 50,
-
-  }
 });
