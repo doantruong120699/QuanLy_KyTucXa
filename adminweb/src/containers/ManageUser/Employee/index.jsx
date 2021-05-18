@@ -9,7 +9,13 @@ const Employee = () => {
   var week = [];
   var i = 1;
   while (i <= 52 && week.length <= 52) {
-    week.push({ value: i, label: i + "" });
+    week.push({
+      value: i,
+      label: `Tuần thứ ${i}, Từ ${moment(i, "week")
+        .startOf("week")
+        .format("DD/MM")} đến ${moment(i, "week").endOf("week").format("DD/MM")}
+           `,
+    });
     i++;
   }
 
