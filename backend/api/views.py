@@ -14,6 +14,8 @@ from .serializers import *
 # from api.lessons.serializers import LessonListSerializer
 from django.http import JsonResponse
 from . import status_http
+from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
+
 
 # API Change Password
 @api_view(['PUT'])
@@ -111,6 +113,69 @@ def update_user_profile_view(request):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+@api_view(['POST'])
+def forgot_password_view(request):
+    if request.method == 'POST':
+        serializer = ForgotPasswordSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            if not serializer.is_email_exist():
+                data['status'] = False
+                data['message'] = 'Email does not exist!'
+                return Response(data, status=status_http.HTTP_ME_451_EMAIL_DOES_NOT_EXIST) 
+            if not serializer.is_account_active():
+                data['status'] = False
+                data['message'] = 'The account is not activated. Contact management to resolve!'
+                return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)     
+            if serializer.send_mail(request):
+                data['status'] = True
+                data['message'] = 'Send an activation link to your email successfully!'                
+                return Response(data, status=status.HTTP_200_OK)
+        data['status'] = False
+        data['message'] = list(serializer.errors.values())[0][0]
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)    
+    return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def reset_password_view(request, uidb64, token):
+    check = check_link_forgot_password(request, uidb64, token).data
+    if check['status'] == True: 
+        data = {}
+        if request.method == 'GET':
+            return Response(check, status=status.HTTP_200_OK)
+        if request.method == 'POST':
+            serializer = ResetPasswordSerializer(data=request.data)
+            if serializer.is_valid():
+                if  not serializer.confirm_password_validate():
+                    data['status'] = False
+                    data['message'] = 'Confirm password is incorrect!'
+                    return Response(data, status=status_http.HTTP_ME_456_CONFIRM_PASSWORD_IS_INCORRECT)
+                serializer.reset_password()    
+                data['status'] = True
+                data['message'] = 'Reset Password successful!'
+                return Response(data, status=status.HTTP_200_OK)
+            data['status'] = False
+            data['message'] = list(serializer.errors.values())[0][0]
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(check, status=status.HTTP_400_BAD_REQUEST)
+
+def check_link_forgot_password(request, uidb64, token):
+    data = {}
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+        if user is not None and account_activation_token.check_token(user, token):
+            data['status'] = True
+            data['email'] = user.email
+            return Response(data, status=status.HTTP_200_OK) 
+    except:
+        pass
+    data['status'] = False
+    data['message'] = 'Link activate is expired!'
+    return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
 
 # API get static data
 class FacultyViewSet(viewsets.ModelViewSet):

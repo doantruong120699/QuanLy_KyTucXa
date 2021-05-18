@@ -68,6 +68,7 @@ class Profile(models.Model):
     position = models.ForeignKey(Position, related_name = 'position_profile', on_delete=models.SET_NULL, blank=True, null=True)
     area = models.ForeignKey(Area, related_name = 'area_profile', on_delete=models.SET_NULL, blank=True, null=True)
     token = models.TextField(null=True, blank=True)
+    forgot_password_token = models.TextField(null=True, blank=True)
 
     class Meta:
         ordering = ('user',)
