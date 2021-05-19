@@ -8,14 +8,4 @@ django-cors-headers
 django-model-utils
 shortuuid
 django-rest-swagger
-
-# django-taggit
-# django-s3direct
-# requests
-# Pillow
-# django-storages
-# boto3
-# django-ckeditor
-# celery
-# redis
-# django-cors-headers
+six

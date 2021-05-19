@@ -7,8 +7,8 @@ from rest_framework import permissions
 from .views import *
 
 
-# ========== room
-# list - create
+# ========== Financal in room
+# list 
 financal_room_in_area_list = FinancalRoomInAreaViewSet.as_view({
     'get': 'list',
 })

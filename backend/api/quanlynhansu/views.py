@@ -224,12 +224,57 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, *args, **kwargs):
-        serializer = DailyScheduleSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            save = serializer.create(request.data)
-            if save:
-                return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
-        return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = DailyScheduleListSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                week = serializer.data['week']
+                if 'year' not in serializer.data:
+                    year = datetime.now().year
+                else:
+                    year = serializer.data['year']
+                data = []
+                schedule = serializer.data['schedule']
+                for obj in schedule:
+                    if 'public_id' in obj and obj['public_id']:
+                        try:
+                            query = DailySchedule.objects.get(public_id=obj['public_id'])
+                            if 'title' in obj:
+                                title = obj['title']
+                                query.title = title
+                                
+                            if 'content' in obj:
+                                content = obj['content']
+                                query.content = content
+                            
+                            if 'staff' in obj:
+                                staff = User.objects.get(pk=obj['staff'])
+                                query.staff = staff
+                                  
+                            query.updated_by = request.user
+                            query.save()
+                        except Exception as ex:
+                            print(ex)
+                            errors = {}
+                            errors['id_schedule'] = obj['public_id']
+                            errors['message'] = str(ex)
+                            data.append(errors)
+                    else:
+                        x = DailyScheduleSerializer(data=obj, context={'request': request})
+                        if x.is_valid():
+                            x.create(user=request.user, validated_data=obj, week=week, year=year)
+                        else:
+                            errors = {}
+                            errors['id_shift'] = obj['shift']
+                            errors['message'] = list(x.errors.values())[0][0]
+                            data.append(errors)
+                if data:
+                    return Response({'status': 'Some error', 'notification' : data}, status=status.HTTP_201_CREATED)    
+                else:
+                    return Response({'status': 'successful'}, status=status.HTTP_201_CREATED)    
+            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+            return Response({'status': 'fail', 'notification' : 'Bad request!'}, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, public_id, *args, **kwargs):
         try:
@@ -244,6 +289,36 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
             print(e)  
             return Response({'status': 'fail', 'notification' : 'Error'}, status=status.HTTP_400_BAD_REQUEST)
 
+class UsedRoomInAreaViewSet(viewsets.ModelViewSet):
+    serializer_class = UsedRoomInAreaSerializer
+    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        return Area.objects.all().order_by('-created_at')
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return [IsAuthenticated(), IsQuanLyNhanSu(),]
+        return [IsAuthenticated(), IsQuanLyNhanSu(),]
+
+    def list(self, request, *args, **kwargs):
+        try:
+            list_area = Area.objects.all()
+            data = list(list_area.values())
+            for index, value in enumerate(list_area):
+                room = Room.objects.filter(area=value)
+                count_full = 0
+                for i in room:
+                    number_max = i.typeroom.number_max
+                    if number_max == i.number_now :
+                        count_full = count_full + 1
+                data[index]['total'] = room.count()
+                data[index]['full'] = count_full
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
