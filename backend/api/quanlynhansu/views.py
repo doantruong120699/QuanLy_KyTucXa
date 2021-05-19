@@ -289,6 +289,36 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
             print(e)  
             return Response({'status': 'fail', 'notification' : 'Error'}, status=status.HTTP_400_BAD_REQUEST)
 
+class UsedRoomInAreaViewSet(viewsets.ModelViewSet):
+    serializer_class = UsedRoomInAreaSerializer
+    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+    lookup_field = 'slug'
+
+    def get_queryset(self):
+        return Area.objects.all().order_by('-created_at')
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return [IsAuthenticated(), IsQuanLyNhanSu(),]
+        return [IsAuthenticated(), IsQuanLyNhanSu(),]
+
+    def list(self, request, *args, **kwargs):
+        try:
+            list_area = Area.objects.all()
+            data = list(list_area.values())
+            for index, value in enumerate(list_area):
+                room = Room.objects.filter(area=value)
+                count_full = 0
+                for i in room:
+                    number_max = i.typeroom.number_max
+                    if number_max == i.number_now :
+                        count_full = count_full + 1
+                data[index]['total'] = room.count()
+                data[index]['full'] = count_full
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
