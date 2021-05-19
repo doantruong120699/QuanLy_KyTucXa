@@ -202,4 +202,7 @@ class DailyScheduleUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'staff' : required_message})
         return data
 
-
+class UsedRoomInAreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Area
+        fields = ['id', 'name', 'slug'] 
