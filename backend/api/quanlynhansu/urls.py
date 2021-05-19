@@ -34,9 +34,9 @@ deny_list_request = ContractRegistationViewSet.as_view({
 schedule = DailyScheduleViewSet.as_view({
     'post' : 'post',
 })
-update_schedule = DailyScheduleViewSet.as_view({
-    'put' : 'update',
-})
+# update_schedule = DailyScheduleViewSet.as_view({
+#     'put' : 'update',
+# })
 
 # =========== Notification =========
 # list - create
@@ -67,5 +67,5 @@ urlpatterns = [
     path('deny-registrations/', deny_list_request, name = 'deny_list_request'),
     # ========== Schedule ========
     path('schedules/', schedule, name = 'schedule'),
-    path('schedules/<str:public_id>/', update_schedule, name = 'update_schedule'),
+    # path('schedules/<str:public_id>/', update_schedule, name = 'update_schedule'),
 ]
