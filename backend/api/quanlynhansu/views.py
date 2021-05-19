@@ -291,16 +291,6 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
 
 class UsedRoomInAreaViewSet(viewsets.ModelViewSet):
     serializer_class = UsedRoomInAreaSerializer
-    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
-    lookup_field = 'slug'
-
-    def get_queryset(self):
-        return Area.objects.all().order_by('-created_at')
-
-    def get_permissions(self):
-        if self.action == 'list':
-            return [IsAuthenticated(), IsQuanLyNhanSu(),]
-        return [IsAuthenticated(), IsQuanLyNhanSu(),]
 
     def list(self, request, *args, **kwargs):
         try:
