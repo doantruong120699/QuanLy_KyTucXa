@@ -12,6 +12,7 @@ import ReactModal from "react-modal";
 import DetailRoom from "./DetailRoom";
 
 import "./styles.css";
+import { getFinancial } from "../../../redux/actions/financial";
 
 function CircularProgressWithLabel(props) {
   return (
@@ -379,12 +380,16 @@ export default function WaterElectrical() {
   };
 
   const handleClickBox = (id) => {
+    getFinancial("area-a", "2021-04", (output) => {
+      if (output) {
+        console.log(output);
+      }
+    });
     setAreaSelected(data.filter((n) => n.id === id)[0].name);
 
     if (tabSelected !== id) {
       setTabSelected(id);
       setTableData(data.filter((n) => n.id === id));
-      //console.log("AAAA", data.filter((n) => n.id === id)[0].name);
       setIsShowTable(true);
     } else setIsShowTable(!isShowTable);
   };
@@ -446,7 +451,6 @@ export default function WaterElectrical() {
               onGridReady={onGridReady}
               rowData={tableData[0].room}
               paginationAutoPageSize={true}
-
             />
           </div>
         </div>
