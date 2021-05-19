@@ -116,7 +116,6 @@ export async function getSchedule(week, resolve = () => {}) {
 }
 
 export async function updateProfile(profile, resolve = () => {}) {
-  console.log(profile);
   store.dispatch({
     type: types.POST_UPDATE_MY_PROFILE_API,
   });
@@ -124,7 +123,7 @@ export async function updateProfile(profile, resolve = () => {}) {
     const response = await fetch(
       `${REACT_APP_BASE_API}account/update-user-profile/`,
       {
-        method: "POST",
+        method: "PUT",
         headers: {
           Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
           "Content-Type": "application/json",
@@ -146,3 +145,10 @@ export async function updateProfile(profile, resolve = () => {}) {
     });
   }
 }
+
+export const actFetchUserNavigation = (user) => {
+  return {
+    type: types.FETCH_NAV_USER,
+    user,
+  };
+};

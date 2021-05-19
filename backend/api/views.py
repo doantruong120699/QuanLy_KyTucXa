@@ -15,35 +15,31 @@ from .serializers import *
 from django.http import JsonResponse
 from . import status_http
 
-
-
-# Create your views here.
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, ])
+# API Change Password
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def change_password_view(request):
-    if request.method == 'POST':
+    if request.method == 'PUT':
         serializer = ChangePasswordSerializer(data=request.data)
         data = {}
+        # Validate data: it'll call to validate() function in ChangePasswordSerializer 
         if serializer.is_valid():
             try:
-                if not serializer.old_password_validate():
-                    data['email'] = request.data['email']
+                # Validate: check old password, it'll call to old_password() function in ChangePasswordSerializer 
+                if not serializer.old_password_validate(request):
                     data['message'] = 'Old password is incorrect'
                     return Response(data, status=status_http.HTTP_ME_454_OLD_PASSWORD_IS_INCORRECT)
-
+                # Validate: Check password confirm, it'll call to confirm_password_validate() function in ChangePasswordSerializer 
                 if  not serializer.confirm_password_validate():
-                    data['email'] = request.data['email']
                     data['message'] = 'Confirm password is incorrect'
                     return Response(data, status=status_http.HTTP_ME_456_CONFIRM_PASSWORD_IS_INCORRECT)
-                serializer.update()
-                data['email'] = request.data['email']
+                # Call function update() in ChangePasswordSerializer to update password
+                serializer.update(request)
                 data['message'] = 'Change password successfully'
                 return Response(data, status=status.HTTP_200_OK)
-            except Exception as e:
-                print(e)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+            except:
+                pass
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, ])
@@ -60,13 +56,13 @@ def get_profile_view(request):
         data['id'] = user.id
 
         if  user.groups.filter(name='sinhvien_group').exists():
+            data['room'] = {}
             try:
                 contract = Contract.objects.filter(profile=queryset).first()
-                data['room'] = contract.room.name
-                data['slug-room'] = contract.room.slug
-            except Exception as ex:
-                data['room'] = None
-                data['slug-room'] = None
+                data['room']['name'] = contract.room.name
+                data['room']['slug'] = contract.room.slug
+            except:
+                pass
     
         groups = Group.objects.filter(user=request.user).all()
         groups_ = []
@@ -96,18 +92,18 @@ def get_profile_view(request):
         return Response(data, status=status.HTTP_200_OK)            
     return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)  
 
-@api_view(['POST'])
+@api_view(['PUT'])
 @permission_classes([IsAuthenticated, ])
 def update_user_profile_view(request):
-    if request.method == 'POST':
+    if request.method == 'PUT':
         # update current user by email
-        request.user.email = request.data['email']  
+        # request.user.email = request.data['email']  
         serializer = UpdateProfileSerializer(data=request.data)
         data = {}
         if serializer.is_valid():   
             try:
-                serializer.save()
-                data['email'] = request.data['email']
+                serializer.save(request)
+                # data['email'] = request.data['email']
                 data['message'] = 'Update profile successfully'
                 return Response(data, status=status.HTTP_200_OK)
             except Exception as e:

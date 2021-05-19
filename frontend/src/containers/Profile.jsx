@@ -1,7 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { profile as GetProfile, updateProfile } from "../redux/actions/profile";
+import {
+  actFetchUserNavigation,
+  profile as GetProfile,
+  updateProfile,
+} from "../redux/actions/profile";
 import Avatar from "../components/profile/Avatar";
 import SummaryInfo from "../components/profile/SummaryInfo";
 import StudyInfo from "../components/profile/StudyInfo";
@@ -14,6 +18,7 @@ import { changePass } from "../redux/actions/changePass";
 import Alertness from "../components/common/Alertness";
 import * as ALERTMESSAGE from "../utilities/constants/AlertMessage";
 import * as APIALERTMESSAGE from "../utilities/constants/APIAlertMessage";
+
 const Profile = () => {
   const [profileState, setProfile] = useState({
     profile: null,
@@ -52,6 +57,7 @@ const Profile = () => {
     const GetProfileUser = () => {
       GetProfile((output) => {
         if (output) {
+          console.log(output);
           setProfile({
             profile: getHandledEmployeeDataRender(output),
             username: output.username,
@@ -68,14 +74,19 @@ const Profile = () => {
   }, [filter]);
 
   const updateUserProfile = (data) => {
-    
     updateProfile(data, (output) => {
       if (output) {
         switch (output.message) {
           case APIALERTMESSAGE.UPDATE_PROFILE_SUCCESSFULLY:
+            const user = getAuth();
+            user.first_name = data.first_name;
+            user.last_name = data.last_name;
+
+            dispatch(actFetchUserNavigation(user));
+
             setNotification({
               type: "type-success",
-              content: ALERTMESSAGE.SUCCESSFULLY_RESET_PASSWORD,
+              content: ALERTMESSAGE.UPDATE_PROFILE_SUCCESSFULLY,
             });
             break;
           default:

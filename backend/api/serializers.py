@@ -41,6 +41,9 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
         for g in user_obj.groups.all():
             gr.append(g.name)
         token['group'] = gr
+        profile = Profile.objects.get(user=user_obj)
+        profile.token = token
+        profile.save()
         return token
 
     def validate(self, attrs):
@@ -57,54 +60,50 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MySimpleJWTSerializer
+    # print(serializer_class)
 
 # API Change Password
 class ChangePasswordSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(required=True)
     old_password = serializers.CharField(
         style={'input_type': 'password'}, write_only=True) 
-
-    password = serializers.CharField(
+    new_password = serializers.CharField(
         style={'input_type': 'password'}, write_only=True)
-     
     confirm_password = serializers.CharField(
         style={'input_type': 'password'}, write_only=True)    
-
     class Meta:
         model = User
-        fields = ['email', 'password', 'old_password', 'confirm_password']
+        fields = ['old_password','new_password', 'confirm_password']
         extra_kwargs = {
-            'password': {'write_only': True},
             'old_password': {'write_only': True},
+            'new_password': {'write_only': True},
             'confirm_password': {'write_only': True},
-            'email': {'validators': [EmailValidator]},
         }
-
+    # Validate data
     def validate(self, data):
         if len(data['old_password']) < 5:
             raise serializers.ValidationError({'message': 'Password must be at least 5 characters.'}) 
-        if len(data['password']) < 5:
+        if len(data['new_password']) < 5:
             raise serializers.ValidationError({'message': 'Password must be at least 5 characters.'})
         return data    
 
-    def old_password_validate(self):
-        user = User.objects.get(email=self.validated_data['email'])
+    def old_password_validate(self, request):
+        user = request.user
         if not user.check_password(self.validated_data['old_password']):
             return False
         return True  
 
     def confirm_password_validate(self):
-        if (self.validated_data['password'] != self.validated_data['confirm_password']):
+        if (self.validated_data['new_password'] != self.validated_data['confirm_password']):
             return False
         return True     
 
-    def update(self):
-        user = User.objects.get(email=self.validated_data['email'])
-        password = self.validated_data['password']  
-        user.set_password(password)
+    # Update data
+    def update(self, request):
+        user = User.objects.get(email=request.user.email)
+        new_password = self.validated_data['new_password']  
+        user.set_password(new_password)
         user.save()
         return user 
-
 
 # API get profile user
 class FacultySerializer(serializers.ModelSerializer):
@@ -126,6 +125,7 @@ class AreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
         fields = [ "id", "name", "slug"]
+
 class ProfileSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
     position = PositionSerializer(required=False)
@@ -166,7 +166,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 class UpdateProfileSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
-    email = serializers.EmailField(required=True)
+    # email = serializers.EmailField(required=True)
     profile = ProfileUpdateSerializer()
 
     class Meta:
@@ -176,8 +176,9 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             'email': {'validators': [EmailValidator]},
         }
 
-    def save(self):
-        user = User.objects.get(email=self.validated_data['email'])
+    def save(self, request):
+        # user = User.objects.get(email=self.validated_data['email'])
+        user = User.objects.get(email=request.user.email)
         try:
             # update user
             user.first_name = self.validated_data['first_name']

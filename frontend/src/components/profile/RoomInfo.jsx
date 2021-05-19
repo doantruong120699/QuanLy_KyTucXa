@@ -37,7 +37,7 @@ const RoomInfo = (props) => {
       <span className="style-notiTitle">Thông tin phòng</span>
       <div className="col col-full">
         <span className="pl-16">Tên phòng: </span>
-        <span>{room}</span>
+        <span>{room ? room.name : null}</span>
       </div>
       <div className="col col-full">
         <span className="pl-16">Khu: </span>

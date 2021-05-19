@@ -29,3 +29,29 @@ export async function login(data, resolve = () => {}) {
     });
   }
 }
+export async function sendEmail(data, resolve = () => {}) {
+  store.dispatch({
+    type: types.SEND_EMAIL_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}auth/send-email/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.SEND_EMAIL_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.SEND_EMAIL_API_FAIL,
+    });
+  }
+}

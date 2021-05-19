@@ -1,6 +1,7 @@
 import "react-tabs/style/react-tabs.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import Student from "./Student";
+import Employee from "./Employee";
 
 export default function ManageUser() {
   return (
@@ -14,9 +15,7 @@ export default function ManageUser() {
           <Student />
         </TabPanel>
         <TabPanel>
-          <div style={{ color: "red" }}>
-            Sorry các bạn nhưng trong cái này chưa có clq gì cả :D
-          </div>{" "}
+          <Employee />
         </TabPanel>
       </Tabs>
     </div>

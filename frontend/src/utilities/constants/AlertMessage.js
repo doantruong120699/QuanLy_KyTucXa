@@ -13,3 +13,7 @@ export const IDENTIFICATION_INVALID = "Số CMND không hợp lệ!";
 export const UNSIGNED_ROOM = "Bạn chưa đăng kí phòng!";
 export const SUCCESSFULLY_RESET_PASSWORD = "Đổi mật khẩu thành công!";
 export const SYSTEM_ERROR = "Lỗi hệ thống!";
+export const INVALID_TIME = "Thời gian bắt đầu phải trước thời gian kết thúc!";
+export const UNAUTHORIZED_ROOM = "Bạn đã đăng kí phòng khác rồi!";
+export const REGISTER_SUCCESSFULLY = "Đăng kí phòng thành công";
+export const UPDATE_PROFILE_SUCCESSFULLY = "Cập nhật thông tin thành công!";

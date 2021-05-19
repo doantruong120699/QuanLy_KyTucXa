@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { getDetailedStudent } from "../../redux/actions/studentPage";
 import avatar from "../../assets/images/user/default-user.png";
+import moment from "moment";
 
 const DetailStudent = () => {
   const { studentID } = useParams();
@@ -14,7 +15,7 @@ const DetailStudent = () => {
         setStudent(output);
       }
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <div className="style-background-container">
@@ -50,7 +51,11 @@ const DetailStudent = () => {
                 </div>
                 <div className="col col-full mt-8">
                   <i className="fi-rr-bold pr-16"></i>
-                  <span>{studentState.profile.birthday}</span>
+                  <span>
+                    {moment(new Date(studentState.profile.birthday)).format(
+                      "DD-MM-YYYY"
+                    )}
+                  </span>
                 </div>
               </div>
             </div>

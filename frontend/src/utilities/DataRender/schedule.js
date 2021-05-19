@@ -7,7 +7,6 @@ import {
 } from "@material-ui/core/colors";
 
 export function getTaskList(data) {
-  console.log(data);
   let result = [];
   const setColor = new Map();
   var j = 0;
