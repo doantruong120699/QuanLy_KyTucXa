@@ -5,20 +5,23 @@ import { apiUrl } from '../../api/api';
 import _ from 'lodash';
 
 const { GET_ALL_STAFF_URL } = apiUrl;
-const { GET_ALL_STAFF, GET_ALL_STAFF_SUCCESS, GET_ALL_STAFF_FAIL } = actionType;
-export const allstaff = (page) => async (dispatch) => {
+const { GET_ALL_STAFF_SUCCESS, GET_ALL_STAFF_FAIL } = actionType;
+export const allstaff = (page, textSearch='') => async (dispatch) => {
   let result;
   try {
     let token = await getData('token');
     let config = {
       headers: { 'Authorization': 'Bearer ' + token }
     }
+    let url = GET_ALL_STAFF_URL;
     if (page != 1) {
-      result = await axios.get(GET_ALL_STAFF_URL + "?page=" + page, config);
+      url += textSearch ? '?page=' + page + '&keyword=' + textSearch : '?page=' + page;
     }
-    else {
-      result = await axios.get(GET_ALL_STAFF_URL, config);
+    else {  
+      url += textSearch ? '?keyword=' + textSearch : '';
     }
+    result = await axios.get(url, config);
+    console.log(result.data)
     dispatch({
       type: GET_ALL_STAFF_SUCCESS,
       payload: result.data,

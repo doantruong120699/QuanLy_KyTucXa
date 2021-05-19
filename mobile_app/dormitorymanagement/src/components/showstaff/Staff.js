@@ -66,7 +66,7 @@ class Staff extends Component {
           onPress={this.openDetail}
         >
           <View style={styleItemSvNv.viewData}>
-            <Text style={styleItemSvNv.email}>{this.props.staff.email}</Text>
+            <Text style={styleItemSvNv.data}>{this.props.staff.last_name + " " + this.props.staff.first_name}</Text>
           </View>
         </TouchableOpacity>
       </View>

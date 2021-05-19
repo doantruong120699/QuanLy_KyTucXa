@@ -65,7 +65,7 @@ class Student extends Component {
           onPress={this.openDetail}
         >
           <View style={styleItemSvNv.viewData}>
-            <Text style={styleItemSvNv.email}>{this.props.student.email}</Text>
+            <Text style={styleItemSvNv.data}>{this.props.student.last_name + " " + this.props.student.first_name}</Text>
           </View>
         </TouchableOpacity>
       </View>

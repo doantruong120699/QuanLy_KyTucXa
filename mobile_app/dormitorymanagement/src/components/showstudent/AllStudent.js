@@ -24,7 +24,16 @@ class AllStudent extends Component {
     )
   }
   changeTextSearch = (value) => {
-    this.setState({ textSearch: value });
+    setTimeout(async () => {
+      await this.props.allstudent(1, value);
+      await this.setState({ 
+        textSearch: value,
+        page: this.props.listSV.current_page, 
+        listSV: this.props.listSV.results, 
+        nextPage: this.props.listSV.next_page, 
+        totals: this.props.listSV.totals 
+      });
+    }, 1000);
   }
   fetchApi = async (page) => {
     await this.props.allstudent(page);
@@ -36,10 +45,6 @@ class AllStudent extends Component {
   }
   plusNumberPage = async () => {
     await this.fetchApi(this.state.page + 1);
-  }
-  searchStaff = () => {
-    var listSearch = this.props.listSV.results.filter(item => item.email.indexOf(this.state.textSearch) !== -1);
-    this.setState({ listSV: listSearch });
   }
   render() {
     let totalPages = Math.ceil(this.state.totals / 20);
@@ -56,9 +61,6 @@ class AllStudent extends Component {
               placeholderTextColor="#808080"
             >
             </TextInput>
-            <TouchableOpacity style={styleSearch.btnSearch} onPress={this.searchStaff}>
-              <Text style={styleSearch.textBtnSearch}>Tìm</Text>
-            </TouchableOpacity>
           </View>
           <View style={styleListNvSv.container_child}>
             <FlatList

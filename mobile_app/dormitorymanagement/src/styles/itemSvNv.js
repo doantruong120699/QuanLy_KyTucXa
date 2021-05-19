@@ -9,10 +9,10 @@ const styleItemSvNv = StyleSheet.create({
     padding: 5,
   },
   viewData: {
-    flexDirection: 'column',
+    flexDirection: 'row',
     height: 30,
   },
-  email: {
+  data: {
     fontSize: 15,
   },
   centeredView: {

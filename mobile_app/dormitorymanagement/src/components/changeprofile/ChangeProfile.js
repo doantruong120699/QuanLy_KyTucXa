@@ -4,7 +4,7 @@ import { View, TouchableOpacity, TextInput, Text, StyleSheet, ImageBackground, T
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { changeprofile } from '../../redux/actions/index';
 import DatePicker from 'react-native-date-picker';
-import { styleBtnComeBack, styleImgBg } from '../../styles/index';
+import { styleBtnComeBack, styleImgBg, styleInput } from '../../styles/index';
 
 class ChangeProfile extends Component {
   constructor(props) {

@@ -24,11 +24,16 @@ class AllStaff extends Component {
     )
   }
   changeTextSearch = (value) => {
-    this.setState({ textSearch: value });
-  }
-  searchStaff = () => {
-    var listSearch = this.props.listNV.results.filter(item => item.email.indexOf(this.state.textSearch) !== -1);
-    this.setState({ listNV: listSearch });
+    setTimeout(async () => {
+      await this.props.allstaff(1, value);
+      await this.setState({ 
+        textSearch: value,
+        page: this.props.listNV.current_page, 
+        listNV: this.props.listNV.results, 
+        nextPage: this.props.listNV.next_page, 
+        totals: this.props.listNV.totals 
+      });
+    }, 1000);
   }
   fetchApi = async (page) => {
     await this.props.allstudent(page);
@@ -56,9 +61,6 @@ class AllStaff extends Component {
               placeholderTextColor="#808080"
             >
             </TextInput>
-            <TouchableOpacity style={styleSearch.btnSearch} onPress={this.searchStaff}>
-              <Text style={styleSearch.textBtnSearch}>Tìm</Text>
-            </TouchableOpacity>
           </View>
           <View style={styleListNvSv.container_child}>
             <FlatList

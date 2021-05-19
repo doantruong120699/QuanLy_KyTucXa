@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ImageBackground, ToastAndroid } from 'react-native';
 import { connect, useSelector } from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { AppBar } from '../index';
@@ -8,45 +8,62 @@ import { styleImgBg } from '../../styles/index';
 
 const Dashboard = (props) => {
   const { dashboard, navigation } = props;
-  // const fetchData = async () => {
-  //   await dashboard();
-  // }
-  // fetchData();
-  const data = useSelector((state) => state.dashboard.payload);
+  const showToast = (msg) => {
+    ToastAndroid.show(msg, ToastAndroid.LONG);
+  };
+  useEffect(async () => {
+    await dashboard();
+  }, [])
+  let data = useSelector((state) => state.dashboard.payload);
+  let msg = useSelector((state) => state.dashboard.msg);
+  const renderData = () => {
+    let listDashboard = [];
+    if (data) {
+      listDashboard.push(<View style={styles.container_child}>
+        <View style={[styles.students, styles.itemDashboard]}>
+          <Text style={styles.numbers}>{data.student.total}</Text>
+          <View style={styles.bottom}>
+            <View style={styles.left}>
+              <Text style={styles.total}>Total Students</Text>
+            </View>
+            <FontAwesome5 style={styles.icon} name="graduation-cap" />
+          </View>
+        </View>
+        <View style={[styles.teachers, styles.itemDashboard]}>
+          <Text style={styles.numbers}>{data.staff.total}</Text>
+          <View style={styles.bottom}>
+            <View style={styles.left}>
+              <Text style={styles.total}>Total Teachers</Text>
+            </View>
+            <FontAwesome5 style={styles.icon} name="user-friends" />
+          </View>
+        </View>
+        <View style={[styles.rooms, styles.itemDashboard]}>
+          <Text style={styles.numbers}>{data.room.total}</Text>
+          <View style={styles.bottom}>
+            <View style={styles.left}>
+              <Text style={styles.total}>Total Rooms</Text>
+              {/* <Text style={styles.last}>+0,5% than last month</Text> */}
+            </View>
+            <FontAwesome5 style={styles.icon} name="hotel" />
+          </View>
+        </View>
+      </View>);
+    }
+    else {
+      listDashboard.push(<View style={styles.container_child}>
+        </View>);
+    }
+    return listDashboard;
+  }
+  if (msg != 'Success') {
+    showToast(msg);
+  }
   return (
     <View style={styles.container}>
       <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
         <AppBar style={styles.appbar} navigation={navigation} />
-        <View style={styles.container_child}>
-          <View style={[styles.students, styles.itemDashboard]}>
-            <Text style={styles.numbers}>{data.student.total}</Text>
-            <View style={styles.bottom}>
-              <View style={styles.left}>
-                <Text style={styles.total}>Total Students</Text>
-              </View>
-              <FontAwesome5 style={styles.icon} name="graduation-cap" />
-            </View>
-          </View>
-          <View style={[styles.teachers, styles.itemDashboard]}>
-            <Text style={styles.numbers}>{data.staff.total}</Text>
-            <View style={styles.bottom}>
-              <View style={styles.left}>
-                <Text style={styles.total}>Total Teachers</Text>
-              </View>
-              <FontAwesome5 style={styles.icon} name="user-friends" />
-            </View>
-          </View>
-          <View style={[styles.rooms, styles.itemDashboard]}>
-            <Text style={styles.numbers}>{data.room.total}</Text>
-            <View style={styles.bottom}>
-              <View style={styles.left}>
-                <Text style={styles.total}>Total Rooms</Text>
-                {/* <Text style={styles.last}>+0,5% than last month</Text> */}
-              </View>
-              <FontAwesome5 style={styles.icon} name="hotel" />
-            </View>
-          </View>
-        </View>
+        {renderData()}
       </ImageBackground>
     </View>
   )
@@ -69,7 +86,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   appbar: {
-    flex: 1,
+    height: '10%',
     backgroundColor: 'white',
     elevation: 7,
     borderRadius: 20,

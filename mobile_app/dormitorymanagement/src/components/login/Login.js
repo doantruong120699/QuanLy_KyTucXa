@@ -48,7 +48,7 @@ class Login extends Component {
     }
     else {
       this.showToast('Đăng nhập thành công');
-      await this.props.dashboard();
+      // await this.props.dashboard();
       this.props.navigation.navigate("HomePage");
     }
   };
