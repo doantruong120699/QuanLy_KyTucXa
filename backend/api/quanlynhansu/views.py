@@ -292,6 +292,9 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
 class UsedRoomInAreaViewSet(viewsets.ModelViewSet):
     serializer_class = UsedRoomInAreaSerializer
 
+    def get_queryset(self):
+        return Area.objects.all().order_by('-created_at')
+
     def list(self, request, *args, **kwargs):
         try:
             list_area = Area.objects.all()
