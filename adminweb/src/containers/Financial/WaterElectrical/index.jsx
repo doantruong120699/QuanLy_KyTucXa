@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import { AgGridColumn, AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import PropTypes from "prop-types";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
@@ -122,14 +121,6 @@ function CircularProgressWithLabel(props) {
     </Box>
   );
 }
-
-CircularProgressWithLabel.propTypes = {
-  /**
-   * The value of the progress indicator for the determinate variant.
-   * Value between 0 and 100.
-   */
-  value: PropTypes.number.isRequired,
-};
 
 export default function WaterElectrical() {
   const history = useHistory();
@@ -409,17 +400,21 @@ export default function WaterElectrical() {
     <Box paddingRight={15} style={{ width: "100%" }}>
       <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
         <Box style={{ display: "flex", justifyContent: "space-between" }}>
-          {data.map((n) => {
+          {data.map((n, index) => {
             const array = n.room;
             const paid = array.filter((m) => m.isPaid === true);
             const unpaid = array.filter((m) => m.isPaid === false);
             return (
               <CircularProgressWithLabel
+                key={index}
                 name={n.name}
                 array={array}
+                value={10}
                 paid={paid}
                 unpaid={unpaid}
-                percentage={((paid.length / array.length) * 100).toFixed(2)}
+                percentage={Number(
+                  ((paid.length / array.length) * 100).toFixed(2)
+                )}
                 availableRoom={n.availableRoom}
                 onClick={() => {
                   handleClickBox(n.id);
@@ -430,15 +425,17 @@ export default function WaterElectrical() {
         </Box>
       </Grow>
       <Grow in={isShowTable} timeout={500} style={{ transformOrigin: "0 0 0" }}>
-        <div className={"dataTable"}>
+        <div className="dataTable">
           <div
             style={{
               margin: "20px 0 20px 0",
               fontSize: "40px",
             }}
-          >{`Khu ${areaSelected}`}</div>
+          >
+            Khu {areaSelected}
+          </div>
 
-          <div className={"ag-theme-alpine grid"}>
+          <div className="ag-theme-alpine grid">
             <AgGridReact
               animateRows
               enableColResize
