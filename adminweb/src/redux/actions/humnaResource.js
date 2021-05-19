@@ -1,21 +1,20 @@
 import * as types from "../constants";
 import store from "../store";
 
+const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
+
 export async function GetListRegistrationRoom(resolve = () => {}) {
   store.dispatch({
     type: types.GET_LIST_REGISTRATION_API,
   });
   try {
-    const response = await fetch(
-      `http://127.0.0.1:8000/api/list-registrations/`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      }
-    );
+    const response = await fetch(`${REACT_APP_BASE_API}list-registrations/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
     const data_1 = await response.json();
     resolve(data_1);
     store.dispatch({
@@ -36,7 +35,7 @@ export async function GetDetailRegistrationRoom(slug, resolve = () => {}) {
   });
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/api/registrations/${slug}/`,
+      `${REACT_APP_BASE_API}registrations/${slug}/`,
       {
         method: "GET",
         headers: {
@@ -65,7 +64,7 @@ export async function AcceptRegistrationRoom(slug, resolve = () => {}) {
   });
   try {
     const response = await fetch(
-      `http://127.0.0.1:8000/api/registrations/${slug}/`,
+      `${REACT_APP_BASE_API}registrations/${slug}/`,
       {
         method: "POST",
         headers: {
@@ -93,7 +92,7 @@ export async function addDailySchedule(data, resolve = () => {}) {
     type: types.ADD_DAILY_SCHEDULE_API,
   });
   try {
-    const response = await fetch(`http://127.0.0.1:8000/api/schedules/`, {
+    const response = await fetch(`${REACT_APP_BASE_API}schedules/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -111,6 +110,63 @@ export async function addDailySchedule(data, resolve = () => {}) {
     store.dispatch({
       payload: error,
       type: types.ADD_DAILY_SCHEDULE_API_FAIL,
+    });
+  }
+}
+
+export async function getRooms(params, resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_ROOMS_API,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}rooms/get-all/?${params}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    resolve(data);
+    store.dispatch({
+      payload: data,
+      type: types.GET_ROOMS_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_ROOMS_API_FAIL,
+    });
+  }
+}
+
+export async function getRoomDetails(slug, resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_ROOM_DETAILS_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}rooms/${slug}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data = await response.json();
+    resolve(data);
+    store.dispatch({
+      payload: data,
+      type: types.GET_ROOM_DETAILS_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_ROOM_DETAILS_API_FAIL,
     });
   }
 }

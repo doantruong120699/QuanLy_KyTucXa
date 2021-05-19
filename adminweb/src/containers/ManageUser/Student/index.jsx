@@ -1,7 +1,5 @@
 import "react-tabs/style/react-tabs.css";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { useHistory } from "react-router-dom";
-import * as ROUTER from "../../../utilities/constants/router";
+import React, { useState, useEffect } from "react";
 import Room from "./Room";
 import MUIDataTable from "mui-datatables";
 import {
@@ -13,417 +11,49 @@ import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import "./styles.css";
-import React, { useState } from "react";
 import ReactModal from "react-modal";
+import { getRoomDetails, getRooms } from "../../../redux/actions/humnaResource";
+import { getRoom } from "../../../utilities/constants/dataRender/checkroom";
+import queryString from "query-string";
+import Pagination from "../../../components/common/Pagination";
 
 export default function Student() {
-  const dataArea = [
-    {
-      id: 1,
-      name: "A",
-      slug: "a",
-      rooms: [
-        {
-          id: 1,
-          name: "101",
-          slug: "101",
-          number_now: 5,
-          typeroom: {
-            id: 1,
-            name: "Type 1",
-            price: 200000,
-            number_max: 8,
-            slug: "type-1",
-          },
-          area: {
-            id: 1,
-            name: "A",
-            slug: "a",
-          },
-          status: "F",
-          created_at: "2021-03-15T14:40:15.339962Z",
-          last_update: "2021-03-18T15:36:20.411397Z",
-        },
-        {
-          id: 2,
-          name: "102",
-          slug: "102",
-          number_now: 4,
-          typeroom: {
-            id: 2,
-            name: "Type 2",
-            price: 150000,
-            number_max: 8,
-            slug: "type-2",
-          },
-          area: {
-            id: 1,
-            name: "A",
-            slug: "a",
-          },
-          status: "F",
-          created_at: "2021-03-15T14:40:37.232087Z",
-          last_update: "2021-04-07T09:14:11.123500Z",
-        },
-        {
-          id: 3,
-          name: "103",
-          slug: "103",
-          number_now: 4,
-          typeroom: {
-            id: 1,
-            name: "Type 1",
-            price: 200000,
-            number_max: 8,
-            slug: "type-1",
-          },
-          area: {
-            id: 1,
-            name: "A",
-            slug: "a",
-          },
-          status: "A",
-          created_at: "2021-04-14T07:34:53.112768Z",
-          last_update: "2021-04-21T16:06:51.341576Z",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "B",
-      slug: "b",
-      rooms: [
-        {
-          id: 4,
-          name: "101",
-          slug: "101",
-          number_now: 5,
-          typeroom: {
-            id: 1,
-            name: "Type 1",
-            price: 200000,
-            number_max: 8,
-            slug: "type-1",
-          },
-          area: {
-            id: 2,
-            name: "B",
-            slug: "b",
-          },
-          status: "F",
-          created_at: "2021-03-15T14:40:15.339962Z",
-          last_update: "2021-03-18T15:36:20.411397Z",
-        },
-        {
-          id: 5,
-          name: "102",
-          slug: "102",
-          number_now: 4,
-          typeroom: {
-            id: 2,
-            name: "Type 2",
-            price: 150000,
-            number_max: 8,
-            slug: "type-2",
-          },
-          area: {
-            id: 2,
-            name: "B",
-            slug: "b",
-          },
-          status: "F",
-          created_at: "2021-03-15T14:40:37.232087Z",
-          last_update: "2021-04-07T09:14:11.123500Z",
-        },
-        {
-          id: 6,
-          name: "103",
-          slug: "103",
-          number_now: 4,
-          typeroom: {
-            id: 1,
-            name: "Type 1",
-            price: 200000,
-            number_max: 8,
-            slug: "type-1",
-          },
-          area: {
-            id: 2,
-            name: "B",
-            slug: "b",
-          },
-          status: "F",
-          created_at: "2021-04-14T07:34:53.112768Z",
-          last_update: "2021-04-21T16:06:51.341576Z",
-        },
-      ],
-    },
-    {
-      id: 4,
-      name: "C",
-      slug: "c",
-      rooms: [
-        {
-          id: 7,
-          name: "101",
-          slug: "101",
-          number_now: 5,
-          typeroom: {
-            id: 1,
-            name: "Type 1",
-            price: 200000,
-            number_max: 8,
-            slug: "type-1",
-          },
-          area: {
-            id: 3,
-            name: "C",
-            slug: "c",
-          },
-          status: "F",
-          created_at: "2021-03-15T14:40:15.339962Z",
-          last_update: "2021-03-18T15:36:20.411397Z",
-        },
-        {
-          id: 8,
-          name: "102",
-          slug: "102",
-          number_now: 4,
-          typeroom: {
-            id: 2,
-            name: "Type 2",
-            price: 150000,
-            number_max: 8,
-            slug: "type-2",
-          },
-          area: {
-            id: 3,
-            name: "C",
-            slug: "c",
-          },
-          status: "F",
-          created_at: "2021-03-15T14:40:37.232087Z",
-          last_update: "2021-04-07T09:14:11.123500Z",
-        },
-        {
-          id: 9,
-          name: "103",
-          slug: "103",
-          number_now: 4,
-          typeroom: {
-            id: 1,
-            name: "Type 1",
-            price: 200000,
-            number_max: 8,
-            slug: "type-1",
-          },
-          area: {
-            id: 3,
-            name: "C",
-            slug: "c",
-          },
-          status: "A",
-          created_at: "2021-04-14T07:34:53.112768Z",
-          last_update: "2021-04-21T16:06:51.341576Z",
-        },
-      ],
-    },
-  ];
+  const [dataArea, setDataArea] = useState();
+  const [peopleInRoom, setPeopleInRoom] = useState();
 
-  const room = [
-    {
-      id: 1,
-      name: "101",
-      slug: "101",
-      number_now: 5,
-      typeroom: {
-        id: 1,
-        name: "Type 1",
-        price: 200000,
-        number_max: 8,
-        slug: "type-1",
-      },
-      area: {
-        id: 1,
-        name: "A",
-        slug: "a",
-      },
-      status: "F",
-      created_at: "2021-03-15T14:40:15.339962Z",
-      last_update: "2021-03-18T15:36:20.411397Z",
-    },
-    {
-      id: 2,
-      name: "102",
-      slug: "102",
-      number_now: 4,
-      typeroom: {
-        id: 2,
-        name: "Type 2",
-        price: 150000,
-        number_max: 8,
-        slug: "type-2",
-      },
-      area: {
-        id: 1,
-        name: "A",
-        slug: "a",
-      },
-      status: "F",
-      created_at: "2021-03-15T14:40:37.232087Z",
-      last_update: "2021-04-07T09:14:11.123500Z",
-    },
-    {
-      id: 3,
-      name: "103",
-      slug: "103",
-      number_now: 4,
-      typeroom: {
-        id: 1,
-        name: "Type 1",
-        price: 200000,
-        number_max: 8,
-        slug: "type-1",
-      },
-      area: {
-        id: 1,
-        name: "A",
-        slug: "a",
-      },
-      status: "A",
-      created_at: "2021-04-14T07:34:53.112768Z",
-      last_update: "2021-04-21T16:06:51.341576Z",
-    },
+  const [pagination, setPagination] = useState({
+    page: 1,
+    page_size: 20,
+    totals: 1,
+  });
 
-    {
-      id: 4,
-      name: "101",
-      slug: "101",
-      number_now: 5,
-      typeroom: {
-        id: 1,
-        name: "Type 1",
-        price: 200000,
-        number_max: 8,
-        slug: "type-1",
-      },
-      area: {
-        id: 2,
-        name: "B",
-        slug: "b",
-      },
-      status: "F",
-      created_at: "2021-03-15T14:40:15.339962Z",
-      last_update: "2021-03-18T15:36:20.411397Z",
-    },
-    {
-      id: 5,
-      name: "102",
-      slug: "102",
-      number_now: 4,
-      typeroom: {
-        id: 2,
-        name: "Type 2",
-        price: 150000,
-        number_max: 8,
-        slug: "type-2",
-      },
-      area: {
-        id: 2,
-        name: "B",
-        slug: "b",
-      },
-      status: "F",
-      created_at: "2021-03-15T14:40:37.232087Z",
-      last_update: "2021-04-07T09:14:11.123500Z",
-    },
-    {
-      id: 6,
-      name: "103",
-      slug: "103",
-      number_now: 4,
-      typeroom: {
-        id: 1,
-        name: "Type 1",
-        price: 200000,
-        number_max: 8,
-        slug: "type-1",
-      },
-      area: {
-        id: 2,
-        name: "B",
-        slug: "b",
-      },
-      status: "F",
-      created_at: "2021-04-14T07:34:53.112768Z",
-      last_update: "2021-04-21T16:06:51.341576Z",
-    },
-    {
-      id: 7,
-      name: "101",
-      slug: "101",
-      number_now: 5,
-      typeroom: {
-        id: 1,
-        name: "Type 1",
-        price: 200000,
-        number_max: 8,
-        slug: "type-1",
-      },
-      area: {
-        id: 3,
-        name: "C",
-        slug: "c",
-      },
-      status: "F",
-      created_at: "2021-03-15T14:40:15.339962Z",
-      last_update: "2021-03-18T15:36:20.411397Z",
-    },
-    {
-      id: 8,
-      name: "102",
-      slug: "102",
-      number_now: 4,
-      typeroom: {
-        id: 2,
-        name: "Type 2",
-        price: 150000,
-        number_max: 8,
-        slug: "type-2",
-      },
-      area: {
-        id: 3,
-        name: "C",
-        slug: "c",
-      },
-      status: "F",
-      created_at: "2021-03-15T14:40:37.232087Z",
-      last_update: "2021-04-07T09:14:11.123500Z",
-    },
-    {
-      id: 9,
-      name: "103",
-      slug: "103",
-      number_now: 4,
-      typeroom: {
-        id: 1,
-        name: "Type 1",
-        price: 200000,
-        number_max: 8,
-        slug: "type-1",
-      },
-      area: {
-        id: 3,
-        name: "C",
-        slug: "c",
-      },
-      status: "A",
-      created_at: "2021-04-14T07:34:53.112768Z",
-      last_update: "2021-04-21T16:06:51.341576Z",
-    },
-  ];
-  const history = useHistory();
-  const [deletePeople, setDeletePeople] = useState([]);
+  const [filter, setFilter] = useState({
+    page: 1,
+  });
+
+  function handlePageChange(newPage) {
+    setFilter({ ...filter, page: newPage });
+  }
+
+  useEffect(() => {
+    const paramsString = queryString.stringify(filter);
+
+    const GetAllRooms = () => {
+      getRooms(paramsString, (output) => {
+        if (output) {
+          const pagination = {
+            page: output.current_page,
+            page_size: output.page_size,
+            totals: output.totals,
+          };
+          setDataArea(getRoom(output));
+          setPagination(pagination);
+        }
+      });
+    };
+    GetAllRooms();
+  }, [filter]);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isModalNotiVisible, setIsModalNotiVisible] = useState(false);
   const hideModal = () => {
@@ -436,11 +66,13 @@ export default function Student() {
       marginRight: "20px",
     },
   }))(Button);
+
   const DeleteButton = withStyles((theme) => ({
     root: {
       width: "100px",
     },
   }))(Button);
+
   const customStyles = {
     content: {
       top: "50%",
@@ -469,48 +101,21 @@ export default function Student() {
         },
       },
     });
-  const handleClickRoom = () => {
-    console.log("Room is clicked");
+  const handleClickRoom = (slug) => {
+    getRoomDetails(slug, (output) => {
+      if (output) {
+        setPeopleInRoom(convertDataForTable(output));
+      }
+    });
     setIsModalVisible(true);
   };
-  const peopleInARoom = [
-    {
-      id: 1,
-      firstName: "Anh",
-      lastName: "To",
-      account: "anh_to@datahouse.com",
-      activeDate: "20/3/2020",
-    },
-    {
-      id: 2,
-      firstName: "Ben",
-      lastName: "Phan",
-      account: "ben_phan@datahouse.com",
-      activeDate: "21/3/2020",
-    },
-    {
-      id: 3,
-      firstName: "Truong",
-      lastName: "Doan",
-      account: "doan_truong@demailam.com",
-      activeDate: "20/4/2020",
-    },
-    {
-      id: 4,
-      firstName: "Quang",
-      lastName: "Tran",
-      account: "quang_tran@demailam.com",
-      activeDate: "22/5/2020",
-    },
-  ];
-  const handleDeletePeople = (params) => {
-    console.log("params", params);
-  };
+
+  const handleDeletePeople = (params) => {};
   const convertDataForTable = (data) => {
-    return data.map((n) => ({
-      name: n.lastName + " " + n.firstName,
-      account: n.account,
-      activeDate: n.activeDate,
+    return data.list_user.map((n) => ({
+      name: n.last_name + " " + n.first_name,
+      account: n.username,
+      activeDate: n.birthday,
     }));
   };
   const columns = [
@@ -532,7 +137,7 @@ export default function Student() {
     },
     {
       name: "activeDate",
-      label: "Active Date",
+      label: "Birthday",
       options: {
         filter: true,
         sort: true,
@@ -570,7 +175,7 @@ export default function Student() {
     customHeadRender: () => {
       return null;
     },
-    onRowClick: (params,rowMeta) => {
+    onRowClick: (params, rowMeta) => {
       console.log("params", params);
       console.log("event", rowMeta);
     },
@@ -658,7 +263,6 @@ export default function Student() {
           display={dataNotification.length > 0 ? "block" : "none"}
           boxShadow={1}
           borderRadius={5}
-          backgroundColor={"palevioletred"}
           marginBottom={5}
           color="red"
           width={350}
@@ -704,44 +308,48 @@ export default function Student() {
                       name={room.name}
                       maximum={room.typeroom.number_max}
                       numberNow={room.number_now}
-                      onClick={handleClickRoom}
+                      onClick={() => handleClickRoom(room.slug)}
                     />
-                    <ReactModal
-                      isOpen={isModalVisible}
-                      onRequestClose={hideModal}
-                      style={customStyles}
-                    >
-                      <div>
-                        <MuiThemeProvider theme={getMuiTheme()}>
-                          <MUIDataTable
-                            title={"Thành viên trong phòng"}
-                            data={convertDataForTable(peopleInARoom)}
-                            columns={columns}
-                            options={options}
-                          />
-                        </MuiThemeProvider>
-                        <div
-                          style={{
-                            textAlign: "center",
-                            marginTop: "20px",
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={(params) => handleClickAddPeopleWithParams}
-                          >
-                            Thêm người
-                          </Button>
-                        </div>
-                      </div>
-                    </ReactModal>
                   </div>
                 );
               })}
             </div>
           );
         })}
+      <ReactModal
+        isOpen={isModalVisible}
+        onRequestClose={hideModal}
+        style={customStyles}
+        ariaHideApp={false}
+      >
+        <div>
+          <MuiThemeProvider theme={getMuiTheme()}>
+            <MUIDataTable
+              title={"Thành viên trong phòng"}
+              data={peopleInRoom}
+              columns={columns}
+              options={options}
+            ></MUIDataTable>
+          </MuiThemeProvider>
+          <div
+            style={{
+              textAlign: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={(params) => handleClickAddPeopleWithParams}
+            >
+              Thêm người
+            </Button>
+          </div>
+        </div>
+      </ReactModal>
+      <div className="col col-full">
+        <Pagination pagination={pagination} onPageChange={handlePageChange} />
+      </div>
     </div>
   );
 }
