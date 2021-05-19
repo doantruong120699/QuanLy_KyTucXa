@@ -52,11 +52,6 @@ notification_detail = NotificationViewSet.as_view({
     'delete': 'destroy'
 })
 
-# ========== Used room
-# list 
-used_room_in_area_list = UsedRoomInAreaViewSet.as_view({
-    'get': 'list',
-})
 urlpatterns = [ 
     # ========== notification
     path('notifications/', notification_list, name = 'notification_list'),
@@ -73,6 +68,5 @@ urlpatterns = [
     # ========== Schedule ========
     path('schedules/', schedule, name = 'schedule'),
     # path('schedules/<str:public_id>/', update_schedule, name = 'update_schedule'),
-    # ========== room
-    path('used-room-area/', used_room_in_area_list, name = 'used_room_in_area_list'),
+    
 ]
