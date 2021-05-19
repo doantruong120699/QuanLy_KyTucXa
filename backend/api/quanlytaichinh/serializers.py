@@ -289,7 +289,6 @@ class ProfileInListBillSerializer(serializers.ModelSerializer):
             'my_class'
         ]
 
-
 class BillSerializer(serializers.ModelSerializer):
     water_electrical = WaterElectricalInListSerializer(required=False)
     created_by = UserSerializer(required=False)
@@ -383,5 +382,10 @@ class BillDetailSerializer(serializers.ModelSerializer):
             'updated_by',
         ]
 
+# ===========================================================
 
+class PaidBillInAreaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Area
+        fields = ['id', 'name', 'slug'] 
 
