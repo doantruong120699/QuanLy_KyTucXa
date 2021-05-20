@@ -30,11 +30,3 @@ class IsQuanLyTaiChinh(BasePermission):
     """
     def has_permission(self, request, view):
         return request.user and request.user.groups.filter(name=settings.GROUP_NAME['QUANLYTAICHINH']).exists()
-
-# Custom permission for users in group 'member_group' and 'coach_group'.
-# class IsCoachMember(BasePermission):
-#     """
-#     Allows access only to "member_group", "coach_group" group.
-#     """
-#     def has_permission(self, request, view):
-#         return request.user and request.user.groups.filter(name__in=[settings.GROUP_NAME['COACH'], settings.GROUP_NAME['MEMBER']]).exists()

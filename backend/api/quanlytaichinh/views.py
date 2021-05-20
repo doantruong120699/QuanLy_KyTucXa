@@ -61,16 +61,40 @@ class FinancalRoomInAreaViewSet(viewsets.ModelViewSet):
             return [IsAuthenticated(), IsQuanLyTaiChinh(),]
         return [IsAuthenticated(), IsQuanLyTaiChinh(),]
 
+    def check_month_year(self, _month, _year):
+        d = datetime.now()
+        month = _month
+        year = _year
+        if _month == None or not _month.isnumeric():
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        elif int(_month) > 12 or int(_month) < 1:
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        if _year == None or not _year.isnumeric():
+            year = d.year
+        return (month, year)
+    
     def list(self, request, *args, **kwargs):
         try:
-            area = Area.objects.get(slug=kwargs['slug'])
-            time = kwargs['time'] + '-01'
-            time = datetime.fromisoformat(time)
-            # Number now in room >=0 
-            room_in_area = Room.objects.filter(area=area).order_by('-id')
+            area = request.GET.get('area', '')
+            
+            month = self.request.GET.get('month',None)                    
+            year = self.request.GET.get('year',None)
+            month, year = self.check_month_year(month, year)
+            
+            area = Area.objects.filter(
+                Q(name=area) |
+                Q(slug=area))
+            # Number now in room >=0        
+            room_in_area = Room.objects.filter(area__in=area).order_by('-id')
             all_bill = Bill.objects.filter(water_electrical__room__in=room_in_area, 
-                                                              water_electrical__year=time.year,
-                                                              water_electrical__month=time.month)
+                                                              water_electrical__year=year,
+                                                              water_electrical__month=month)
             list_room_add_json = []
             for bill in all_bill:
                 list_room_add_json.append({'name': bill.water_electrical.room.name, 'isPaid' : bill.is_paid})
@@ -82,7 +106,7 @@ class FinancalRoomInAreaViewSet(viewsets.ModelViewSet):
             return Response(data_room, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
 # =========================================================
 
@@ -165,16 +189,35 @@ class BillViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return Bill.objects.all().order_by('-created_at')
 
+    def check_month_year(self, _month, _year):
+        d = datetime.now()
+        month = _month
+        year = _year
+        if _month == None or not _month.isnumeric():
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        elif int(_month) > 12 or int(_month) < 1:
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        if _year == None or not _year.isnumeric():
+            year = d.year
+        return (month, year)
+    
     def list(self, request, *args, **kwargs):
         try:
-            area = Area.objects.get(slug=kwargs['slug'])
-            time = kwargs['time'] + '-01'
-            time = datetime.fromisoformat(time)
-            # Number now in room >=0 
-            room_in_area = Room.objects.filter(area=area).order_by('-id')
+            area = self.request.GET.get('area','') 
+            month = self.request.GET.get('month',None)                    
+            year = self.request.GET.get('year',None)
+            month, year = self.check_month_year(month, year)
+            area = Area.objects.filter(Q(name=area) | Q(slug=area)) 
+            room_in_area = Room.objects.filter(area__in=area).order_by('-id')
             _list = Bill.objects.filter(water_electrical__room__in=room_in_area, 
-                                                              water_electrical__year=time.year,
-                                                              water_electrical__month=time.month)
+                                                              water_electrical__year=year,
+                                                              water_electrical__month=month)
             _list = _list.filter(is_delete=False)
             page = self.paginate_queryset(_list)
             if page is not None:
@@ -264,3 +307,91 @@ class PaidBillInAreaViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+# =======================================================
+
+class TypeExpenseViewSet(viewsets.ModelViewSet):
+    queryset = TypeExpense.objects.all()
+    serializer_class = TypeExpenseSerializer
+
+    def get_queryset(self):
+        return TypeExpense.objects.all().order_by('id')
+
+    def list(self, request, *args, **kwargs):
+        queryset = list(TypeExpense.objects.values().order_by('id'))
+        return JsonResponse(queryset, safe=False, status=status.HTTP_200_OK)
+
+class ExpenseViewSet(viewsets.ModelViewSet):
+    serializer_class = ExpenseListSerializer
+    permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
+    lookup_field = 'public_id'
+
+    def get_queryset(self):
+        return Expense.objects.filter(is_delete=False).order_by('-created_at')
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            _list = self.get_queryset()
+            page = self.paginate_queryset(_list)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            serializer = ExpenseSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                save = serializer.create(request.data)
+                if save:
+                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
+            print(serializer.errors)
+            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)    
+
+    def update(self, request, public_id, format=None):
+        try:
+            queryset = Expense.objects.filter(public_id=public_id, is_delete=False).first()
+            if queryset:
+                datas = request.data
+                serializer = ExpenseUpdateSerializer(queryset, data=datas, context={'request': request})
+                if serializer.is_valid():
+                        save = serializer.update(instance = queryset, validated_data = request.data)
+                        if save:
+                            return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Expense Not Found!'}, status=status.HTTP_404_NOT_FOUND)
+    
+    def destroy(self, request, public_id, format=None):
+        try:
+            queryset = Expense.objects.filter(public_id=public_id ,is_delete=False).first()
+            if queryset:
+                queryset.is_delete = True
+                queryset.save()
+                return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            pass
+        return Response({'status': 'fail', 'notification' : 'Expense not found!'}, status=status.HTTP_404_NOT_FOUND)
+
+    def retrieve(self, request, public_id, **kwargs):
+        try:
+            queryset = Expense.objects.filter(public_id=public_id, is_delete=False).first()
+            if queryset:
+                serializer = ExpenseListSerializer(queryset)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Expense not found!'}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+
