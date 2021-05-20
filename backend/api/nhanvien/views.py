@@ -84,15 +84,16 @@ class NhanVienViewSet(viewsets.ModelViewSet):
     # get list all nhanvien 
     @action(methods=["GET"], detail=False, url_path="get_all_nhanvien", url_name="get_all_nhanvien")
     def get_all_nhanvien(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=nhanvien_group).order_by('id')
+        queryset = list(User.objects.filter(groups__name=nhanvien_group).order_by('id').values())
+        _list = list(Shift.objects.values().order_by('id'))
+        return JsonResponse(queryset, safe=False, status=status.HTTP_200_OK)
+        # page = self.paginate_queryset(queryset)
+        # if page is not None:
+        #     serializer = self.get_serializer(page, many=True)
+        #     return self.get_paginated_response(serializer.data)
 
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
+        # serializer = self.get_serializer(page, many=True)
+        # return self.get_paginated_response(serializer.data)
 
 class ShiftViewSet(viewsets.ModelViewSet):
     queryset = Shift.objects.all()
@@ -145,6 +146,8 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
             sunday = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w") - timedelta(days=1)
 
             for item in range(len(data)):
+                staff = Profile.objects.filter(user__email = data[item]['staff']['email']).first()
+                data[item]['staff']['id'] = staff.pk
                 day_of_week = data[item]['shift']['weekdays']
                 day_shift = sunday + datetime.timedelta(days=self.day_week(day_of_week))
                 data[item]['shift']['date'] = day_shift.date()
@@ -155,6 +158,7 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
         try:
             queryset = DailySchedule.objects.get(public_id=kwargs['public_id'])
             serializer = DailyScheduleDetailSerializer(queryset)
+            serializer.data['staff']['id'] = queryset.staff.user_profile.pk
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
