@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, ToastAndroid, Modal, Pressable} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { TextInput } from 'react-native-gesture-handler';
 import DatePicker from 'react-native-date-picker';
 import { Picker } from '@react-native-picker/picker';
 import moment from 'moment';
 import { registrationroom } from '../../redux/actions/index';
-import { styleBtnComeBack, styleImgBg } from '../../styles/index';
+import { styleBtnComeBack, styleImgBg, styleContainer } from '../../styles/index';
 
 class RoomDetail extends Component {
   constructor(props) {
@@ -32,7 +31,7 @@ class RoomDetail extends Component {
     this.setModalVisible(!this.state.modalVisible);
   }
   goBack = () => {
-    this.props.navigation.navigate("ShowAllRoom");
+    this.props.navigation.goBack();
   }
   handleAssignRoom = () => {
     this.openDetail;
@@ -60,7 +59,7 @@ class RoomDetail extends Component {
   render() {
     const item = this.props.route.params.item;
     return (
-      <View style={styles.container}>
+      <View style={styleContainer.container}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
         <View style={styles.centeredView}>
           <Modal
@@ -129,7 +128,7 @@ class RoomDetail extends Component {
           <View style={styles.formProfile}>
             <View style={styles.viewInfo}>
               <Text style={styles.title}>Tên Phòng:</Text>
-              <Text style={styles.info}>{item.area.name + item.name}</Text>
+              <Text style={styles.info}>{item.name}</Text>
             </View>
             <View style={styles.viewInfo}>
               <Text style={styles.title}>Loại Phòng:</Text>
@@ -143,10 +142,10 @@ class RoomDetail extends Component {
               <Text style={styles.title}>Số Người Trong Phòng:</Text>
               <Text style={styles.info}>{item.number_now}</Text>
             </View>
-            <View style={styles.viewInfo}>
+            {/* <View style={styles.viewInfo}>
               <Text style={styles.title}>Thành Viên:</Text>
               <Text style={styles.info}>Nguyễn Văn A, Hoàng Văn B, Đinh Văn C, Tôn Hữu D, Võ Văn E</Text>
-            </View>
+            </View> */}
             <View style={styles.viewInfo}>
               <Text style={styles.title}>Tình Trạng Phòng:</Text>
               <Text style={styles.info}>{item.number_now < item.typeroom.number_max ? 'Có Thể Đăng Kí' : 'Đã Đủ Người'}</Text>
@@ -177,11 +176,6 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, mapDispatchToProps)(RoomDetail);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   comeBack: {
     flex: 1,
     height: '100%',

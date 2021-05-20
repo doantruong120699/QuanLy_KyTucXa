@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
+import ReactModal from "react-modal";
+
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
 import Grow from "@material-ui/core/Grow";
 import "./styles.css";
 import { getUsedRoom } from "../../redux/actions/overview";

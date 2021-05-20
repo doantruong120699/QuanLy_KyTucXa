@@ -71,3 +71,18 @@ export const month = [
     label: "Tháng mười hai",
   },
 ];
+
+export const shiftTime = [
+  {
+    value: 0,
+    label: "Ca 1 (6h - 14h)",
+  },
+  {
+    value: 1,
+    label: "Ca 2 (14h - 22h)",
+  },
+  {
+    value: 2,
+    label: "Ca 3 (22h - 6h)",
+  },
+];

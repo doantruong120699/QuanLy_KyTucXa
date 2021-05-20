@@ -1,10 +1,9 @@
-import {actionType} from '../actionType';
-import {storeData, getData} from '../../utils/asyncStorage';
+import { actionType } from '../actionType';
 
-const {STATUS_MAIN_MENU} = actionType;
+const { STATUS_MAIN_MENU } = actionType;
 export const mainmenu = (data) => (dispatch) => {
-    dispatch({
-        type: STATUS_MAIN_MENU,
-        status: data,
-    });
+  dispatch({
+    type: STATUS_MAIN_MENU,
+    status: data,
+  });
 };

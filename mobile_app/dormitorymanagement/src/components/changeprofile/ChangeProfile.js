@@ -4,19 +4,18 @@ import { View, TouchableOpacity, TextInput, Text, StyleSheet, ImageBackground, T
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { changeprofile } from '../../redux/actions/index';
 import DatePicker from 'react-native-date-picker';
-import { styleBtnComeBack, styleImgBg } from '../../styles/index';
+import { styleBtnComeBack, styleImgBg, styleContainer } from '../../styles/index';
 
 class ChangeProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
       username: '',
       first_name: '',
       last_name: '',
       birthday: new Date(),
       address: '',
-      identity_card: '',
+      identify_card: '',
       phone: '',
     };
   };
@@ -24,25 +23,28 @@ class ChangeProfile extends Component {
     ToastAndroid.show(msg, ToastAndroid.LONG);
   };
   save = async () => {
-    const data = {
-      "email": "tmquang@gmail.com",
-      "username": "quangteo",
-      "first_name": "Quang",
-      "last_name": "Tran Minh",
-      "profile": {
-        "birthday": "2021-01-01",
-        "address": "DANA",
-        "identity_card": "20220002",
-        "phone": "0213123123"
-      }
-    }
-    await this.props.changeprofile(data);
-    if (this.props.msg !== 'Success') {
-      this.showToast('Đổi thông tin không thành công');
+    if (!this.state.first_name || !this.state.last_name || !this.state.birthday || !this.state.address || !this.state.identify_card || !this.state.phone) {
+      this.showToast("Vui lòng nhập đầy đủ thông tin");
     }
     else {
-      this.showToast('Đổi thông tin thành công');
-      this.props.navigation.goBack();
+      const data = {
+        "first_name": this.state.first_name,
+        "last_name": this.state.last_name,
+        "profile": {
+          "birthday": this.state.birthday.getFullYear() + "-" + this.state.birthday.getMonth() + "-" + this.state.birthday.getDate(),
+          "address": this.state.address,
+          "identify_card": this.state.identify_card,
+          "phone": this.state.phone
+        }
+      }
+      await this.props.changeprofile(data);
+      if (this.props.msg !== 'Success') {
+        this.showToast('Đổi thông tin không thành công');
+      }
+      else {
+        this.showToast('Đổi thông tin thành công');
+        this.props.navigation.goBack();
+      }
     }
   }
   goBack = () => {
@@ -64,14 +66,14 @@ class ChangeProfile extends Component {
     this.setState({ address: text });
   }
   changeTextIdentify = (text) => {
-    this.setState({ identity_card: text });
+    this.setState({ identify_card: text });
   }
   changeTextPhone = (text) => {
     this.setState({ phone: text });
   }
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[styleContainer.container, styles.container]}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <View style={styleBtnComeBack.comeBack}>
             <TouchableOpacity style={styleBtnComeBack.buttonComback} onPress={this.goBack}>
@@ -82,14 +84,6 @@ class ChangeProfile extends Component {
           <View style={styles.container_child}>
             <View style={styles.formChangeInfo}>
               <ScrollView>
-                <View style={styles.viewRow}>
-                  <Text style={styles.title}>Email:</Text>
-                  <TextInput
-                    underlineColorAndroid="transparent"
-                    onChangeText={this.changeTextEmail}
-                    style={styles.inputText}
-                  />
-                </View>
                 <View style={styles.viewRow}>
                   <Text style={styles.title}>Tài khoản:</Text>
                   <TextInput
@@ -141,6 +135,7 @@ class ChangeProfile extends Component {
                     underlineColorAndroid="transparent"
                     onChangeText={this.changeTextIdentify}
                     style={styles.inputText}
+                    keyboardType="numeric"
                   />
                 </View>
                 <View style={styles.viewRow}>
@@ -149,6 +144,7 @@ class ChangeProfile extends Component {
                     underlineColorAndroid="transparent"
                     onChangeText={this.changeTextPhone}
                     style={styles.inputText}
+                    keyboardType="numeric"
                   />
                 </View>
                 <View style={styles.viewButton}>
@@ -179,11 +175,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(ChangeProfile);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     width: "100%",
     height: "100%",
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   text: {
     fontWeight: 'bold',

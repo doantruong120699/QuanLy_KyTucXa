@@ -1,6 +1,6 @@
 import { actionType } from '../actionType';
 
-const { REGISTRATION_ROOM, REGISTRATION_ROOM_FAIL, REGISTRATION_ROOM_SUCCESS } = actionType;
+const { REGISTRATION_ROOM_FAIL, REGISTRATION_ROOM_SUCCESS } = actionType;
 const initialState = {
   msg: '',
 }

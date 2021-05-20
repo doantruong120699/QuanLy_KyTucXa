@@ -49,6 +49,7 @@ const Dashboard = () => {
     const GetDashboard = () =>
       getDashboard((output) => {
         if (output) {
+          console.log(output);
           setDashboard(output);
         }
       });
@@ -68,7 +69,7 @@ const Dashboard = () => {
                   title={"Tổng số sinh viên"}
                   iconStyle={"fi-sr-graduation-cap"}
                   color={"#c71cca"}
-                  increasedPercent={dashboard.student["cur-month"]}
+                  increasedPercent={dashboard.student.cur_month}
                 />
               </div>
               <div className="col col-half">
@@ -77,7 +78,7 @@ const Dashboard = () => {
                   title={"Tổng số nhân viên"}
                   iconStyle={"fi-sr-users"}
                   color={"#0a3dbd"}
-                  increasedPercent={dashboard.staff["cur-month"]}
+                  increasedPercent={dashboard.staff.cur_month}
                 />
               </div>
               <div className="col col-half">
@@ -91,7 +92,7 @@ const Dashboard = () => {
               </div>
               <div className="col col-half">
                 <InfoContainer
-                  number={dashboard["room-available"]}
+                  number={dashboard.room_available}
                   title={"Phòng trống"}
                   iconStyle={"fi-sr-checkbox"}
                   color={"#ff6275"}

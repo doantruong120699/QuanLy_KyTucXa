@@ -5,5 +5,6 @@ import { styleItemSvNv } from './itemSvNv';
 import { styleBtnComeBack } from './buttonComeback';
 import { styleImgBg } from './imgBg';
 import { styleInput } from './input';
+import { styleContainer } from './container';
 
-export { stylePages, styleListNvSv, styleSearch, styleItemSvNv, styleBtnComeBack, styleImgBg, styleInput };
+export { stylePages, styleListNvSv, styleSearch, styleItemSvNv, styleBtnComeBack, styleImgBg, styleInput, styleContainer };

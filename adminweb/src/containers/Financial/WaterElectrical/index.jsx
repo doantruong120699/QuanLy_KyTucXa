@@ -6,11 +6,11 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Grow from "@material-ui/core/Grow";
+import Select from "react-select";
 import ReactModal from "react-modal";
 import DetailRoom from "./DetailRoom";
 import queryString from "querystring";
-import Select from "react-select";
-
+import moment from "moment";
 import "./styles.css";
 import { getFinancial, getStatistical } from "../../../redux/actions/financial";
 import { month as MONTH } from "../../../utilities/constants/titles";
@@ -222,7 +222,7 @@ export default function WaterElectrical() {
       cellStyle: { textAlign: "center", cursor: "pointer" },
       resizeable: true,
       filter: false,
-      cellRenderer: (param) => {
+      cellRenderer: () => {
         return "<span style='color:blue'>Xem chi tiết</span>";
       },
     },
@@ -263,7 +263,18 @@ export default function WaterElectrical() {
       transform: "translate(-50%, -50%)",
     },
   };
-
+  var week = [];
+  var i = 1;
+  while (i <= 52 && week.length <= 52) {
+    week.push({
+      value: i,
+      label: `Tuần thứ ${i}, Từ ${moment(i, "week")
+        .startOf("week")
+        .format("DD/MM")} đến ${moment(i, "week").endOf("week").format("DD/MM")}
+           `,
+    });
+    i++;
+  }
   return (
     <div>
       {data && (

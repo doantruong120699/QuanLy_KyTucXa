@@ -3,17 +3,16 @@ import { ImageBackground, StyleSheet, View, Text, TouchableOpacity, ToastAndroid
 import { TextInput } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { login, dashboard } from '../../redux/actions/index';
-import { storeData, getData } from '../../utils/asyncStorage';
+import { getData } from '../../utils/asyncStorage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import HomePage from '../home/HomePage';
-import { styleImgBg, styleInput } from '../../styles/index';
+import { styleImgBg, styleInput, styleContainer } from '../../styles/index';
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: 'tmquang@gmail.com',
-      password: 'quang1999',
+      username: '',
+      password: '',
       icon: 'eye-slash',
       isShow: true,
     };
@@ -26,8 +25,8 @@ class Login extends Component {
   };
   validateData = () => {
     const { username, password } = this.state;
-    // if (!username || !password)
-    //     return false;
+    if (!username || !password)
+        return false;
     return true;
   };
   showToast = (msg) => {
@@ -38,17 +37,16 @@ class Login extends Component {
       this.showToast('Chưa nhập tài khoản hoặc mật khẩu');
       return;
     }
-    const data = { "username": "doantruong", "password": "123QWE!@#" };
+    let data = { "username": this.state.username, "password": this.state.password };
     await this.props.login(data);
-    const token = await getData('token');
-    const role = await getData('role');
+    let token = await getData('token');
+    let role = await getData('role');
     if (token === null || token === undefined || token === '') {
         this.showToast(this.props.msg);
         this.props.navigation.navigate("Login");
     }
     else {
       this.showToast('Đăng nhập thành công');
-      await this.props.dashboard();
       this.props.navigation.navigate("HomePage");
     }
   };
@@ -63,7 +61,7 @@ class Login extends Component {
   }
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[styleContainer.container, styles.container]}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <View style={styles.container_child}>
             <View style={styles.formLogin}>
@@ -72,7 +70,6 @@ class Login extends Component {
                 <TextInput
                   underlineColorAndroid="transparent"
                   onChangeText={this.changeTextUsername}
-                  value='asdquang111@gmail.com'
                   style={styleInput.inputText}
                   placeholder="Tài khoản"
                   placeholderTextColor="#808080"
@@ -83,7 +80,6 @@ class Login extends Component {
                   underlineColorAndroid="transparent"
                   onChangeText={this.changeTextPassword}
                   style={styleInput.inputText}
-                  value='quang1999'
                   placeholder="Mật khẩu"
                   placeholderTextColor="#808080"
                   secureTextEntry={this.state.isShow}
@@ -129,9 +125,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(Login);
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
     flexDirection: "column",
   },
   container_child: {

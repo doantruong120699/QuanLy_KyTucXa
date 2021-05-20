@@ -4,6 +4,7 @@ const initialState = {
   listRooms: {},
   currentRoom: {},
   resgistrations: {},
+  employeeList: {},
   schedules: {},
   currentRegistration: {},
   error: {},
@@ -13,6 +14,7 @@ const initialState = {
 export default function reducer(state = initialState, actions) {
   switch (actions.type) {
     case types.GET_LIST_REGISTRATION_API:
+    case types.GET_LIST_EMPLOYEE_API:
     case types.GET_SCHEDULE_API:
     case types.GET_ROOM_DETAILS_API:
     case types.GET_DETAILED_REGISTRATION_API:
@@ -29,6 +31,12 @@ export default function reducer(state = initialState, actions) {
         ...state,
         loading: false,
         schedules: actions.payload,
+      };
+    case types.GET_LIST_EMPLOYEE_API_SUCCEED:
+      return {
+        ...state,
+        loading: false,
+        employeeList: actions.payload,
       };
     case types.GET_LIST_REGISTRATION_API_SUCCEED:
       return {
@@ -55,6 +63,7 @@ export default function reducer(state = initialState, actions) {
         loading: false,
       };
     case types.GET_LIST_REGISTRATION_API_FAIL:
+    case types.GET_LIST_EMPLOYEE_API_FAIL:
     case types.GET_SCHEDULE_API_FAIL:
     case types.GET_ROOM_DETAILS_API_FAIL:
     case types.GET_ROOMS_API_FAIL:

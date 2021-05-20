@@ -4,16 +4,15 @@ import { TextInput } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { changepassword } from '../../redux/actions/changepassword';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { styleBtnComeBack, styleImgBg, styleInput } from '../../styles/index';
+import { styleBtnComeBack, styleImgBg, styleInput, styleContainer } from '../../styles/index';
 
 class ChangePassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: 'asdquang111@gmail.com',
-      old_password: 'quang301199',
-      new_password: 'quang1999',
-      repeat_new_password: 'quang1999',
+      old_password: 'quang111',
+      new_password: 'quang19999',
+      repeat_new_password: 'quang19999',
     };
   };
   changTextOldPassword = (text) => {
@@ -30,9 +29,8 @@ class ChangePassword extends Component {
   };
   changePassword = async () => {
     const data = {
-      "email": this.state.email,
       "old_password": this.state.old_password,
-      "password": this.state.new_password,
+      "new_password": this.state.new_password,
       "confirm_password": this.state.repeat_new_password
     };
     await this.props.changepassword(data);
@@ -48,7 +46,7 @@ class ChangePassword extends Component {
   }
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[styleContainer.container, styles.container]}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <View style={styleBtnComeBack.comeBack}>
             <TouchableOpacity style={styleBtnComeBack.buttonComback} onPress={this.goBack}>
@@ -110,9 +108,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(ChangePassword);
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
     flexDirection: "column",
   },
   text: {

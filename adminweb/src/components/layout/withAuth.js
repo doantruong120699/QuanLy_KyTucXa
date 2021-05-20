@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "../layout/Header";
 import AdminNavbar from "../adminNavbar";
 import { getAuth } from "../../utilities/helper";
 import { Redirect } from "react-router";

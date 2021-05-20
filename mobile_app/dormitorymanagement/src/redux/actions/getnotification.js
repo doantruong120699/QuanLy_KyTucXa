@@ -1,7 +1,7 @@
 import { actionType } from '../actionType';
 import { apiUrl } from '../../api/api';
 import axios from 'axios';
-import { storeData, getData } from '../../utils/asyncStorage';
+import { getData } from '../../utils/asyncStorage';
 
 const { GET_NOTIFICATION_SUCCESS, GET_NOTIFICATION_FAIL } = actionType;
 const { GET_NOTIFICATION } = apiUrl;
@@ -25,7 +25,6 @@ export const getnotification = (page) => async (dispatch) => {
     });
   }
   catch (error) {
-    console.log(error);
     dispatch({
       type: GET_NOTIFICATION_FAIL,
       msg: 'Không thể kết nối tới máy chủ'

@@ -2,17 +2,14 @@ import { StyleSheet } from 'react-native';
 
 const styleItemSvNv = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     flexDirection: 'column',
     padding: 5,
   },
   viewData: {
-    flexDirection: 'column',
+    flexDirection: 'row',
     height: 30,
   },
-  email: {
+  data: {
     fontSize: 15,
   },
   centeredView: {

@@ -1,6 +1,6 @@
 import { actionType } from '../actionType';
 
-const { GET_PROFILE, GET_PROFILE_SUCCESS, GET_PROFILE_FAIL } = actionType;
+const { GET_PROFILE_SUCCESS, GET_PROFILE_FAIL } = actionType;
 const initialState = {
   msg: '',
   payload: ''
