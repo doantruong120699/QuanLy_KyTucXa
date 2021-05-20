@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { connect, useSelector } from 'react-redux';
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity } from 'react-native';
 import { Agenda } from 'react-native-calendars';
-import { Avatar, Card } from 'react-native-paper';
+import { Card } from 'react-native-paper';
 import moment from 'moment';
 import { AppBar } from '../index';
 import { getcalendar } from '../../redux/actions/index';
-import { styleImgBg } from '../../styles/index';
+import { styleImgBg, styleContainer } from '../../styles/index';
 
 const Schedule = (props) => {
   const { navigation, getcalendar } = props;
@@ -15,7 +15,7 @@ const Schedule = (props) => {
 
   const [selectDay, setSelectDay] = useState({
     week: moment().format("w") - 1,
-    start: moment().startOf('isoWeek').add(1, 'w'),
+    start: moment().startOf('isoWeek').add(1, 'w').subtract(7, 'days'),
   });
   let daySelect = selectDay.start.toISOString().split('T')[0];
   let dayCalendar;
@@ -77,8 +77,8 @@ const Schedule = (props) => {
               alignItems: 'center'
             }}>
               <View>
-                <Text>{item.staff}</Text>
-                <Text>{item.date}</Text>
+                <Text style={{color: 'red', fontSize: 15}}>{item.staff}</Text>
+                <Text style={{color: 'blue'}}>{item.date}</Text>
                 <View style={{flexDirection: 'row'}}>
                   <Text>Từ: </Text>
                   <Text>{item.start}</Text>
@@ -88,7 +88,6 @@ const Schedule = (props) => {
                   <Text>{item.end}</Text>
                 </View>
               </View>
-              {/* <Avatar.Text label="S"/> */}
             </View>
           </Card.Content>
         </Card>
@@ -97,7 +96,7 @@ const Schedule = (props) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styleContainer.container, styles.container]}>
       <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
         <AppBar style={styles.appBar} navigation={navigation} />
         <View style={styles.schedule}>
@@ -123,9 +122,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(Schedule);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     flexDirection: 'column',
   },
   appBar: {

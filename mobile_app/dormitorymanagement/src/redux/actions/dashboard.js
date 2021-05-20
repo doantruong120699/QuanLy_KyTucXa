@@ -1,5 +1,5 @@
 import { actionType } from '../actionType';
-import { storeData, getData } from '../../utils/asyncStorage';
+import { getData } from '../../utils/asyncStorage';
 import axios from 'axios';
 import { apiUrl } from '../../api/api';
 import _ from 'lodash';
@@ -22,7 +22,6 @@ export const dashboard = () => async (dispatch) => {
   }
   catch (error) {
     const msg = _.get(error.response, 'data.msg') || "Cant't connect network";
-    console.log(msg);
     dispatch({
       type: GET_DASHBOARD_FAIL,
       msg: 'Không thể kết nối tới máy chủ'

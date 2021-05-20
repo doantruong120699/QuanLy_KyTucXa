@@ -5,7 +5,7 @@ import { AppBar } from '../index';
 import ItemNotification from './ItemNotification';
 import { getnotification } from '../../redux/actions/getnotification';
 import { TextInput } from 'react-native-gesture-handler';
-import { stylePages, styleImgBg } from '../../styles/index';
+import { stylePages, styleImgBg, styleContainer } from '../../styles/index';
 
 class Notification extends Component {
   constructor(props) {
@@ -36,7 +36,7 @@ class Notification extends Component {
   render() {
     let totalPages = Math.ceil(this.state.totals / 20);
     return (
-      <View style={styles.container}>
+      <View style={[styleContainer.container, styles.container]}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <AppBar style={styles.appbar} navigation={this.props.navigation} />
           <View style={styles.container_child}>
@@ -88,9 +88,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(Notification);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     flexDirection: 'column',
   },
   appBar: {

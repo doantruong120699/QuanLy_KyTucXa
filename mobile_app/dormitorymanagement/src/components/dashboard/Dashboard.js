@@ -4,7 +4,7 @@ import { connect, useSelector } from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { AppBar } from '../index';
 import { dashboard } from '../../redux/actions/index';
-import { styleImgBg } from '../../styles/index';
+import { styleImgBg, styleContainer } from '../../styles/index';
 
 const Dashboard = (props) => {
   const { dashboard, navigation } = props;
@@ -25,6 +25,7 @@ const Dashboard = (props) => {
           <View style={styles.bottom}>
             <View style={styles.left}>
               <Text style={styles.total}>Total Students</Text>
+              <Text style={styles.total}>+{data.student.cur_month}</Text>
             </View>
             <FontAwesome5 style={styles.icon} name="graduation-cap" />
           </View>
@@ -34,6 +35,7 @@ const Dashboard = (props) => {
           <View style={styles.bottom}>
             <View style={styles.left}>
               <Text style={styles.total}>Total Teachers</Text>
+              <Text style={styles.total}>+{data.staff.cur_month}</Text>
             </View>
             <FontAwesome5 style={styles.icon} name="user-friends" />
           </View>
@@ -43,7 +45,15 @@ const Dashboard = (props) => {
           <View style={styles.bottom}>
             <View style={styles.left}>
               <Text style={styles.total}>Total Rooms</Text>
-              {/* <Text style={styles.last}>+0,5% than last month</Text> */}
+            </View>
+            <FontAwesome5 style={styles.icon} name="hotel" />
+          </View>
+        </View>
+        <View style={[styles.rooms_available, styles.itemDashboard]}>
+          <Text style={styles.numbers}>{data.room_available}</Text>
+          <View style={styles.bottom}>
+            <View style={styles.left}>
+              <Text style={styles.total}>Rooms Available</Text>
             </View>
             <FontAwesome5 style={styles.icon} name="hotel" />
           </View>
@@ -60,7 +70,7 @@ const Dashboard = (props) => {
     showToast(msg);
   }
   return (
-    <View style={styles.container}>
+    <View style={styleContainer.container}>
       <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
         <AppBar style={styles.appbar} navigation={navigation} />
         {renderData()}
@@ -80,11 +90,6 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   appbar: {
     height: '10%',
     backgroundColor: 'white',
@@ -120,6 +125,9 @@ const styles = StyleSheet.create({
   rooms: {
     backgroundColor: '#32cd32',
   },
+  rooms_available: {
+    backgroundColor: 'red',
+  },
   numbers: {
     margin: 10,
     color: 'white',
@@ -128,7 +136,7 @@ const styles = StyleSheet.create({
   },
   bottom: {
     flexDirection: 'row',
-    height: 50
+    height: 55
   },
   left: {
     marginLeft: 10,

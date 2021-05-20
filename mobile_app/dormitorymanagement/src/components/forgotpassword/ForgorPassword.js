@@ -1,30 +1,41 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ImageBackground, ToastAndroid } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { login } from '../../redux/actions/login';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { styleBtnComeBack, styleImgBg } from '../../styles/index';
+import { styleBtnComeBack, styleImgBg, styleContainer } from '../../styles/index';
+import { forgotpassword } from '../../redux/actions/forgotpassword';
 
 class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ms: '',
+      email: '',
     };
   };
-  changTextMs = (text) => {
-    this.setState({ ms: text });
+  showToast = (msg) => {
+    ToastAndroid.show(msg, ToastAndroid.LONG);
   };
-  loginSuccess = () => {
-    const data = { email: this.state.email, password: this.state.password };
+  changTextEmail = (text) => {
+    this.setState({ email: text });
   };
+  changePassword = async () => {
+    let data = { "email": this.state.email };
+    await this.props.forgotpassword(data);
+    if (this.props.msg != 'Success') {
+      this.showToast(this.props.msg);
+    }
+    else {
+      this.showToast('Vui lòng kiểm tra email để tạo mật khẩu mới!');
+      this.props.navigation.navigate("Login");
+    }
+  }
   goBack = () => {
     this.props.navigation.goBack();
   }
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[styleContainer.container, styles.container]}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <View style={styleBtnComeBack.comeBack}>
             <TouchableOpacity style={styleBtnComeBack.buttonComback} onPress={this.goBack}>
@@ -34,13 +45,13 @@ class ForgotPassword extends Component {
           </View>
           <View style={styles.container_child}>
             <View style={styles.formForgot}>
-              <Text style={styles.text1}>Bạn hãy nhập vào MSSV dưới đây.</Text>
+              <Text style={styles.text1}>Bạn hãy nhập vào Email dưới đây.</Text>
               <Text style={styles.text2}>Chúng tôi sẽ gửi cho bạn đường link đổi mật khẩu mới</Text>
               <View style={styles.inputView}>
                 <TextInput
-                  onChangeText={this.changTextMs}
+                  onChangeText={this.changTextEmail}
                   style={styles.inputText}
-                  placeholder="MSSV or MSNV..."
+                  placeholder="Email"
                   placeholderTextColor="#808080"
                 />
               </View>
@@ -58,21 +69,17 @@ class ForgotPassword extends Component {
 }
 
 const mapDispatchToProps = {
-  login,
+  forgotpassword,
 };
 function mapStateToProps(state) {
   return {
-    msg: state.login.msg,
-    isLoggedIn: state.login.isLoggedIn,
+    msg: state.forgotpassword.msg
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ForgotPassword);
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
     flexDirection: "column",
   },
   container_child: {

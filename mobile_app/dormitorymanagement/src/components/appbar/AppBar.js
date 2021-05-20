@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { StyleSheet, View, TouchableOpacity, Alert, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { searchroom } from '../../redux/actions/searchroom';
 import { getprofile } from '../../redux/actions/getprofile';
 import { storeData, getData } from '../../utils/asyncStorage';
 
@@ -37,9 +36,7 @@ class AppBar extends Component {
         {
           text: "Cá nhân", onPress: async () => {
             const role = await getData('role');
-            console.log(role);
             await this.props.getprofile();
-            console.log(this.props.msg);
             if (this.props.msg != "Success") {
               this.showToast(this.props.msg);
             }
@@ -87,7 +84,6 @@ class AppBar extends Component {
 }
 
 const mapDispatchToProps = {
-  searchroom,
   getprofile,
 };
 function mapStateToProps(state) {

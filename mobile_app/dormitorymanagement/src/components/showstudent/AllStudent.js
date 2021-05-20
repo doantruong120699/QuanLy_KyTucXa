@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Text, ImageBackground } from 'react-native';
+import { View, FlatList, TouchableOpacity, Text, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { AppBar } from '../index';
 import Student from './Student';
 import { TextInput } from 'react-native-gesture-handler';
 import { allstudent } from '../../redux/actions/allstudent';
-import { stylePages, styleListNvSv, styleSearch, styleImgBg } from '../../styles/index';
+import { stylePages, styleListNvSv, styleSearch, styleImgBg, styleContainer } from '../../styles/index';
 
 class AllStudent extends Component {
   constructor(props) {
@@ -49,7 +49,7 @@ class AllStudent extends Component {
   render() {
     let totalPages = Math.ceil(this.state.totals / 20);
     return (
-      <View style={styleListNvSv.container}>
+      <View style={[styleContainer.container, styleListNvSv.container]}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <AppBar style={styleListNvSv.appBar} navigation={this.props.navigation} />
           <View style={styleSearch.viewSearch}>

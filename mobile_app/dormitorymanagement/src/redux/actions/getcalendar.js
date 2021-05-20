@@ -1,7 +1,7 @@
 import { actionType } from '../actionType';
 import { apiUrl } from '../../api/api';
 import axios from 'axios';
-import { storeData, getData } from '../../utils/asyncStorage';
+import { getData } from '../../utils/asyncStorage';
 
 const { GET_CALENDAR_STAFF_SUCCESS, GET_CALENDAR_STAFF_FAIL } = actionType;
 const { GET_CALENDAR_STAFF_URL } = apiUrl;

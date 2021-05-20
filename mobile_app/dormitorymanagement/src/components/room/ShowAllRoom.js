@@ -1,18 +1,15 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, SectionList, ImageBackground, ToastAndroid } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { connect, useSelector } from 'react-redux';
 import { getallroom, getarea } from '../../redux/actions/index';
 import { AppBar } from '../index';
 import Room from './Room';
 import { useEffect } from 'react';
 import { TextInput } from 'react-native-gesture-handler';
-import { G } from 'react-native-svg';
-import { stylePages, styleImgBg } from '../../styles/index';
+import { stylePages, styleImgBg, styleSearch } from '../../styles/index';
 
 const ShowAllRoom = (props) => {
   const { navigation, getallroom, getarea } = props;
-  const nav = navigation;
   const handleClickItem = (item) => {
     navigation.navigate("RoomDetail", { item });
   }
@@ -25,6 +22,7 @@ const ShowAllRoom = (props) => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
   };
   const [newData, setNewData] = useState([]);
+  const [textSearch, setTextSearch] = useState('');
   const getRoom = useSelector((state) => state.getallroom);
   const dataArea = useSelector((state) => state.getarea.payload);
   const [page, setPage] = useState({
@@ -44,14 +42,7 @@ const ShowAllRoom = (props) => {
         data: [...roomInThisArea],
       }
     }))
-  }, [page, selectedValue, area])
-  const [selectedValue, setSelectedValue] = useState("all");
-  const changeSelectedValueItem = (item) => {
-    setSelectedValue(item);
-  }
-  const handlePickerChange = async (item) => {
-    changeSelectedValueItem(item);
-  }
+  }, [page, textSearch])
   const minusNumberPage = async () => {
     await getallroom(page.current_page - 1);
     await getarea();
@@ -68,34 +59,33 @@ const ShowAllRoom = (props) => {
       current_page: page.current_page + 1,
     });
   }
-  const [area, setArea] = useState([{
-    "id": 99,
-    "name": "All",
-    "slug": "all"
-  }, ...dataArea,])
+  const changeTextSearch = (value) => {
+    setTimeout(async () => {
+      await getallroom(1, value);
+      await getarea();
+      await setTextSearch(value);
+    }, 1000);
+  }
   return (
     <View style={styles.container}>
       <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
-        <AppBar style={styles.appBar} navigation={nav} onChange={(t) => {
+        <AppBar style={styles.appBar} navigation={navigation} onChange={(t) => {
         }
         } />
-        <View style={styles.container}>
-          <Picker
-            selectedValue={selectedValue}
-            style={{ height: 100, width: 150 }}
-            onValueChange={(itemValue, itemIndex) => {
-              handlePickerChange(itemValue);
-            }}
+        <View style={styleSearch.viewSearch}>
+          <TextInput
+            underlineColorAndroid="transparent"
+            onChangeText={(value) => {changeTextSearch(value)}}
+            placeholder="Tìm kiếm"
+            style={styleSearch.inputTextSearch}
+            placeholderTextColor="#808080"
           >
-            {area.map(t => {
-              return t.name === "All" ? <Picker.Item label="Tất cả phòng" value="all" /> : <Picker.Item label={`Khu ${t.name}`} value={t.name} />
-            })}
-          </Picker>
+          </TextInput>
         </View>
         <View style={styles.container_child}>
           <SectionList
             style={styles.sectionList}
-            sections={selectedValue === "all" ? newData : newData.filter(t => t.title === `Khu ${selectedValue}`)}
+            sections={newData}
             keyExtrator={(item, index) => item.id}
             renderItem={renderItem}
             renderSectionHeader={({ section: { title } }) => (
