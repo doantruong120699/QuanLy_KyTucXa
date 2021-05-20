@@ -222,3 +222,45 @@ class BillViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
         return Response({'status': 'fail', 'notification' : 'Bill not found!'}, status=status.HTTP_404_NOT_FOUND)
+
+# ==========================================================
+
+class PaidBillInAreaViewSet(viewsets.ModelViewSet):
+    serializer_class = PaidBillInAreaSerializer
+
+    def check_month_year(self, _month, _year):
+        d = datetime.now()
+        month = _month
+        year = _year
+        if _month == None or not _month.isnumeric():
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        elif int(_month) > 12 or int(_month) < 1:
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        if _year == None or not _year.isnumeric():
+            year = d.year
+        return (month, year)
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            month = self.request.GET.get('month',None)                    
+            year = self.request.GET.get('year',None)
+            month, year = self.check_month_year(month, year)
+            list_area = Area.objects.all()
+            data = list(list_area.values())
+            for index, value in enumerate(list_area):
+                room = Room.objects.filter(area=value)
+                all_bill = Bill.objects.filter(water_electrical__room__in=room, 
+                                                water_electrical__year=year,
+                                                water_electrical__month=month)
+                data[index]['total'] = all_bill.count()
+                data[index]['paid'] = all_bill.filter(is_paid=True).count()
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)

@@ -26,9 +26,4 @@ export async function login(data, resolve = () => {}) {
     });
   }
 }
-export function updateRememberedPath(path) {
-  store.dispatch({
-    type: types.UPDATE_REMEMBERED_PATH,
-    payload: path,
-  });
-}
+

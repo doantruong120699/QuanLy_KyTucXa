@@ -7,8 +7,8 @@ from rest_framework import permissions
 from .views import *
 
 
-# ========== room
-# list - create
+# ========== Financal in room
+# list 
 financal_room_in_area_list = FinancalRoomInAreaViewSet.as_view({
     'get': 'list',
 })
@@ -48,6 +48,12 @@ bill_detail = BillViewSet.as_view({
     'delete': 'destroy'
 })
 
+# ========== Used room
+# list 
+paid_bill_in_area_list = PaidBillInAreaViewSet.as_view({
+    'get': 'list',
+})
+
 urlpatterns = [ 
     # ========== room
     path('financal-room-area/<slug:slug>/<str:time>/', financal_room_in_area_list, name = 'financal_room_in_area_list'),
@@ -61,4 +67,6 @@ urlpatterns = [
     # ========== Bill
     path('bills/<slug:slug>/<str:time>/', bill_list, name = 'bill_list'),
     path('bills/<str:public_id>/', bill_detail, name = 'bill_detail'),
+    # 
+    path('paid-bill-area/', paid_bill_in_area_list, name = 'paid_bill_in_area_list'),
 ]

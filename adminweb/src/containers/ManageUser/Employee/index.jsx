@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
+import Box from "@material-ui/core/Box";
+
 import Select from "react-select";
 import moment from "moment";
 import { Button, Typography } from "@material-ui/core";
@@ -58,16 +60,16 @@ const Employee = () => {
 
   const renderTableHeader = () => {
     return (
-      <div>
-        <th key={0} style={{ width: "9%" }}></th>
-        <th key={1}>Chủ nhật</th>
-        <th key={2}>Thứ hai</th>
-        <th key={3}>Thứ ba</th>
-        <th key={4}>Thứ tư</th>
-        <th key={5}>Thứ năm</th>
-        <th key={6}>Thứ sáu</th>
-        <th key={7}>Thứ bảy</th>
-      </div>
+      <Box>
+        <th style={{ width: "9%" }}></th>
+        <th>Chủ nhật</th>
+        <th>Thứ hai</th>
+        <th>Thứ ba</th>
+        <th>Thứ tư</th>
+        <th>Thứ năm</th>
+        <th>Thứ sáu</th>
+        <th>Thứ bảy</th>
+      </Box>
     );
   };
   const curWeek = moment(new Date()).weeks();
@@ -76,10 +78,10 @@ const Employee = () => {
 
   const renderTableData = () => {
     return (
-      <div>
-        <tr key={1}>
-          <td key={0}>Ca 1 (6h - 14h)</td>
-          <td key={1}>
+      <tbody>
+        <tr>
+          <td>Ca 1 (6h - 14h)</td>
+          <td>
             <Select
               name={"01"}
               options={employeeOption}
@@ -111,7 +113,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "01")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"04"}
               options={employeeOption}
@@ -138,7 +140,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "04")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"07"}
               options={employeeOption}
@@ -165,7 +167,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "07")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"10"}
               options={employeeOption}
@@ -192,7 +194,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "10")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"13"}
               options={employeeOption}
@@ -219,7 +221,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "13")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"16"}
               options={employeeOption}
@@ -246,7 +248,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "16")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"19"}
               options={employeeOption}
@@ -274,9 +276,9 @@ const Employee = () => {
             />
           </td>
         </tr>
-        <tr key={2}>
-          <td key={0}>Ca 2 (14h - 22h)</td>
-          <td key={1}>
+        <tr>
+          <td>Ca 2 (14h - 22h)</td>
+          <td>
             <Select
               name={"02"}
               options={employeeOption}
@@ -303,7 +305,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "02")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"05"}
               options={employeeOption}
@@ -330,7 +332,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "05")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"08"}
               options={employeeOption}
@@ -357,7 +359,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "08")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"11"}
               options={employeeOption}
@@ -384,7 +386,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "11")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"14"}
               options={employeeOption}
@@ -411,7 +413,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "14")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"17"}
               options={employeeOption}
@@ -438,7 +440,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "17")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"20"}
               options={employeeOption}
@@ -466,9 +468,9 @@ const Employee = () => {
             />
           </td>
         </tr>
-        <tr key={3}>
-          <td key={0}>Ca 3 (22h - 6h)</td>
-          <td key={1}>
+        <tr>
+          <td>Ca 3 (22h - 6h)</td>
+          <td>
             <Select
               name={"03"}
               options={employeeOption}
@@ -495,7 +497,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "03")?.content}
             />{" "}
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"06"}
               options={employeeOption}
@@ -522,7 +524,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "06")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"09"}
               options={employeeOption}
@@ -549,7 +551,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "09")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"12"}
               options={employeeOption}
@@ -576,7 +578,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "12")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"15"}
               options={employeeOption}
@@ -603,7 +605,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "15")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"18"}
               options={employeeOption}
@@ -630,7 +632,7 @@ const Employee = () => {
               defaultValue={initData.find((i) => i.shift === "18")?.content}
             />
           </td>
-          <td key={1}>
+          <td>
             <Select
               name={"21"}
               options={employeeOption}
@@ -658,7 +660,7 @@ const Employee = () => {
             />
           </td>
         </tr>
-      </div>
+      </tbody>
     );
   };
   const employeeOption = [

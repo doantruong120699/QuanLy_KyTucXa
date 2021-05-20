@@ -136,18 +136,20 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         _list = DailySchedule.objects.filter(week=kwargs['week']).order_by('shift__order')
-        serializer = DailyScheduleListSerializer(_list, many=True)
-        data = serializer.data
+        if len(_list)>0:
+            serializer = DailyScheduleListSerializer(_list, many=True)
+            data = serializer.data
 
-        weekday = serializer.data[0]['shift']['weekdays']
-        d =  str(serializer.data[0]['year'])+"-"+'W'+str(serializer.data[0]['week'])
-        sunday = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w") - timedelta(days=1)
+            weekday = serializer.data[0]['shift']['weekdays']
+            d =  str(serializer.data[0]['year'])+"-"+'W'+str(serializer.data[0]['week'])
+            sunday = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w") - timedelta(days=1)
 
-        for item in range(len(data)):
-            day_of_week = data[item]['shift']['weekdays']
-            day_shift = sunday + datetime.timedelta(days=self.day_week(day_of_week))
-            data[item]['shift']['date'] = day_shift.date()
-        return Response(data, status=status.HTTP_200_OK)
+            for item in range(len(data)):
+                day_of_week = data[item]['shift']['weekdays']
+                day_shift = sunday + datetime.timedelta(days=self.day_week(day_of_week))
+                data[item]['shift']['date'] = day_shift.date()
+            return Response(data, status=status.HTTP_200_OK)
+        return Response({'message':'No data'}, status=status.HTTP_200_OK)
 
     def retrieve(self, request, **kwargs):
         try:

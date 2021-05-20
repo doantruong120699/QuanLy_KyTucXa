@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { AgGridColumn, AgGridReact } from "ag-grid-react";
+import {  AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import PropTypes from "prop-types";
@@ -8,10 +7,13 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import Grow from "@material-ui/core/Grow";
+import Select from "react-select";
 import ReactModal from "react-modal";
 import DetailRoom from "./DetailRoom";
+import moment from "moment";
 
 import "./styles.css";
+import { getFinancial } from "../../../redux/actions/financial";
 
 function CircularProgressWithLabel(props) {
   return (
@@ -131,7 +133,8 @@ CircularProgressWithLabel.propTypes = {
 };
 
 export default function WaterElectrical() {
-  const history = useHistory();
+  const [selectedWeek, setSelectedWeek] = useState();
+  const curWeek = moment(new Date()).weeks();
 
   const [data, setData] = useState([
     {
@@ -304,6 +307,10 @@ export default function WaterElectrical() {
   const [tableData, setTableData] = useState(data.filter((n) => n.id === 1));
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
+  const handleWeekChange = (params) => {
+    console.log("params", params);
+    setSelectedWeek(params.value);
+  };
   const onGridReady = (params) => {
     let _gridApi = params.api;
     _gridApi.forEachNode(function (rowNode, index) {
@@ -379,12 +386,16 @@ export default function WaterElectrical() {
   };
 
   const handleClickBox = (id) => {
+    getFinancial("area-a", "2021-04", (output) => {
+      if (output) {
+        console.log(output);
+      }
+    });
     setAreaSelected(data.filter((n) => n.id === id)[0].name);
 
     if (tabSelected !== id) {
       setTabSelected(id);
       setTableData(data.filter((n) => n.id === id));
-      //console.log("AAAA", data.filter((n) => n.id === id)[0].name);
       setIsShowTable(true);
     } else setIsShowTable(!isShowTable);
   };
@@ -399,9 +410,31 @@ export default function WaterElectrical() {
       transform: "translate(-50%, -50%)",
     },
   };
-
+  var week = [];
+  var i = 1;
+  while (i <= 52 && week.length <= 52) {
+    week.push({
+      value: i,
+      label: `Tuần thứ ${i}, Từ ${moment(i, "week")
+        .startOf("week")
+        .format("DD/MM")} đến ${moment(i, "week").endOf("week").format("DD/MM")}
+           `,
+    });
+    i++;
+  }
   return (
     <Box paddingRight={15} style={{ width: "100%" }}>
+      <div style={{margin:'20px 0 20px 0'}}>
+        <Typography>Lựa chọn tuần làm việc</Typography>
+        <Select
+          name={"week"}
+          className="week-select"
+          options={week}
+          value={week.find((index) => index.value === selectedWeek)}
+          onChange={handleWeekChange}
+          defaultValue={week.find((index) => index.value === curWeek)}
+        />
+      </div>
       <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
         <Box style={{ display: "flex", justifyContent: "space-between" }}>
           {data.map((n) => {
@@ -446,7 +479,6 @@ export default function WaterElectrical() {
               onGridReady={onGridReady}
               rowData={tableData[0].room}
               paginationAutoPageSize={true}
-
             />
           </div>
         </div>
