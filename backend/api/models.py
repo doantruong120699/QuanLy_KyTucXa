@@ -145,6 +145,7 @@ class Contract(models.Model):
     note = models.TextField(null=True, blank=True)
     price = models.FloatField(default=0)
     is_paid = models.BooleanField(null=True)
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
 
 
     class Meta:
