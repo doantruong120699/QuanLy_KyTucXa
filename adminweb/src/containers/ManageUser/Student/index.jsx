@@ -12,7 +12,7 @@ import Box from "@material-ui/core/Box";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import "./styles.css";
 import ReactModal from "react-modal";
-import { getRoomDetails, getRooms } from "../../../redux/actions/humnaResource";
+import { getRoomDetails, getRooms } from "../../../redux/actions/humanResource";
 import { getRoom } from "../../../utilities/constants/dataRender/checkroom";
 import queryString from "query-string";
 import Pagination from "../../../components/common/Pagination";
