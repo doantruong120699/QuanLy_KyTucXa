@@ -1,4 +1,4 @@
-import { Route, Router, Switch } from "react-router-dom";
+import { Route, Router, Switch, Redirect } from "react-router-dom";
 import { createBrowserHistory as history } from "history";
 import withAuth from "./components/layout/withAuth";
 
@@ -13,17 +13,20 @@ function App() {
   return (
     <Router history={history()}>
       <Switch>
+        <Route path="/" exact>
+          <Redirect to={ROUTER.ROUTE_OVERVIEW} />
+        </Route>
         <Route path={ROUTER.ROUTE_LOGIN} component={Login} exact />
         <Route
           path={ROUTER.ROUTE_OVERVIEW}
           component={withAuth(Overview)}
           exact
         />
-         <Route
+        <Route
           path={ROUTER.ROUTE_MANAGE_USER}
           component={withAuth(ManageUser)}
           exact
-        /> 
+        />
         <Route
           path={ROUTER.ROUTE_MANAGE_FINANCIAL}
           component={withAuth(Financial)}

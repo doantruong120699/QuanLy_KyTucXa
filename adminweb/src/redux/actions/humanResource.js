@@ -170,3 +170,32 @@ export async function getRoomDetails(slug, resolve = () => {}) {
     });
   }
 }
+export async function getSchedule(week, resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_SCHEDULE_API,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}daily-schedules/${week}/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    resolve(data);
+    store.dispatch({
+      payload: data,
+      type: types.GET_SCHEDULE_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_SCHEDULE_API_FAIL,
+    });
+  }
+}

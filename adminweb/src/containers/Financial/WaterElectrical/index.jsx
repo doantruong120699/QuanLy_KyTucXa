@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { AgGridColumn, AgGridReact } from "ag-grid-react";
+import React, { useState, useEffect } from "react";
+import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -9,9 +8,12 @@ import Box from "@material-ui/core/Box";
 import Grow from "@material-ui/core/Grow";
 import ReactModal from "react-modal";
 import DetailRoom from "./DetailRoom";
+import queryString from "querystring";
+import Select from "react-select";
 
 import "./styles.css";
-import { getFinancial } from "../../../redux/actions/financial";
+import { getFinancial, getStatistical } from "../../../redux/actions/financial";
+import { month as MONTH } from "../../../utilities/constants/titles";
 
 function CircularProgressWithLabel(props) {
   return (
@@ -49,7 +51,7 @@ function CircularProgressWithLabel(props) {
             color="textSecondary"
             style={{ paddingTop: "20px" }}
           >
-            {`${props.paid.length}/${props.array.length}`}
+            {`${props.paid}/${props.total}`}
           </Typography>
         </Box>
         <Box
@@ -67,7 +69,7 @@ function CircularProgressWithLabel(props) {
             color="textSecondary"
             style={{ paddingTop: "80px" }}
           >
-            {`Còn thiếu ${props.unpaid.length} phòng`}
+            Còn thiếu {props.total - props.paid} phòng
           </Typography>
         </Box>
         <CircularProgress
@@ -109,12 +111,12 @@ function CircularProgressWithLabel(props) {
               paddingRight: "15px",
             }}
           >
-            {`${props.percentage}%`}
+            {props.percentage}%
           </Typography>
         </Box>
         <Box position="absolute" bottom={5}>
           <Typography variant="h3" component="div" color="textSecondary">
-            {`Khu ${props.name}`}
+            {props.name}
           </Typography>
         </Box>
       </Box>
@@ -123,187 +125,68 @@ function CircularProgressWithLabel(props) {
 }
 
 export default function WaterElectrical() {
-  const history = useHistory();
+  const current = new Date();
 
-  const [data, setData] = useState([
-    {
-      id: 1,
-      name: "A",
-      room: [
-        {
-          name: "101",
-          isPaid: true,
-        },
-        {
-          name: "102",
-          isPaid: false,
-        },
-        {
-          name: "103",
-          isPaid: true,
-        },
-        {
-          name: "104",
-          isPaid: false,
-        },
-        {
-          name: "201",
-          isPaid: true,
-        },
-        {
-          name: "202",
-          isPaid: false,
-        },
-        {
-          name: "203",
-          isPaid: false,
-        },
-        {
-          name: "204",
-          isPaid: true,
-        },
-        {
-          name: "301",
-          isPaid: true,
-        },
-        {
-          name: "302",
-          isPaid: false,
-        },
-        {
-          name: "303",
-          isPaid: true,
-        },
-        {
-          name: "304",
-          isPaid: true,
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "B",
-      room: [
-        {
-          name: "101",
-          isPaid: false,
-        },
-        {
-          name: "102",
-          isPaid: false,
-        },
-        {
-          name: "103",
-          isPaid: true,
-        },
-        {
-          name: "104",
-          isPaid: true,
-        },
-        {
-          name: "201",
-          isPaid: false,
-        },
-        {
-          name: "202",
-          isPaid: false,
-        },
-        {
-          name: "203",
-          isPaid: true,
-        },
-        {
-          name: "204",
-          isPaid: true,
-        },
-        {
-          name: "301",
-          isPaid: false,
-        },
-        {
-          name: "302",
-          isPaid: false,
-        },
-        {
-          name: "303",
-          isPaid: true,
-        },
-        {
-          name: "304",
-          isPaid: true,
-        },
-      ],
-    },
-    {
-      id: 3,
-      name: "C",
-      room: [
-        {
-          name: "101",
-          isPaid: true,
-        },
-        {
-          name: "102",
-          isPaid: true,
-        },
-        {
-          name: "103",
-          isPaid: true,
-        },
-        {
-          name: "104",
-          isPaid: true,
-        },
-        {
-          name: "201",
-          isPaid: true,
-        },
-        {
-          name: "202",
-          isPaid: true,
-        },
-        {
-          name: "203",
-          isPaid: true,
-        },
-        {
-          name: "204",
-          isPaid: true,
-        },
-        {
-          name: "301",
-          isPaid: false,
-        },
-        {
-          name: "302",
-          isPaid: true,
-        },
-        {
-          name: "303",
-          isPaid: true,
-        },
-        {
-          name: "304",
-          isPaid: true,
-        },
-      ],
-    },
-  ]);
-  //const [detailedRoom,setDetailedRoom]
-  const [tabSelected, setTabSelected] = useState(1);
+  const [time, setTime] = useState({
+    month: current.getMonth() + 1,
+    year: current.getFullYear(),
+  });
+
+  const year = [];
+
+  for (var i = current.getFullYear(); i > current.getFullYear() - 5; i--) {
+    year.push({ value: i, label: i.toString() });
+  }
+
+  const month = MONTH;
+
+  const [data, setData] = useState();
+
+  const [tableData, setTableData] = useState();
+
+  useEffect(() => {
+    const params = queryString.stringify(time);
+    console.log(params);
+    getStatistical(params, (output) => {
+      if (output) {
+        console.log(output);
+        setData(output);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [time]);
+
+  const handleClickBox = (areaSlug, areaname) => {
+    const params = {
+      year: time.year,
+      month: time.month,
+      area: areaSlug,
+    };
+
+    getFinancial(queryString.stringify(params), (output) => {
+      if (output) {
+        console.log(output);
+        setTableData(output);
+      }
+    });
+    setAreaSelected(areaname);
+    setIsShowTable(true);
+  };
+
   const [areaSelected, setAreaSelected] = useState("");
   const [isShowTable, setIsShowTable] = useState(false);
-  const [tableData, setTableData] = useState(data.filter((n) => n.id === 1));
-  const [gridApi, setGridApi] = useState(null);
-  const [gridColumnApi, setGridColumnApi] = useState(null);
+
   const onGridReady = (params) => {
     let _gridApi = params.api;
     _gridApi.forEachNode(function (rowNode, index) {
       rowNode.id = index;
     });
-    setGridApi(_gridApi);
-    setGridColumnApi(params.columnApi);
   };
+
+  const handleTimeChange = (params, name) => {
+    setTime({ ...time, [name]: params.value });
+  };
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const columnDefs = [
     {
@@ -370,21 +253,6 @@ export default function WaterElectrical() {
     floatingFilter: true,
   };
 
-  const handleClickBox = (id) => {
-    getFinancial("area-a", "2021-04", (output) => {
-      if (output) {
-        console.log(output);
-      }
-    });
-    setAreaSelected(data.filter((n) => n.id === id)[0].name);
-
-    if (tabSelected !== id) {
-      setTabSelected(id);
-      setTableData(data.filter((n) => n.id === id));
-      setIsShowTable(true);
-    } else setIsShowTable(!isShowTable);
-  };
-  //const data =
   const customStyles = {
     content: {
       top: "50%",
@@ -397,68 +265,93 @@ export default function WaterElectrical() {
   };
 
   return (
-    <Box paddingRight={15} style={{ width: "100%" }}>
-      <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
-        <Box style={{ display: "flex", justifyContent: "space-between" }}>
-          {data.map((n, index) => {
-            const array = n.room;
-            const paid = array.filter((m) => m.isPaid === true);
-            const unpaid = array.filter((m) => m.isPaid === false);
-            return (
-              <CircularProgressWithLabel
-                key={index}
-                name={n.name}
-                array={array}
-                value={10}
-                paid={paid}
-                unpaid={unpaid}
-                percentage={Number(
-                  ((paid.length / array.length) * 100).toFixed(2)
-                )}
-                availableRoom={n.availableRoom}
-                onClick={() => {
-                  handleClickBox(n.id);
-                }}
+    <div>
+      {data && (
+        <Box paddingRight={15} style={{ width: "100%" }}>
+          <div className="col col-full">
+            <div className="col col-half">
+              <Typography>Lựa chọn tháng</Typography>
+              <Select
+                className="week-select"
+                options={month}
+                value={month.find((index) => index.value === time.month)}
+                onChange={(params) => handleTimeChange(params, "month")}
               />
-            );
-          })}
-        </Box>
-      </Grow>
-      <Grow in={isShowTable} timeout={500} style={{ transformOrigin: "0 0 0" }}>
-        <div className="dataTable">
-          <div
-            style={{
-              margin: "20px 0 20px 0",
-              fontSize: "40px",
-            }}
+            </div>
+            <div className="col col-half">
+              <Typography>Lựa chọn năm</Typography>
+              <Select
+                className="week-select"
+                options={year}
+                value={year.find((index) => index.value === time.year)}
+                onChange={(params) => handleTimeChange(params, "year")}
+              />
+            </div>
+          </div>
+          <div className="col col-full">
+            <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
+              <Box style={{ display: "flex", justifyContent: "space-between" }}>
+                {data.map((n, index) => {
+                  return (
+                    <CircularProgressWithLabel
+                      key={index}
+                      name={n.name}
+                      value={10}
+                      paid={n.paid}
+                      total={n.total}
+                      percentage={Number(((n.paid / n.total) * 100).toFixed(2))}
+                      onClick={() => {
+                        handleClickBox(n.name);
+                      }}
+                    />
+                  );
+                })}
+              </Box>
+            </Grow>
+          </div>
+          <Grow
+            in={isShowTable}
+            timeout={500}
+            style={{ transformOrigin: "0 0 0" }}
           >
-            Khu {areaSelected}
-          </div>
+            <div className="dataTable">
+              <div
+                style={{
+                  margin: "20px 0 20px 0",
+                  fontSize: "40px",
+                }}
+              >
+                {areaSelected}
+              </div>
 
-          <div className="ag-theme-alpine grid">
-            <AgGridReact
-              animateRows
-              enableColResize
-              pagination={true}
-              columnDefs={columnDefs}
-              defaultColDef={defaultColDef}
-              rowClassRules={rowClassRules}
-              onCellClicked={handleCellClicked}
-              getRowNodeId={(data) => data.name}
-              onGridReady={onGridReady}
-              rowData={tableData[0].room}
-              paginationAutoPageSize={true}
-            />
-          </div>
-        </div>
-      </Grow>
-      <ReactModal
-        isOpen={isModalVisible}
-        onRequestClose={hideModal}
-        style={customStyles}
-      >
-        <DetailRoom />
-      </ReactModal>
-    </Box>
+              {tableData && (
+                <div className="ag-theme-alpine grid">
+                  <AgGridReact
+                    animateRows
+                    enableColResize
+                    pagination={true}
+                    columnDefs={columnDefs}
+                    defaultColDef={defaultColDef}
+                    rowClassRules={rowClassRules}
+                    onCellClicked={handleCellClicked}
+                    getRowNodeId={(data) => data.name}
+                    onGridReady={onGridReady}
+                    rowData={tableData.room}
+                    paginationAutoPageSize={true}
+                  />
+                </div>
+              )}
+            </div>
+          </Grow>
+          <ReactModal
+            isOpen={isModalVisible}
+            onRequestClose={hideModal}
+            style={customStyles}
+          >
+            <DetailRoom />
+          </ReactModal>
+        </Box>
+      )}
+    </div>
   );
 }

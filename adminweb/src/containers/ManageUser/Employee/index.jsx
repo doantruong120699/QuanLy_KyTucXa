@@ -5,6 +5,7 @@ import moment from "moment";
 import { Button, Typography } from "@material-ui/core";
 import SaveIcon from "@material-ui/icons/Save";
 import Input from "@material-ui/core/Input";
+import { getSchedule } from "../../../redux/actions/humanResource";
 const Employee = () => {
   var week = [];
   var i = 1;
@@ -21,41 +22,25 @@ const Employee = () => {
 
   const [valueSelected, setValueSelected] = useState();
   const [isEdit, setIsEdit] = useState(false);
-  const [initData, setInitData] = useState([
-    {
-      title: "Ca trực",
-      content: "abc",
-      shift: "02",
-      staff: 1,
-    },
-    {
-      title: "Ca làm",
-      content: "abc",
-      shift: "01",
-      staff: 1,
-    },
-    {
-      title: "Ca trực",
-      content: "abc",
-      shift: "21",
-      staff: 2,
-    },
-    {
-      title: "Ca trực",
-      content: "abc",
-      shift: "15",
-      staff: 5,
-    },
-    {
-      title: "Ca làm",
-      content: "abc",
-      shift: "18",
-      staff: 4,
-    },
-  ]);
+  const [initData, setInitData] = useState();
   const [putData, setPutData] = useState([]);
   const [postData, setPostData] = useState([]);
 
+  useEffect(() => {
+    getSchedule(20, (output) => {
+      if (output) {
+        const data = output.map((value) => {
+          return {
+            title: value.title,
+            content: value.content,
+            shift: value.shift.id,
+            staff: value.username,
+          };
+        });
+        setInitData(data);
+      }
+    });
+  }, []);
   const renderTableHeader = () => {
     return (
       <div>
@@ -662,10 +647,7 @@ const Employee = () => {
     );
   };
   const employeeOption = [
-    {
-      staff: 1,
-      label: "Phan Văn Ben",
-    },
+    { staff: 1, label: "Phan Văn Ben" },
     { staff: 2, label: "Đoàn Trường" },
     { staff: 3, label: "Tô Việt Anh" },
     { staff: 4, label: "Trần Minh Quang" },
@@ -773,7 +755,6 @@ const Employee = () => {
           { shift: params.target.id, content: params.target.value },
         ]);
     } else {
-      console.log("postData");
       var tempPost = postData.find((index) => index.shift === params.target.id);
 
       if (tempPost) {
@@ -806,7 +787,6 @@ const Employee = () => {
   ];
 
   const handleWeekChange = (params) => {
-    console.log("params", params);
     setSelectedWeek(params.value);
   };
   const handleSaveSchedule = () => {
@@ -823,7 +803,7 @@ const Employee = () => {
     //   }
     // });
   };
-  console.log("Put Data", putData);
+
   return (
     <div>
       <div>
