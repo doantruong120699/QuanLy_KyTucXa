@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { View, Text, TouchableOpacity, Modal, Pressable } from 'react-native';
 import { connect } from 'react-redux';
-import { styleItemSvNv } from '../../styles/index';
+import { styleItemSvNv, styleContainer } from '../../styles/index';
 
 class Student extends Component {
   state = {
@@ -20,7 +19,7 @@ class Student extends Component {
   render() {
     const { modalVisible } = this.state;
     return (
-      <View style={styleItemSvNv.container}>
+      <View style={[styleContainer.container, styleItemSvNv.container]}>
         <View style={styleItemSvNv.centeredView}>
           <Modal
             animationType="slide"
@@ -65,7 +64,7 @@ class Student extends Component {
           onPress={this.openDetail}
         >
           <View style={styleItemSvNv.viewData}>
-            <Text style={styleItemSvNv.email}>{this.props.student.email}</Text>
+            <Text style={styleItemSvNv.data}>{this.props.student.last_name + " " + this.props.student.first_name}</Text>
           </View>
         </TouchableOpacity>
       </View>

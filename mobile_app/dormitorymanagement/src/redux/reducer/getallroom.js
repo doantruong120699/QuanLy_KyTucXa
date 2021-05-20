@@ -1,6 +1,6 @@
 import { actionType } from '../actionType';
 
-const { GET_ALL_ROOM, GET_ALL_ROOM_SUCCESS, GET_ALL_ROOM_FAIL } = actionType;
+const { GET_ALL_ROOM_SUCCESS, GET_ALL_ROOM_FAIL } = actionType;
 const initialState = {
   msg: '',
   payload: '',

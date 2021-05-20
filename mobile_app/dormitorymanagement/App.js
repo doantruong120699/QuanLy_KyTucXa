@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { store } from './src/redux/store';
 import 'react-native-gesture-handler';
 import { Login, HomePage, ProfileSV, ProfileNV, ChangePassword, ChangeProfile, RoomDetail, ShowAllRoom, ForgotPassword } from './src/components/index';
-// 
+
 const Stack = createStackNavigator();
 class App extends Component {
   render() {

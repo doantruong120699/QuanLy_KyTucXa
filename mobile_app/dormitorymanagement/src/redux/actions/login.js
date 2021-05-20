@@ -1,12 +1,12 @@
 import { actionType } from '../actionType';
-import { storeData, getData } from '../../utils/asyncStorage';
+import { storeData } from '../../utils/asyncStorage';
 import axios from 'axios';
 import { apiUrl } from '../../api/api';
 import _ from 'lodash';
 import jwt_decode from "jwt-decode";
 
 const { LOGIN_URL } = apiUrl;
-const { LOGIN, LOGIN_FAIL, LOGIN_SUCCESS } = actionType;
+const { LOGIN_FAIL, LOGIN_SUCCESS } = actionType;
 export const login = (data) => async (dispatch) => {
   storeData('token', '');
   let result;
@@ -16,8 +16,7 @@ export const login = (data) => async (dispatch) => {
     let decoded = jwt_decode(token);
     storeData('token', token);
     storeData('role', decoded.group[0]);
-    storeData('name', decoded.first_name + ' ' + decoded.last_name);
-    console.log(data);
+    storeData('name', decoded.last_name + ' ' + decoded.first_name);
     dispatch({
       type: LOGIN_SUCCESS,
       payload: result.data

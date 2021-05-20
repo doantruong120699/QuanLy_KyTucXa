@@ -1,5 +1,5 @@
 import { actionType } from '../actionType';
-import { storeData, getData } from '../../utils/asyncStorage';
+import { getData } from '../../utils/asyncStorage';
 import axios from 'axios';
 import { apiUrl } from '../../api/api';
 import _ from 'lodash';

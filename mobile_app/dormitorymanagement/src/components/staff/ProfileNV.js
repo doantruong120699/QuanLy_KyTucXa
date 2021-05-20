@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { getData } from '../../utils/asyncStorage';
-import { getarea, getposition } from '../../redux/actions/index';
-import { styleBtnComeBack, styleImgBg } from '../../styles/index';
+import { styleBtnComeBack, styleContainer, styleImgBg } from '../../styles/index';
 
 class ProfileNV extends Component {
   constructor(props) {
@@ -22,7 +20,7 @@ class ProfileNV extends Component {
   render() {
     let data = this.props.dataProfile;
     return (
-      <View style={styles.container}>
+      <View style={styleContainer.container}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <View style={styleBtnComeBack.comeBack}>
             <TouchableOpacity style={styleBtnComeBack.buttonComback} onPress={this.goBack}>
@@ -80,24 +78,14 @@ class ProfileNV extends Component {
   }
 }
 
-const mapDispatchToProps = {
-  getarea,
-  getposition,
-};
-
 function mapStateToProps(state) {
   return {
     dataProfile: state.getprofile.msg,
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileNV);
+export default connect(mapStateToProps)(ProfileNV);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   text: {
     fontWeight: 'bold',
     fontSize: 20,

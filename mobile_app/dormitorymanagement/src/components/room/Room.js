@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { connect } from 'react-redux';
-import { getallroom } from '../../redux/actions/getallroom';
+
 class Room extends Component {
   render() {
     const RenderPeople = (number) => {
@@ -16,7 +16,6 @@ class Room extends Component {
       }
       return listPeople;
     }
-    //const { status } = this.props.myRoom;
     const icon = this.props.myRoom.number_now !== 8 ? 'check-circle' : 'ban';
     return (
       <View>
@@ -24,7 +23,7 @@ class Room extends Component {
           <View style={styles.item}>
             <FontAwesome5 style={styles.iconItem} name={icon} />
             <View style={styles.viewData}>
-              <Text style={styles.title}>{`${this.props.myRoom.area.name}${this.props.myRoom.name}`}</Text>
+              <Text style={styles.title}>{`${this.props.myRoom.name}`}</Text>
               <Text style={styles.numbers}>{this.props.myRoom.number_now}/8</Text>
             </View>
             <View style={styles.viewIconPeople}>
@@ -37,12 +36,7 @@ class Room extends Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    textSearch: state.searchroom.textSearch,
-  }
-}
-export default connect(mapStateToProps)(Room);
+export default connect()(Room);
 
 const styles = StyleSheet.create({
   item: {

@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { getarea, getclass, getfaculty } from '../../redux/actions/index';
-import { styleBtnComeBack, styleImgBg } from '../../styles/index';
+import { styleBtnComeBack, styleImgBg, styleContainer } from '../../styles/index';
 
 class ProfileSV extends Component {
   constructor(props) {
@@ -20,9 +19,8 @@ class ProfileSV extends Component {
   };
   render() {
     let data = this.props.dataProfile;
-    console.log(data);
     return (
-      <View style={styles.container}>
+      <View style={[styleContainer.container, styles.container]}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <View style={styleBtnComeBack.comeBack}>
             <TouchableOpacity style={styleBtnComeBack.buttonComback} onPress={this.goBack}>
@@ -60,6 +58,10 @@ class ProfileSV extends Component {
                 <Text style={styles.title}>Khoa:</Text>
                 <Text style={styles.info}>{data.profile.faculty.name}</Text>
               </View>
+              <View style={styles.viewInfo}>
+                <Text style={styles.title}>Phòng đang đăng ký:</Text>
+                <Text style={styles.info}>{data.room.name ? data.room.name : 'Bạn chưa đăng ký phòng'}</Text>
+              </View>
               <View style={styles.viewButton}>
                 <TouchableOpacity style={styles.button} onPress={this.moveToChangeProfile}>
                   <Text style={styles.textButton}>Sửa thông tin</Text>
@@ -76,25 +78,14 @@ class ProfileSV extends Component {
   }
 }
 
-const mapDispatchToProps = {
-  getarea,
-  getclass,
-  getfaculty,
-};
-
 function mapStateToProps(state) {
   return {
     dataProfile: state.getprofile.payload,
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileSV);
+export default connect(mapStateToProps)(ProfileSV);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   text: {
     fontWeight: 'bold',
     fontSize: 20,
@@ -107,7 +98,7 @@ const styles = StyleSheet.create({
   },
   formProfile: {
     backgroundColor: 'white',
-    height: '70%',
+    height: '80%',
     width: '80%',
     borderRadius: 20,
     elevation: 7,

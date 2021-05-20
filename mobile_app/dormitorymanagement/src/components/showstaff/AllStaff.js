@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Text, ImageBackground } from 'react-native';
+import { View, FlatList, TouchableOpacity, Text, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { AppBar } from '../index';
 import Staff from './Staff';
 import { TextInput } from 'react-native-gesture-handler';
 import { allstaff } from '../../redux/actions/allstaff';
-import { stylePages, styleListNvSv, styleSearch, styleImgBg } from '../../styles/index';
+import { stylePages, styleListNvSv, styleSearch, styleImgBg, styleContainer } from '../../styles/index';
 
 class AllStaff extends Component {
   constructor(props) {
@@ -24,11 +24,16 @@ class AllStaff extends Component {
     )
   }
   changeTextSearch = (value) => {
-    this.setState({ textSearch: value });
-  }
-  searchStaff = () => {
-    var listSearch = this.props.listNV.results.filter(item => item.email.indexOf(this.state.textSearch) !== -1);
-    this.setState({ listNV: listSearch });
+    setTimeout(async () => {
+      await this.props.allstaff(1, value);
+      await this.setState({ 
+        textSearch: value,
+        page: this.props.listNV.current_page, 
+        listNV: this.props.listNV.results, 
+        nextPage: this.props.listNV.next_page, 
+        totals: this.props.listNV.totals 
+      });
+    }, 1000);
   }
   fetchApi = async (page) => {
     await this.props.allstudent(page);
@@ -44,7 +49,7 @@ class AllStaff extends Component {
   render() {
     let totalPages = Math.ceil(this.state.totals / 20);
     return (
-      <View style={styleListNvSv.container}>
+      <View style={[styleContainer.container, styleListNvSv.container]}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <AppBar style={styleListNvSv.appBar} navigation={this.props.navigation} />
           <View style={styleSearch.viewSearch}>
@@ -56,9 +61,6 @@ class AllStaff extends Component {
               placeholderTextColor="#808080"
             >
             </TextInput>
-            <TouchableOpacity style={styleSearch.btnSearch} onPress={this.searchStaff}>
-              <Text style={styleSearch.textBtnSearch}>Tìm</Text>
-            </TouchableOpacity>
           </View>
           <View style={styleListNvSv.container_child}>
             <FlatList
