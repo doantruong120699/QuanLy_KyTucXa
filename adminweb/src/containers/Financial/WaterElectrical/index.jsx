@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { AgGridColumn, AgGridReact } from "ag-grid-react";
+import {  AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import PropTypes from "prop-types";
@@ -431,7 +430,6 @@ export default function WaterElectrical() {
           name={"week"}
           className="week-select"
           options={week}
-          styles={{marginTop:'10px'}}
           value={week.find((index) => index.value === selectedWeek)}
           onChange={handleWeekChange}
           defaultValue={week.find((index) => index.value === curWeek)}
