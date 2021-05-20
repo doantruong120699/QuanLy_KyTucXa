@@ -288,6 +288,21 @@ class ProfileInListBillSerializer(serializers.ModelSerializer):
             'faculty',
             'my_class'
         ]
+        
+class ProfileStaffListBillSerializer(serializers.ModelSerializer):
+    area = AreaSerializer(required=False)
+    position = PositionSerializer(required=False)
+    user = UserSerializer(required=False)
+    class Meta:
+        model = Profile
+        fields = [
+            'user',
+            'gender',
+            'phone',
+            'public_id',
+            'area',
+            'position'
+        ]
 
 class BillSerializer(serializers.ModelSerializer):
     water_electrical = WaterElectricalInListSerializer(required=False)
@@ -389,3 +404,176 @@ class PaidBillInAreaSerializer(serializers.ModelSerializer):
         model = Area
         fields = ['id', 'name', 'slug'] 
 
+class TypeExpenseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TypeExpense
+        fields = [
+            'id', 
+            'name',
+            'description',
+            'slug'
+        ] 
+
+class ExpenseSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True)
+    
+    price = serializers.IntegerField(required=True)
+    time_paid = serializers.DateTimeField(required=True)
+    
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+
+    class Meta:
+        model = Expense
+        fields = [
+            'public_id',
+            'name',
+            'type_expense',
+            'description',
+            'price',
+            'user_paid',
+            'time_paid',
+            # 
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+
+    def _current_user(self):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
+        return False
+
+    def create(self, validated_data):
+        try:
+            current_user = self._current_user()
+            type_expense = TypeExpense.objects.get(pk=validated_data['type_expense'])
+            user_paid = Profile.objects.get(pk=validated_data['user_paid'])
+            
+            model = Expense.objects.create(
+                public_id=shortuuid.uuid(),
+                name=validated_data['name'],
+                type_expense=type_expense,
+                price=validated_data['price'],
+                user_paid = user_paid,
+                time_paid=validated_data['time_paid'],
+                created_by=current_user
+            )
+            if 'description' in validated_data:
+                model.description = validated_data['description']
+            model.save()
+            return True
+        except Exception as e:
+            print(e)
+            pass
+        return False
+
+    def update(self, instance, validated_data):
+        try:
+            current_user = self._current_user()
+            water_electrical_unit_price = WaterElectricalUnitPrice.objects.get(pk=validated_data['water_electrical_unit_price'])
+            room = Room.objects.get(pk=validated_data['room'])
+
+            instance.room = room
+            instance.new_index_eclectrical = validated_data.get('new_index_eclectrical', instance.new_index_eclectrical)
+            instance.new_index_water = validated_data.get('new_index_water', instance.new_index_water)
+            instance.month = validated_data.get('month', instance.month)
+            
+            instance.updated_by = current_user
+
+            instance.save()
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    def validate(self, data):
+        """
+        validate data
+        """
+        if 'type_expense' not in data:
+            raise serializers.ValidationError({'type_expense' : required_message})
+        if 'user_paid' not in data:
+            raise serializers.ValidationError({'user_paid' : required_message})
+        return data
+
+class ExpenseUpdateSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=False)
+    
+    price = serializers.IntegerField(required=False)
+    time_paid = serializers.DateTimeField(required=False)
+    
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+
+    class Meta:
+        model = Expense
+        fields = [
+            'public_id',
+            'name',
+            'type_expense',
+            'description',
+            'price',
+            'user_paid',
+            'time_paid',
+            # 
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+
+    def _current_user(self):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
+        return False
+
+    def update(self, instance, validated_data):
+        try:
+            current_user = self._current_user()
+            if 'type_expense' in validated_data:
+                type_expense = TypeExpense.objects.get(pk=validated_data['type_expense'])
+                instance.type_expense = type_expense
+            if 'user_paid' in validated_data:
+                user_paid = Profile.objects.get(pk=validated_data['user_paid'])
+                instance.user_paid = user_paid
+            
+            instance.name = validated_data.get('name', instance.name)
+            instance.description = validated_data.get('description', instance.description)
+            instance.price = validated_data.get('price', instance.price)
+            instance.price = validated_data.get('price', instance.price)
+            instance.time_paid = validated_data.get('time_paid', instance.time_paid)
+            
+            instance.updated_by = current_user
+
+            instance.save()
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+class ExpenseListSerializer(serializers.ModelSerializer):
+    type_expense = TypeExpenseSerializer()
+    user_paid =ProfileStaffListBillSerializer()
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+
+    class Meta:
+        model = Expense
+        fields = [
+            'public_id',
+            'name',
+            'type_expense',
+            'description',
+            'price',
+            'user_paid',
+            'time_paid',
+            # 
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]

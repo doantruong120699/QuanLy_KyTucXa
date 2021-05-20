@@ -145,6 +145,7 @@ class Contract(models.Model):
     note = models.TextField(null=True, blank=True)
     price = models.FloatField(default=0)
     is_paid = models.BooleanField(null=True)
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
 
 
     class Meta:
@@ -349,6 +350,9 @@ class TypeExpense(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True) 
     slug = models.CharField(max_length=200, null=True, unique=True)  
+    
+    def __str__(self):
+        return self.name
 
 class Expense(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
@@ -361,3 +365,9 @@ class Expense(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name = 'expense_created_by', on_delete=models.CASCADE, blank=True, null=True)
+    updated_by = models.ForeignKey(User, related_name = 'expense_updated_by', on_delete=models.CASCADE, blank=True, null=True)
+    
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
+    def __str__(self):
+        return self.name + ' - '+ self.type_expense.name 

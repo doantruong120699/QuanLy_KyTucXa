@@ -206,6 +206,22 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             pass
         return Response({'detail': 'Error!'}, status=status.HTTP_400_BAD_REQUEST)
          
+    # ==== Deny List Request ====
+    @action(methods=["DELETE"], detail=False, url_path="delete_user_in_room", url_name="delete_user_in_room")
+    def delete_user_in_room(self, request, *args, **kwargs):
+        try:
+            profile = Profile.objects.get(public_id=kwargs['public_id'])
+            contract = Contract.objects.filter(profile=profile, is_expired=False, is_delete=False).first()
+            contract.is_delete = True
+            contract.is_expired = True
+            contract.room.number_now = contract.room.number_now - 1 
+            contract.save()
+            contract.room.save()
+            return Response({'detail': 'Delete Successful'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+        return Response({'detail': 'Sinh Vien not Found!'}, status=status.HTTP_404_NOT_FOUND)
+
 class DailyScheduleViewSet(viewsets.ModelViewSet):
     serializer_class = DailyScheduleSerializer
     permission_classes = [IsAuthenticated, IsQuanLyNhanSu]

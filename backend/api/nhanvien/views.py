@@ -84,16 +84,12 @@ class NhanVienViewSet(viewsets.ModelViewSet):
     # get list all nhanvien 
     @action(methods=["GET"], detail=False, url_path="get_all_nhanvien", url_name="get_all_nhanvien")
     def get_all_nhanvien(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=nhanvien_group).order_by('id')
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
-
+        try:
+            queryset = User.objects.filter(groups__name=nhanvien_group).order_by('pk')
+            serializer = NhanVienListSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK) 
+        except:
+            return Response({'detail':'Bad Request'}, status=status.HTTP_400_BAD_REQUEST) 
 class ShiftViewSet(viewsets.ModelViewSet):
     queryset = Shift.objects.all()
     serializer_class = ShiftSerializer

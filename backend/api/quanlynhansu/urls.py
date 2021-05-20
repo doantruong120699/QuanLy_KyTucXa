@@ -30,6 +30,10 @@ deny_registration_request = ContractRegistationViewSet.as_view({
 deny_list_request = ContractRegistationViewSet.as_view({
     'post': 'deny_list_request',
 })
+# ======== Delete user in room ========
+delete_user_in_room = ContractRegistationViewSet.as_view({
+    'delete': 'delete_user_in_room',
+})
 # =========== Schedule ===========
 schedule = DailyScheduleViewSet.as_view({
     'post' : 'post',
@@ -70,6 +74,8 @@ urlpatterns = [
     # ========== Deny
     path('deny-registrations/<str:public_id>/', deny_registration_request, name = 'deny_registration_request'),
     path('deny-registrations/', deny_list_request, name = 'deny_list_request'),
+    # ========== Delete User in room
+    path('delete-user-room/<str:public_id>/', delete_user_in_room, name = 'delete_user_in_room'),
     # ========== Schedule ========
     path('schedules/', schedule, name = 'schedule'),
     # path('schedules/<str:public_id>/', update_schedule, name = 'update_schedule'),
