@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {  AgGridReact } from "ag-grid-react";
+import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import PropTypes from "prop-types";
@@ -9,7 +9,7 @@ import Box from "@material-ui/core/Box";
 import Grow from "@material-ui/core/Grow";
 import Select from "react-select";
 import ReactModal from "react-modal";
-import DetailRoom from "./DetailRoom";
+import ShowBill from "./DetailRoom";
 import moment from "moment";
 
 import "./styles.css";
@@ -133,9 +133,10 @@ CircularProgressWithLabel.propTypes = {
 };
 
 export default function WaterElectrical() {
-  const [selectedWeek, setSelectedWeek] = useState();
-  const curWeek = moment(new Date()).weeks();
-
+  const [selectedData, setSelectedData] = useState({
+    selectedMonth: moment(new Date()).month() + 1,
+    selectedYear: moment(new Date()).year(),
+  });
   const [data, setData] = useState([
     {
       id: 1,
@@ -303,13 +304,18 @@ export default function WaterElectrical() {
   //const [detailedRoom,setDetailedRoom]
   const [tabSelected, setTabSelected] = useState(1);
   const [areaSelected, setAreaSelected] = useState("");
+  const [roomSelected, setRoomSelected] = useState("");
   const [isShowTable, setIsShowTable] = useState(false);
   const [tableData, setTableData] = useState(data.filter((n) => n.id === 1));
   const [gridApi, setGridApi] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const [gridColumnApi, setGridColumnApi] = useState(null);
-  const handleWeekChange = (params) => {
-    console.log("params", params);
-    setSelectedWeek(params.value);
+  const handleSelectChange = (event) => {
+    console.log("params", event);
+    event.value > 13
+      ? setSelectedData({ ...selectedData, selectedYear: event.value })
+      : setSelectedData({ ...selectedData, selectedMonth: event.value });
   };
   const onGridReady = (params) => {
     let _gridApi = params.api;
@@ -319,7 +325,6 @@ export default function WaterElectrical() {
     setGridApi(_gridApi);
     setGridColumnApi(params.columnApi);
   };
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const columnDefs = [
     {
       field: "name",
@@ -366,6 +371,7 @@ export default function WaterElectrical() {
     if (params.colDef.field === "details") {
       console.log("Xem chi tiet ne!", params);
       setIsModalVisible(true);
+      setRoomSelected(params.data.name);
     }
   };
   const rowClassRules = {
@@ -410,30 +416,57 @@ export default function WaterElectrical() {
       transform: "translate(-50%, -50%)",
     },
   };
-  var week = [];
+  var month = [];
   var i = 1;
-  while (i <= 52 && week.length <= 52) {
-    week.push({
+  while (i <= 12 && month.length <= 52) {
+    month.push({
       value: i,
-      label: `Tuần thứ ${i}, Từ ${moment(i, "week")
-        .startOf("week")
-        .format("DD/MM")} đến ${moment(i, "week").endOf("week").format("DD/MM")}
-           `,
+      label: `Tháng ${i} `,
     });
     i++;
   }
+  var year = [];
+  var start = 1990;
+  while (start <= moment(new Date()).year()) {
+    year.push({
+      value: start,
+      label: start,
+    });
+    start++;
+  }
+  console.log(
+    "Selected Year",
+    selectedData.selectedYear,
+    "Selected Month",
+    selectedData.selectedMonth
+  );
   return (
     <Box paddingRight={15} style={{ width: "100%" }}>
-      <div style={{margin:'20px 0 20px 0'}}>
-        <Typography>Lựa chọn tuần làm việc</Typography>
-        <Select
-          name={"week"}
-          className="week-select"
-          options={week}
-          value={week.find((index) => index.value === selectedWeek)}
-          onChange={handleWeekChange}
-          defaultValue={week.find((index) => index.value === curWeek)}
-        />
+      <div style={{ margin: "20px 0 20px 0", display: "flex" }}>
+        <div style={{ margin: "20px 20px 20px 0" }}>
+          <Typography>Chọn tuần</Typography>
+          <Select
+            name={"month"}
+            className="month-select"
+            options={month}
+            value={month.find(
+              (index) => index.value === selectedData.selectedMonth
+            )}
+            onChange={handleSelectChange}
+          />
+        </div>
+        <div style={{ margin: "20px 0 20px 0" }}>
+          <Typography>Chọn năm</Typography>
+          <Select
+            name={"year"}
+            className="month-select"
+            options={year}
+            value={year.find(
+              (index) => index.value === selectedData.selectedYear
+            )}
+            onChange={(event) => handleSelectChange(event)}
+          />
+        </div>
       </div>
       <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
         <Box style={{ display: "flex", justifyContent: "space-between" }}>
@@ -488,7 +521,12 @@ export default function WaterElectrical() {
         onRequestClose={hideModal}
         style={customStyles}
       >
-        <DetailRoom />
+        <ShowBill
+          selectedMonth={selectedData.selectedMonth}
+          selectedYear={selectedData.selectedYear}
+          room={roomSelected}
+          area={areaSelected}
+        />
       </ReactModal>
     </Box>
   );
