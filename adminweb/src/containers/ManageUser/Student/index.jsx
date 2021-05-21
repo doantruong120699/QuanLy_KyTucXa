@@ -168,9 +168,8 @@ export default function Student() {
 
   const options = {
     filterType: "textField",
-    customFooter: () => {
-      return;
-    },
+   
+    pagination: true,
     selectableRows: false,
     customHeadRender: () => {
       return null;
