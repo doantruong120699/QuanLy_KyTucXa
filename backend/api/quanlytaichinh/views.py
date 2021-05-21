@@ -417,6 +417,89 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             print(e)
         return Response({'status': 'fail', 'notification' : 'Expense not found!'}, status=status.HTTP_404_NOT_FOUND)
 
+# ==========================================================
+
+class TypeRevenueViewSet(viewsets.ModelViewSet):
+    queryset = TypeRevenue.objects.all()
+    serializer_class = TypeRevenueSerializer
+
+    def get_queryset(self):
+        return TypeRevenue.objects.all().order_by('id')
+
+    def list(self, request, *args, **kwargs):
+        queryset = list(TypeRevenue.objects.values().order_by('id'))
+        return JsonResponse(queryset, safe=False, status=status.HTTP_200_OK)
+
+class RevenueViewSet(viewsets.ModelViewSet):
+    serializer_class = RevenueSerializer
+    permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
+    lookup_field = 'public_id'
+
+    def get_queryset(self):
+        return Revenue.objects.filter(is_delete=False).order_by('-created_at')
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            _list = self.get_queryset()
+            page = self.paginate_queryset(_list)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            serializer = RevenueSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                save = serializer.create(request.data)
+                if save:
+                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
+            print(serializer.errors)
+            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)    
+
+    def update(self, request, public_id, format=None):
+        try:
+            queryset = Revenue.objects.filter(public_id=public_id, is_delete=False).first()
+            if queryset:
+                datas = request.data
+                serializer = RevenueUpdateSerializer(queryset, data=datas, context={'request': request})
+                if serializer.is_valid():
+                        save = serializer.update(instance = queryset, validated_data = request.data)
+                        if save:
+                            return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Expense Not Found!'}, status=status.HTTP_404_NOT_FOUND)
+    
+    def destroy(self, request, public_id, format=None):
+        try:
+            queryset = Revenue.objects.filter(public_id=public_id ,is_delete=False).first()
+            if queryset:
+                queryset.is_delete = True
+                queryset.save()
+                return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            pass
+        return Response({'status': 'fail', 'notification' : 'Revenue not found!'}, status=status.HTTP_404_NOT_FOUND)
+
+    def retrieve(self, request, public_id, **kwargs):
+        try:
+            queryset = Revenue.objects.filter(public_id=public_id, is_delete=False).first()
+            if queryset:
+                serializer = RevenueListSerializer(queryset)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Revenue not found!'}, status=status.HTTP_404_NOT_FOUND)
 
 
 
