@@ -90,6 +90,7 @@ class NhanVienViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK) 
         except:
             return Response({'detail':'Bad Request'}, status=status.HTTP_400_BAD_REQUEST) 
+
 class ShiftViewSet(viewsets.ModelViewSet):
     queryset = Shift.objects.all()
     serializer_class = ShiftSerializer
@@ -141,6 +142,7 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
             sunday = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w") - timedelta(days=1)
 
             for item in range(len(data)):
+                data[item]['shift']['id'] = Shift.objects.get(pk=data[item]['shift']['id']).order
                 day_of_week = data[item]['shift']['weekdays']
                 day_shift = sunday + datetime.timedelta(days=self.day_week(day_of_week))
                 data[item]['shift']['date'] = day_shift.date()

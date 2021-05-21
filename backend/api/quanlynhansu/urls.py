@@ -38,10 +38,6 @@ delete_user_in_room = ContractRegistationViewSet.as_view({
 schedule = DailyScheduleViewSet.as_view({
     'post' : 'post',
 })
-# update_schedule = DailyScheduleViewSet.as_view({
-#     'put' : 'update',
-# })
-
 # =========== Notification =========
 # list - create
 notification_list = NotificationViewSet.as_view({
@@ -61,6 +57,24 @@ notification_detail = NotificationViewSet.as_view({
 used_room_in_area_list = UsedRoomInAreaViewSet.as_view({
     'get': 'list',
 })
+# ========== List Permission
+permission_list = GroupPermissionViewSet.as_view({
+    'get': 'list',
+})
+# =========== Profile =========
+# list - create
+profile_list = UserProfileViewSet.as_view({
+    'get': 'list',
+    'post': 'post'
+})
+# detail - update - delete
+profile_detail = UserProfileViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    # 'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
 urlpatterns = [ 
     # ========== notification
     path('notifications/', notification_list, name = 'notification_list'),
@@ -81,4 +95,9 @@ urlpatterns = [
     # path('schedules/<str:public_id>/', update_schedule, name = 'update_schedule'),
     # ========== room
     path('used-room-area/', used_room_in_area_list, name = 'used_room_in_area_list'),
+    # =========== Permission
+    path('permission/', permission_list, name = 'permission_list'),
+    # ========== notification
+    path('admin/account/', profile_list, name = 'profile_list'),
+    path('admin/account/<str:public_id>/', profile_detail, name = 'profile_detail'),
 ]

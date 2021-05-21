@@ -25,6 +25,8 @@ class FinancalRoomInAreaSerializer(serializers.ModelSerializer):
         model = Area
         fields = ['id', 'name'] 
 
+# =============================================
+
 class WaterElectricalUnitPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = WaterElectricalUnitPrice
@@ -263,6 +265,8 @@ class WaterElectricalInListSerializer(serializers.ModelSerializer):
             'water_price',
             'electrical_price',
         ]
+
+# =====================================================
 
 class FacultyBillSerializer(serializers.ModelSerializer):
     class Meta:
