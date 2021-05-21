@@ -266,6 +266,31 @@ class BillViewSet(viewsets.ModelViewSet):
             print(e)
         return Response({'status': 'fail', 'notification' : 'Bill not found!'}, status=status.HTTP_404_NOT_FOUND)
 
+    # get list all room 
+    @action(methods=["GET"], detail=False, url_path="get_bill_of_room", url_name="get_bill_of_room")
+    def get_bill_of_room(self, request, *args, **kwargs):
+        try:
+            room = self.request.GET.get('room','') 
+            month = self.request.GET.get('month',None)                    
+            year = self.request.GET.get('year',None)
+            month, year = self.check_month_year(month, year)
+            
+            room = Room.objects.filter(Q(slug=room)) 
+            # room_in_area = Room.objects.filter(area__in=area).order_by('-id')
+            _list = Bill.objects.filter(water_electrical__room__in=room, 
+                                                              water_electrical__year=year,
+                                                              water_electrical__month=month)
+            _list = _list.filter(is_delete=False).first()
+            if _list:
+                serializer = BillDetailSerializer(_list)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : 'Bill not found!'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    
 # ==========================================================
 
 class PaidBillInAreaViewSet(viewsets.ModelViewSet):

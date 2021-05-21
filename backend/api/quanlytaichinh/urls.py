@@ -41,6 +41,9 @@ water_electrical_detail = WaterElectricalViewSet.as_view({
 bill_list = BillViewSet.as_view({
     'get': 'list',
 })
+bill_of_room = BillViewSet.as_view({
+    'get': 'get_bill_of_room',
+})
 # detail - update - delete
 bill_detail = BillViewSet.as_view({
     'get': 'retrieve',
@@ -80,6 +83,7 @@ urlpatterns = [
     path('water-electricals/<str:public_id>/', water_electrical_detail, name = 'water_electrical_detail'),
     # ========== Bill
     path('bills/', bill_list, name = 'bill_list'),
+    path('room-bills/', bill_of_room, name = 'bill_of_room'),
     path('bills/<str:public_id>/', bill_detail, name = 'bill_detail'),
     # 
     path('paid-bill-area/', paid_bill_in_area_list, name = 'paid_bill_in_area_list'),
