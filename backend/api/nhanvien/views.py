@@ -156,7 +156,7 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
         if year == None:
             year = datetime.datetime.now().year
         if week != None:
-            _list = DailySchedule.objects.filter(week=week).order_by('shift__order')
+            _list = DailySchedule.objects.filter(week=week, year=year).order_by('shift__order')
             serializer = DailyScheduleListSerializer(_list, many=True)
             data = serializer.data
             if len(_list)>0:
@@ -170,7 +170,7 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
                     day_shift = sunday + datetime.timedelta(days=self.day_week(day_of_week))
                     data[item]['shift']['date'] = day_shift.date()
                 return Response(data, status=status.HTTP_200_OK)
-            return Response(data, status=status.HTTP_204_NO_CONTENT)
+        return Response({'status':'fail'}, status=status.HTTP_204_NO_CONTENT)
 
     def retrieve(self, request, **kwargs):
         try:
