@@ -44,6 +44,6 @@ urlpatterns = [
     path('shifts/', shift_list, name = 'shift_list'),
     path('shifts/<slug:slug>/', shift_detail, name = 'shift_detail'),
     # ========== shift
-    path('daily-schedules/<int:week>/', schedule_list, name = 'schedule_list'),
+    path('daily-schedules/', schedule_list, name = 'schedule_list'),
     path('daily-schedules/<str:public_id>/', schedule_detail, name = 'schedule_detail'),
 ]
