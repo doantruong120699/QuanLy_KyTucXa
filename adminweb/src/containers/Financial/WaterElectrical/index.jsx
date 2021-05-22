@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
-=======
-import React, { useState } from "react";
->>>>>>> f2b62fac8377b632f2c8d546b07037136ee1b16c
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
@@ -157,30 +153,6 @@ export default function WaterElectrical() {
       transform: "translate(-50%, -50%)",
     },
   };
-  var month = [];
-  var i = 1;
-  while (i <= 12 && month.length <= 52) {
-    month.push({
-      value: i,
-      label: `Tháng ${i} `,
-    });
-    i++;
-  }
-  var year = [];
-  var start = 1990;
-  while (start <= moment(new Date()).year()) {
-    year.push({
-      value: start,
-      label: start,
-    });
-    start++;
-  }
-  console.log(
-    "Selected Year",
-    selectedData.selectedYear,
-    "Selected Month",
-    selectedData.selectedMonth
-  );
   return (
     <div>
       {data && (
