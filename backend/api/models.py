@@ -69,6 +69,7 @@ class Profile(models.Model):
     area = models.ForeignKey(Area, related_name = 'area_profile', on_delete=models.SET_NULL, blank=True, null=True)
     token = models.TextField(null=True, blank=True)
     forgot_password_token = models.TextField(null=True, blank=True)
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
 
     class Meta:
         ordering = ('user',)
@@ -359,7 +360,7 @@ class Expense(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     type_expense = models.ForeignKey(TypeExpense, related_name = 'type_expense', on_delete=models.CASCADE, blank=True, null=True)
     description = models.TextField(null=True, blank=True) 
-    price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    price = models.PositiveIntegerField(default=0, null=True, blank=True)
     user_paid = models.ForeignKey(Profile, related_name = 'expense_user_paid', on_delete=models.CASCADE, blank=True, null=True)
     time_paid = models.DateTimeField(null=True, blank=True)
 
@@ -371,3 +372,30 @@ class Expense(models.Model):
     is_delete = models.BooleanField(default=False, null=True, blank=True)
     def __str__(self):
         return self.name + ' - '+ self.type_expense.name 
+    
+class TypeRevenue(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(null=True, blank=True) 
+    slug = models.CharField(max_length=200, null=True, unique=True)  
+    
+    def __str__(self):
+        return self.name
+
+class Revenue(models.Model):
+    public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    type_revenue = models.ForeignKey(TypeRevenue, related_name = 'type_revenue', on_delete=models.CASCADE, blank=True, null=True)
+    description = models.TextField(null=True, blank=True) 
+    amount = models.PositiveIntegerField(default=0, null=True, blank=True)
+    user_recieve = models.ForeignKey(Profile, related_name = 'revenue_user_recieve', on_delete=models.CASCADE, blank=True, null=True)
+    time_recieve = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name = 'revenue_created_by', on_delete=models.CASCADE, blank=True, null=True)
+    updated_by = models.ForeignKey(User, related_name = 'revenue_updated_by', on_delete=models.CASCADE, blank=True, null=True)
+    
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
+    def __str__(self):
+        return self.name + ' - '+ self.type_revenue.name 
+  

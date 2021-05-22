@@ -25,6 +25,8 @@ class FinancalRoomInAreaSerializer(serializers.ModelSerializer):
         model = Area
         fields = ['id', 'name'] 
 
+# =============================================
+
 class WaterElectricalUnitPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = WaterElectricalUnitPrice
@@ -263,6 +265,8 @@ class WaterElectricalInListSerializer(serializers.ModelSerializer):
             'water_price',
             'electrical_price',
         ]
+
+# =====================================================
 
 class FacultyBillSerializer(serializers.ModelSerializer):
     class Meta:
@@ -577,3 +581,185 @@ class ExpenseListSerializer(serializers.ModelSerializer):
             'created_by',
             'updated_by',
         ]
+        
+# ==================================================================
+
+class TypeRevenueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TypeRevenue
+        fields = [
+            'id', 
+            'name',
+            'description',
+            'slug'
+        ] 
+
+class RevenueSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=True)
+    
+    amount = serializers.IntegerField(required=True)
+    time_recieve = serializers.DateTimeField(required=True)
+    
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+
+    class Meta:
+        model = Revenue
+        fields = [
+            'public_id',
+            'name',
+            'type_revenue',
+            'description',
+            'amount',
+            'user_recieve',
+            'time_recieve',
+            # 
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+
+    def _current_user(self):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
+        return False
+
+    def create(self, validated_data):
+        try:
+            current_user = self._current_user()
+            type_revenue = TypeRevenue.objects.get(pk=validated_data['type_revenue'])
+            user_recieve = Profile.objects.get(pk=validated_data['user_recieve'])
+            
+            model = Revenue.objects.create(
+                public_id=shortuuid.uuid(),
+                name=validated_data['name'],
+                type_revenue=type_revenue,
+                amount=validated_data['amount'],
+                user_recieve = user_recieve,
+                time_recieve=validated_data['time_recieve'],
+                created_by=current_user
+            )
+            if 'description' in validated_data:
+                model.description = validated_data['description']
+            model.save()
+            return True
+        except Exception as e:
+            print(e)
+            pass
+        return False
+
+    def update(self, instance, validated_data):
+        try:
+            current_user = self._current_user()
+            water_electrical_unit_price = WaterElectricalUnitPrice.objects.get(pk=validated_data['water_electrical_unit_price'])
+            room = Room.objects.get(pk=validated_data['room'])
+
+            instance.room = room
+            instance.new_index_eclectrical = validated_data.get('new_index_eclectrical', instance.new_index_eclectrical)
+            instance.new_index_water = validated_data.get('new_index_water', instance.new_index_water)
+            instance.month = validated_data.get('month', instance.month)
+            
+            instance.updated_by = current_user
+
+            instance.save()
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    def validate(self, data):
+        """
+        validate data
+        """
+        if 'type_revenue' not in data:
+            raise serializers.ValidationError({'type_revenue' : required_message})
+        if 'user_recieve' not in data:
+            raise serializers.ValidationError({'user_recieve' : required_message})
+        return data
+
+class RevenueUpdateSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(required=False)
+    
+    amount = serializers.IntegerField(required=False)
+    time_recieve = serializers.DateTimeField(required=False)
+    
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+
+    class Meta:
+        model = Revenue
+        fields = [
+            'public_id',
+            'name',
+            'type_revenue',
+            'description',
+            'amount',
+            'user_recieve',
+            'time_recieve',
+            # 
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+
+    def _current_user(self):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
+        return False
+
+    def update(self, instance, validated_data):
+        try:
+            current_user = self._current_user()
+            if 'type_revenue' in validated_data:
+                type_revenue = TypeRevenue.objects.get(pk=validated_data['type_revenue'])
+                instance.type_revenue = type_revenue
+            if 'user_recieve' in validated_data:
+                user_recieve = Profile.objects.get(pk=validated_data['user_recieve'])
+                instance.user_recieve = user_recieve
+            
+            instance.name = validated_data.get('name', instance.name)
+            instance.description = validated_data.get('description', instance.description)
+            instance.amount = validated_data.get('amount', instance.amount)
+            instance.time_recieve = validated_data.get('time_recieve', instance.time_recieve)
+            
+            instance.updated_by = current_user
+
+            instance.save()
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+class RevenueListSerializer(serializers.ModelSerializer):
+    type_revenue = TypeRevenueSerializer()
+    user_recieve =ProfileStaffListBillSerializer()
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+
+    class Meta:
+        model = Revenue
+        fields = [
+            'public_id',
+            'name',
+            'type_revenue',
+            'description',
+            'amount',
+            'user_recieve',
+            'time_recieve',
+            # 
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+        
+        
+
+
+
+
+

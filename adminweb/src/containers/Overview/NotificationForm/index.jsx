@@ -21,8 +21,8 @@ export default function NotificationForm(props) {
       console.log("output", output);
     });
     console.log("dataSend", dataSend);
-    setTimeout(toast("Wow so easy!"), 3000);
-    console.log("AABB")
+    toast("Gửi thông báo thành công!");
+    setTimeout(onSuccess, 4000);
   };
 
   const SendButton = withStyles((theme) => ({

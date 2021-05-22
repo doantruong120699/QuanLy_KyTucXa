@@ -41,6 +41,9 @@ water_electrical_detail = WaterElectricalViewSet.as_view({
 bill_list = BillViewSet.as_view({
     'get': 'list',
 })
+bill_of_room = BillViewSet.as_view({
+    'get': 'get_bill_of_room',
+})
 # detail - update - delete
 bill_detail = BillViewSet.as_view({
     'get': 'retrieve',
@@ -58,12 +61,27 @@ type_expense_list = TypeExpenseViewSet.as_view({
     'get': 'list', # Get lists
 })
 # ========= Expense
-expensel_list = ExpenseViewSet.as_view({
+expense_list = ExpenseViewSet.as_view({
     'get': 'list',
     'post': 'post'
 })
 # detail - update - delete
 expense_detail = ExpenseViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'delete': 'destroy'
+})
+# ======== Revenue
+type_revenue_list = TypeRevenueViewSet.as_view({
+    'get': 'list', # Get lists
+})
+# ========= revenue
+revenue_list = RevenueViewSet.as_view({
+    'get': 'list',
+    'post': 'post'
+})
+# detail - update - delete
+revenue_detail = RevenueViewSet.as_view({
     'get': 'retrieve',
     'put': 'update',
     'delete': 'destroy'
@@ -80,12 +98,17 @@ urlpatterns = [
     path('water-electricals/<str:public_id>/', water_electrical_detail, name = 'water_electrical_detail'),
     # ========== Bill
     path('bills/', bill_list, name = 'bill_list'),
+    path('room-bills/', bill_of_room, name = 'bill_of_room'),
     path('bills/<str:public_id>/', bill_detail, name = 'bill_detail'),
     # 
     path('paid-bill-area/', paid_bill_in_area_list, name = 'paid_bill_in_area_list'),
     # 
     path('type-expense/', type_expense_list),
     # ========== expense
-    path('expense/', expensel_list, name = 'expensel_list'),
+    path('expense/', expense_list, name = 'expense_list'),
     path('expense/<str:public_id>/', expense_detail, name = 'expense_detail'),
+    # ========== revenue
+    path('type-revenue/', type_revenue_list),
+    path('revenue/', revenue_list, name = 'revenue_list'),
+    path('revenue/<str:public_id>/', revenue_detail, name = 'revenue_detail'),
 ]
