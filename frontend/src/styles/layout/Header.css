@@ -1,3 +1,8 @@
+.withShadow {
+  box-shadow: 0px 15px 10px -15px #111;
+  transition: all 0.25s linear;
+}
+
 .header-bar {
   z-index: 999;
   position: fixed;

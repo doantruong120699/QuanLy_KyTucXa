@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
+import React, { useState, useEffect } from "react";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import ReactModal from "react-modal";
@@ -8,8 +7,8 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Grow from "@material-ui/core/Grow";
 import "./styles.css";
-import AddBoxIcon from "@material-ui/icons/AddBox";
-import NotificationForm from "./NotificationForm";
+import { getUsedRoom } from "../../redux/actions/overview";
+
 function CircularProgressWithLabel(props) {
   return (
     <Box position="relative" display="inline-flex" paddingTop="20px">
@@ -116,91 +115,35 @@ function CircularProgressWithLabel(props) {
   );
 }
 
-CircularProgressWithLabel.propTypes = {
-  /**
-   * The value of the progress indicator for the determinate variant.
-   * Value between 0 and 100.
-   */
-  value: PropTypes.number.isRequired,
-};
-
 export default function Overview() {
-  const [data, setData] = useState([
-    {
-      id: 1,
-      name: "Khu A",
-      maxRoom: 1500,
-      availableRoom: 375,
-    },
-    {
-      id: 2,
-      name: "Khu B",
-      maxRoom: 1500,
-      availableRoom: 425,
-    },
-    {
-      id: 3,
-      name: "Khu C",
-      maxRoom: 1500,
-      availableRoom: 300,
-    },
-  ]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const hideModal = () => {
-    setIsModalVisible(false);
-  };
-  const customStyles = {
-    content: {
-      top: "50%",
-      left: "53%",
-      right: "50%",
-      bottom: "auto",
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-    },
-    overlay: { zIndex: 1000 },
-  };
-  const handleSendNoti = () => {
-    setIsModalVisible(true);
-  };
-  const handleSuccessSubmit = () => {
-    setIsModalVisible(false);
-  };
-  //const data =
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    getUsedRoom((output) => {
+      if (output) {
+        console.log(output);
+        setData(output);
+      }
+    });
+  }, []);
+
   return (
-    <Grow in={true} timeout={1000} style={{ transformOrigin: "10 10 10" }}>
-      <Box style={{ transform: "scale(1)" }}>
-        {data.map((n,key) => {
-          return (
-            <CircularProgressWithLabel
-              name={n.name}
-              allRoom={n.maxRoom}
-              availabeRoom={n.availableRoom}
-            />
-          );
-        })}
-        <Box textAlign="center">
-          <Button
-            startIcon={<AddBoxIcon />}
-            style={{
-              width: "50%",
-              marginRight: "50px",
-              backgroundColor: "#005CC8",
-              color: "white",
-            }}
-            onClick={handleSendNoti}
-          >
-            Gửi Thông Báo
-          </Button>
-          <ReactModal
-            isOpen={isModalVisible}
-            onRequestClose={hideModal}
-            style={customStyles}
-          >
-            <NotificationForm onSuccess={handleSuccessSubmit} />
-          </ReactModal>
-        </Box>
-      </Box>
-    </Grow>
+    <div>
+      {data && (
+        <Grow in={true} timeout={1000} style={{ transformOrigin: "10 10 10" }}>
+          <Box style={{ transform: "scale(1)" }}>
+            {data.map((n) => {
+              return (
+                <CircularProgressWithLabel
+                  name={n.name}
+                  allRoom={n.total}
+                  availabeRoom={n.total - n.full}
+                />
+              );
+            })}
+          </Box>
+        </Grow>
+      )}
+    </div>
   );
 }

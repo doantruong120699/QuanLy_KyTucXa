@@ -9,7 +9,7 @@
 #students {
   text-align: center;
   font-size: 14px;
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
   border-collapse: collapse;
   border: 3px solid #ddd;
   width: fit-content;
@@ -46,4 +46,5 @@
 .week-select {
   width: 250px;
   font-size: 14px;
+  margin-bottom: 16px;
 }

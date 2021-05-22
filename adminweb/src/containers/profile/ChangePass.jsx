@@ -1,7 +1,7 @@
 import Popup from "reactjs-popup";
-import Button from "../common/Button";
-import FormError from "../common/FormError";
-import InputField from "../common/InputField";
+import Button from "../../components/common/Button";
+import FormError from "../../components/common/FormError";
+import InputField from "../../components/common/InputField";
 
 const ChangePass = (props) => {
   const { open, closeModal, errorState, handleInput, savePass } = props;
@@ -18,7 +18,7 @@ const ChangePass = (props) => {
             <InputField
               name="curPass"
               isValid={errorState.curPass.isInputValid}
-              type="text"
+              type="password"
               placeholder="Mật khẩu hiện tại"
               onChange={handleInput}
               autocomplete="off"
@@ -32,7 +32,7 @@ const ChangePass = (props) => {
             <InputField
               name="newPass"
               isValid={errorState.newPass.isInputValid}
-              type="text"
+              type="password"
               placeholder="Mật khẩu mới"
               onChange={handleInput}
               autocomplete="off"

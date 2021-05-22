@@ -5,10 +5,12 @@ const InputField = (props) => {
     name,
     isValid,
     type,
+    value,
     placeholder,
     onBlur,
     onChange,
     autocomplete,
+    disabled,
   } = props;
 
   const inputStyle = className(
@@ -21,11 +23,13 @@ const InputField = (props) => {
       type={type}
       name={name}
       id={id}
+      value={value}
       placeholder={placeholder}
       autoComplete={autocomplete}
       className={inputStyle}
       onBlur={onBlur}
       onChange={onChange}
+      disabled={disabled}
     />
   );
 };

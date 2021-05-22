@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "../layout/Header";
 import AdminNavbar from "../adminNavbar";
 import { getAuth } from "../../utilities/helper";
 import { Redirect } from "react-router";
@@ -9,7 +8,7 @@ const withAuth = (Component) => (props) => {
       {getAuth() && getAuth().jti ? (
         <div>
           <AdminNavbar />
-          <div className="style-content" style={{ marginLeft: "15%" }}>
+          <div className="style-content" >
             <Component {...props} />
           </div>
         </div>

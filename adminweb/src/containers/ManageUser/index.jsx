@@ -5,9 +5,9 @@ import Employee from "./Employee";
 
 export default function ManageUser() {
   return (
-    <div style={{ fontSize: "30px" }}>
+    <div style={{ margin: "0px 90px"}}>
       <Tabs>
-        <TabList style={{ borderBottom: "none", marginBottom: "50px" }}>
+        <TabList style={{ marginBottom: "20px" }}>
           <Tab>Sinh Viên</Tab>
           <Tab>Nhân Viên</Tab>
         </TabList>
