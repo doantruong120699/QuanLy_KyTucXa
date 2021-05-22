@@ -74,15 +74,36 @@ export const month = [
 
 export const shiftTime = [
   {
-    value: 0,
+    value: 1,
     label: "Ca 1 (6h - 14h)",
   },
   {
-    value: 1,
+    value: 2,
     label: "Ca 2 (14h - 22h)",
   },
   {
-    value: 2,
+    value: 0,
     label: "Ca 3 (22h - 6h)",
+  },
+];
+
+export const week = [
+  { value: 1, label: "Chủ nhật" },
+  { value: 2, label: "Thứ hai" },
+  { value: 3, label: "Thứ ba" },
+  { value: 4, label: "Thứ tư" },
+  { value: 5, label: "Thứ năm" },
+  { value: 6, label: "Thú sáu" },
+  { value: 7, label: "Thứ bảy" },
+];
+
+export const typeOption = [
+  {
+    value: "Ca trực",
+    label: "Ca trực",
+  },
+  {
+    value: "Ca làm",
+    label: "Ca làm",
   },
 ];

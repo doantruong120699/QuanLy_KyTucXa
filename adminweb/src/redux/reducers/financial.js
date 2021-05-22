@@ -2,6 +2,7 @@ import * as types from "../constants";
 
 const initialState = {
   financialRooms: {},
+  expenses: {},
   statisticalBill: {},
   waterElectricalBills: {},
   detailedWaterElectricalBill: {},
@@ -26,6 +27,7 @@ export default function reducer(state = initialState, actions) {
     case types.GET_LIST_WATER_ELECTRICAL_INDEX_API:
     case types.GET_DETAILED_WATER_ELECTRICAL_INDEX_API:
     case types.GET_STATISTICAL_BILL_API:
+    case types.GET_EXPENSES_API:
       return {
         ...state,
         loading: true,
@@ -35,6 +37,12 @@ export default function reducer(state = initialState, actions) {
       return {
         ...state,
         financialRooms: actions.payload,
+        loading: false,
+      };
+    case types.GET_EXPENSES_API_SUCCEED:
+      return {
+        ...state,
+        expenses: actions.payload,
         loading: false,
       };
     case types.GET_WATER_ELECTRICAL_UNIT_PRICE_API_SUCCEED:
@@ -74,6 +82,7 @@ export default function reducer(state = initialState, actions) {
         loading: false,
       };
     case types.GET_FINANCIAL_API_FAIL:
+    case types.GET_EXPENSES_API_FAIL:
     case types.GET_STATISTICAL_BILL_API_FAIL:
     case types.GET_WATER_ELECTRICAL_UNIT_PRICE_API_FAIL:
     case types.UPDATE_WATER_ELECTRICAL_BILL_API_FAIL:

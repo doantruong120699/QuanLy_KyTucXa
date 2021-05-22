@@ -8,6 +8,7 @@ import ManageUser from "./containers/ManageUser";
 import Financial from "./containers/Financial";
 import Account from "./containers/Account";
 import * as ROUTER from "./utilities/constants/router";
+import Profile from "./containers/profile/Profile";
 
 function App() {
   return (
@@ -35,6 +36,11 @@ function App() {
         <Route
           path={ROUTER.ROUTE_ACCOUNT}
           component={withAuth(Account)}
+          exact
+        />
+        <Route
+          path={ROUTER.ROUTE_MY_PROFILE}
+          component={withAuth(Profile)}
           exact
         />
       </Switch>

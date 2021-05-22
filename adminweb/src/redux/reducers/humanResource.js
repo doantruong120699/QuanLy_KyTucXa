@@ -4,7 +4,7 @@ const initialState = {
   listRooms: {},
   currentRoom: {},
   resgistrations: {},
-  employeeList: {},
+  employeeList: [],
   schedules: {},
   currentRegistration: {},
   error: {},
@@ -21,6 +21,7 @@ export default function reducer(state = initialState, actions) {
     case types.ACCEPT_REGISTRATION_API:
     case types.ADD_DAILY_SCHEDULE_API:
     case types.GET_ROOMS_API:
+    case types.DELETE_STUDENT_IN_ROOM_API:
       return {
         ...state,
         loading: true,
@@ -63,6 +64,8 @@ export default function reducer(state = initialState, actions) {
         loading: false,
       };
     case types.GET_LIST_REGISTRATION_API_FAIL:
+    case types.DELETE_STUDENT_IN_ROOM_API_FAIL:
+    case types.DELETE_STUDENT_IN_ROOM_API_SUCCEED:
     case types.GET_LIST_EMPLOYEE_API_FAIL:
     case types.GET_SCHEDULE_API_FAIL:
     case types.GET_ROOM_DETAILS_API_FAIL:

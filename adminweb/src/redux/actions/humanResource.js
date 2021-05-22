@@ -205,14 +205,17 @@ export async function getEmployee(resolve = () => {}) {
     type: types.GET_LIST_EMPLOYEE_API,
   });
   try {
-    const response = await fetch(`${REACT_APP_BASE_API}staffs/get-all-staff/`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
+    const response = await fetch(
+      `${REACT_APP_BASE_API}staffs/list-all-staff/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
     const data = await response.json();
     resolve(data);
     store.dispatch({
@@ -223,6 +226,36 @@ export async function getEmployee(resolve = () => {}) {
     store.dispatch({
       payload: error,
       type: types.GET_LIST_EMPLOYEE_API_FAIL,
+    });
+  }
+}
+
+export async function deleteStudentInRoom(id, resolve = () => {}) {
+  store.dispatch({
+    type: types.DELETE_STUDENT_IN_ROOM_API,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}delete-user-room/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    resolve(data);
+    store.dispatch({
+      payload: data,
+      type: types.DELETE_STUDENT_IN_ROOM_API_FAIL,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.DELETE_STUDENT_IN_ROOM_API_SUCCEED,
     });
   }
 }

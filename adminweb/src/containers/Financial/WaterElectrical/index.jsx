@@ -15,115 +15,6 @@ import "./styles.css";
 import { getFinancial, getStatistical } from "../../../redux/actions/financial";
 import { month as MONTH } from "../../../utilities/constants/titles";
 
-function CircularProgressWithLabel(props) {
-  return (
-    <Box
-      id={1}
-      position="relative"
-      display="inline-flex"
-      paddingTop="20px"
-      style={{ cursor: "pointer", transformOrigin: "0 0 0" }}
-      onClick={props.onClick}
-    >
-      <Box
-        position="relative"
-        display="inline-flex"
-        boxShadow={2}
-        height={450}
-        width={300}
-        justifyContent="center"
-        marginRight={"20px"}
-        marginBottom={"20px"}
-        className="Box-component"
-      >
-        <Box
-          top={0}
-          left={0}
-          bottom={0}
-          right={0}
-          position="absolute"
-          display="flex"
-          justifyContent="center"
-        >
-          <Typography
-            variant="h3"
-            component="div"
-            color="textSecondary"
-            style={{ paddingTop: "20px" }}
-          >
-            {`${props.paid}/${props.total}`}
-          </Typography>
-        </Box>
-        <Box
-          top={0}
-          left={0}
-          bottom={0}
-          right={0}
-          position="absolute"
-          display="flex"
-          justifyContent="center"
-        >
-          <Typography
-            variant="h6"
-            component="div"
-            color="textSecondary"
-            style={{ paddingTop: "80px" }}
-          >
-            Còn thiếu {props.total - props.paid} phòng
-          </Typography>
-        </Box>
-        <CircularProgress
-          variant="determinate"
-          color={"primary"}
-          size={150}
-          style={{
-            color: "olivedrab",
-            marginTop: "130px",
-            position: "absolute",
-          }}
-          value={100}
-        />
-        <CircularProgress
-          variant="determinate"
-          color={"primary"}
-          size={150}
-          style={{ color: "maroon", marginTop: "130px" }}
-          value={props.percentage}
-        />
-
-        <Box
-          top={0}
-          left={0}
-          bottom={0}
-          right={0}
-          position="absolute"
-          display="flex"
-          justifyContent="center"
-        >
-          <Typography
-            variant="h5"
-            component="div"
-            color="textSecondary"
-            style={{
-              paddingTop: "190px",
-              paddingLeft: "20px",
-              fontSize: "30px",
-              paddingRight: "15px",
-            }}
-          >
-            {props.percentage}%
-          </Typography>
-        </Box>
-        <Box position="absolute" bottom={5}>
-          <Typography variant="h3" component="div" color="textSecondary">
-            {props.name}
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
-  );
-}
-
 export default function WaterElectrical() {
   const current = new Date();
 
@@ -146,17 +37,15 @@ export default function WaterElectrical() {
 
   useEffect(() => {
     const params = queryString.stringify(time);
-    console.log(params);
     getStatistical(params, (output) => {
       if (output) {
-        console.log(output);
         setData(output);
+        setIsShowTable(false);
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
-  const handleClickBox = (areaSlug, areaname) => {
+  const handleClickBox = (areaname, areaSlug) => {
     const params = {
       year: time.year,
       month: time.month,
@@ -165,7 +54,6 @@ export default function WaterElectrical() {
 
     getFinancial(queryString.stringify(params), (output) => {
       if (output) {
-        console.log(output);
         setTableData(output);
       }
     });
@@ -280,7 +168,7 @@ export default function WaterElectrical() {
       {data && (
         <Box paddingRight={15} style={{ width: "100%" }}>
           <div className="col col-full">
-            <div className="col col-half">
+            <div className="col col-third">
               <Typography>Lựa chọn tháng</Typography>
               <Select
                 className="week-select"
@@ -289,7 +177,7 @@ export default function WaterElectrical() {
                 onChange={(params) => handleTimeChange(params, "month")}
               />
             </div>
-            <div className="col col-half">
+            <div className="col col-third">
               <Typography>Lựa chọn năm</Typography>
               <Select
                 className="week-select"
@@ -299,9 +187,9 @@ export default function WaterElectrical() {
               />
             </div>
           </div>
-          <div className="col col-full">
+          <div className="col col-half">
             <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
-              <Box style={{ display: "flex", justifyContent: "space-between" }}>
+              <Box>
                 {data.map((n, index) => {
                   return (
                     <CircularProgressWithLabel
@@ -312,7 +200,7 @@ export default function WaterElectrical() {
                       total={n.total}
                       percentage={Number(((n.paid / n.total) * 100).toFixed(2))}
                       onClick={() => {
-                        handleClickBox(n.name);
+                        handleClickBox(n.name, n.slug);
                       }}
                     />
                   );
@@ -364,5 +252,114 @@ export default function WaterElectrical() {
         </Box>
       )}
     </div>
+  );
+}
+
+function CircularProgressWithLabel(props) {
+  return (
+    <Box
+      id={1}
+      position="relative"
+      display="inline-flex"
+      paddingTop="20px"
+      style={{ cursor: "pointer", transformOrigin: "0 0 0" }}
+      onClick={props.onClick}
+    >
+      <Box
+        position="relative"
+        display="inline-flex"
+        boxShadow={2}
+        height={350}
+        width={200}
+        justifyContent="center"
+        marginRight={"20px"}
+        marginBottom={"20px"}
+        className="Box-component"
+      >
+        <Box
+          top={0}
+          left={0}
+          bottom={0}
+          right={0}
+          position="absolute"
+          display="flex"
+          justifyContent="center"
+        >
+          <Typography
+            variant="h3"
+            component="div"
+            color="textSecondary"
+            style={{ paddingTop: "20px" }}
+          >
+            {`${props.paid}/${props.total}`}
+          </Typography>
+        </Box>
+        <Box
+          top={0}
+          left={0}
+          bottom={0}
+          right={0}
+          position="absolute"
+          display="flex"
+          justifyContent="center"
+        >
+          <Typography
+            variant="h6"
+            component="div"
+            color="textSecondary"
+            style={{ paddingTop: "80px" }}
+          >
+            Còn thiếu {props.total - props.paid} phòng
+          </Typography>
+        </Box>
+        <CircularProgress
+          variant="determinate"
+          color={"primary"}
+          size={150}
+          style={{
+            color: "olivedrab",
+            marginTop: "130px",
+            position: "absolute",
+          }}
+          value={100}
+        />
+        <CircularProgress
+          variant="determinate"
+          color={"primary"}
+          size={150}
+          style={{ color: "maroon", marginTop: "130px" }}
+          value={props.percentage}
+        />
+
+        <Box
+          top={0}
+          left={0}
+          bottom={0}
+          right={0}
+          position="absolute"
+          display="flex"
+          justifyContent="center"
+        >
+          <Typography
+            variant="h5"
+            component="div"
+            color="textSecondary"
+            style={{
+              paddingTop: "190px",
+              paddingLeft: "20px",
+              fontSize: "18px",
+              paddingRight: "15px",
+            }}
+          >
+            {props.percentage}%
+          </Typography>
+        </Box>
+        <Box position="absolute" bottom={5}>
+          <Typography variant="h4" component="div" color="textSecondary">
+            {props.name}
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
   );
 }

@@ -12,14 +12,14 @@ import "react-datepicker/dist/react-datepicker.css";
 
 export default function Financial() {
   return (
-    <div style={{ fontSize: "30px" }}>
+    <div>
       <Tabs>
-        <TabList style={{ borderBottom: "none", marginBottom: "20px" }}>
+        <TabList>
           <Tab>
-            <span style={{ fontSize: "20px" }}>Thu Chi</span>
+            <span>Thu Chi</span>
           </Tab>
           <Tab>
-            <span style={{ fontSize: "20px" }}>Tiền Điện Nước</span>
+            <span>Tiền Điện Nước</span>
           </Tab>
         </TabList>
         <TabPanel>

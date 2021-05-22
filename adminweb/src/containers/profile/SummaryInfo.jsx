@@ -1,31 +1,21 @@
 import React, { useState } from "react";
-import Button from "../common/Button";
-import EditEmployeeProfile from "./EditEmployeeProfile";
+import Button from "../../components/common/Button";
+import EditProfile from "./EditProfile";
 import * as AlertMessage from "../../utilities/constants/AlertMessage";
-import { changePass } from "../../redux/actions/changePass";
 import validate from "../../utilities/regex";
 import ChangePass from "./ChangePass";
-const SummaryInfo = (props) => {
-  const { dataRender, isEmployee } = props;
+import { getFormResetPass } from "../../utilities/constants/dataRender/password";
+import moment from "moment";
 
-  const [errorState, setError] = useState({
-    curPass: {
-      isHidden: true,
-      isInputValid: true,
-      value: "",
-      errorMessage: "",
-    },
-    newPass: {
-      isHidden: true,
-      isInputValid: true,
-      value: "",
-      errorMessage: "",
-    },
-  });
+const SummaryInfo = (props) => {
+  const { dataRender, updateOrigin, updateUserProfile, changeUserPassword } =
+    props;
+
+  const [errorState, setError] = useState(getFormResetPass());
 
   const validPasswordInput = (checkingValue) => {
     const isValidPass = validate.password(checkingValue);
-    if (isValidPass === null) {
+    if (!isValidPass) {
       return {
         isInputValid: false,
         isErrorHidden: false,
@@ -56,33 +46,13 @@ const SummaryInfo = (props) => {
 
     if (curPassError.isInputValid && newPassError.isInputValid) {
       const data = {
-        email: dataRender.email.value,
-        password: errorState.newPass.value,
+        new_password: errorState.newPass.value,
         old_password: errorState.curPass.value,
         confirm_password: errorState.newPass.value,
       };
-      var token = localStorage.getItem("token");
-      changePass(data, token, (output) => {
-        if (output) {
-          closeChangePassModal();
-        } else {
-          const curPassState = { ...errorState.newPass };
-          curPassState.isInputValid = false;
-          curPassState.isHidden = false;
-          curPassState.errorMessage = AlertMessage.PASSWORD_DIFFERENT;
 
-          const newPassState = { ...errorState.newPass };
-          newPassState.isInputValid = false;
-          newPassState.isHidden = true;
-          newPassState.errorMessage = newPassError.errorMessage;
-
-          setError({
-            ...errorState,
-            curPass: curPassState,
-            newPass: newPassState,
-          });
-        }
-      });
+      closeChangePassModal();
+      changeUserPassword(data);
     }
 
     const curPassState = { ...errorState.curPass };
@@ -103,30 +73,18 @@ const SummaryInfo = (props) => {
   };
 
   const [openChangePass, setOpenChangePass] = useState(false);
-  const closeChangePassModal = () => {
-    setError({
-      curPass: {
-        isHidden: true,
-        isInputValid: true,
-        value: "",
-        errorMessage: "",
-      },
-      newPass: {
-        isHidden: true,
-        isInputValid: true,
-        value: "",
-        errorMessage: "",
-      },
-    });
 
+  const closeChangePassModal = () => {
+    setError(getFormResetPass());
     setOpenChangePass(false);
   };
+
   const openChangePassModal = () => setOpenChangePass(true);
 
   const [openEdit, setOpenEdit] = useState(false);
-  const closeEditModal = () => {
-    setOpenEdit(false);
-  };
+
+  const closeEditModal = () => setOpenEdit(false);
+
   const openEditModal = () => setOpenEdit(true);
 
   return (
@@ -134,11 +92,14 @@ const SummaryInfo = (props) => {
       <div className="col col-full justify-content-sb ml-8">
         <div>
           <span className="text-is-purple-gradient style-profile-name">
-            {dataRender.firstName.value}{" "}
+            {dataRender.firstName.value} {dataRender.lastName.value}
           </span>
-          <span>{dataRender.username.value}</span>
         </div>
-        <i className="fi-rr-edit" onClick={openEditModal}></i>
+        <i
+          className="fi-rr-edit"
+          style={{ cursor: "pointer" }}
+          onClick={openEditModal}
+        ></i>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-heart"></i>
@@ -154,7 +115,7 @@ const SummaryInfo = (props) => {
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-bold"></i>
-        <span>{dataRender.birthday.value}</span>
+        <span>{moment(dataRender.birthday.value).format("DD/MM/YYYY")}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-smartphone"></i>
@@ -162,7 +123,7 @@ const SummaryInfo = (props) => {
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-fingerprint"></i>
-        <span>{dataRender.phone.value}</span>
+        <span>{dataRender.identification.value}</span>
       </div>
       <div className="col col-third style-profile-changepass-btn">
         <Button
@@ -178,12 +139,13 @@ const SummaryInfo = (props) => {
           handleInput={handleInput}
           savePass={savePass}
         />
-        <EditEmployeeProfile
+        <EditProfile
           open={openEdit}
           onClose={closeEditModal}
           handleInput={handleInput}
-          isEmployee={isEmployee}
           dataRender={dataRender}
+          updateOrigin={updateOrigin}
+          updateUserProfile={updateUserProfile}
         />
       </div>
     </div>

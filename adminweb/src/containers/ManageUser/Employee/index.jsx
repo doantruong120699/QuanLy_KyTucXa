@@ -5,12 +5,36 @@ import moment from "moment";
 import { Button, Typography } from "@material-ui/core";
 import SaveIcon from "@material-ui/icons/Save";
 import Input from "@material-ui/core/Input";
-import { getEmployee, getSchedule } from "../../../redux/actions/humanResource";
-import { shiftTime } from "../../../utilities/constants/titles";
+import {
+  addDailySchedule,
+  getEmployee,
+  getSchedule,
+} from "../../../redux/actions/humanResource";
+import {
+  shiftTime,
+  week as weekDate,
+  typeOption,
+} from "../../../utilities/constants/titles";
+import { getTimeSheetRender } from "../../../utilities/constants/dataRender/humanResource";
+import querystring from "querystring";
 
 const Employee = () => {
-  var week = [];
+  const current = new Date();
+
   var currentWeek = moment().format("w") - 1;
+
+  const [time, setTime] = useState({
+    week: currentWeek,
+    year: current.getFullYear(),
+  });
+
+  const [initData, setInitData] = useState();
+
+  const [disable, setDisable] = useState(true);
+
+  const [employeeOption, setEmployeeOption] = useState();
+
+  var week = [];
 
   for (var i = 1; i <= currentWeek; i++) {
     week.push({
@@ -22,92 +46,108 @@ const Employee = () => {
     });
   }
 
-  const [isEdit, setIsEdit] = useState(false);
-  const [selectedWeek, setSelectedWeek] = useState(currentWeek);
-  const [initData, setInitData] = useState();
-  const [putData, setPutData] = useState([]);
-  const [employeeOption, setEmployeeOption] = useState();
+  const year = [];
+
+  for (var j = current.getFullYear(); j > current.getFullYear() - 5; j--) {
+    year.push({ value: j, label: j.toString() });
+  }
 
   useEffect(() => {
-    getSchedule(selectedWeek, (output) => {
+    const params = querystring.stringify(time);
+    getSchedule(params, (output) => {
       if (output) {
-        const data = output.map((value) => {
-          return {
-            title: value.title,
-            content: value.content,
-            shift: value.shift.id,
-            staff: value.staff.username,
-          };
-        });
+        const data = getTimeSheetRender(output, shiftTime.length);
         setInitData(data);
       }
     });
 
     getEmployee((output) => {
       if (output) {
-        const data = output.results.map((value) => {
+        const data = output.map((value) => {
           return {
-            staff: value.username,
+            value: value.id,
             label: value.first_name + " " + value.last_name,
           };
         });
         setEmployeeOption(data);
       }
     });
-  }, [selectedWeek]);
+  }, [time]);
 
-  const renderTableHeader = () => {
-    return (
-      <thead>
-        <tr>
-          <th style={{ width: "9%" }}></th>
-          <th>Chủ nhật</th>
-          <th>Thứ hai</th>
-          <th>Thứ ba</th>
-          <th>Thứ tư</th>
-          <th>Thứ năm</th>
-          <th>Thứ sáu</th>
-          <th>Thứ bảy</th>
-        </tr>
-      </thead>
-    );
+  const handleSelectionChange = (event, params, shiftId) => {
+    let data = [...initData];
+    let temp = data.find((element) => element.shift === shiftId);
+    var i = data.indexOf(temp);
+    let changedData = { ...temp, [event.name]: params.value };
+    data[i] = changedData;
+    setInitData(data);
+    setDisable(false);
+  };
+
+  const handleTypeChange = (event, shiftId) => {
+    const { name, value } = event.target;
+    let data = [...initData];
+    let temp = data.find((element) => element.shift === shiftId);
+    var i = data.indexOf(temp);
+    let changedData = { ...temp, [name]: value };
+    data[i] = changedData;
+    setInitData(data);
+    setDisable(false);
   };
 
   const renderTableData = () => {
     return (
       <tbody>
-        {shiftTime.map((value) => {
+        {shiftTime.map((value, index) => {
           return (
-            <tr>
+            <tr key={index}>
               <td>{value.label}</td>
-              <td>
-                <Select
-                  options={employeeOption}
-                  value={
-                    employeeOption.find(
-                      (index) =>
-                        index.staff ===
-                        initData.find((i) => i.shift === 1)?.staff
-                    ) || ""
-                  }
-                />
-                <Select
-                  options={typeOption}
-                  placeholder="Loại công việc"
-                  value={
-                    typeOption.find(
-                      (index) =>
-                        index.label ===
-                        initData.find((i) => i.shift === 1)?.title
-                    ) || ""
-                  }
-                />
-                <Input
-                  id="01"
-                  placeholder="Ghi chú"
-                  value={initData.find((i) => i.shift === 1)?.content || ""}
-                />
-              </td>
+              {initData
+                .filter((data) => data.shift % shiftTime.length === value.value)
+                .map((data, id) => (
+                  <td key={id}>
+                    <Select
+                      name="staff"
+                      className="mb-8"
+                      options={employeeOption}
+                      value={
+                        employeeOption.find(
+                          (index) =>
+                            index.value ===
+                            initData.find((i) => i.shift === data.shift)?.staff
+                        ) || ""
+                      }
+                      onChange={(params, event) =>
+                        handleSelectionChange(event, params, data.shift)
+                      }
+                    />
+                    <Select
+                      options={typeOption}
+                      className="mb-8"
+                      placeholder="Loại công việc"
+                      name="title"
+                      value={
+                        typeOption.find(
+                          (index) =>
+                            index.label ===
+                            initData.find((i) => i.shift === data.shift)?.title
+                        ) || ""
+                      }
+                      onChange={(params, event) =>
+                        handleSelectionChange(event, params, data.shift)
+                      }
+                    />
+                    <Input
+                      placeholder="Ghi chú"
+                      name="content"
+                      value={
+                        initData.find((i) => i.shift === data.shift)?.content ||
+                        ""
+                      }
+                      onChange={(event) => handleTypeChange(event, data.shift)}
+                    />
+                  </td>
+                ))}
             </tr>
           );
         })}
@@ -115,42 +155,60 @@ const Employee = () => {
     );
   };
 
-  const typeOption = [
-    {
-      value: 1,
-      label: "Ca trực",
-    },
-    {
-      value: 2,
-      label: "Ca làm",
-    },
-  ];
-
-  const handleWeekChange = (params) => {
-    setSelectedWeek(params.value);
+  const handleTimeChange = (params, name) => {
+    setTime({ ...time, [name]: params.value });
   };
+
   const handleSaveSchedule = () => {
-    console.log(putData);
+    let shifts = initData.filter((element) => element.staff && element.title);
+    const data = {
+      week: time.week,
+      year: time.year,
+      schedule: shifts,
+    };
+    addDailySchedule(data, (output) => {
+      if (output) {
+        console.log(output);
+        setDisable(true);
+      }
+    });
   };
 
   return (
     <div>
       {initData && employeeOption && (
         <div>
-          {console.log(initData)}
-          <div>
-            <Typography>Lựa chọn tuần làm việc</Typography>
-            <Select
-              className="week-select"
-              options={week}
-              value={week.find((index) => index.value === selectedWeek)}
-              onChange={handleWeekChange}
-            />
+          <div className="col col-full">
+            <div className="col col-third">
+              <Typography>Lựa chọn tuần</Typography>
+              <Select
+                className="week-select"
+                options={week}
+                value={week.find((index) => index.value === time.week)}
+                onChange={(params) => handleTimeChange(params, "week")}
+              />
+            </div>
+            <div className="col col-third">
+              <Typography>Lựa chọn năm</Typography>
+              <Select
+                className="week-select"
+                options={year}
+                value={year.find((index) => index.value === time.year)}
+                onChange={(params) => handleTimeChange(params, "year")}
+              />
+            </div>
           </div>
           <div>
             <h1 id="title">Bảng phân công công việc</h1>
             <table id="students">
-              {renderTableHeader()}
+              <thead>
+                <tr>
+                  <th style={{ width: "9%" }}></th>
+                  {weekDate.map((date, index) => (
+                    <th key={index}>{date.label}</th>
+                  ))}
+                </tr>
+              </thead>
               {renderTableData()}
             </table>
           </div>
@@ -162,7 +220,7 @@ const Employee = () => {
               color="primary"
               onClick={handleSaveSchedule}
               startIcon={<SaveIcon></SaveIcon>}
-              disabled={!isEdit}
+              disabled={disable}
             >
               Lưu lịch làm
             </Button>

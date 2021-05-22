@@ -306,10 +306,12 @@
   color: #fff;
 }
 .style-background-container {
-  height: 100vh;
+  height: 200vh; /* You must set a specified height */
   padding: 20px;
-  background: url('../../assets/images/backgrounds/background.jpg') center/cover
-    repeat-y;
+  background-image: url(../../assets/images/backgrounds/background.jpg);
+  background-repeat: repeat;
+  background-position: center; /* Center the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
 }
 .style-img {
   border-radius: 5px;

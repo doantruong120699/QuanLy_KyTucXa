@@ -8,7 +8,7 @@ const withAuth = (Component) => (props) => {
       {getAuth() && getAuth().jti ? (
         <div>
           <AdminNavbar />
-          <div className="style-content" style={{ marginLeft: "15%" }}>
+          <div className="style-content" >
             <Component {...props} />
           </div>
         </div>

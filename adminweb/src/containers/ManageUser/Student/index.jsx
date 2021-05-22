@@ -19,6 +19,7 @@ import Pagination from "../../../components/common/Pagination";
 
 export default function Student() {
   const [dataArea, setDataArea] = useState();
+
   const [peopleInRoom, setPeopleInRoom] = useState();
 
   const [pagination, setPagination] = useState({
@@ -110,9 +111,12 @@ export default function Student() {
     setIsModalVisible(true);
   };
 
-  const handleDeletePeople = (params) => {};
+  const handleDeletePeople = (params) => {
+    console.log(params);
+  };
   const convertDataForTable = (data) => {
     return data.list_user.map((n) => ({
+      publicId: n.public_id,
       name: n.last_name + " " + n.first_name,
       account: n.username,
       activeDate: n.birthday,
@@ -147,12 +151,12 @@ export default function Student() {
       name: "",
       label: "",
       options: {
-        customBodyRender: (value) => {
+        customBodyRender: () => {
           return (
             <Button
               variant="contained"
               color="secondary"
-              onClick={(params) => handleDeletePeople}
+              onClick={handleDeletePeople}
               style={{ marginLeft: "20px" }}
             >
               Xoá
@@ -175,12 +179,9 @@ export default function Student() {
     customHeadRender: () => {
       return null;
     },
-    onRowClick: (params, rowMeta) => {
-      console.log("params", params);
-      console.log("event", rowMeta);
-    },
+    onRowClick: (params, rowMeta) => {},
   };
-  const dataNotification = [
+  const registrationData = [
     {
       id: 1,
       request: "requestRoom@demailam.com",
@@ -239,7 +240,7 @@ export default function Student() {
             <Button
               variant="contained"
               color="primary"
-              onClick={(params) => handleClickAddPeople}
+              onClick={handleClickAddPeople}
               style={{ marginLeft: "20px" }}
             >
               Xác nhận
@@ -256,11 +257,11 @@ export default function Student() {
     setIsModalNotiVisible(true);
   };
   return (
-    <div className="style-background-container">
+    <div>
       <Box>
         <Box
           className={"notification"}
-          display={dataNotification.length > 0 ? "block" : "none"}
+          display={registrationData.length > 0 ? "block" : "none"}
           boxShadow={1}
           borderRadius={5}
           marginBottom={5}
@@ -272,9 +273,9 @@ export default function Student() {
           onClick={handleOpenNotiModal}
         >
           <NotificationsIcon />
-          <span
-            style={{ marginLeft: "5px" }}
-          >{`Có ${dataNotification.length} yêu cầu mới `}</span>
+          <span style={{ marginLeft: "5px" }}>
+            Có {registrationData.length} yêu cầu mới
+          </span>
         </Box>
       </Box>
       <ReactModal
@@ -286,7 +287,7 @@ export default function Student() {
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
               title={"Yêu cầu vào phòng"}
-              data={dataNotification}
+              data={registrationData}
               columns={columnsNoti}
               options={options}
             />
