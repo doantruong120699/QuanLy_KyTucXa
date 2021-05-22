@@ -107,7 +107,8 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
             'end_at', 
             'payment_method', 
             'created_at',
-            'profile'
+            'profile',
+            'is_expired',
         ] 
 
 class ListRequestSerializer(serializers.Serializer):
@@ -611,3 +612,4 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
                 if len(user) > 0:
                     raise serializers.ValidationError({'email': 'Email is exist.'}) 
         return data   
+

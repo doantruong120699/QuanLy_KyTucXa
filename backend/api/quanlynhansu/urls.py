@@ -11,7 +11,9 @@ from .views import *
 list_registration_room = ContractRegistationViewSet.as_view({
     'get': 'list',
 })
-
+list_contract_filter = ContractRegistationViewSet.as_view({
+    'get': 'list_contract_filter'
+})
 detail_registration_room = ContractRegistationViewSet.as_view({
     'get': 'retrieve',
 })
@@ -90,6 +92,8 @@ urlpatterns = [
     path('deny-registrations/', deny_list_request, name = 'deny_list_request'),
     # ========== Delete User in room
     path('delete-user-room/<str:public_id>/', delete_user_in_room, name = 'delete_user_in_room'),
+    # ========== Lisst contract filter
+    path('list-contract/', list_contract_filter, name = 'list_contract_filter'),
     # ========== Schedule ========
     path('schedules/', schedule, name = 'schedule'),
     # path('schedules/<str:public_id>/', update_schedule, name = 'update_schedule'),

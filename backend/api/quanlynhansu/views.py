@@ -207,7 +207,7 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             pass
         return Response({'detail': 'Error!'}, status=status.HTTP_400_BAD_REQUEST)
          
-    # ==== Deny List Request ====
+    # ==== delete user in room ====
     @action(methods=["DELETE"], detail=False, url_path="delete_user_in_room", url_name="delete_user_in_room")
     def delete_user_in_room(self, request, *args, **kwargs):
         try:
@@ -223,6 +223,33 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             print(e)
         return Response({'detail': 'Sinh Vien not Found!'}, status=status.HTTP_404_NOT_FOUND)
 
+    # ==== List contract =======
+    @action(methods=["GET"], detail=False, url_path="list_contract_filter", url_name="list_contract_filter")
+    def list_contract_filter(self, request, *args, **kwargs):
+        try:
+            list_contract_room = Contract.objects.all()
+            
+            is_expired = request.GET.get('is_expired', None)
+            if is_expired != None:
+                list_contract_room = list_contract_room.filter(is_expired=is_expired)
+                            
+            id_user = request.GET.get('id_user', None)
+            if id_user != None:
+                list_contract_room = list_contract_room.filter(profile__public_id=id_user)
+            room = request.GET.get('room', None)
+            if room != None:
+                list_contract_room = list_contract_room.filter(Q(room__name=id_user) | Q(room__slug=id_user))
+            
+            page = self.paginate_queryset(list_contract_room)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        except Exception as e:
+            print(e)
+        return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+            
 class DailyScheduleViewSet(viewsets.ModelViewSet):
     serializer_class = DailyScheduleSerializer
     permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
@@ -468,5 +495,6 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             print(e)
         return Response({'status': 'fail', 'notification' : 'Profile not found!'}, status=status.HTTP_404_NOT_FOUND)
 
-    
+# =====================================================
+
 
