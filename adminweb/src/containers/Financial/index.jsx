@@ -8,6 +8,7 @@ import "react-tabs/style/react-tabs.css";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import WaterElectrical from "./WaterElectrical";
 import Budget from "./Budget";
+import Contract from "./Contract";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function Financial() {
@@ -21,12 +22,18 @@ export default function Financial() {
           <Tab>
             <span>Tiền Điện Nước</span>
           </Tab>
+          <Tab>
+            <span style={{ fontSize: "20px" }}>Hoá đơn/ Hợp đồng</span>
+          </Tab>
         </TabList>
         <TabPanel>
           <Budget />
         </TabPanel>
         <TabPanel>
           <WaterElectrical />
+        </TabPanel>
+        <TabPanel>
+          <Contract />
         </TabPanel>
       </Tabs>
     </div>
