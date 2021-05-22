@@ -116,7 +116,7 @@ function CircularProgressWithLabel(props) {
 }
 
 export default function Overview() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     getUsedRoom((output) => {

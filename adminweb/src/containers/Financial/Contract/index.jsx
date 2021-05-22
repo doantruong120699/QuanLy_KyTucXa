@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
 import "./styles.css";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import * as ROUTER from "../../../utilities/constants/router";
+
 import Box from "@material-ui/core/Box";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
@@ -10,13 +11,17 @@ import Button from "@material-ui/core/Button";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import ReactModal from "react-modal";
 import AddBudget from "../Budget/AddBudget";
+import {useHistory } from "react-router-dom";
 
 export default function Budget() {
+  let history = useHistory();
+
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [selectedOption, setSelectedOption] = useState("bill");
+  const [selectedOption, setSelectedOption] = useState("contract");
   const dataContract = [
     {
+      public_id: "123abcde",
       room: {
         id: 3,
         name: "101",
@@ -40,6 +45,8 @@ export default function Budget() {
       is_expired: false,
     },
     {
+      public_id: "123abcdef",
+
       room: {
         id: 4,
         name: "102",
@@ -63,6 +70,8 @@ export default function Budget() {
       is_expired: true,
     },
     {
+      public_id: "123abcdefg",
+
       room: {
         id: 5,
         name: "103",
@@ -86,6 +95,8 @@ export default function Budget() {
       is_expired: false,
     },
     {
+      public_id: "123abcdegh",
+
       room: {
         id: 7,
         name: "105",
@@ -109,6 +120,8 @@ export default function Budget() {
       is_expired: false,
     },
     {
+      public_id: "123abcdeyij",
+
       room: {
         id: 3,
         name: "101",
@@ -222,6 +235,7 @@ export default function Budget() {
   const formatData = (data) => {
     return data.map((index) => {
       return {
+        contractId: index.public_id,
         roomId: index.room.id,
         roomName: index.room.name,
         studentName: `${index.profile.lastName} ${index.profile.firstName}`,
@@ -258,9 +272,17 @@ export default function Budget() {
     };
     return updatedRow;
   });
+  const handleRowClick = (params, rowMeta) => {
+    console.log("params", params, "meta", rowMeta);
+    
+    history.push(
+      `${ROUTER.ROUTE_CONTRACT_DETAIL}/${dataContract[rowMeta.rowIndex].public_id}`
+    );
+  };
   const options = {
     filterType: "textField",
     selectableRows: false,
+    onRowClick: handleRowClick,
   };
   const handleAddBudget = () => {
     setIsModalVisible(true);
@@ -299,7 +321,7 @@ export default function Budget() {
     });
   return (
     <div className="budget cmp">
-      <div style={{ marginBottom: "20px" }}>Bảng thu chi của kí túc xá</div>
+      <div style={{ marginBottom: "20px" }}>Hoá đơn điện nước</div>
       <div className="budget-date-picker" style={{}}>
         <span style={{ fontSize: "16px" }}>Từ: </span>
         <DatePicker
@@ -325,27 +347,27 @@ export default function Budget() {
         />
       </div>
       <span style={{ display: "flex" }}>
-        <div style={{ fontSize: "16px", marginTop: "20px" }}>
-          <input
-            type="radio"
-            value="bill"
-            checked={selectedOption === "bill"}
-            onChange={handleOptionChange}
-          />
-          Hoá đơn
+        <div style={{ fontSize: "16px", marginTop: "20px", width: "230px" }}>
           <input
             type="radio"
             value="contract"
             checked={selectedOption === "contract"}
             onChange={handleOptionChange}
-            style={{ marginLeft: "20px" }}
           />
           Hợp đồng
+          <input
+            type="radio"
+            value="bill"
+            checked={selectedOption === "bill"}
+            onChange={handleOptionChange}
+            style={{ marginLeft: "20px" }}
+          />
+          Hoá đơn
         </div>
         <Button
           startIcon={<AddBoxIcon />}
           style={{
-            marginLeft: "78%",
+            marginLeft: "75%",
             backgroundColor: "#005CC8",
             width: "100px",
             color: "white",
@@ -362,8 +384,10 @@ export default function Budget() {
         <Box component="div">
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
-              title={selectedOption === "in" ? "Bảng thu" : "Bảng chi"}
-              data={selectedOption === "in" ? gridBillData : gridContractData}
+              title={selectedOption === "contract" ? "Hoá đơn" : "Hợp đồng"}
+              data={
+                selectedOption === "contract" ? gridContractData : gridBillData
+              }
               columns={columns}
               options={options}
             />

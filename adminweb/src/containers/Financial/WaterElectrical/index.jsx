@@ -178,60 +178,52 @@ export default function WaterElectrical() {
             </div>
           </div>
           <div className="col col-half">
-            <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
-              <Box>
-                {data.map((n, index) => {
-                  return (
-                    <CircularProgressWithLabel
-                      key={index}
-                      name={n.name}
-                      value={10}
-                      paid={n.paid}
-                      total={n.total}
-                      percentage={Number(((n.paid / n.total) * 100).toFixed(2))}
-                      onClick={() => {
-                        handleClickBox(n.name, n.slug);
-                      }}
-                    />
-                  );
-                })}
-              </Box>
-            </Grow>
-          </div>
-          <Grow
-            in={isShowTable}
-            timeout={500}
-            style={{ transformOrigin: "0 0 0" }}
-          >
-            <div className="dataTable">
-              <div
-                style={{
-                  margin: "20px 0 20px 0",
-                  fontSize: "40px",
-                }}
-              >
-                {areaSelected}
-              </div>
-
-              {tableData && (
-                <div className="ag-theme-alpine grid">
-                  <AgGridReact
-                    animateRows
-                    enableColResize
-                    pagination={true}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    rowClassRules={rowClassRules}
-                    onCellClicked={handleCellClicked}
-                    getRowNodeId={(data) => data.name}
-                    onGridReady={onGridReady}
-                    rowData={tableData.room}
-                    paginationAutoPageSize={true}
+            <Box>
+              {data.map((n, index) => {
+                return (
+                  <CircularProgressWithLabel
+                    key={index}
+                    name={n.name}
+                    value={10}
+                    paid={n.paid}
+                    total={n.total}
+                    percentage={Number(((n.paid / n.total) * 100).toFixed(2))}
+                    onClick={() => {
+                      handleClickBox(n.name, n.slug);
+                    }}
                   />
-                </div>
-              )}
+                );
+              })}
+            </Box>
+          </div>
+          <div className="dataTable">
+            <div
+              style={{
+                margin: "20px 0 20px 0",
+                fontSize: "40px",
+              }}
+            >
+              {areaSelected}
             </div>
-          </Grow>
+
+            {tableData && (
+              <div className="ag-theme-alpine grid">
+                <AgGridReact
+                  animateRows
+                  enableColResize
+                  pagination={true}
+                  columnDefs={columnDefs}
+                  defaultColDef={defaultColDef}
+                  rowClassRules={rowClassRules}
+                  onCellClicked={handleCellClicked}
+                  getRowNodeId={(data) => data.name}
+                  onGridReady={onGridReady}
+                  rowData={tableData.room}
+                  paginationAutoPageSize={true}
+                />
+              </div>
+            )}
+          </div>
           <ReactModal
             isOpen={isModalVisible}
             onRequestClose={hideModal}

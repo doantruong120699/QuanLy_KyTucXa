@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import "./styles.css";
@@ -23,7 +23,7 @@ export default function Financial() {
             <span>Tiền Điện Nước</span>
           </Tab>
           <Tab>
-            <span style={{ fontSize: "20px" }}>Hoá đơn/ Hợp đồng</span>
+            <span>Hoá đơn/ Hợp đồng</span>
           </Tab>
         </TabList>
         <TabPanel>
