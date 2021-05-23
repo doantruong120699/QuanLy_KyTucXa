@@ -63,7 +63,9 @@ def get_profile_view(request):
                 contract = Contract.objects.filter(profile=queryset, is_expired=False, is_delete=False).first()
                 data['room']['name'] = contract.room.name
                 data['room']['slug'] = contract.room.slug
-            except:
+            except Exception as e:
+                print("====")
+                print(e)
                 pass
     
         groups = Group.objects.filter(user=request.user).all()

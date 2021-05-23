@@ -108,7 +108,7 @@ class Room(models.Model):
     status = models.CharField(choices=STATUS, max_length=10, null=True, blank=True)
 
     class Meta:
-        ordering = ('id',)
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -345,7 +345,10 @@ class Service(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True) 
-    price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    price = models.PositiveIntegerField(default=0, null=True, blank=True)
+    
+    def __str__(self):
+        return self.name + ' - ' + str(self.price)
     
 class TypeExpense(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
