@@ -10,7 +10,7 @@ import Avatar from "./Avatar";
 import SummaryInfo from "./SummaryInfo";
 import EmployeeInfo from "./EmployeeInfo";
 import { getAuth } from "../../utilities/helper";
-import { getHandledEmployeeDataRender } from "../../utilities/constants/dataRender/profile";
+import { getHandledEmployeeDataRender } from "../../utilities/constants/DataRender/profile";
 import { changePass } from "../../redux/actions/changePass";
 import Alertness from "../../components/common/Alertness";
 import * as ALERTMESSAGE from "../../utilities/constants/AlertMessage";

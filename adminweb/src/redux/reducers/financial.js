@@ -3,6 +3,7 @@ import * as types from "../constants";
 const initialState = {
   financialRooms: {},
   expenses: {},
+  revenues: {},
   statisticalBill: {},
   waterElectricalBills: {},
   detailedWaterElectricalBill: {},
@@ -16,6 +17,7 @@ const initialState = {
 export default function reducer(state = initialState, actions) {
   switch (actions.type) {
     case types.GET_FINANCIAL_API:
+    case types.GET_REVENUES_API:
     case types.GET_WATER_ELECTRICAL_UNIT_PRICE_API:
     case types.UPDATE_WATER_ELECTRICAL_BILL_API:
     case types.DELETE_WATER_ELECTRICAL_BILL_API:
@@ -81,7 +83,14 @@ export default function reducer(state = initialState, actions) {
         detailedWaterElectricalIndex: actions.payload,
         loading: false,
       };
+    case types.GET_REVENUES_API_SUCCEED:
+      return {
+        ...state,
+        revenues: actions.payload,
+        loading: false,
+      };
     case types.GET_FINANCIAL_API_FAIL:
+    case types.GET_REVENUES_API_FAIL:
     case types.GET_EXPENSES_API_FAIL:
     case types.GET_STATISTICAL_BILL_API_FAIL:
     case types.GET_WATER_ELECTRICAL_UNIT_PRICE_API_FAIL:

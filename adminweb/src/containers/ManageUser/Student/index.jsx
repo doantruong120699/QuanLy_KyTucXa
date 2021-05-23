@@ -13,7 +13,7 @@ import NotificationsIcon from "@material-ui/icons/Notifications";
 import "./styles.css";
 import ReactModal from "react-modal";
 import { getRoomDetails, getRooms } from "../../../redux/actions/humanResource";
-import { getRoom } from "../../../utilities/constants/dataRender/checkroom";
+import { getRoom } from "../../../utilities/constants/DataRender/checkroom";
 import queryString from "query-string";
 import Pagination from "../../../components/common/Pagination";
 
