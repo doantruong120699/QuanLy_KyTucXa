@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { makeStyles } from "@material-ui/core/styles";
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
 }));
-function ShowBill({ selectedMonth, selectedYear, area, room, onCancel }) {
+export default function ShowBill({ selectedMonth, selectedYear, area, room, onCancel }) {
   const classes = useStyles();
   console.log("Room", room.id);
   const lastWaterElectrical = {
@@ -215,4 +215,3 @@ function ShowBill({ selectedMonth, selectedYear, area, room, onCancel }) {
     </div>
   );
 }
-export default ShowBill;

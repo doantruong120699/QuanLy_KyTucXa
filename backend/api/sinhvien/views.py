@@ -34,8 +34,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
         return Profile.objects.filter(public_id__public_id=public_id).order_by('id')
 
     def list(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=sinhvien_group).order_by('id')
-
+        queryset = User.objects.filter(groups__name=sinhvien_group, user_profile__isnull=False).order_by('username')
         keyword = self.request.GET.get('keyword')
         if keyword and len(keyword) > 0:
             words = re.split(r"[-;,.\s]\s*", keyword)
@@ -88,6 +87,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Profile Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
+    # API thong ke
     @action(methods=["GET"], detail=False, url_path="dashboard", url_name="dashboard")
     def dashboard(self, request, *args, **kwargs):
         try:
