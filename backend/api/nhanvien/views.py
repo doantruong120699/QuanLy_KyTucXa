@@ -35,7 +35,7 @@ class NhanVienViewSet(viewsets.ModelViewSet):
         return Profile.objects.filter(public_id__public_id=public_id).order_by('id')
 
     def list(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=nhanvien_group).order_by('id')
+        queryset = User.objects.filter(groups__name=nhanvien_group, user_profile__isnull=False).order_by('id')
 
         keyword = self.request.GET.get('keyword')
         if keyword and len(keyword) > 0:
@@ -148,8 +148,7 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
             if _year == None or not _year.isnumeric():
                 year = d.year
             return (month, year)
-    
-    
+     
     def list(self, request, *args, **kwargs):
         week = request.GET.get('week', None)
         year = request.GET.get('year', None)
