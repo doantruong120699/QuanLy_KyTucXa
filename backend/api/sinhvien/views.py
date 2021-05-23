@@ -68,7 +68,8 @@ class SinhVienViewSet(viewsets.ModelViewSet):
                 contract = Contract.objects.filter(profile=queryset, is_expired=False, is_delete = False).first()
                 data['room']['name'] = contract.room.name
                 data['room']['slug'] = contract.room.slug
-            except:
+            except Exception as ee:
+                print(ee)
                 pass
 
             profile = {}
