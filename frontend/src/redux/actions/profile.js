@@ -85,13 +85,13 @@ export async function grade(resolve = () => {}) {
   }
 }
 
-export async function getSchedule(week, resolve = () => {}) {
+export async function getSchedule(params, resolve = () => {}) {
   store.dispatch({
     type: types.GET_MY_SCHEDULE_API,
   });
   try {
     const response = await fetch(
-      `${REACT_APP_BASE_API}daily-schedules/${week}/`,
+      `${REACT_APP_BASE_API}daily-schedules/?${params}`,
       {
         method: "GET",
         headers: {

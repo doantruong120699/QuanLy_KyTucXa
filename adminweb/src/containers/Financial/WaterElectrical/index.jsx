@@ -10,8 +10,6 @@ import Select from "react-select";
 import ReactModal from "react-modal";
 import DetailRoom from "./DetailRoom";
 import queryString from "querystring";
-import ShowBill from "./DetailRoom";
-import moment from "moment";
 import "./styles.css";
 import { getFinancial, getStatistical } from "../../../redux/actions/financial";
 import { month as MONTH } from "../../../utilities/constants/titles";
@@ -121,7 +119,6 @@ export default function WaterElectrical() {
   };
   const handleCellClicked = (params) => {
     if (params.colDef.field === "details") {
-      console.log("Xem chi tiet ne!", params);
       setIsModalVisible(true);
       setRoomSelected(params.data.name);
     }
@@ -136,7 +133,7 @@ export default function WaterElectrical() {
   };
   const defaultColDef = {
     flex: 1,
-    minWidth: 150,
+    minWidth: 200,
 
     filter: true,
     sortable: true,
@@ -154,9 +151,9 @@ export default function WaterElectrical() {
     },
   };
   return (
-    <div>
+    <div className="col col-full pl-48">
       {data && (
-        <Box paddingRight={15} style={{ width: "100%" }}>
+        <Box style={{ width: "100%" }}>
           <div className="col col-full">
             <div className="col col-third">
               <Typography>Lựa chọn tháng</Typography>
@@ -177,7 +174,7 @@ export default function WaterElectrical() {
               />
             </div>
           </div>
-          <div className="col col-half">
+          <div className="col col-half mt-12">
             <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
               <Box>
                 {data.map((n, index) => {
@@ -206,8 +203,8 @@ export default function WaterElectrical() {
             <div className="dataTable">
               <div
                 style={{
-                  margin: "20px 0 20px 0",
-                  fontSize: "40px",
+                  margin: "0 0 8px 0",
+                  fontSize: "20px",
                 }}
               >
                 {areaSelected}

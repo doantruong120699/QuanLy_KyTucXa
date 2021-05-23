@@ -298,7 +298,7 @@ export default function Budget() {
       },
     });
   return (
-    <div className="budget cmp">
+    <div className="col col-full pl-48">
       <div style={{ marginBottom: "20px" }}>Bảng thu chi của kí túc xá</div>
       <div className="budget-date-picker" style={{}}>
         <span style={{ fontSize: "16px" }}>Từ: </span>

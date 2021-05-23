@@ -2,9 +2,6 @@
 @import './styles/common/InputField.css';
 @import './styles/common/FormError.css';
 @import './styles/common/User.css';
-@import './styles/layout/Footer.css';
-@import './styles/layout/Header.css';
-@import './styles/layout/SideBar.css';
 @import './styles/dashboard/InfoContainer.css';
 @import './styles/dashboard/Notification.css';
 @import './styles/dashboard/Dashboard.css';
