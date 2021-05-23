@@ -8,9 +8,9 @@ import Box from "@material-ui/core/Box";
 import Grow from "@material-ui/core/Grow";
 import Select from "react-select";
 import ReactModal from "react-modal";
-import DetailRoom from "./DetailRoom";
+import DetailRoom from "./ShowBill";
 import queryString from "querystring";
-import ShowBill from "./DetailRoom";
+import ShowBill from "./ShowBill";
 import moment from "moment";
 import "./styles.css";
 import { getFinancial, getStatistical } from "../../../redux/actions/financial";
@@ -89,6 +89,7 @@ export default function WaterElectrical() {
         return `<span style='color:blue'>${param.value}</span>`;
       },
     },
+
     {
       field: "isPaid",
       headerName: "Trạng thái",
@@ -106,13 +107,11 @@ export default function WaterElectrical() {
       },
     },
     {
-      headerName: "",
-      field: "details",
-      cellStyle: { textAlign: "center", cursor: "pointer" },
-      resizeable: true,
-      filter: false,
-      cellRenderer: () => {
-        return "<span style='color:blue'>Xem chi tiết</span>";
+      field: "id",
+      filter: "agNumberColumnFilter",
+      cellStyle: {
+        fontSize: "20px",
+        textAlign: "center",
       },
     },
   ];
@@ -120,11 +119,13 @@ export default function WaterElectrical() {
     setIsModalVisible(false);
   };
   const handleCellClicked = (params) => {
-    if (params.colDef.field === "details") {
-      console.log("Xem chi tiet ne!", params);
-      setIsModalVisible(true);
-      setRoomSelected(params.data.name);
-    }
+    console.log("Xem chi tiet ne!", params);
+    console.log("Data", data, "tableData", tableData);
+    setIsModalVisible(true);
+    setRoomSelected(params.data.name);
+  };
+  const onCancel = () => {
+    setIsModalVisible(false);
   };
   const rowClassRules = {
     odd: function (params) {
@@ -137,7 +138,6 @@ export default function WaterElectrical() {
   const defaultColDef = {
     flex: 1,
     minWidth: 150,
-
     filter: true,
     sortable: true,
     floatingFilter: true,
@@ -154,47 +154,49 @@ export default function WaterElectrical() {
     },
   };
   return (
-    <div>
+    <div style={{ display: "flex" }}>
       {data && (
-        <Box paddingRight={15} style={{ width: "100%" }}>
-          <div className="col col-full">
-            <div className="col col-third">
-              <Typography>Lựa chọn tháng</Typography>
-              <Select
-                className="week-select"
-                options={month}
-                value={month.find((index) => index.value === time.month)}
-                onChange={(params) => handleTimeChange(params, "month")}
-              />
+        <Box paddingRight={15} style={{ width: "100%" }} display={"flex"}>
+          <div>
+            <div className="col col-full">
+              <div className="col col-third">
+                <Typography>Lựa chọn tháng</Typography>
+                <Select
+                  className="week-select"
+                  options={month}
+                  value={month.find((index) => index.value === time.month)}
+                  onChange={(params) => handleTimeChange(params, "month")}
+                />
+              </div>
+              <div className="col col-third">
+                <Typography>Lựa chọn năm</Typography>
+                <Select
+                  className="week-select"
+                  options={year}
+                  value={year.find((index) => index.value === time.year)}
+                  onChange={(params) => handleTimeChange(params, "year")}
+                />
+              </div>
             </div>
-            <div className="col col-third">
-              <Typography>Lựa chọn năm</Typography>
-              <Select
-                className="week-select"
-                options={year}
-                value={year.find((index) => index.value === time.year)}
-                onChange={(params) => handleTimeChange(params, "year")}
-              />
+            <div style={{width:'600px'}}>
+              <Box>
+                {data.map((n, index) => {
+                  return (
+                    <CircularProgressWithLabel
+                      key={index}
+                      name={n.name}
+                      value={10}
+                      paid={n.paid}
+                      total={n.total}
+                      percentage={Number(((n.paid / n.total) * 100).toFixed(2))}
+                      onClick={() => {
+                        handleClickBox(n.name, n.slug);
+                      }}
+                    />
+                  );
+                })}
+              </Box>
             </div>
-          </div>
-          <div className="col col-half">
-            <Box>
-              {data.map((n, index) => {
-                return (
-                  <CircularProgressWithLabel
-                    key={index}
-                    name={n.name}
-                    value={10}
-                    paid={n.paid}
-                    total={n.total}
-                    percentage={Number(((n.paid / n.total) * 100).toFixed(2))}
-                    onClick={() => {
-                      handleClickBox(n.name, n.slug);
-                    }}
-                  />
-                );
-              })}
-            </Box>
           </div>
           <div className="dataTable">
             <div
@@ -229,7 +231,13 @@ export default function WaterElectrical() {
             onRequestClose={hideModal}
             style={customStyles}
           >
-            <DetailRoom />
+            <ShowBill
+              selectedMonth={time.month}
+              selectedYear={time.year}
+              room={roomSelected}
+              area={areaSelected}
+              onCancel={onCancel}
+            />
           </ReactModal>
         </Box>
       )}

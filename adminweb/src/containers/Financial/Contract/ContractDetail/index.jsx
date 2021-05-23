@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import moment from "moment";
+import * as ROUTER from "../../../../utilities/constants/router";
+
 import "./styles.css";
+import Button from "@material-ui/core/Button";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 export default function ContractDetail() {
+  let history = useHistory();
+
   const { contractId } = useParams();
   const data = {
     start_date: "2021/7/17",
@@ -35,14 +41,26 @@ export default function ContractDetail() {
       my_class: "17T1",
     },
   };
+  const handleClickBack = () => {
+    history.push(ROUTER.ROUTE_MANAGE_FINANCIAL);
+  };
   return (
     <div>
       <h1 id="title">Chi tiết hợp đồng</h1>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleClickBack}
+        style={{ marginBottom: "20px" }}
+        startIcon={<ArrowBackIcon></ArrowBackIcon>}
+      >
+        Trở lại
+      </Button>
       <table id="contract">
         <thead>
           <tr>
-            <th style={{ backgroundColor: "green" , border:'none'}}></th>
-            <th style={{ backgroundColor: "green" , border:'none'}}></th>
+            <th style={{ backgroundColor: "green", border: "none" }}></th>
+            <th style={{ backgroundColor: "green", border: "none" }}></th>
           </tr>
         </thead>
         <tbody>
