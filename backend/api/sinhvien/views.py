@@ -34,7 +34,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
         return Profile.objects.filter(public_id__public_id=public_id).order_by('id')
 
     def list(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=sinhvien_group, user_profile__isnull=False).order_by('id')
+        queryset = User.objects.filter(groups__name=sinhvien_group, user_profile__isnull=False).order_by('username')
         keyword = self.request.GET.get('keyword')
         if keyword and len(keyword) > 0:
             words = re.split(r"[-;,.\s]\s*", keyword)
