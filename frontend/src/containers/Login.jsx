@@ -7,6 +7,7 @@ import { login as LoginUser } from "../redux/actions/login";
 import { useSelector, useDispatch } from "react-redux";
 import { getAuth, setAuth } from "../utilities/helper";
 import * as ROUTER from "../utilities/constants/router";
+import validate from "../utilities/regex";
 
 import { Link, useHistory } from "react-router-dom";
 import { actFetchUserNavigation } from "../redux/actions/profile";
@@ -48,10 +49,9 @@ const Login = () => {
   };
 
   const validPasswordInput = (checkingValue) => {
-    const regrexPass = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    const isValidPass = regrexPass.exec(checkingValue);
+    const isValidPass = validate.password(checkingValue);
 
-    if (isValidPass === null) {
+    if (!isValidPass) {
       return {
         isPassInputValid: false,
         isPassErrorHidden: false,

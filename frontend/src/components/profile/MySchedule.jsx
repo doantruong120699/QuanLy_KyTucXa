@@ -10,6 +10,7 @@ import {
 import { getSchedule } from "../../redux/actions/profile";
 import { colorData, getTaskList } from "../../utilities/dataRender/schedule";
 import moment from "moment-timezone";
+import querystring from "querystring";
 
 const MySchedule = () => {
   const currentWeek = moment().tz("Asia/Ho_Chi_Minh").format("w") - 1;
@@ -20,18 +21,36 @@ const MySchedule = () => {
     data: null,
   });
 
+  const currentYear = new Date().getFullYear();
+
   const [filter, setFilter] = useState({
     week: currentWeek,
+    year: currentYear,
   });
 
+  const years = [];
+
+  for (var j = currentYear; j > currentYear - 5; j--) {
+    years.push({ value: j, label: j.toString() });
+  }
+
   useEffect(() => {
-    getSchedule(filter.week, (output) => {
+    const params = querystring.stringify(filter);
+    getSchedule(params, (output) => {
       if (output) {
-        setSchedule({
-          ...myScheduleState,
-          data: getTaskList(output),
-          week: output[0].week,
-        });
+        if (output.status === "fail") {
+          setSchedule({
+            ...myScheduleState,
+            data: getTaskList([]),
+            week: filter.week,
+          });
+        } else {
+          setSchedule({
+            ...myScheduleState,
+            data: getTaskList(output),
+            week: filter.week,
+          });
+        }
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,11 +68,28 @@ const MySchedule = () => {
       ...myScheduleState,
       date: newDate,
     });
-    setFilter({ week: newWeek });
+    setFilter({ ...filter, week: newWeek });
   }
-
+  function handleChangeYear(event) {
+    const { name, value } = event.target;
+    setFilter({ ...filter, [name]: value });
+  }
   return (
     <div className="style-background-container">
+      <div className="col col-5">
+        <select
+          className="form-control mb-16"
+          name="year"
+          value={filter.year}
+          onChange={handleChangeYear}
+        >
+          {years.map((year, index) => (
+            <option key={index} value={year.value}>
+              {year.label}
+            </option>
+          ))}
+        </select>
+      </div>
       {myScheduleState.data && (
         <div className="col col-full style-lg-box bg-color-white">
           <p className="bold-text text-20 pd-8">Lịch trực cá nhân</p>
@@ -90,7 +126,7 @@ const MySchedule = () => {
               </div>
               <button
                 className="text-is-pink bg-color-white bold-text pt-4 pb-4 pr-8 pl-8"
-                disabled={myScheduleState.week >= currentWeek}
+                disabled={myScheduleState.week >= 52}
                 onClick={() =>
                   handleWeekChange(
                     myScheduleState.week + 1,

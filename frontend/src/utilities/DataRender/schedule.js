@@ -16,7 +16,7 @@ export function getTaskList(data) {
     if (!setColor.has(element.staff.username)) {
       setColor.set(element.staff.username, colorData[j++].id);
     }
-    if (element.shift.id === 3) {
+    if (element.shift.id % 3 === 0) {
       endDate.setDate(endDate.getDate() + 1);
     }
     result.push({

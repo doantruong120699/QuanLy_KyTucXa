@@ -170,7 +170,7 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
                     day_shift = sunday + datetime.timedelta(days=self.day_week(day_of_week))
                     data[item]['shift']['date'] = day_shift.date()
                 return Response(data, status=status.HTTP_200_OK)
-        return Response({'status':'fail'}, status=status.HTTP_204_NO_CONTENT)
+        return Response({'status':'fail'}, status=status.HTTP_200_OK)
 
     def retrieve(self, request, **kwargs):
         try:
