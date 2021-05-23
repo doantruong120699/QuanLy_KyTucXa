@@ -36,7 +36,7 @@ const Employee = () => {
 
   var week = [];
 
-  for (var i = 1; i <= currentWeek; i++) {
+  for (var i = 1; i <= 52; i++) {
     week.push({
       value: i,
       label: `Tuần thứ ${i}, Từ ${moment(i, "week")
@@ -56,8 +56,11 @@ const Employee = () => {
     const params = querystring.stringify(time);
     getSchedule(params, (output) => {
       if (output) {
-        const data = getTimeSheetRender(output, shiftTime.length);
-        setInitData(data);
+        if (output.status === "fail") {
+          setInitData(getTimeSheetRender([], shiftTime.length));
+        } else {
+          setInitData(getTimeSheetRender(output, shiftTime.length));
+        }
       }
     });
 
@@ -114,7 +117,7 @@ const Employee = () => {
                         employeeOption.find(
                           (index) =>
                             index.value ===
-                            initData.find((i) => i.shift === data.shift)?.staff
+                            initData.find((i) => i.shift === data.shift).staff
                         ) || ""
                       }
                       onChange={(params, event) =>
@@ -130,7 +133,7 @@ const Employee = () => {
                         typeOption.find(
                           (index) =>
                             index.label ===
-                            initData.find((i) => i.shift === data.shift)?.title
+                            initData.find((i) => i.shift === data.shift).title
                         ) || ""
                       }
                       onChange={(params, event) =>
@@ -141,7 +144,7 @@ const Employee = () => {
                       placeholder="Ghi chú"
                       name="content"
                       value={
-                        initData.find((i) => i.shift === data.shift)?.content ||
+                        initData.find((i) => i.shift === data.shift).content ||
                         ""
                       }
                       onChange={(event) => handleTypeChange(event, data.shift)}
@@ -168,14 +171,13 @@ const Employee = () => {
     };
     addDailySchedule(data, (output) => {
       if (output) {
-        console.log(output);
         setDisable(true);
       }
     });
   };
 
   return (
-    <div>
+    <div className="col col-full pl-48">
       {initData && employeeOption && (
         <div>
           <div className="col col-full">

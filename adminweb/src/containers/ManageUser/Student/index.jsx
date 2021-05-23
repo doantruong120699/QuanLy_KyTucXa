@@ -159,7 +159,7 @@ export default function Student() {
 
   const options = {
     filterType: "textField",
-   
+
     pagination: true,
     selectableRows: false,
     customHeadRender: () => {
@@ -243,7 +243,7 @@ export default function Student() {
     setIsModalNotiVisible(true);
   };
   return (
-    <div>
+    <div className="col col-full pl-48">
       <Box>
         <Box
           className={"notification"}

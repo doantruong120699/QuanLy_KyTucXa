@@ -11,6 +11,7 @@ export async function GetListRegistrationRoom(resolve = () => {}) {
     const response = await fetch(`${REACT_APP_BASE_API}list-registrations/`, {
       method: "GET",
       headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -39,6 +40,7 @@ export async function GetDetailRegistrationRoom(slug, resolve = () => {}) {
       {
         method: "GET",
         headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
@@ -68,6 +70,7 @@ export async function AcceptRegistrationRoom(slug, resolve = () => {}) {
       {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
           "Content-Type": "application/json",
           Accept: "application/json",
         },
@@ -95,6 +98,7 @@ export async function addDailySchedule(data, resolve = () => {}) {
     const response = await fetch(`${REACT_APP_BASE_API}schedules/`, {
       method: "POST",
       headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
@@ -170,13 +174,13 @@ export async function getRoomDetails(slug, resolve = () => {}) {
     });
   }
 }
-export async function getSchedule(week, resolve = () => {}) {
+export async function getSchedule(params, resolve = () => {}) {
   store.dispatch({
     type: types.GET_SCHEDULE_API,
   });
   try {
     const response = await fetch(
-      `${REACT_APP_BASE_API}daily-schedules/${week}/`,
+      `${REACT_APP_BASE_API}daily-schedules/?${params}`,
       {
         method: "GET",
         headers: {

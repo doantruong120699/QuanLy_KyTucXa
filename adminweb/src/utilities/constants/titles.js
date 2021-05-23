@@ -1,23 +1,19 @@
 export const NAVIGATION_TITLE = [
   {
-    title: "Dashboard",
-    path: "./dashboard",
+    title: "Tổng quan",
+    path: "/overview",
   },
   {
-    title: "Xem phòng",
-    path: "./rooms",
+    title: "Tài chính",
+    path: "/financial",
   },
   {
-    title: "Sinh viên",
-    path: "./students",
+    title: "Nhân sự",
+    path: "/manage-user",
   },
   {
-    title: "Nhân viên",
-    path: "./employees",
-  },
-  {
-    title: "Dịch vụ",
-    path: "./services",
+    title: "Tài khoản",
+    path: "/account",
   },
 ];
 

@@ -35,7 +35,7 @@ class NhanVienViewSet(viewsets.ModelViewSet):
         return Profile.objects.filter(public_id__public_id=public_id).order_by('id')
 
     def list(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=nhanvien_group).order_by('id')
+        queryset = User.objects.filter(groups__name=nhanvien_group, user_profile__isnull=False).order_by('id')
 
         keyword = self.request.GET.get('keyword')
         if keyword and len(keyword) > 0:
@@ -148,15 +148,14 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
             if _year == None or not _year.isnumeric():
                 year = d.year
             return (month, year)
-    
-    
+     
     def list(self, request, *args, **kwargs):
         week = request.GET.get('week', None)
         year = request.GET.get('year', None)
         if year == None:
             year = datetime.datetime.now().year
         if week != None:
-            _list = DailySchedule.objects.filter(week=week).order_by('shift__order')
+            _list = DailySchedule.objects.filter(week=week, year=year).order_by('shift__order')
             serializer = DailyScheduleListSerializer(_list, many=True)
             data = serializer.data
             if len(_list)>0:
@@ -170,7 +169,7 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
                     day_shift = sunday + datetime.timedelta(days=self.day_week(day_of_week))
                     data[item]['shift']['date'] = day_shift.date()
                 return Response(data, status=status.HTTP_200_OK)
-            return Response(data, status=status.HTTP_204_NO_CONTENT)
+        return Response({'status':'fail'}, status=status.HTTP_200_OK)
 
     def retrieve(self, request, **kwargs):
         try:

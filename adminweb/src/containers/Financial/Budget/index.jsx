@@ -178,10 +178,10 @@ export default function Budget() {
     });
 
   return (
-    <div className="budget cmp">
+    <div className="col col-full pl-48">
       {dataInBudget && dataOutBudget && (
         <div>
-          <div style={{ margin: "10px 0px" }}>Bảng thu chi của kí túc xá</div>
+          <div>Bảng thu chi của kí túc xá</div>
           <span style={{ display: "flex" }}>
             <div style={{ fontSize: "16px", marginTop: "20px" }}>
               <input

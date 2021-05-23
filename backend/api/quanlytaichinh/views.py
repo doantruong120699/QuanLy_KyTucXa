@@ -88,21 +88,20 @@ class FinancalRoomInAreaViewSet(viewsets.ModelViewSet):
             month, year = self.check_month_year(month, year)
             
             area = Area.objects.filter(
-                Q(name=area) |
-                Q(slug=area))
+                Q(name__icontains=area) |
+                Q(slug=area)).first()
             # Number now in room >=0        
-            room_in_area = Room.objects.filter(area__in=area).order_by('-id')
+            room_in_area = Room.objects.filter(area=area).order_by('-id')
             all_bill = Bill.objects.filter(water_electrical__room__in=room_in_area, 
                                                               water_electrical__year=year,
                                                               water_electrical__month=month)
             list_room_add_json = []
             for bill in all_bill:
-                list_room_add_json.append({'name': bill.water_electrical.room.name, 'isPaid' : bill.is_paid})
+                list_room_add_json.append({'id': bill.water_electrical.room.pk, 'name': bill.water_electrical.room.name, 'isPaid' : bill.is_paid})
             
             serializer = FinancalRoomInAreaSerializer(area)
             data_room = serializer.data
             data_room['room'] = list_room_add_json
-            
             return Response(data_room, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
