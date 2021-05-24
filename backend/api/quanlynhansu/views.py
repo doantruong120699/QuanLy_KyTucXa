@@ -22,7 +22,7 @@ import re
 
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationListSerializer
-    # permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
+    permission_classes = [IsAuthenticated]
     lookup_field = 'public_id'
 
     def get_queryset(self):
