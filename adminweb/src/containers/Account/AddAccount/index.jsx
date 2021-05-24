@@ -459,14 +459,7 @@ export default function NotificationForm() {
     },
   }))(InputBase);
   const classes = useStyles();
-  const convertDataSelect = (data, type) => {
-    return data.map((index) => {
-      return {
-        value: index.id,
-        label: index.name,
-      };
-    });
-  };
+
   const handleChange = (event) => {
     console.log("event.target", event.target);
     const name = event.target.name;
@@ -522,14 +515,12 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(permission.group).map((index) => {
+            {permission.group.map((index) => {
               return (
-                <MenuItem value={index.value}>
+                <MenuItem value={index.id}>
                   {" "}
-                  <Checkbox
-                    checked={localData.group.indexOf(index.value) > -1}
-                  />
-                  <ListItemText primary={index.label} />
+                  <Checkbox checked={localData.group.indexOf(index.id) > -1} />
+                  <ListItemText primary={index.name} />
                 </MenuItem>
               );
             })}
@@ -571,12 +562,12 @@ export default function NotificationForm() {
             renderValue={(selected) => selected.join(", ")}
             MenuProps={MenuProps}
           >
-            {convertDataSelect(permission.permission).map((index) => (
-              <MenuItem value={index.value}>
+            {permission.permission.map((index) => (
+              <MenuItem value={index.id}>
                 <Checkbox
-                  checked={localData.permission.indexOf(index.value) > -1}
+                  checked={localData.permission.indexOf(index.id) > -1}
                 />
-                <ListItemText primary={index.label} />
+                <ListItemText primary={index.name} />
               </MenuItem>
             ))}
           </Select>
@@ -722,8 +713,8 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(position).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {position.map((index) => {
+              return <MenuItem value={index.id}>{index.name}</MenuItem>;
             })}
           </Select>
           <FormHelperText>
@@ -745,8 +736,8 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(area).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {area.map((index) => {
+              return <MenuItem value={index.id}>{index.name}</MenuItem>;
             })}
           </Select>
           <FormHelperText>
@@ -771,8 +762,8 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(faculty).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {faculty.map((index) => {
+              return <MenuItem value={index.id}>{index.name}</MenuItem>;
             })}
           </Select>
           <FormHelperText>
@@ -794,8 +785,8 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(class_in_university).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {class_in_university.map((index) => {
+              return <MenuItem value={index.id}>{index.name}</MenuItem>;
             })}
           </Select>
           <FormHelperText>

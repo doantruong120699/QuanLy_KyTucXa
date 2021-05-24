@@ -133,7 +133,7 @@ const Profile = () => {
   return (
     <div>
       {profileState.profile && (
-        <div className="style-background-container">
+        <div className="pl-24 pr-24">
           <div className="col col-full">
             <div className="col col-third justify-content-ct">
               <Avatar />
