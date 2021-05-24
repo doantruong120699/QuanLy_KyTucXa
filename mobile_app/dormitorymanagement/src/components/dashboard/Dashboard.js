@@ -1,84 +1,97 @@
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, ImageBackground } from 'react-native';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ImageBackground, ToastAndroid } from 'react-native';
+import { connect, useSelector } from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { AppBar } from '../index';
+import { dashboard } from '../../redux/actions/index';
+import { styleImgBg, styleContainer } from '../../styles/index';
 
-class Dashboard extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
-          <AppBar style={styles.appbar} navigation={this.props.navigation} />
-          <View style={styles.container_child}>
-            {/* <View style={styles.dashboard}>
-                            <FontAwesome5 style={styles.iconList} name="list-ul"/>
-                            <Text style={styles.textDashboard}>DASHBOARD</Text>
-                        </View> */}
-            <View style={styles.students}>
-              <Text style={styles.numbers}>9,825</Text>
-              <View style={styles.bottom}>
-                <View style={styles.left}>
-                  <Text style={styles.total}>Total Students</Text>
-                  <Text style={styles.last}>+0,5% than last month</Text>
-                </View>
-                <FontAwesome5 style={styles.icon} name="graduation-cap" />
-              </View>
+const Dashboard = (props) => {
+  const { dashboard, navigation } = props;
+  const showToast = (msg) => {
+    ToastAndroid.show(msg, ToastAndroid.LONG);
+  };
+  useEffect(async () => {
+    await dashboard();
+  }, [])
+  let data = useSelector((state) => state.dashboard.payload);
+  let msg = useSelector((state) => state.dashboard.msg);
+  const renderData = () => {
+    let listDashboard = [];
+    if (data) {
+      listDashboard.push(<View style={styles.container_child}>
+        <View style={[styles.students, styles.itemDashboard]}>
+          <Text style={styles.numbers}>{data.student.total}</Text>
+          <View style={styles.bottom}>
+            <View style={styles.left}>
+              <Text style={styles.total}>Total Students</Text>
+              <Text style={styles.total}>+{data.student.cur_month}</Text>
             </View>
-            <View style={styles.teachers}>
-              <Text style={styles.numbers}>9,825</Text>
-              <View style={styles.bottom}>
-                <View style={styles.left}>
-                  <Text style={styles.total}>Total Teachers</Text>
-                  <Text style={styles.last}>+0,5% than last month</Text>
-                </View>
-                <FontAwesome5 style={styles.icon} name="user-friends" />
-              </View>
-            </View>
-            <View style={styles.rooms}>
-              <Text style={styles.numbers}>9,825</Text>
-              <View style={styles.bottom}>
-                <View style={styles.left}>
-                  <Text style={styles.total}>Total Rooms</Text>
-                  <Text style={styles.last}>+0,5% than last month</Text>
-                </View>
-                <FontAwesome5 style={styles.icon} name="hotel" />
-              </View>
-            </View>
-            <View style={styles.events}>
-              <Text style={styles.numbers}>9,825</Text>
-              <View style={styles.bottom}>
-                <View style={styles.left}>
-                  <Text style={styles.total}>Total Events</Text>
-                  <Text style={styles.last}>+0,5% than last month</Text>
-                </View>
-                <FontAwesome5 style={styles.icon} name="calendar-week" />
-              </View>
-            </View>
+            <FontAwesome5 style={styles.icon} name="graduation-cap" />
           </View>
-        </ImageBackground>
-      </View>
-    )
+        </View>
+        <View style={[styles.teachers, styles.itemDashboard]}>
+          <Text style={styles.numbers}>{data.staff.total}</Text>
+          <View style={styles.bottom}>
+            <View style={styles.left}>
+              <Text style={styles.total}>Total Teachers</Text>
+              <Text style={styles.total}>+{data.staff.cur_month}</Text>
+            </View>
+            <FontAwesome5 style={styles.icon} name="user-friends" />
+          </View>
+        </View>
+        <View style={[styles.rooms, styles.itemDashboard]}>
+          <Text style={styles.numbers}>{data.room.total}</Text>
+          <View style={styles.bottom}>
+            <View style={styles.left}>
+              <Text style={styles.total}>Total Rooms</Text>
+            </View>
+            <FontAwesome5 style={styles.icon} name="hotel" />
+          </View>
+        </View>
+        <View style={[styles.rooms_available, styles.itemDashboard]}>
+          <Text style={styles.numbers}>{data.room_available}</Text>
+          <View style={styles.bottom}>
+            <View style={styles.left}>
+              <Text style={styles.total}>Rooms Available</Text>
+            </View>
+            <FontAwesome5 style={styles.icon} name="hotel" />
+          </View>
+        </View>
+      </View>);
+    }
+    else {
+      listDashboard.push(<View style={styles.container_child}>
+        </View>);
+    }
+    return listDashboard;
   }
+  if (msg != 'Success') {
+    showToast(msg);
+  }
+  return (
+    <View style={styleContainer.container}>
+      <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
+        <AppBar style={styles.appbar} navigation={navigation} />
+        {renderData()}
+      </ImageBackground>
+    </View>
+  )
 }
 
-export default connect()(Dashboard);
+const mapDispatchToProps = {
+  dashboard,
+}
+function mapStateToProps(state) {
+  return {
+
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  imageBackground: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    // resizeMode: "cover",
-    alignItems: 'center',
-  },
   appbar: {
-    flex: 1,
+    height: '10%',
     backgroundColor: 'white',
     elevation: 7,
     borderRadius: 20,
@@ -96,48 +109,24 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'black',
   },
-  iconList: {
-    fontSize: 25,
-    fontWeight: 'bold',
-    marginRight: 5,
+  itemDashboard: {
     marginTop: 10,
-  },
-  textDashboard: {
-    fontWeight: 'bold',
-    fontSize: 30,
-    marginTop: 10,
+    marginLeft: 60,
+    marginRight: 60,
+    borderRadius: 20,
+    elevation: 7,
   },
   students: {
-    marginTop: 10,
-    marginLeft: 60,
-    marginRight: 60,
     backgroundColor: '#8a2be2',
-    borderRadius: 20,
-    elevation: 7,
   },
   teachers: {
-    marginTop: 10,
-    marginLeft: 60,
-    marginRight: 60,
     backgroundColor: 'blue',
-    borderRadius: 20,
-    elevation: 7,
   },
   rooms: {
-    marginTop: 10,
-    marginLeft: 60,
-    marginRight: 60,
     backgroundColor: '#32cd32',
-    borderRadius: 20,
-    elevation: 6,
   },
-  events: {
-    marginTop: 10,
-    marginLeft: 60,
-    marginRight: 60,
-    backgroundColor: '#ff69b4',
-    borderRadius: 20,
-    elevation: 6,
+  rooms_available: {
+    backgroundColor: 'red',
   },
   numbers: {
     margin: 10,
@@ -147,6 +136,7 @@ const styles = StyleSheet.create({
   },
   bottom: {
     flexDirection: 'row',
+    height: 55
   },
   left: {
     marginLeft: 10,

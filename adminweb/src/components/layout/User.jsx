@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
+import { useSelector } from "react-redux";
 import * as ROUTER from "../../utilities/constants/router";
 import * as ROLE from "../../utilities/constants/roles";
-import { getAuth } from "../../utilities/helper";
 
 const User = () => {
   const [isShown, setIsShown] = useState(false);
 
   const history = useHistory();
+
+  const user = useSelector((state) => state.profile.user);
+
   const logoutWrapper = useRef(null);
 
   const useClickOutside = (ref) => {
@@ -32,8 +35,8 @@ const User = () => {
   var styleIcon = isShown ? "fi-rr-caret-up" : "fi-rr-caret-down";
   useClickOutside(logoutWrapper);
 
-  const user = getAuth();
   const role = ROLE.ROLES[user.group[0]];
+
   return (
     <div ref={logoutWrapper} className="style-userContainer">
       <div className="style-userInfor" onClick={() => setIsShown(!isShown)}>
@@ -44,7 +47,7 @@ const User = () => {
           </span>
           <span className="style-roleUser">{role}</span>
         </div>
-        <div className="icon-custome" style={{ color: "white" }}>
+        <div className="icon-custome">
           <i className={styleIcon} />
         </div>
       </div>

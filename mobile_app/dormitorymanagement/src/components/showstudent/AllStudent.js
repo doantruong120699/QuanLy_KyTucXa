@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, Text, SectionList, ImageBackground } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { View, FlatList, TouchableOpacity, Text, ImageBackground } from 'react-native';
 import { connect } from 'react-redux';
 import { AppBar } from '../index';
 import Student from './Student';
 import { TextInput } from 'react-native-gesture-handler';
 import { allstudent } from '../../redux/actions/allstudent';
+import { stylePages, styleListNvSv, styleSearch, styleImgBg, styleContainer } from '../../styles/index';
 
 class AllStudent extends Component {
   constructor(props) {
@@ -24,7 +24,16 @@ class AllStudent extends Component {
     )
   }
   changeTextSearch = (value) => {
-    this.setState({ textSearch: value });
+    setTimeout(async () => {
+      await this.props.allstudent(1, value);
+      await this.setState({ 
+        textSearch: value,
+        page: this.props.listSV.current_page, 
+        listSV: this.props.listSV.results, 
+        nextPage: this.props.listSV.next_page, 
+        totals: this.props.listSV.totals 
+      });
+    }, 1000);
   }
   fetchApi = async (page) => {
     await this.props.allstudent(page);
@@ -37,39 +46,32 @@ class AllStudent extends Component {
   plusNumberPage = async () => {
     await this.fetchApi(this.state.page + 1);
   }
-  searchStaff = () => {
-    var listSearch = this.props.listSV.results.filter(item => item.email.indexOf(this.state.textSearch) !== -1);
-    this.setState({ listSV: listSearch });
-  }
   render() {
-    let totalPages = Math.ceil(this.state.totals / 10);
+    let totalPages = Math.ceil(this.state.totals / 20);
     return (
-      <View style={styles.container}>
-        <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
-          <AppBar style={styles.appBar} navigation={this.props.navigation} />
-          <View style={styles.viewSearch}>
+      <View style={[styleContainer.container, styleListNvSv.container]}>
+        <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
+          <AppBar style={styleListNvSv.appBar} navigation={this.props.navigation} />
+          <View style={styleSearch.viewSearch}>
             <TextInput
               underlineColorAndroid="transparent"
               onChangeText={this.changeTextSearch}
               placeholder="Tìm kiếm"
-              style={styles.inputTextSearch}
+              style={styleSearch.inputTextSearch}
               placeholderTextColor="#808080"
             >
             </TextInput>
-            <TouchableOpacity style={styles.btnSearch} onPress={this.searchStaff}>
-              <Text style={styles.textBtnSearch}>Tìm</Text>
-            </TouchableOpacity>
           </View>
-          <View style={styles.container_child}>
+          <View style={styleListNvSv.container_child}>
             <FlatList
-              style={styles.flatlist}
+              style={styleListNvSv.flatlist}
               data={this.state.listSV}
               renderItem={this.renderItem}
               keyExtractor={item => item.profile.public_id}
             />
-            <View style={styles.flexRow}>
+            <View style={stylePages.flexRow}>
               <TouchableOpacity 
-                style={[styles.btnOperation, styles.viewPage]} 
+                style={[stylePages.btnOperation, stylePages.viewPage]} 
                 onPress={this.minusNumberPage} 
                 disabled={this.state.page <= 1}
               >
@@ -78,13 +80,13 @@ class AllStudent extends Component {
               <TextInput
                 underlineColorAndroid="transparent"
                 value={this.state.page.toString()}
-                style={[styles.inputPage, styles.viewPage]}
+                style={[stylePages.inputPage, stylePages.viewPage]}
                 placeholderTextColor="#808080"
                 keyboardType="numeric"
               >
               </TextInput>
               <TouchableOpacity 
-                style={[styles.btnOperation, styles.viewPage]} 
+                style={[stylePages.btnOperation, stylePages.viewPage]} 
                 onPress={this.plusNumberPage} 
                 disabled={this.state.page >= totalPages}
               >
@@ -102,99 +104,9 @@ const mapDispatchToProps = {
   allstudent,
 };
 function mapStateToProps(state) {
-  console.log(state.allstudent.payload)
   return {
     listSV: state.allstudent.payload,
   };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AllStudent);
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  imageBackground: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    resizeMode: "cover",
-    alignItems: 'center',
-  },
-  appBar: {
-    flex: 1,
-  },
-  container_child: {
-    flex: 9,
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  flatlist: {
-    elevation: 7,
-    borderRadius: 20,
-    backgroundColor: 'white',
-    width: '90%',
-    marginBottom: '2%',
-  },
-  header: {
-    textAlign: 'center',
-    fontSize: 20,
-  },
-  viewSearch: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    width: '90%',
-    marginBottom: 10,
-  },
-  inputTextSearch: {
-    flex: 7,
-    marginRight: 10,
-    elevation: 7,
-    borderRadius: 20,
-    backgroundColor: 'white',
-    padding: 10,
-    alignItems: 'center',
-  },
-  btnSearch: {
-    padding: 10,
-    elevation: 7,
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'black',
-    flex: 1,
-  },
-  textBtnSearch: {
-    color: 'white',
-  },
-  flexRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  viewPage: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  inputPage: {
-    width: 50,
-    height: 30,
-    marginLeft: 5,
-    marginRight: 5,
-    color: 'black',
-    padding: 5,
-    textAlign: 'center',
-    backgroundColor: 'white',
-  },
-  btnOperation: {
-    width: 30,
-    height: 30,
-    backgroundColor: 'gray',
-  }
-});

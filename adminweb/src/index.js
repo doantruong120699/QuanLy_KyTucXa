@@ -15,3 +15,4 @@ ReactDOM.render(
   document.getElementById("root")
 );
 reportWebVitals();
+require("dotenv").config();

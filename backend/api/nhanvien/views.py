@@ -35,7 +35,7 @@ class NhanVienViewSet(viewsets.ModelViewSet):
         return Profile.objects.filter(public_id__public_id=public_id).order_by('id')
 
     def list(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=nhanvien_group).order_by('id')
+        queryset = User.objects.filter(groups__name=nhanvien_group, user_profile__isnull=False).order_by('id')
 
         keyword = self.request.GET.get('keyword')
         if keyword and len(keyword) > 0:
@@ -84,15 +84,12 @@ class NhanVienViewSet(viewsets.ModelViewSet):
     # get list all nhanvien 
     @action(methods=["GET"], detail=False, url_path="get_all_nhanvien", url_name="get_all_nhanvien")
     def get_all_nhanvien(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=nhanvien_group).order_by('id')
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(page, many=True)
-        return self.get_paginated_response(serializer.data)
+        try:
+            queryset = User.objects.filter(groups__name=nhanvien_group).order_by('pk')
+            serializer = NhanVienListSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK) 
+        except:
+            return Response({'detail':'Bad Request'}, status=status.HTTP_400_BAD_REQUEST) 
 
 class ShiftViewSet(viewsets.ModelViewSet):
     queryset = Shift.objects.all()
@@ -134,20 +131,45 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
             }
         return switcher.get(i,"Invalid day of week")
 
+        def check_month_year(self, _month, _year):
+            d = datetime.now()
+            month = _month
+            year = _year
+            if _month == None or not _month.isnumeric():
+                if d.month == 1:
+                    month = 12
+                else:
+                    month = d.month - 1
+            elif int(_month) > 12 or int(_month) < 1:
+                if d.month == 1:
+                    month = 12
+                else:
+                    month = d.month - 1
+            if _year == None or not _year.isnumeric():
+                year = d.year
+            return (month, year)
+     
     def list(self, request, *args, **kwargs):
-        _list = DailySchedule.objects.filter(week=kwargs['week']).order_by('shift__order')
-        serializer = DailyScheduleListSerializer(_list, many=True)
-        data = serializer.data
+        week = request.GET.get('week', None)
+        year = request.GET.get('year', None)
+        if year == None:
+            year = datetime.datetime.now().year
+        if week != None:
+            _list = DailySchedule.objects.filter(week=week, year=year).order_by('shift__order')
+            serializer = DailyScheduleListSerializer(_list, many=True)
+            data = serializer.data
+            if len(_list)>0:
+                weekday = serializer.data[0]['shift']['weekdays']
+                d =  str(serializer.data[0]['year'])+"-"+'W'+str(serializer.data[0]['week'])
+                sunday = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w") - timedelta(days=1)
 
-        weekday = serializer.data[0]['shift']['weekdays']
-        d =  str(serializer.data[0]['year'])+"-"+'W'+str(serializer.data[0]['week'])
-        sunday = datetime.datetime.strptime(d + '-1', "%Y-W%W-%w") - timedelta(days=1)
-
-        for item in range(len(data)):
-            day_of_week = data[item]['shift']['weekdays']
-            day_shift = sunday + datetime.timedelta(days=self.day_week(day_of_week))
-            data[item]['shift']['date'] = day_shift.date()
-        return Response(data, status=status.HTTP_200_OK)
+                for item in range(len(data)):
+                    data[item]['shift']['id'] = Shift.objects.get(pk=data[item]['shift']['id']).order
+                    day_of_week = data[item]['shift']['weekdays']
+                    day_shift = sunday + datetime.timedelta(days=self.day_week(day_of_week))
+                    data[item]['shift']['date'] = day_shift.date()
+                return Response(data, status=status.HTTP_200_OK)
+        return Response({'status':'fail'}, status=status.HTTP_200_OK)
 
     def retrieve(self, request, **kwargs):
         try:

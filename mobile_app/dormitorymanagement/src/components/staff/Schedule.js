@@ -1,101 +1,43 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { connect, useSelector } from 'react-redux';
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { Calendar, Agenda } from 'react-native-calendars';
-import { Avatar, Card } from 'react-native-paper';
+import { Agenda } from 'react-native-calendars';
+import { Card } from 'react-native-paper';
 import moment from 'moment';
+import { AppBar } from '../index';
+import { getcalendar } from '../../redux/actions/index';
+import { styleImgBg, styleContainer } from '../../styles/index';
 
-const timeToString = (time) => {
-  const date = new Date(time);
-  return date.toISOString().split('T')[0];
-};
-
-const initData = [
-  {
-    "public_id": "atdi4wFPXFF4EBC8P4vGYP",
-    "week": 17,
-    "year": 2021,
-    "title": "ca 2",
-    "content": "",
-    "shift": {
-      "id": 3,
-      "name": "morning",
-      "weekdays": "Mon",
-      "start_at": "08:00:00",
-      "end_at": "12:00:00",
-      "slug": "1213",
-      "date": "2021-04-26"
-    },
-    "staff": {
-      "username": "tranminhquang",
-      "email": "asdquang111@gmail.com",
-      "first_name": "Quang",
-      "last_name": "Tran Minh"
-    }
-  },
-  {
-    "public_id": "atdi4wFPXFF4EBC8P4vGYP",
-    "week": 17,
-    "year": 2021,
-    "title": "ca 1",
-    "content": "",
-    "shift": {
-      "id": 3,
-      "name": "morning",
-      "weekdays": "Mon",
-      "start_at": "08:00:00",
-      "end_at": "12:00:00",
-      "slug": "1213",
-      "date": "2021-04-26"
-    },
-    "staff": {
-      "username": "tranminhquang",
-      "email": "asdquang111@gmail.com",
-      "first_name": "Quang",
-      "last_name": "Tran Minh"
-    }
-  },
-
-  {
-    "public_id": "atdi4wFPXFF4EBC8P4vGYPa",
-    "week": 17,
-    "year": 2021,
-    "title": "ca 2",
-    "content": "",
-    "shift": {
-      "id": 4,
-      "name": "afternoon",
-      "weekdays": "Tue",
-      "start_at": "12:00:00",
-      "end_at": "14:46:11",
-      "slug": "12212",
-      "date": "2021-04-27"
-    },
-    "staff": {
-      "username": "tranminhquang",
-      "email": "asdquang111@gmail.com",
-      "first_name": "Quang",
-      "last_name": "Tran Minh"
-    }
-  }
-];
-
-const Schedule: React.FC = () => {
-  var week = moment().format("w") - 1;
-  var start = moment().startOf("isoWeek");
-  var dayCalendar;
+const Schedule = (props) => {
+  const { navigation, getcalendar } = props;
+  
   const [items, setItems] = useState({});
-  var selectDay = moment(start).add(1, 'days').toISOString().split('T')[0];
+
+  const [selectDay, setSelectDay] = useState({
+    week: moment().format("w") - 1,
+    start: moment().startOf('isoWeek').add(1, 'w').subtract(7, 'days'),
+  });
+  let daySelect = selectDay.start.toISOString().split('T')[0];
+  let dayCalendar;
   var dataCalendar = {};
-  const loadItems = (day) => {
+  const initData = useSelector((state) => state.getcalendar.payload);
+  const fetchData = async (day) => {
+    let week = moment(day.dateString).format("w") - 1;
+    await getcalendar(week);
+    await setSelectDay({
+      week: week,
+      start: moment(day.dateString).startOf('week').add(1, 'w').subtract(6, 'days'),
+    });
+  }
+  useEffect(() => {
+    loadItems();
+  }, [selectDay])
+  const loadItems = () => {
+    let dayRender = selectDay.start;
     setTimeout(() => {
       for (let i = 0; i < 7; i++) {
-        // const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        // const strTime = timeToString(time);
-        // console.log(strTime);
-        start = moment(start).add(1, 'days');
-        dayCalendar = start.toISOString().split('T')[0];
+        dayCalendar = dayRender.toISOString().split('T')[0];
+        console.log(dayCalendar);
         dataCalendar[dayCalendar] = [];
         for (let i = 0; i < initData.length; i++) {
           if (initData[i].shift.date == dayCalendar) {
@@ -107,19 +49,15 @@ const Schedule: React.FC = () => {
           for (let i = 0; i < initData.length; i++) {
             if (initData[i].shift.date == dayCalendar) {
               items[dayCalendar].push({
-                name: initData[i].title + " " + initData[i].shift.start_at + " ",
-                // height: Math.max(50, Math.floor(Math.random() * 150)),
+                date: initData[i].shift.date,
+                start: initData[i].shift.start_at,
+                end: initData[i].shift.end_at,
+                staff: initData[i].staff.last_name + " " + initData[i].staff.first_name,
               })
             }
           }
-          // const numItems = Math.floor(Math.random() * 3 + 1);
-          // for (let j = 0; j < numItems; j++) {
-          //   items[day].push({
-          //     name: 'Item for ' + day + '#' + j,
-          //     height: Math.max(50, Math.floor(Math.random() * 150)),
-          //   })
-          // }
         }
+        dayRender = moment(dayRender).add(1, 'days');
       }
       const newItems = {};
       Object.keys(items).forEach((key) => {
@@ -138,8 +76,18 @@ const Schedule: React.FC = () => {
               justifyContent: 'space-between',
               alignItems: 'center'
             }}>
-              <Text>{item.name}</Text>
-              {/* <Avatar.Text label="J"/> */}
+              <View>
+                <Text style={{color: 'red', fontSize: 15}}>{item.staff}</Text>
+                <Text style={{color: 'blue'}}>{item.date}</Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Text>Từ: </Text>
+                  <Text>{item.start}</Text>
+                </View>
+                <View style={{flexDirection: 'row'}}>
+                  <Text>Đến: </Text>
+                  <Text>{item.end}</Text>
+                </View>
+              </View>
             </View>
           </Card.Content>
         </Card>
@@ -148,15 +96,39 @@ const Schedule: React.FC = () => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <Agenda
-        items={items}
-        loadItemsForMonth={loadItems}
-        selected={selectDay}
-        renderItem={renderItem}
-      />
+    <View style={[styleContainer.container, styles.container]}>
+      <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
+        <AppBar style={styles.appBar} navigation={navigation} />
+        <View style={styles.schedule}>
+          <Agenda
+            items={items}
+            selected={daySelect}
+            renderItem={renderItem}
+            onDayPress={async (day) => {fetchData(day)}}
+          />
+        </View>
+      </ImageBackground>
     </View>
   )
 }
 
-export default connect()(Schedule);
+const mapDispatchToProps = {
+  getcalendar: getcalendar,
+}
+function mapStateToProps(state) {
+  return {}
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Schedule);
+
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'column',
+  },
+  appBar: {
+    height: 50,
+  },
+  schedule: {
+    flex: 9,
+    width: '100%'
+  }
+});

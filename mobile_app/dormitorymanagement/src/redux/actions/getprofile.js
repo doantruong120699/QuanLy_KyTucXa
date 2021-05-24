@@ -1,5 +1,5 @@
 import { actionType } from '../actionType';
-import { storeData, getData } from '../../utils/asyncStorage';
+import { getData } from '../../utils/asyncStorage';
 import axios from 'axios';
 import { apiUrl } from '../../api/api';
 import _ from 'lodash';
@@ -21,8 +21,6 @@ export const getprofile = () => async (dispatch) => {
     });
   }
   catch (error) {
-    const msg = _.get(error.response, 'data.msg') || "Cant't connect network";
-    console.log(msg);
     if (error.response.status == 404) {
       dispatch({
         type: GET_PROFILE_FAIL,

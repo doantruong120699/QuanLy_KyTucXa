@@ -31,12 +31,8 @@ area_list = AreaViewSet.as_view({
 
 urlpatterns = [
     url(r'^auth/login/$', MyTokenObtainPairView.as_view()),
-    # path('auth/register/', registration_view),    
-    # path('auth/forgot-password/', forgot_password_view),
-    # path('auth/resend-link-active/', resend_link_activation_view),
-    # path('auth/active-account/', active_account_view),
-    # path('auth/create-access-token/', create_access_token_view),
-    # path('auth/reset-password/', reset_password_view),
+    path('auth/forgot-password/', forgot_password_view),
+    path('auth/forgot-password/<uidb64>/<token>', reset_password_view, name='reset_password'),
 
     # user
     path('account/get-user-profile/', get_profile_view),

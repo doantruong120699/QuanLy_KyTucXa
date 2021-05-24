@@ -17,12 +17,41 @@ from api import status_http
 from api.permissions import *
 from django.http import JsonResponse
 import shortuuid
+import re
+from django.contrib.contenttypes.models import ContentType
+quanlynhansu_group = 'quanlynhansu_group'
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationListSerializer
-    # permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
+    # permission_classes = [IsAuthenticated]
     lookup_field = 'public_id'
+
+    # def get_permissions(self):
+    #     if self.action == 'list':
+    #         return [IsAuthenticated(), IsSinhVien(),]
+    #     return [IsAuthenticated(), IsSinhVien(),]
+        
+    def check_permission(self, request):
+        user = request.user
+        user_group = [g.name for g in user.groups.all()]
+        user_permission = [p.codename for p in user.user_permissions.all()]
+        if self.action == 'list':
+            return request.user.is_authenticated
+        else:
+            if quanlynhansu_group in user_group:
+                return True
+            else:
+                action = self.action
+                if action == 'post':
+                    action = 'add'
+                elif action == 'update':
+                    action = 'change'
+                elif action == 'destroy':
+                    action = 'delete'
+                    
+                required_action = action + '_notification'
+                return required_action in user_permission
 
     def get_queryset(self):
         return Notification.objects.all().order_by('-created_at')
@@ -42,34 +71,44 @@ class NotificationViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, *args, **kwargs):
-        serializer = NotificationListSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            save = serializer.create(request.data)
-            if save:
-                return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
-        return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
-
-    def update(self, request, public_id, format=None):
-        try:
-            queryset = Notification.objects.get(public_id=public_id)
-            datas = request.data
-            serializer = NotificationListSerializer(queryset, data=datas, context={'request': request})
+        if self.check_permission(request):
+            serializer = NotificationListSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
-                save = serializer.save()
+                save = serializer.create(request.data)
                 if save:
-                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_200_OK)
+                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
             return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
-        except:
+        else:
+            return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+        
+    def update(self, request, public_id, format=None):
+        if self.check_permission(request):
+            try:
+                queryset = Notification.objects.get(public_id=public_id)
+                datas = request.data
+                serializer = NotificationListSerializer(queryset, data=datas, context={'request': request})
+                if serializer.is_valid():
+                    save = serializer.save()
+                    if save:
+                        return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_200_OK)
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
             return Response({'status': 'fail', 'notification' : 'Not Found Notification!'}, status=status.HTTP_404_NOT_FOUND)
-    
+        else:
+            return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+        
     def destroy(self, request, public_id, format=None):
-        try:
-            queryset = Notification.objects.get(public_id=public_id)
-            queryset.delete()
-            return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
-        except:
+        if self.check_permission(request):
+            try:
+                queryset = Notification.objects.get(public_id=public_id)
+                queryset.delete()
+                return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+            except:
+                pass
             return Response({'status': 'fail', 'notification' : 'Notification not found!'}, status=status.HTTP_404_NOT_FOUND)
-
+        else:
+            return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
     def retrieve(self, request, **kwargs):
         try:
             noti = Notification.objects.get(public_id=kwargs['public_id'])
@@ -206,6 +245,49 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             pass
         return Response({'detail': 'Error!'}, status=status.HTTP_400_BAD_REQUEST)
          
+    # ==== delete user in room ====
+    @action(methods=["DELETE"], detail=False, url_path="delete_user_in_room", url_name="delete_user_in_room")
+    def delete_user_in_room(self, request, *args, **kwargs):
+        try:
+            profile = Profile.objects.get(public_id=kwargs['public_id'])
+            contract = Contract.objects.filter(profile=profile, is_expired=False, is_delete=False).first()
+            contract.is_delete = True
+            contract.is_expired = True
+            contract.room.number_now = contract.room.number_now - 1 
+            contract.save()
+            contract.room.save()
+            return Response({'detail': 'Delete Successful'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+        return Response({'detail': 'Sinh Vien not Found!'}, status=status.HTTP_404_NOT_FOUND)
+
+    # ==== List contract =======
+    @action(methods=["GET"], detail=False, url_path="list_contract_filter", url_name="list_contract_filter")
+    def list_contract_filter(self, request, *args, **kwargs):
+        try:
+            list_contract_room = Contract.objects.all()
+            
+            is_expired = request.GET.get('is_expired', None)
+            if is_expired != None:
+                list_contract_room = list_contract_room.filter(is_expired=is_expired)
+                            
+            id_user = request.GET.get('id_user', None)
+            if id_user != None:
+                list_contract_room = list_contract_room.filter(profile__public_id=id_user)
+            room = request.GET.get('room', None)
+            if room != None:
+                list_contract_room = list_contract_room.filter(Q(room__name=id_user) | Q(room__slug=id_user))
+            
+            page = self.paginate_queryset(list_contract_room)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        except Exception as e:
+            print(e)
+        return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+            
 class DailyScheduleViewSet(viewsets.ModelViewSet):
     serializer_class = DailyScheduleSerializer
     permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
@@ -224,18 +306,66 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
     def post(self, request, *args, **kwargs):
-        serializer = DailyScheduleSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            save = serializer.create(request.data)
-            if save:
-                return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
-        return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = DailyScheduleListSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                week = serializer.data['week']
+                if 'year' not in serializer.data:
+                    year = datetime.now().year
+                else:
+                    year = serializer.data['year']
+                data = []
+                schedule = serializer.data['schedule']
+                for obj in schedule:
+                    if 'shift' in obj:
+                        sche = DailySchedule.objects.filter(week=week, year=year, shift__order=obj['shift'])
+                        if len(sche) > 0:
+                            try:
+                                s = sche.first()
+                                if 'title' in obj:
+                                    title = obj['title']
+                                    s.title = title
+                                    
+                                if 'content' in obj:
+                                    content = obj['content']
+                                    s.content = content
+                                
+                                if 'staff' in obj:
+                                    staff = User.objects.get(pk=obj['staff'])
+                                    s.staff = staff
+                                    
+                                s.updated_by = request.user
+                                s.save()
+                            except Exception as ex:
+                                print(ex)
+                                errors = {}
+                                errors['id_shift'] = obj['shift']
+                                errors['message'] = str(ex)
+                                data.append(errors)
+                        else:
+                            x = DailyScheduleSerializer(data=obj, context={'request': request})
+                            if x.is_valid():
+                                x.create(user=request.user, validated_data=obj, week=week, year=year)
+                            else:
+                                # print("===")
+                                errors = {}
+                                errors['id_shift'] = obj['shift']
+                                errors['message'] = list(x.errors.values())[0][0]
+                                data.append(errors)
+                if data:
+                    return Response({'status': 'Some error', 'notification' : data}, status=status.HTTP_201_CREATED)    
+                else:
+                    return Response({'status': 'successful'}, status=status.HTTP_201_CREATED)    
+            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+            return Response({'status': 'fail', 'notification' : 'Bad request!'}, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, public_id, *args, **kwargs):
         try:
             dailySchedule = DailySchedule.objects.get(public_id=public_id)
             serializer = DailyScheduleUpdateSerializer(data=request.data, context={'request': request})
-            if serializer.is_valid():
+            if serializer.is_valid():             
                 update = serializer.update(validated_data=request.data, instance=dailySchedule)
                 if update:
                     return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
@@ -244,6 +374,165 @@ class DailyScheduleViewSet(viewsets.ModelViewSet):
             print(e)  
             return Response({'status': 'fail', 'notification' : 'Error'}, status=status.HTTP_400_BAD_REQUEST)
 
+class UsedRoomInAreaViewSet(viewsets.ModelViewSet):
+    serializer_class = UsedRoomInAreaSerializer
 
+    def get_queryset(self):
+        return Area.objects.all().order_by('-created_at')
+
+    def list(self, request, *args, **kwargs):
+        try:
+            list_area = Area.objects.all()
+            data = list(list_area.values())
+            for index, value in enumerate(list_area):
+                room = Room.objects.filter(area=value)
+                count_full = 0
+                for i in room:
+                    number_max = i.typeroom.number_max
+                    if number_max == i.number_now :
+                        count_full = count_full + 1
+                data[index]['total'] = room.count()
+                data[index]['full'] = count_full
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+# =========================================================
+
+class GroupPermissionViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = Group.objects.all()
+            list_group = GroupSerializer(queryset, many=True)
+            queryset = Permission.objects.filter(content_type_id__gte = 9).order_by('content_type_id')
+            list_permission = PermissionSerializer(queryset, many=True)
+            return Response({'group': list_group.data, 'permission':list_permission.data}, status=status.HTTP_200_OK)
+        except:
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+        
+class UserProfileViewSet(viewsets.ModelViewSet):
+    serializer_class = ProfileListSerializer
+    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+
+    def list(self, request, *args, **kwargs):
+        try:
+            queryset = Profile.objects.filter(is_delete=False).order_by('-pk')
+            keyword = self.request.GET.get('keyword')
+            if keyword and len(keyword) > 0:
+                words = re.split(r"[-;,.\s]\s*", keyword)
+                query = Q()
+                for word in words:
+                    query |= Q(user__first_name__icontains=word)
+                    query |= Q(user__last_name__icontains=word)
+                    query |= Q(user__email__icontains=word)
+                queryset=queryset.filter(query).distinct()
+            
+            page = self.paginate_queryset(queryset)
+            serializer = self.get_serializer(page, many=True)
+            data = serializer.data
+            for index, value in enumerate(data):
+                group_list = []
+                user = User.objects.get(email=value['user']['email'])
+                for g in user.groups.all():
+                    group_dic = {}
+                    group_dic['id'] = g.pk
+                    group_dic['name'] = g.name
+                    group_list.append(group_dic)
+                    
+                permission_list = []
+                for p in user.user_permissions.all():
+                    permission_dic = {}
+                    permission_dic['id'] = p.pk
+                    permission_dic['name'] = p.name
+                    permission_dic['content_type_id'] = p.content_type_id
+                    permission_dic['codename'] = p.codename
+                    permission_list.append(permission_dic)
+                    
+                data[index]['user']['group_list'] = group_list
+                data[index]['user']['permission_list'] = permission_list
+            return self.get_paginated_response(data)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, *args, **kwargs):
+        serializer = UserProfileSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            if serializer.add_validate(data=request.data):
+                save = serializer.create(request.data)
+                if save:
+                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
+        # print(list(serializer.errors.values()))
+        try:
+            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except:
+            return Response({'status': 'fail', 'notification' : list(list(serializer.errors.values())[0].values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, public_id, format=None):
+        try:
+            queryset = Profile.objects.filter(public_id=public_id, is_delete=False)
+            if len(queryset) > 0:
+                profile = queryset.first()
+                datas = request.data
+                serializer = UserProfileSerializer(instance=profile.user, data=datas, context={'request': request})
+                if serializer.is_valid():
+                    save = serializer.save()
+                    if save:
+                        return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_200_OK)
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Not Found Profile!'}, status=status.HTTP_404_NOT_FOUND)
+    
+    def destroy(self, request, public_id, format=None):
+        try:
+            queryset = Profile.objects.filter(public_id=public_id, is_delete=False)
+            if len(queryset) > 0:
+                query = queryset.first()
+                query.is_delete = True
+                query.save()
+                return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            pass
+        return Response({'status': 'fail', 'notification' : 'Profile not found!'}, status=status.HTTP_404_NOT_FOUND)
+
+    def retrieve(self, request, **kwargs):
+        try:
+            queryset = Profile.objects.filter(public_id=kwargs['public_id'], is_delete=False)
+            if len(queryset) > 0:
+                profile = queryset.first()
+                serializer = ProfileListSerializer(profile)
+                data = serializer.data
+                group_list = []
+                for g in profile.user.groups.all():
+                    group_dic = {}
+                    group_dic['id'] = g.pk
+                    group_dic['name'] = g.name
+                    group_list.append(group_dic)
+                    
+                permission_list = []
+                for p in profile.user.user_permissions.all():
+                    permission_dic = {}
+                    permission_dic['id'] = p.pk
+                    permission_dic['name'] = p.name
+                    permission_dic['content_type_id'] = p.content_type_id
+                    permission_dic['codename'] = p.codename
+                    permission_list.append(permission_dic)
+                    
+                data['user']['group_list'] = group_list
+                data['user']['permission_list'] = permission_list
+                
+                return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Profile not found!'}, status=status.HTTP_404_NOT_FOUND)
+
+# =====================================================
 
 

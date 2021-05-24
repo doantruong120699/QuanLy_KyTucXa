@@ -1,33 +1,31 @@
 import { login } from './login';
 import { getallroom } from './getallroom';
-import { searchroom } from './searchroom';
 import { mainmenu } from './mainmenu';
 import { changepassword } from './changepassword';
 import { getprofile } from './getprofile';
 import { allstudent } from './allstudent';
 import { allstaff } from './allstaff';
 import { getarea } from './getarea';
-import { getclass } from './getclass';
-import { getposition } from './getposition';
-import { getfaculty } from './getfaculty';
 import { changeprofile } from './changeprofile';
 import { getnotification } from './getnotification';
 import { registrationroom } from './registrationroom';
+import { dashboard } from './dashboard';
+import { getcalendar } from './getcalendar';
+import { forgotpassword } from './forgotpassword';
 
-export { 
-    login,
-    getallroom, 
-    searchroom, 
-    mainmenu, 
-    changepassword, 
-    getprofile, 
-    allstudent, 
-    allstaff, 
-    getarea,
-    getclass, 
-    getposition, 
-    getfaculty,
-    changeprofile,
-    getnotification,
-    registrationroom,
+export {
+  login,
+  getallroom,
+  mainmenu,
+  changepassword,
+  getprofile,
+  allstudent,
+  allstaff,
+  getarea,
+  changeprofile,
+  getnotification,
+  registrationroom,
+  dashboard,
+  getcalendar,
+  forgotpassword,
 };

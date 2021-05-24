@@ -290,17 +290,28 @@
 .text-is-pink {
   color: #fe6276;
 }
+.text-is-red {
+  color: #e15b69;
+}
+.text-is-blue {
+  color: #003eff;
+}
 .text-is-grey {
   color: #7b8191;
+}
+.text-is-green {
+  color: #82ce34;
 }
 .text-is-white {
   color: #fff;
 }
 .style-background-container {
-  height: 85vh;
+  height: 200vh; /* You must set a specified height */
   padding: 20px;
-  background: url('../../assets/images/backgrounds/background.jpg') center/cover
-    no-repeat;
+  background-image: url(../../assets/images/backgrounds/background.jpg);
+  background-repeat: repeat;
+  background-position: center; /* Center the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
 }
 .style-img {
   border-radius: 5px;
@@ -312,4 +323,7 @@
 }
 .icon-white-active:hover {
   color: #7b8191;
+}
+.inline-block {
+  display: inline-block;
 }

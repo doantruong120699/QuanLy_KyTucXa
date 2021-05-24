@@ -1,4 +1,5 @@
 import { actionType } from '../actionType';
+import { getData } from '../../utils/asyncStorage';
 import { apiUrl } from '../../api/api';
 import axios from 'axios';
 
@@ -19,7 +20,6 @@ export const getarea = () => async (dispatch) => {
     });
   }
   catch (error) {
-    console.log("AB");
     dispatch({
       type: GET_AREA_FAIL,
       msg: 'Không thể kết nối tới máy chủ'

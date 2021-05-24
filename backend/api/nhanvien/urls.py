@@ -38,11 +38,12 @@ schedule_detail = DailyScheduleViewSet.as_view({
 
 urlpatterns = [
     path('staffs/get-all-staff/', nhanvien_list, name = 'nhanvien_list'),
+    path('staffs/list-all-staff/', nhanvien_list_all, name = 'nhanvien_list_all'),
     path('staffs/<uuid:public_id>/', nhanvien_detail, name = 'nhanvien_detail'),
     # ========== shift
     path('shifts/', shift_list, name = 'shift_list'),
     path('shifts/<slug:slug>/', shift_detail, name = 'shift_detail'),
     # ========== shift
-    path('daily-schedules/<int:week>/', schedule_list, name = 'schedule_list'),
+    path('daily-schedules/', schedule_list, name = 'schedule_list'),
     path('daily-schedules/<str:public_id>/', schedule_detail, name = 'schedule_detail'),
 ]

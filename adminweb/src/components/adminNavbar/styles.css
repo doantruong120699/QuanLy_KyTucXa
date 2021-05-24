@@ -1,109 +1,38 @@
-@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@300;700&display=swap");
-* {
-  margin: 0px;
-  padding: 0px;
-  box-sizing: border-box;
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 17px 0px 30px;
+  min-height: 8vh;
+  background-color: #5d4954;
 }
 nav {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   min-height: 8vh;
   background-color: #5d4954;
 }
 .logo {
-  font-size: 25px;
+  font-size: 20px;
   color: aliceblue;
   text-transform: capitalize;
-  letter-spacing: 5px;
-  margin-right: 400px;
-  padding-left: 50px;
 }
 .nav-links {
   display: flex;
-  width: 30%;
+  align-items: center;
   justify-content: space-around;
 }
 .nav-links li {
-  list-style: none;
-  width: 200px;
+  list-style-type: none;
+  margin: 0px 20px;
+  padding: 0;
 }
-.nav-links a {
+
+.style-activeNavlink {
+  opacity: 0.6;
+}
+.style-navLink {
+  width: 150px;
   color: aliceblue;
-  text-decoration: none;
-  letter-spacing: 3px;
-  font-weight: bold;
-  font-size: 14px;
-}
-.footer {
-  display: none;
-}
-.nav-links a:hover {
-  text-decoration: underline;
-}
-.nav-links a:visited {
-  text-decoration: underline;
-}
-.burger {
-  display: none;
-  cursor: pointer;
-}
-.burger div {
-  width: 25px;
-  height: 2px;
-  background-color: aliceblue;
-  margin: 5px;
-}
-@media screen and (max-width: 1408px) {
-  .nav-links {
-    width: 60%;
-  }
-  .user {
-    display: none;
-  }
-}
-@media screen and (max-width: 1600px) {
-  nav {
-    transform: scale(1);
-  }
-}
-@media screen and (max-width: 1200px) {
-  body {
-    overflow-x: hidden;
-  }
-  .footer {
-    display: block;
-  }
-  .nav-links {
-    position: absolute;
-    right: 0px;
-    height: 92vh;
-    top: 8vh;
-    background-color: #5d4954;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 300px;
-    transform: translateX(100%);
-    transition: transform 0.5 ease-in;
-    transition-duration: 0.4s;
-  }
-  .burger {
-    display: block;
-  }
-}
-
-.nav-active {
-  transform: translateX(0%);
-  transition-duration: 0.4s;
-}
-
-@keyframes navLinkFade {
-  from {
-    opacity: 0;
-    transform: translateX(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0px);
-  }
 }

@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, Pressable } from 'react-native';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { setbackgroundcolor } from '../../redux/actions/index';
+import { styleContainer } from '../../styles/index';
 
 class ItemNotification extends Component {
   state = {
@@ -11,7 +10,7 @@ class ItemNotification extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={[styleContainer.container, styles.container]}>
         <View style={styles.viewData}>
           <Text style={styles.day}>{this.props.item.last_update.split("T")[0]}</Text>
           <Text style={styles.title}>{this.props.item.title}</Text>
@@ -22,26 +21,13 @@ class ItemNotification extends Component {
   }
 }
 
-const mapDispatchToProps = {
-  setbackgroundcolor,
-}
-function mapStateToProps(state) {
-  return {
-
-  }
-}
-export default connect(mapStateToProps, mapDispatchToProps)(ItemNotification);
+export default connect()(ItemNotification);
 
 const styles = StyleSheet.create({
   container: {
-    //   backgroundColor: 'rgba(52, 52, 52, 0.8)',
-    flex: 1,
     width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
     flexDirection: 'column',
-    marginTop: 10,
-    padding: 2,
+    padding: 5,
   },
   viewData: {
     width: '80%',

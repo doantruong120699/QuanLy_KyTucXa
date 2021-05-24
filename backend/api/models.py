@@ -52,6 +52,7 @@ class Area(models.Model):
     
     def __str__(self):
         return self.name
+
 class Profile(models.Model):
     user = models.OneToOneField(User,related_name = 'user_profile', on_delete=models.CASCADE, primary_key=True)
     public_id = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -66,7 +67,9 @@ class Profile(models.Model):
     my_class = models.ForeignKey(Class, related_name = 'class_profile', on_delete=models.SET_NULL, blank=True, null=True)
     position = models.ForeignKey(Position, related_name = 'position_profile', on_delete=models.SET_NULL, blank=True, null=True)
     area = models.ForeignKey(Area, related_name = 'area_profile', on_delete=models.SET_NULL, blank=True, null=True)
-    token = models.CharField(max_length=100, null=True)
+    token = models.TextField(null=True, blank=True)
+    forgot_password_token = models.TextField(null=True, blank=True)
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
 
     class Meta:
         ordering = ('user',)
@@ -87,6 +90,7 @@ class TypeRoom(models.Model):
 
     def __str__(self):
         return self.name
+
 class Room(models.Model):
     STATUS = Choices(
         ('A', _('Available')),
@@ -104,7 +108,7 @@ class Room(models.Model):
     status = models.CharField(choices=STATUS, max_length=10, null=True, blank=True)
 
     class Meta:
-        ordering = ('id',)
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -142,6 +146,7 @@ class Contract(models.Model):
     note = models.TextField(null=True, blank=True)
     price = models.FloatField(default=0)
     is_paid = models.BooleanField(null=True)
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
 
 
     class Meta:
@@ -331,6 +336,8 @@ class Bill(models.Model):
     created_by = models.ForeignKey(User, related_name = 'bill_created_by', on_delete=models.CASCADE, blank=True, null=True)
     updated_by = models.ForeignKey(User, related_name = 'bill_updated_by', on_delete=models.CASCADE, blank=True, null=True)
 
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
+
     def __str__(self):
         return self.water_electrical.room.name + ' - ' + str(self.is_paid)
 
@@ -338,21 +345,60 @@ class Service(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True) 
-    price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    price = models.PositiveIntegerField(default=0, null=True, blank=True)
+    
+    def __str__(self):
+        return self.name + ' - ' + str(self.price)
     
 class TypeExpense(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True) 
     slug = models.CharField(max_length=200, null=True, unique=True)  
+    
+    def __str__(self):
+        return self.name
 
 class Expense(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     type_expense = models.ForeignKey(TypeExpense, related_name = 'type_expense', on_delete=models.CASCADE, blank=True, null=True)
     description = models.TextField(null=True, blank=True) 
-    price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
+    price = models.PositiveIntegerField(default=0, null=True, blank=True)
     user_paid = models.ForeignKey(Profile, related_name = 'expense_user_paid', on_delete=models.CASCADE, blank=True, null=True)
     time_paid = models.DateTimeField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name = 'expense_created_by', on_delete=models.CASCADE, blank=True, null=True)
+    updated_by = models.ForeignKey(User, related_name = 'expense_updated_by', on_delete=models.CASCADE, blank=True, null=True)
+    
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
+    def __str__(self):
+        return self.name + ' - '+ self.type_expense.name 
+    
+class TypeRevenue(models.Model):
+    name = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(null=True, blank=True) 
+    slug = models.CharField(max_length=200, null=True, unique=True)  
+    
+    def __str__(self):
+        return self.name
+
+class Revenue(models.Model):
+    public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
+    name = models.CharField(max_length=100, null=True, blank=True)
+    type_revenue = models.ForeignKey(TypeRevenue, related_name = 'type_revenue', on_delete=models.CASCADE, blank=True, null=True)
+    description = models.TextField(null=True, blank=True) 
+    amount = models.PositiveIntegerField(default=0, null=True, blank=True)
+    user_recieve = models.ForeignKey(Profile, related_name = 'revenue_user_recieve', on_delete=models.CASCADE, blank=True, null=True)
+    time_recieve = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name = 'revenue_created_by', on_delete=models.CASCADE, blank=True, null=True)
+    updated_by = models.ForeignKey(User, related_name = 'revenue_updated_by', on_delete=models.CASCADE, blank=True, null=True)
+    
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
+    def __str__(self):
+        return self.name + ' - '+ self.type_revenue.name 
+  

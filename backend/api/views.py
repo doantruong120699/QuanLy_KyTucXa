@@ -14,36 +14,34 @@ from .serializers import *
 # from api.lessons.serializers import LessonListSerializer
 from django.http import JsonResponse
 from . import status_http
+from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
 
 
-
-# Create your views here.
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, ])
+# API Change Password
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def change_password_view(request):
-    if request.method == 'POST':
+    if request.method == 'PUT':
         serializer = ChangePasswordSerializer(data=request.data)
         data = {}
+        # Validate data: it'll call to validate() function in ChangePasswordSerializer 
         if serializer.is_valid():
             try:
-                if not serializer.old_password_validate():
-                    data['email'] = request.data['email']
+                # Validate: check old password, it'll call to old_password() function in ChangePasswordSerializer 
+                if not serializer.old_password_validate(request):
                     data['message'] = 'Old password is incorrect'
                     return Response(data, status=status_http.HTTP_ME_454_OLD_PASSWORD_IS_INCORRECT)
-
+                # Validate: Check password confirm, it'll call to confirm_password_validate() function in ChangePasswordSerializer 
                 if  not serializer.confirm_password_validate():
-                    data['email'] = request.data['email']
                     data['message'] = 'Confirm password is incorrect'
                     return Response(data, status=status_http.HTTP_ME_456_CONFIRM_PASSWORD_IS_INCORRECT)
-                serializer.update()
-                data['email'] = request.data['email']
+                # Call function update() in ChangePasswordSerializer to update password
+                serializer.update(request)
                 data['message'] = 'Change password successfully'
                 return Response(data, status=status.HTTP_200_OK)
-            except Exception as e:
-                print(e)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+            except:
+                pass
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)   
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, ])
@@ -58,15 +56,15 @@ def get_profile_view(request):
         data['first_name'] = user.first_name
         data['last_name'] = user.last_name
         data['id'] = user.id
-
+        data['room'] = {}
         if  user.groups.filter(name='sinhvien_group').exists():
             try:
-                contract = Contract.objects.filter(profile=queryset).first()
-                data['room'] = contract.room.name
-                data['slug-room'] = contract.room.slug
-            except Exception as ex:
-                data['room'] = None
-                data['slug-room'] = None
+                contract = Contract.objects.filter(profile=queryset, is_expired=False, is_delete=False).first()
+                data['room']['name'] = contract.room.name
+                data['room']['slug'] = contract.room.slug
+            except Exception as e:
+                print(e)
+                pass
     
         groups = Group.objects.filter(user=request.user).all()
         groups_ = []
@@ -96,18 +94,18 @@ def get_profile_view(request):
         return Response(data, status=status.HTTP_200_OK)            
     return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)  
 
-@api_view(['POST'])
+@api_view(['PUT'])
 @permission_classes([IsAuthenticated, ])
 def update_user_profile_view(request):
-    if request.method == 'POST':
+    if request.method == 'PUT':
         # update current user by email
-        request.user.email = request.data['email']  
+        # request.user.email = request.data['email']  
         serializer = UpdateProfileSerializer(data=request.data)
         data = {}
         if serializer.is_valid():   
             try:
-                serializer.save()
-                data['email'] = request.data['email']
+                serializer.save(request)
+                # data['email'] = request.data['email']
                 data['message'] = 'Update profile successfully'
                 return Response(data, status=status.HTTP_200_OK)
             except Exception as e:
@@ -115,6 +113,69 @@ def update_user_profile_view(request):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+@api_view(['POST'])
+def forgot_password_view(request):
+    if request.method == 'POST':
+        serializer = ForgotPasswordSerializer(data=request.data)
+        data = {}
+        if serializer.is_valid():
+            if not serializer.is_email_exist():
+                data['status'] = False
+                data['message'] = 'Email does not exist!'
+                return Response(data, status=status_http.HTTP_ME_451_EMAIL_DOES_NOT_EXIST) 
+            if not serializer.is_account_active():
+                data['status'] = False
+                data['message'] = 'The account is not activated. Contact management to resolve!'
+                return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)     
+            if serializer.send_mail(request):
+                data['status'] = True
+                data['message'] = 'Send an activation link to your email successfully!'                
+                return Response(data, status=status.HTTP_200_OK)
+        data['status'] = False
+        data['message'] = list(serializer.errors.values())[0][0]
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)    
+    return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def reset_password_view(request, uidb64, token):
+    check = check_link_forgot_password(request, uidb64, token).data
+    if check['status'] == True: 
+        data = {}
+        if request.method == 'GET':
+            return Response(check, status=status.HTTP_200_OK)
+        if request.method == 'POST':
+            serializer = ResetPasswordSerializer(data=request.data)
+            if serializer.is_valid():
+                if  not serializer.confirm_password_validate():
+                    data['status'] = False
+                    data['message'] = 'Confirm password is incorrect!'
+                    return Response(data, status=status_http.HTTP_ME_456_CONFIRM_PASSWORD_IS_INCORRECT)
+                serializer.reset_password()    
+                data['status'] = True
+                data['message'] = 'Reset Password successful!'
+                return Response(data, status=status.HTTP_200_OK)
+            data['status'] = False
+            data['message'] = list(serializer.errors.values())[0][0]
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)
+    else:
+        return Response(check, status=status.HTTP_400_BAD_REQUEST)
+
+def check_link_forgot_password(request, uidb64, token):
+    data = {}
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+        if user is not None and account_activation_token.check_token(user, token):
+            data['status'] = True
+            data['email'] = user.email
+            return Response(data, status=status.HTTP_200_OK) 
+    except:
+        pass
+    data['status'] = False
+    data['message'] = 'Link activate is expired!'
+    return Response(data, status=status.HTTP_400_BAD_REQUEST)
+
 
 # API get static data
 class FacultyViewSet(viewsets.ModelViewSet):

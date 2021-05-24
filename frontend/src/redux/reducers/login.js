@@ -9,6 +9,7 @@ const initialState = {
 export default function reducer(state = initialState, actions) {
   switch (actions.type) {
     case types.LOGIN_API:
+    case types.SEND_EMAIL_API:
       return {
         ...state,
         loading: true,
@@ -21,6 +22,8 @@ export default function reducer(state = initialState, actions) {
         loading: false,
       };
     case types.LOGIN_API_FAIL:
+    case types.SEND_EMAIL_API_SUCCEED:
+    case types.SEND_EMAIL_API_FAIL:
       return {
         ...state,
         error: actions.payload,

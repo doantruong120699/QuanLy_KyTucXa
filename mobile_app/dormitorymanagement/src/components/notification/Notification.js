@@ -1,70 +1,72 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, ImageBackground, FlatList, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { AppBar } from '../index';
 import ItemNotification from './ItemNotification';
 import { getnotification } from '../../redux/actions/getnotification';
 import { TextInput } from 'react-native-gesture-handler';
+import { stylePages, styleImgBg, styleContainer } from '../../styles/index';
 
 class Notification extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // data: this.props.listSV,
-      page: "1",
+      data: this.props.listNotification,
+      page: this.props.listNotification.current_page,
+      nextPage: this.props.listNotification.next_page,
+      totals: this.props.listNotification.totals,
     }
   }
   renderItem = ({ item }) => {
-    console.log("ab");
     return (
       <ItemNotification item={item} />
     )
   }
-  changeNumberPage = async (value) => {
-    await this.setState({ page: value });
-    await this.props.getnotification(this.state.page);
-    await this.setState({ listSV: this.props.listSV.results });
+  fetchApi = async (page) => {
+    await this.props.allstudent(page);
+    await this.setState({ page: page });
+    await this.setState({ listNotification: this.props.listNotification.results, nextPage: this.props.listNotification.next_page, totals: this.props.listNotification.totals });
   }
   minusNumberPage = async () => {
-    if (this.state.page > 1) {
-      await this.setState({ page: (parseInt(this.state.page) - 1).toString() });
-      await this.props.getnotification(this.state.page);
-      await this.setState({ listSV: this.props.listSV.results });
-    }
+    await this.fetchApi(this.state.page - 1);
   }
   plusNumberPage = async () => {
-    await this.setState({ page: (parseInt(this.state.page) + 1).toString() });
-    await this.props.getnotification(this.state.page);
-    await this.setState({ listSV: this.props.listSV.results });
+    await this.fetchApi(this.state.page + 1);
   }
   render() {
-    console.log(this.props.listNotification);
+    let totalPages = Math.ceil(this.state.totals / 20);
     return (
-      <View style={styles.container}>
-        <ImageBackground source={require('../../assets/background.jpg')} style={styles.imageBackground}>
+      <View style={[styleContainer.container, styles.container]}>
+        <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
           <AppBar style={styles.appbar} navigation={this.props.navigation} />
           <View style={styles.container_child}>
             <FlatList
               style={styles.flatlist}
-              data={this.props.listNotification.results}
+              data={this.state.data.results}
               renderItem={this.renderItem}
-              keyExtractor={item => item.public_id}
+              keyExtractor={(item, index) => index + 1}
             />
-            <View style={styles.flexRow}>
-              <TouchableOpacity style={[styles.btnOperation, styles.viewPage]} onPress={this.minusNumberPage}>
+            <View style={stylePages.flexRow}>
+              <TouchableOpacity 
+                style={[stylePages.btnOperation, stylePages.viewPage]} 
+                onPress={this.minusNumberPage}
+                disabled={this.state.page <= 1}
+              >
                 <Text>-</Text>
               </TouchableOpacity>
               <TextInput
                 underlineColorAndroid="transparent"
-                onChangeText={this.changeNumberPage}
-                value={this.state.page}
-                style={[styles.inputPage, styles.viewPage]}
+                value={this.state.page.toString()}
+                style={[stylePages.inputPage, stylePages.viewPage]}
                 placeholderTextColor="#808080"
                 keyboardType="numeric"
               >
               </TextInput>
-              <TouchableOpacity style={[styles.btnOperation, styles.viewPage]} onPress={this.plusNumberPage}>
+              <TouchableOpacity 
+                style={[stylePages.btnOperation, stylePages.viewPage]} 
+                onPress={this.plusNumberPage}
+                disabled={this.state.page >= totalPages}
+              >
                 <Text>+</Text>
               </TouchableOpacity>
             </View>
@@ -79,24 +81,14 @@ const mapDispatchToProps = {
 };
 function mapStateToProps(state) {
   return {
-    listNotification: state.getnotification.data,
+    listNotification: state.getnotification.payload,
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(Notification);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     flexDirection: 'column',
-  },
-  imageBackground: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    resizeMode: "cover",
-    alignItems: 'center',
   },
   appBar: {
     flex: 1,
@@ -120,10 +112,6 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 16,
   },
-  header: {
-    textAlign: 'center',
-    fontSize: 20,
-  },
   item: {
     marginLeft: 20,
     marginRight: 20,
@@ -133,37 +121,4 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  iconitem: {
-    padding: 5,
-    fontSize: 15,
-  },
-  title: {
-    padding: 5,
-    fontSize: 15,
-  },
-  flexRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 5,
-  },
-  viewPage: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  inputPage: {
-    width: 50,
-    height: 30,
-    marginLeft: 5,
-    marginRight: 5,
-    color: 'black',
-    padding: 5,
-    textAlign: 'center',
-    backgroundColor: 'white',
-  },
-  btnOperation: {
-    width: 30,
-    height: 30,
-    backgroundColor: 'gray',
-  }
 });

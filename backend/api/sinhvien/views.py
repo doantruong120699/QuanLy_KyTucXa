@@ -34,8 +34,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
         return Profile.objects.filter(public_id__public_id=public_id).order_by('id')
 
     def list(self, request, *args, **kwargs):
-        queryset = User.objects.filter(groups__name=sinhvien_group).order_by('id')
-
+        queryset = User.objects.filter(groups__name=sinhvien_group, user_profile__isnull=False).order_by('username')
         keyword = self.request.GET.get('keyword')
         if keyword and len(keyword) > 0:
             words = re.split(r"[-;,.\s]\s*", keyword)
@@ -56,7 +55,6 @@ class SinhVienViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, **kwargs):
         try:
             queryset = Profile.objects.get(public_id=kwargs['public_id'])
-            contract = Contract.objects.filter(profile=queryset).first()
             data = {}        
             data['id'] = queryset.user.id
             data['email'] = queryset.user.email
@@ -64,8 +62,14 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             data['username'] = queryset.user.username
             data['first_name'] = queryset.user.first_name
             data['last_name'] = queryset.user.last_name
-            data['room'] = contract.room.name
-            data['slug-room'] = contract.room.slug
+            data['room'] = {}
+            try:
+                contract = Contract.objects.filter(profile=queryset, is_expired=False, is_delete = False).first()
+                data['room']['name'] = contract.room.name
+                data['room']['slug'] = contract.room.slug
+            except Exception as ee:
+                print(ee)
+                pass
 
             profile = {}
             try:
@@ -73,8 +77,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 print(e)
                 pass
-            data['profile'] = profile
-            print(profile)
+            data['profile'] = profile\
             #
             return Response(data, status=status.HTTP_200_OK) 
 
@@ -84,6 +87,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Profile Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
+    # API thong ke
     @action(methods=["GET"], detail=False, url_path="dashboard", url_name="dashboard")
     def dashboard(self, request, *args, **kwargs):
         try:
@@ -95,8 +99,8 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             sinhvien_cur_month = sinhvien_queryset.filter(date_joined__month=dt.month)
             sinhvien = {}
             sinhvien['total'] = sinhvien_queryset.count()
-            sinhvien['pre-month'] = sinhvien_pre_month.count()
-            sinhvien['cur-month'] = sinhvien_cur_month.count()
+            sinhvien['pre_month'] = sinhvien_pre_month.count()
+            sinhvien['cur_month'] = sinhvien_cur_month.count()
             data['student'] = sinhvien
             # ======Staff=========
             staff_queryset = User.objects.filter(groups__name=nhanvien_group)
@@ -104,15 +108,15 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             staff_cur_month = staff_queryset.filter(date_joined__month=dt.month)
             staff = {}
             staff['total'] = staff_queryset.count()
-            staff['pre-month'] = staff_pre_month.count()
-            staff['cur-month'] = staff_cur_month.count()
+            staff['pre_month'] = staff_pre_month.count()
+            staff['cur_month'] = staff_cur_month.count()
             data['staff'] = staff
             # ======Room==========
             room_queryset = Room.objects.all()
             room = {}
             room['total'] = room_queryset.count()
             data['room'] = room
-            data['room-available'] = room_queryset.filter(number_now__lte = 8).count()
+            data['room_available'] = room_queryset.filter(number_now__lte = 8).count()
             return Response(data, status=status.HTTP_200_OK)
 
         except Exception as e:

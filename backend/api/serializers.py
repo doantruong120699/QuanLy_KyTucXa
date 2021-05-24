@@ -12,8 +12,13 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from .models import *
 from django.contrib.auth.models import Group
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from .utils import account_activation_token
+from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
 
-# Authentication ================================================================
+# Authentication ==================================
 
 class PermissionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,6 +46,13 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
         for g in user_obj.groups.all():
             gr.append(g.name)
         token['group'] = gr
+        per = []
+        for p in user_obj.user_permissions.all():
+            per.append(p.codename)
+        token['permission'] = per
+        profile = Profile.objects.get(user=user_obj)
+        profile.token = token
+        profile.save()
         return token
 
     def validate(self, attrs):
@@ -57,54 +69,146 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MySimpleJWTSerializer
+    # print(serializer_class)
 
 # API Change Password
 class ChangePasswordSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(required=True)
     old_password = serializers.CharField(
         style={'input_type': 'password'}, write_only=True) 
-
-    password = serializers.CharField(
+    new_password = serializers.CharField(
         style={'input_type': 'password'}, write_only=True)
-     
     confirm_password = serializers.CharField(
         style={'input_type': 'password'}, write_only=True)    
-
     class Meta:
         model = User
-        fields = ['email', 'password', 'old_password', 'confirm_password']
+        fields = ['old_password','new_password', 'confirm_password']
         extra_kwargs = {
-            'password': {'write_only': True},
             'old_password': {'write_only': True},
+            'new_password': {'write_only': True},
             'confirm_password': {'write_only': True},
-            'email': {'validators': [EmailValidator]},
         }
-
+    # Validate data
     def validate(self, data):
         if len(data['old_password']) < 5:
             raise serializers.ValidationError({'message': 'Password must be at least 5 characters.'}) 
-        if len(data['password']) < 5:
+        if len(data['new_password']) < 5:
             raise serializers.ValidationError({'message': 'Password must be at least 5 characters.'})
         return data    
 
-    def old_password_validate(self):
-        user = User.objects.get(email=self.validated_data['email'])
+    def old_password_validate(self, request):
+        user = request.user
         if not user.check_password(self.validated_data['old_password']):
             return False
         return True  
 
     def confirm_password_validate(self):
-        if (self.validated_data['password'] != self.validated_data['confirm_password']):
+        if (self.validated_data['new_password'] != self.validated_data['confirm_password']):
             return False
         return True     
 
-    def update(self):
-        user = User.objects.get(email=self.validated_data['email'])
-        password = self.validated_data['password']  
-        user.set_password(password)
+    # Update data
+    def update(self, request):
+        user = User.objects.get(email=request.user.email)
+        new_password = self.validated_data['new_password']  
+        user.set_password(new_password)
         user.save()
         return user 
 
+class ForgotPasswordSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True)
+
+    class Meta:
+        model = User
+        fields = ['email']
+        extra_kwargs = {
+            'email': {'validators': [EmailValidator]},
+        }
+
+    def is_account_active(self):
+        try:
+            user = User.objects.get(
+                email=self.validated_data['email'], is_active=True)
+            return True
+        except:
+            return False
+
+    def is_email_exist(self):
+        try:
+            user = User.objects.get(email=self.validated_data['email'])
+            return True
+        except:
+            return False
+
+    def send_mail(self, request):
+        try:
+            user = User.objects.get(email=self.validated_data['email'])
+            forgot_password_token = account_activation_token.make_token(user)
+            user.user_profile.forgot_password_token = forgot_password_token
+            user.user_profile.save()
+
+            current_site = get_current_site(request)
+            email_body = {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': forgot_password_token,
+            } 
+            # Create link active
+            link = reverse('reset_password', kwargs={'uidb64': email_body['uid'], 'token': email_body['token']})
+            activate_url = 'http://'+current_site.domain+link
+            # Create body of email
+            message = render_to_string('api/forgot_password.html', {'activate_url': activate_url, 'time_expire':settings.PASSWORD_RESET_TIMEOUT/60})  
+            # Create object email  
+            send = EmailMessage('[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY', message, from_email=settings.EMAIL_HOST_USER, to=[self.validated_data['email']])
+            send.content_subtype = 'html'
+            # Send email to user
+            send.send()
+            return True
+        except Exception as e:
+            print(e)
+            pass
+        return False
+
+class ResetPasswordSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        style={'input_type': 'password'}, write_only=True)
+    new_password = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True)
+    confirm_password = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ['email', 'new_password', 'confirm_password']
+        extra_kwargs = {
+            'new_password': {'write_only': True},
+            'confirm_password': {'write_only': True},
+            'email': {'validators': [EmailValidator]},
+        }
+
+    def validate(self, data):
+        if len(data['new_password']) < 5:
+            raise serializers.ValidationError(
+                {'message': 'Password must be at least 5 characters.'})
+        return data
+
+    def confirm_password_validate(self):
+        if (self.validated_data['new_password'] != self.validated_data['confirm_password']):
+            return False
+        return True 
+
+    def reset_password(self):
+        try:
+            user = User.objects.get(email=self.validated_data['email'])
+            new_password = self.validated_data['new_password']
+            user.set_password(new_password)
+            user.save()
+            return True
+        except:
+            return False
+
+
+# =============== API Account ====================
 
 # API get profile user
 class FacultySerializer(serializers.ModelSerializer):
@@ -126,6 +230,7 @@ class AreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
         fields = [ "id", "name", "slug"]
+
 class ProfileSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
     position = PositionSerializer(required=False)
@@ -166,7 +271,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
 class UpdateProfileSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
-    email = serializers.EmailField(required=True)
+    # email = serializers.EmailField(required=True)
     profile = ProfileUpdateSerializer()
 
     class Meta:
@@ -176,8 +281,9 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             'email': {'validators': [EmailValidator]},
         }
 
-    def save(self):
-        user = User.objects.get(email=self.validated_data['email'])
+    def save(self, request):
+        # user = User.objects.get(email=self.validated_data['email'])
+        user = User.objects.get(email=request.user.email)
         try:
             # update user
             user.first_name = self.validated_data['first_name']
