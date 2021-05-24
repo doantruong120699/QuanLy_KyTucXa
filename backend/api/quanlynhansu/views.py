@@ -18,12 +18,40 @@ from api.permissions import *
 from django.http import JsonResponse
 import shortuuid
 import re
+from django.contrib.contenttypes.models import ContentType
+quanlynhansu_group = 'quanlynhansu_group'
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationListSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     lookup_field = 'public_id'
+
+    # def get_permissions(self):
+    #     if self.action == 'list':
+    #         return [IsAuthenticated(), IsSinhVien(),]
+    #     return [IsAuthenticated(), IsSinhVien(),]
+        
+    def check_permission(self, request):
+        user = request.user
+        user_group = [g.name for g in user.groups.all()]
+        user_permission = [p.codename for p in user.user_permissions.all()]
+        if self.action == 'list':
+            return request.user.is_authenticated
+        else:
+            if quanlynhansu_group in user_group:
+                return True
+            else:
+                action = self.action
+                if action == 'post':
+                    action = 'add'
+                elif action == 'update':
+                    action = 'change'
+                elif action == 'destroy':
+                    action = 'delete'
+                    
+                required_action = action + '_notification'
+                return required_action in user_permission
 
     def get_queryset(self):
         return Notification.objects.all().order_by('-created_at')
@@ -43,34 +71,44 @@ class NotificationViewSet(viewsets.ModelViewSet):
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, *args, **kwargs):
-        serializer = NotificationListSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            save = serializer.create(request.data)
-            if save:
-                return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
-        return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
-
-    def update(self, request, public_id, format=None):
-        try:
-            queryset = Notification.objects.get(public_id=public_id)
-            datas = request.data
-            serializer = NotificationListSerializer(queryset, data=datas, context={'request': request})
+        if self.check_permission(request):
+            serializer = NotificationListSerializer(data=request.data, context={'request': request})
             if serializer.is_valid():
-                save = serializer.save()
+                save = serializer.create(request.data)
                 if save:
-                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_200_OK)
+                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
             return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
-        except:
+        else:
+            return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+        
+    def update(self, request, public_id, format=None):
+        if self.check_permission(request):
+            try:
+                queryset = Notification.objects.get(public_id=public_id)
+                datas = request.data
+                serializer = NotificationListSerializer(queryset, data=datas, context={'request': request})
+                if serializer.is_valid():
+                    save = serializer.save()
+                    if save:
+                        return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_200_OK)
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            except:
+                pass
             return Response({'status': 'fail', 'notification' : 'Not Found Notification!'}, status=status.HTTP_404_NOT_FOUND)
-    
+        else:
+            return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+        
     def destroy(self, request, public_id, format=None):
-        try:
-            queryset = Notification.objects.get(public_id=public_id)
-            queryset.delete()
-            return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
-        except:
+        if self.check_permission(request):
+            try:
+                queryset = Notification.objects.get(public_id=public_id)
+                queryset.delete()
+                return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+            except:
+                pass
             return Response({'status': 'fail', 'notification' : 'Notification not found!'}, status=status.HTTP_404_NOT_FOUND)
-
+        else:
+            return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
     def retrieve(self, request, **kwargs):
         try:
             noti = Notification.objects.get(public_id=kwargs['public_id'])
