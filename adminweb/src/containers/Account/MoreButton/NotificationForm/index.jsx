@@ -1,13 +1,8 @@
-import Paper from "@material-ui/core/Paper";
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import Grid from "@material-ui/core/Grid";
 import { Typography } from "@material-ui/core";
 import {
-  createMuiTheme,
   withStyles,
-  makeStyles,
-  ThemeProvider,
 } from "@material-ui/core/styles";
 
 import TextField from "@material-ui/core/TextField";

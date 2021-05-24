@@ -11,3 +11,5 @@ export const ROUTE_MANAGE_USER = "/manage-user";
 export const ROUTE_OVERVIEW = "/overview";
 export const ROUTE_ACCOUNT = "/account";
 export const ROUTE_MANAGE_FINANCIAL = "/financial";
+export const ROUTE_BUDGET = "/budget";
+export const ROUTE_CONTRACT_DETAIL = "/contract/detail";

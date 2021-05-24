@@ -5,11 +5,10 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import Grow from "@material-ui/core/Grow";
 import Select from "react-select";
 import ReactModal from "react-modal";
-import DetailRoom from "./DetailRoom";
 import queryString from "querystring";
+import ShowBill from "./ShowBill";
 import "./styles.css";
 import { getFinancial, getStatistical } from "../../../redux/actions/financial";
 import { month as MONTH } from "../../../utilities/constants/titles";
@@ -87,6 +86,7 @@ export default function WaterElectrical() {
         return `<span style='color:blue'>${param.value}</span>`;
       },
     },
+
     {
       field: "isPaid",
       headerName: "Trạng thái",
@@ -104,13 +104,11 @@ export default function WaterElectrical() {
       },
     },
     {
-      headerName: "",
-      field: "details",
-      cellStyle: { textAlign: "center", cursor: "pointer" },
-      resizeable: true,
-      filter: false,
-      cellRenderer: () => {
-        return "<span style='color:blue'>Xem chi tiết</span>";
+      field: "id",
+      filter: "agNumberColumnFilter",
+      cellStyle: {
+        fontSize: "20px",
+        textAlign: "center",
       },
     },
   ];
@@ -118,10 +116,13 @@ export default function WaterElectrical() {
     setIsModalVisible(false);
   };
   const handleCellClicked = (params) => {
-    if (params.colDef.field === "details") {
-      setIsModalVisible(true);
-      setRoomSelected(params.data.name);
-    }
+    console.log("Xem chi tiet ne!", params);
+    console.log("Data", data, "tableData", tableData);
+    setIsModalVisible(true);
+    setRoomSelected(params.data.name);
+  };
+  const onCancel = () => {
+    setIsModalVisible(false);
   };
   const rowClassRules = {
     odd: function (params) {
@@ -133,8 +134,7 @@ export default function WaterElectrical() {
   };
   const defaultColDef = {
     flex: 1,
-    minWidth: 200,
-
+    minWidth: 150,
     filter: true,
     sortable: true,
     floatingFilter: true,
@@ -151,31 +151,31 @@ export default function WaterElectrical() {
     },
   };
   return (
-    <div className="col col-full pl-48">
+    <div style={{ display: "flex" }}>
       {data && (
-        <Box style={{ width: "100%" }}>
-          <div className="col col-full">
-            <div className="col col-third">
-              <Typography>Lựa chọn tháng</Typography>
-              <Select
-                className="week-select"
-                options={month}
-                value={month.find((index) => index.value === time.month)}
-                onChange={(params) => handleTimeChange(params, "month")}
-              />
+        <Box paddingRight={15} style={{ width: "100%" }} display={"flex"}>
+          <div>
+            <div className="col col-full">
+              <div className="col col-third">
+                <Typography>Lựa chọn tháng</Typography>
+                <Select
+                  className="week-select"
+                  options={month}
+                  value={month.find((index) => index.value === time.month)}
+                  onChange={(params) => handleTimeChange(params, "month")}
+                />
+              </div>
+              <div className="col col-third">
+                <Typography>Lựa chọn năm</Typography>
+                <Select
+                  className="week-select"
+                  options={year}
+                  value={year.find((index) => index.value === time.year)}
+                  onChange={(params) => handleTimeChange(params, "year")}
+                />
+              </div>
             </div>
-            <div className="col col-third">
-              <Typography>Lựa chọn năm</Typography>
-              <Select
-                className="week-select"
-                options={year}
-                value={year.find((index) => index.value === time.year)}
-                onChange={(params) => handleTimeChange(params, "year")}
-              />
-            </div>
-          </div>
-          <div className="col col-half mt-12">
-            <Grow in={true} timeout={1000} style={{ transformOrigin: "0 0 0" }}>
+            <div style={{width:'600px'}}>
               <Box>
                 {data.map((n, index) => {
                   return (
@@ -193,48 +193,48 @@ export default function WaterElectrical() {
                   );
                 })}
               </Box>
-            </Grow>
-          </div>
-          <Grow
-            in={isShowTable}
-            timeout={500}
-            style={{ transformOrigin: "0 0 0" }}
-          >
-            <div className="dataTable">
-              <div
-                style={{
-                  margin: "0 0 8px 0",
-                  fontSize: "20px",
-                }}
-              >
-                {areaSelected}
-              </div>
-
-              {tableData && (
-                <div className="ag-theme-alpine grid">
-                  <AgGridReact
-                    animateRows
-                    enableColResize
-                    pagination={true}
-                    columnDefs={columnDefs}
-                    defaultColDef={defaultColDef}
-                    rowClassRules={rowClassRules}
-                    onCellClicked={handleCellClicked}
-                    getRowNodeId={(data) => data.name}
-                    onGridReady={onGridReady}
-                    rowData={tableData.room}
-                    paginationAutoPageSize={true}
-                  />
-                </div>
-              )}
             </div>
-          </Grow>
+          </div>
+          <div className="dataTable">
+            <div
+              style={{
+                margin: "20px 0 20px 0",
+                fontSize: "40px",
+              }}
+            >
+              {areaSelected}
+            </div>
+
+            {tableData && (
+              <div className="ag-theme-alpine grid">
+                <AgGridReact
+                  animateRows
+                  enableColResize
+                  pagination={true}
+                  columnDefs={columnDefs}
+                  defaultColDef={defaultColDef}
+                  rowClassRules={rowClassRules}
+                  onCellClicked={handleCellClicked}
+                  getRowNodeId={(data) => data.name}
+                  onGridReady={onGridReady}
+                  rowData={tableData.room}
+                  paginationAutoPageSize={true}
+                />
+              </div>
+            )}
+          </div>
           <ReactModal
             isOpen={isModalVisible}
             onRequestClose={hideModal}
             style={customStyles}
           >
-            <DetailRoom />
+            <ShowBill
+              selectedMonth={time.month}
+              selectedYear={time.year}
+              room={roomSelected}
+              area={areaSelected}
+              onCancel={onCancel}
+            />
           </ReactModal>
         </Box>
       )}

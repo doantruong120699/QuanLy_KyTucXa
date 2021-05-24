@@ -5,7 +5,6 @@ import MUIDataTable from "mui-datatables";
 import {
   createMuiTheme,
   MuiThemeProvider,
-  withStyles,
 } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
@@ -61,18 +60,6 @@ export default function Student() {
     setIsModalVisible(false);
     setIsModalNotiVisible(false);
   };
-  const AddButton = withStyles((theme) => ({
-    root: {
-      width: "100px",
-      marginRight: "20px",
-    },
-  }))(Button);
-
-  const DeleteButton = withStyles((theme) => ({
-    root: {
-      width: "100px",
-    },
-  }))(Button);
 
   const customStyles = {
     content: {
