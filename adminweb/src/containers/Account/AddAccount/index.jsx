@@ -1,6 +1,6 @@
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SendIcon from "@material-ui/icons/Send";
 import { Typography } from "@material-ui/core";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
@@ -19,8 +19,8 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
 import moment from "moment";
 
-export default function NotificationForm() {
-  const user = getAuth();
+export default function NotificationForm({ user }) {
+  //const user = getAuth();
   const permission = {
     group: [
       {
@@ -417,6 +417,29 @@ export default function NotificationForm() {
   // const [price, setPrice] = useState();
   // const [description, setDescription] = useState();
 
+  useEffect(() => {
+    if (user) {
+      setLocalData({
+        userName: user.username || "",
+        password: user.password || "",
+        email: user.email || "",
+        permission: user.permissions_list || "",
+        group: user.group_list || "",
+        firstName: user.first_name || "",
+        lastName: user.last_name || "",
+        birthday: user.profile.birthday || "",
+        role: "" || "",
+        address: user.profile.address || "",
+        identify_card: user.profile.identify_card || "",
+        gender: user.profile.gender || "",
+        phone: user.profile.phone || "",
+        faculty: user.profile.faculty?.id ? user.profile.faculty.id : "",
+        my_class: user.profile.my_class?.id ? user.profile.my_class.id : "",
+        position: user.profile.position?.id ? user.profile.position.id : "",
+        area: user.profile.area?.id ? user.profile.area.id : "",
+      });
+    }
+  }, []);
   const SendButton = withStyles((theme) => ({
     root: {
       width: "100px",
@@ -469,6 +492,9 @@ export default function NotificationForm() {
   };
   const handleChange = (event) => {
     console.log("event.target", event.target);
+    if (localData.role === "student") {
+      setLocalData({ ...localData, position: "", area: "" });
+    } else setLocalData({ ...localData, faculty: "", my_class: "" });
     const name = event.target.name;
     const data = event.target.value;
     setLocalData({ ...localData, [name]: data });
@@ -481,7 +507,7 @@ export default function NotificationForm() {
       },
     },
   };
-  console.log(localData, localData);
+  console.log("localData", localData);
   return (
     <Box style={{ width: "100%" }}>
       <Box marginLeft={"15%"} marginBottom={3}>
@@ -491,6 +517,7 @@ export default function NotificationForm() {
         <TextField
           id="userName"
           name={"userName"}
+          value={localData.userName}
           label="Tên Tài Khoản"
           onChange={handleChange}
           variant="outlined"
@@ -498,6 +525,7 @@ export default function NotificationForm() {
         />
         <TextField
           id="email"
+          value={localData.email}
           name={"email"}
           type="email"
           label="Email"
@@ -646,6 +674,7 @@ export default function NotificationForm() {
           id="firstName"
           name={"firstName"}
           label="Tên"
+          value={localData.firstName}
           variant="outlined"
           onChange={handleChange}
           size="small"
@@ -655,6 +684,7 @@ export default function NotificationForm() {
           id="lastName"
           name={"lastName"}
           type="lastName"
+          value={localData.lastName}
           label="Họ "
           variant="outlined"
           onChange={handleChange}
@@ -664,6 +694,7 @@ export default function NotificationForm() {
       </Box>
       <Box marginLeft={"15%"}>
         <TextField
+          value={localData.identify_card}
           id="identify_card"
           name={"identify_card"}
           label="CMND"
@@ -674,6 +705,7 @@ export default function NotificationForm() {
         />
         <TextField
           id="address"
+          value={localData.address}
           name={"address"}
           label="Địa chỉ liên lạc"
           variant="outlined"
@@ -701,6 +733,7 @@ export default function NotificationForm() {
           id="phone"
           name={"phone"}
           label="Số điện thoại"
+          value={localData.phone}
           variant="outlined"
           onChange={handleChange}
           size="small"
