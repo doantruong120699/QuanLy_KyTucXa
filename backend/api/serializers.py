@@ -46,6 +46,10 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
         for g in user_obj.groups.all():
             gr.append(g.name)
         token['group'] = gr
+        per = []
+        for p in user_obj.user_permissions.all():
+            per.append(p.codename)
+        token['permission'] = per
         profile = Profile.objects.get(user=user_obj)
         profile.token = token
         profile.save()
