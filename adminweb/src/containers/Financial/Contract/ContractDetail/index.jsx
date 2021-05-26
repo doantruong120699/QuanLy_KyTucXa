@@ -42,7 +42,7 @@ export default function ContractDetail() {
     },
   };
   const handleClickBack = () => {
-    history.push(ROUTER.ROUTE_MANAGE_FINANCIAL);
+    history.push(`${ROUTER.ROUTE_MANAGE_FINANCIAL}/contract`);
   };
   return (
     <div>

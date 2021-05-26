@@ -11,7 +11,7 @@ import Button from "@material-ui/core/Button";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import ReactModal from "react-modal";
 import AddBudget from "../Budget/AddBudget";
-import {useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 export default function Budget() {
   let history = useHistory();
@@ -145,32 +145,45 @@ export default function Budget() {
       is_expired: false,
     },
   ];
-  const dataInBudget = [
+  const dataBill = [
     {
-      id: 4,
-      type: 0,
-      description: "Phòng A101 đóng tiền điện nước",
-      number: 1,
-      createdBy: "anh_to@datahouse.com",
-
-      price: 200000,
-      createdDate: "04/20/2021",
+      public_id: 4,
+      water_electrical: {
+        public_id: 1,
+        room: { name: "101", slug: "101-b", number_now: 0 },
+        month: 4,
+        year: 2021,
+        water_price: 89313,
+        electrical_price: 891564,
+      },
     },
     {
-      id: 5,
-      type: 0,
-      description: "Phòng A102 đóng tiền điện nước",
-      number: 1,
-      createdBy: "anh_to@datahouse.com",
-
-      price: 200000,
-      createdDate: "04/21/2021",
+      public_id: 2,
+      water_electrical: {
+        public_id: 2,
+        room: { name: "102", slug: "101-a", number_now: 0 },
+        month: 4,
+        year: 2021,
+        water_price: 89313,
+        electrical_price: 891564,
+      },
+    },
+    {
+      public_id: 3,
+      water_electrical: {
+        public_id: 3,
+        room: { name: "103", slug: "101-b", number_now: 0 },
+        month: 4,
+        year: 2021,
+        water_price: 89313,
+        electrical_price: 891564,
+      },
     },
   ];
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.defaultValue);
   };
-  const columns = [
+  const contractColumn = [
     {
       label: "ID Phòng",
       name: "roomId",
@@ -232,6 +245,50 @@ export default function Budget() {
       },
     },
   ];
+  const billColumn = [
+    {
+      label: "Tên phòng",
+      name: "room_name",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      label: "Thời gian",
+      name: "date",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      label: "Giá điện",
+      name: "water_price",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value) =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value),
+      },
+    },
+    {
+      label: "Giá nước",
+      name: "electrical_price",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value) =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value),
+      },
+    },
+  ];
   const formatData = (data) => {
     return data.map((index) => {
       return {
@@ -243,6 +300,18 @@ export default function Budget() {
         studentClass: `${index.profile.class} ${index.profile.faculty}`,
         startDate: index.start_at,
         endDate: index.end_at,
+      };
+    });
+  };
+  const formatDataBill = (data) => {
+    return data.map((index) => {
+      return {
+        id: index.id,
+        water_electrical_id: index.water_electrical.id,
+        room_name: index.water_electrical.room.name,
+        date: `${index.water_electrical.month}/${index.water_electrical.year}`,
+        water_price: index.water_electrical.water_price,
+        electrical_price: index.water_electrical.electrical_price,
       };
     });
   };
@@ -259,24 +328,13 @@ export default function Budget() {
     };
     return updatedRow;
   });
-  const gridBillData = dataInBudget.map((row) => {
-    const updatedRow = {
-      ...row,
-      id: parseInt(row.id),
-      description: `${row.description}`,
-      number: row.number, // lastUpdateDate: row.lastUpdateDate,
-      createdDate: getHyphenatedDate(row.createdDate),
-      createdDateNumber: moment(row.createdDate, "MM/DD/YYYY")
-        .toDate()
-        .getTime(),
-    };
-    return updatedRow;
-  });
   const handleRowClick = (params, rowMeta) => {
     console.log("params", params, "meta", rowMeta);
-    
+
     history.push(
-      `${ROUTER.ROUTE_CONTRACT_DETAIL}/${dataContract[rowMeta.rowIndex].public_id}`
+      `${ROUTER.ROUTE_CONTRACT_DETAIL}/${
+        dataContract[rowMeta.rowIndex].public_id
+      }`
     );
   };
   const options = {
@@ -386,9 +444,13 @@ export default function Budget() {
             <MUIDataTable
               title={selectedOption === "contract" ? "Hoá đơn" : "Hợp đồng"}
               data={
-                selectedOption === "contract" ? gridContractData : gridBillData
+                selectedOption === "contract"
+                  ? gridContractData
+                  : formatDataBill(dataBill)
               }
-              columns={columns}
+              columns={
+                selectedOption === "contract" ? contractColumn : billColumn
+              }
               options={options}
             />
           </MuiThemeProvider>
