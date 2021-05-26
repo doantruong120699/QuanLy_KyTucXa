@@ -63,6 +63,9 @@ used_room_in_area_list = UsedRoomInAreaViewSet.as_view({
 permission_list = GroupPermissionViewSet.as_view({
     'get': 'list',
 })
+permission_information_list = GroupPermissionViewSet.as_view({
+    'get': 'get_permission_infomation',
+})
 # =========== Profile =========
 # list - create
 profile_list = UserProfileViewSet.as_view({
@@ -101,6 +104,7 @@ urlpatterns = [
     path('used-room-area/', used_room_in_area_list, name = 'used_room_in_area_list'),
     # =========== Permission
     path('permission/', permission_list, name = 'permission_list'),
+    path('permission-and-information/', permission_information_list, name = 'permission_information_list'),
     # ========== notification
     path('admin/account/', profile_list, name = 'profile_list'),
     path('admin/account/<str:public_id>/', profile_detail, name = 'profile_detail'),
