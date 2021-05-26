@@ -13,45 +13,16 @@ import DatePicker from "react-datepicker";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import TextField from "@material-ui/core/TextField";
-import { getAuth } from "../../../../src/utilities/helper";
 import InputBase from "@material-ui/core/InputBase";
 import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
 import moment from "moment";
 
-export default function NotificationForm({ user }) {
-  //const user = getAuth();
-  const permission = {
-    group: [
-      {
-        id: 2,
-        name: "quanlynhansu_group",
-      },
-      {
-        id: 1,
-        name: "nhanvien_group",
-      },
-      {
-        id: 3,
-        name: "sinhvien_group",
-      },
-      {
-        id: 4,
-        name: "quanlytaichinh_group",
-      },
-      {
-        id: 5,
-        name: "superadmin_group",
-      },
-    ],
-    permission: [
-      { id: 33, name: "can remove area" },
-      { id: 34, name: "can add area" },
-      { id: 35, name: "can add bill" },
-      { id: 36, name: "can change bill" },
-    ],
-  };
+export default function NotificationForm(props) {
+  const { userInfor, permission } = props;
+
   const [dumbBirthDay, setDumbBirthDay] = useState();
+
   const [localData, setLocalData] = useState({
     // this data used to store value, dataSend will be the data to post
     email: "",
@@ -386,7 +357,6 @@ export default function NotificationForm({ user }) {
     },
   ];
   const handleClick = () => {
-    console.log("dataSend", localData);
     const dataSend = {
       username: localData.userName,
       password: localData.password,
@@ -418,25 +388,29 @@ export default function NotificationForm({ user }) {
   // const [description, setDescription] = useState();
 
   useEffect(() => {
-    if (user) {
+    if (userInfor) {
       setLocalData({
-        userName: user.username || "",
-        password: user.password || "",
-        email: user.email || "",
-        permission: user.permissions_list || "",
-        group: user.group_list || "",
-        firstName: user.first_name || "",
-        lastName: user.last_name || "",
-        birthday: user.profile.birthday || "",
+        userName: userInfor.user.username || "",
+        password: userInfor.password || "",
+        email: userInfor.user.email || "",
+        permission: userInfor.user.permissions_list
+          ? userInfor.user.permissions_list.map((value) => value.id)
+          : [],
+        group: userInfor.user.group_list
+          ? userInfor.user.group_list.map((value) => value.id)
+          : [],
+        firstName: userInfor.user.first_name || "",
+        lastName: userInfor.user.last_name || "",
+        birthday: userInfor.birthday || "",
         role: "" || "",
-        address: user.profile.address || "",
-        identify_card: user.profile.identify_card || "",
-        gender: user.profile.gender || "",
-        phone: user.profile.phone || "",
-        faculty: user.profile.faculty?.id ? user.profile.faculty.id : "",
-        my_class: user.profile.my_class?.id ? user.profile.my_class.id : "",
-        position: user.profile.position?.id ? user.profile.position.id : "",
-        area: user.profile.area?.id ? user.profile.area.id : "",
+        address: userInfor.address || "",
+        identify_card: userInfor.identify_card || "",
+        gender: userInfor.gender || "",
+        phone: userInfor.phone || "",
+        faculty: userInfor.faculty?.id ? userInfor.faculty.id : "",
+        my_class: userInfor.my_class ? userInfor.my_class.id : "",
+        position: userInfor.position ? userInfor.position.id : "",
+        area: userInfor.area ? userInfor.area.id : "",
       });
     }
   }, []);
@@ -482,14 +456,7 @@ export default function NotificationForm({ user }) {
     },
   }))(InputBase);
   const classes = useStyles();
-  const convertDataSelect = (data, type) => {
-    return data.map((index) => {
-      return {
-        value: index.id,
-        label: index.name,
-      };
-    });
-  };
+
   const handleChange = (event) => {
     console.log("event.target", event.target);
     if (localData.role === "student") {
@@ -507,7 +474,6 @@ export default function NotificationForm({ user }) {
       },
     },
   };
-  console.log("localData", localData);
   return (
     <Box style={{ width: "100%" }}>
       <Box marginLeft={"15%"} marginBottom={3}>
@@ -550,14 +516,11 @@ export default function NotificationForm({ user }) {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(permission.group).map((index) => {
+            {permission.group.map((value, index) => {
               return (
-                <MenuItem value={index.value}>
-                  {" "}
-                  <Checkbox
-                    checked={localData.group.indexOf(index.value) > -1}
-                  />
-                  <ListItemText primary={index.label} />
+                <MenuItem key={index} value={value.id}>
+                  <Checkbox checked={localData.group.indexOf(value.id) > -1} />
+                  <ListItemText primary={value.name} />
                 </MenuItem>
               );
             })}
@@ -576,10 +539,10 @@ export default function NotificationForm({ user }) {
             marginTop: "20px",
           }}
         >
-          {localData.group.map((index) => {
+          {localData.group.map((value, index) => {
             return (
-              <div>
-                {permission.group.find((value) => value.id === index).name}
+              <div key={index}>
+                {permission.group.find((ele) => ele.id === value).name}
               </div>
             );
           })}
@@ -599,12 +562,12 @@ export default function NotificationForm({ user }) {
             renderValue={(selected) => selected.join(", ")}
             MenuProps={MenuProps}
           >
-            {convertDataSelect(permission.permission).map((index) => (
-              <MenuItem value={index.value}>
+            {permission.permission.map((value, index) => (
+              <MenuItem key={index} value={value.id}>
                 <Checkbox
-                  checked={localData.permission.indexOf(index.value) > -1}
+                  checked={localData.permission.indexOf(value.id) > -1}
                 />
-                <ListItemText primary={index.label} />
+                <ListItemText primary={value.name} />
               </MenuItem>
             ))}
           </Select>
@@ -620,10 +583,10 @@ export default function NotificationForm({ user }) {
             display: "block",
           }}
         >
-          {localData.permission.map((index) => {
+          {localData.permission.map((value, index) => {
             return (
-              <div>
-                {permission.permission.find((value) => value.id === index).name}
+              <div key={index}>
+                {permission.permission.find((ele) => ele.id === value).name}
               </div>
             );
           })}
@@ -755,8 +718,12 @@ export default function NotificationForm({ user }) {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(position).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {position.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              );
             })}
           </Select>
           <FormHelperText>
@@ -778,8 +745,12 @@ export default function NotificationForm({ user }) {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(area).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {area.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              );
             })}
           </Select>
           <FormHelperText>
@@ -804,8 +775,12 @@ export default function NotificationForm({ user }) {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(faculty).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {faculty.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              );
             })}
           </Select>
           <FormHelperText>
@@ -827,8 +802,8 @@ export default function NotificationForm({ user }) {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(class_in_university).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {class_in_university.map((value, index) => {
+              return <MenuItem value={value.id}>{value.name}</MenuItem>;
             })}
           </Select>
           <FormHelperText>

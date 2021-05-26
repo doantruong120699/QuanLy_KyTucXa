@@ -4,7 +4,7 @@ import Button from "../../components/common/Button";
 import FormError from "../../components/common/FormError";
 import InputField from "../../components/common/InputField";
 import validate from "../../utilities/regex";
-import { getRawEmployeeDataRender } from "../../utilities/constants/dataRender/profile";
+import { getRawEmployeeDataRender } from "../../utilities/constants/DataRender/profile";
 
 const EditEmployeeProfile = (props) => {
   const { open, onClose, dataRender, updateOrigin, updateUserProfile } = props;
@@ -51,7 +51,7 @@ const EditEmployeeProfile = (props) => {
       onClose();
     }
   };
- 
+
   return (
     <Popup open={open} closeOnDocumentClick onClose={() => onClose()}>
       <div className="col modal style-lg-box bg-color-white text-align-ct">

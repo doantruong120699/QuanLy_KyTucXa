@@ -1,50 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ThemeProvider } from "@material-ui/styles";
 import { Button, createMuiTheme, Menu, MenuItem } from "@material-ui/core";
 import ReactModal from "react-modal";
 import AddAccount from "../AddAccount/index";
 import { BsThreeDotsVertical } from "react-icons/bs";
+import { getDetailedAccount } from "../../../redux/actions/account";
 
-export default function MoreButton(rowUser) {
+export default function MoreButton(props) {
+  const { rowUser, permission } = props;
+
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const user = {
-    email: "admin@gmail.com",
-    username: "admin@gmail.com",
-    first_name: "Nam",
-    last_name: "Trần",
-    id: 13,
-    room: {},
-    group_list: [1, 2, 3],
-    permissions_list: [33, 34, 35],
-    profile: {
-      birthday: "2021-05-18",
-      address: "Liên Chiểu Đà Nẵng",
-      identify_card: "1234567898",
-      gender: true,
-      phone: "0388012232",
-      created_at: "2021-05-18T15:37:00.102536Z",
-      faculty: null,
-      my_class: null,
-      position: {
-        id: 3,
-        name: "Admin",
-        slug: "admin",
-      },
-      area: {
-        id: 1,
-        name: "Khu A",
-        slug: "area-a",
-      },
-    },
-  };
+
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    getDetailedAccount(rowUser.publicId, (output) => {
+      if (output) {
+        setUser(output);
+      }
+    });
+  }, []);
+
   const handleClick = (event) => {
     if (anchorEl !== event.currentTarget) {
       setAnchorEl(event.currentTarget);
     }
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const theme = createMuiTheme({
     overrides: {
       MuiList: {
@@ -54,10 +40,13 @@ export default function MoreButton(rowUser) {
       },
     },
   });
+
   const [isModalVisible, setIsModalVisible] = useState(false);
+
   const hideModal = () => {
     setIsModalVisible(false);
   };
+
   const customStyles = {
     content: {
       top: "50%",
@@ -70,13 +59,16 @@ export default function MoreButton(rowUser) {
     },
     overlay: { zIndex: 1000 },
   };
+
   const onOpenEditForm = () => {
     setIsModalVisible(true);
   };
+
   const onConfirmChangeStatus = () => {
     console.log("rowUser", rowUser);
-    console.log("rowUser.isActive", rowUser.rowUser.isActive);
+    console.log("rowUser.isActive", rowUser.isActive);
   };
+
   return (
     <div>
       <Button
@@ -96,7 +88,7 @@ export default function MoreButton(rowUser) {
           MenuListProps={{ onMouseLeave: handleClose }}
         >
           <MenuItem onClick={onConfirmChangeStatus}>
-            {rowUser.rowUser.isActive === true ? (
+            {rowUser.isActive === true ? (
               <div style={{ color: "red" }}>Disable User</div>
             ) : (
               <div style={{ color: "green" }}>Enable User</div>
@@ -112,7 +104,7 @@ export default function MoreButton(rowUser) {
         onRequestClose={hideModal}
         style={customStyles}
       >
-        <AddAccount user={user} />
+        <AddAccount userInfor={user} permission={permission} />
       </ReactModal>
     </div>
   );

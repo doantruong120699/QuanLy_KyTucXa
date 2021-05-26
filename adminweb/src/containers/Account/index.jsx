@@ -1,6 +1,6 @@
 import MUIDataTable from "mui-datatables";
 import Box from "@material-ui/core/Box";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
@@ -9,110 +9,45 @@ import AddBoxIcon from "@material-ui/icons/AddBox";
 import ReactModal from "react-modal";
 import AddAccount from "./AddAccount";
 import MoreButton from "./MoreButton";
+import {
+  getAccounts,
+  getGroupAndPermission,
+} from "../../redux/actions/account";
+import moment from "moment";
 import YesNoModal from "../../components/YesNoModal";
 
 export default function Account() {
-  const data = [
-    {
-      id: 1,
-      firstName: "Anh",
-      lastName: "To",
-      account: "anh_to@datahouse.com",
-      role: "Student",
-      activeDate: "20/3/2020",
-      isActive: true,
-    },
-    {
-      id: 2,
-      firstName: "Ben",
-      lastName: "Phan",
-      account: "ben_phan@datahouse.com",
-      role: "Student",
-      activeDate: "21/3/2020",
-      isActive: false,
-    },
-    {
-      id: 3,
-      firstName: "Truong",
-      lastName: "Doan",
-      account: "doan_truong@demailam.com",
-      role: "Student",
-      activeDate: "20/4/2020",
-      isActive: true,
-    },
-    {
-      id: 4,
-      firstName: "Quang",
-      lastName: "Tran",
-      account: "quang_tran@demailam.com",
-      role: "Student",
-      activeDate: "22/5/2020",
-      isActive: true,
-    },
-    {
-      id: 5,
-      firstName: "Admin",
-      lastName: "le",
-      account: "admin_le@datahouse.com",
-      role: "Super Admin",
-      activeDate: "21/2/2017",
-      isActive: true,
-    },
-    {
-      id: 6,
-      firstName: "Financial",
-      lastName: "Admin",
-      account: "financial_admin@demailam.com",
-      role: "Student",
-      activeDate: "21/3/2020",
-      isActive: true,
-    },
-    {
-      id: 7,
-      firstName: "Human",
-      lastName: "Resource",
-      account: "human_resource@demailam.com",
-      role: "Student",
-      activeDate: "20/3/2020",
-      isActive: true,
-    },
-    {
-      id: 8,
-      firstName: "Van",
-      lastName: "Pham",
-      account: "pham_van@demailam.com",
-      role: "Staff",
-      activeDate: "20/3/2020",
-      isActive: true,
-    },
-    {
-      id: 9,
-      firstName: "Ton",
-      lastName: "Hoang",
-      account: "hoang_lan_ton@demailam.com",
-      role: "Staff",
-      activeDate: "20/3/2020",
-      isActive: true,
-    },
-    {
-      id: 10,
-      firstName: "De Boer",
-      lastName: "Frank",
-      account: "fboer@demailam.com",
-      role: "Student",
-      activeDate: "20/3/2020",
-      isActive: true,
-    },
-    {
-      id: 11,
-      firstName: "B",
-      lastName: "Nguyen",
-      account: "nguyen_b@demailam.com",
-      role: "Staff",
-      isActive: true,
-      activeDate: "20/3/2020",
-    },
-  ];
+  const [data, setData] = useState();
+
+  const [permission, setPermission] = useState();
+
+  useEffect(() => {
+    const params = "";
+    getAccounts(params, (output) => {
+      var data;
+      if (output) {
+        data = output.results.map((value, index) => {
+          return {
+            order: index + 1,
+            publicId: value.public_id,
+            firstName: value.user.first_name,
+            lastName: value.user.last_name,
+            account: value.user.username,
+            role: value.position ? value.position.name : null,
+            isActive: true,
+            activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
+          };
+        });
+        setData(data);
+        getGroupAndPermission((output) => {
+          if (output) {
+            setPermission(output);
+          }
+        });
+      }
+    });
+  }, []);
+
   const getMuiTheme = () =>
     createMuiTheme({
       overrides: {
@@ -131,6 +66,7 @@ export default function Account() {
         },
       },
     });
+
   const convertDataForTable = (data) => {
     return data.map((n) => ({
       name: n.lastName + " " + n.firstName,
@@ -140,6 +76,7 @@ export default function Account() {
       isActive: n.isActive,
     }));
   };
+
   const columns = [
     {
       name: "name",
@@ -191,19 +128,23 @@ export default function Account() {
         sort: false,
         filter: false,
         customBodyRender: (userId, tableMetaData) => (
-          <MoreButton rowUser={data[tableMetaData.rowIndex]} />
+          <MoreButton
+            rowUser={data[tableMetaData.rowIndex]}
+            permission={permission}
+          />
         ),
         setCellProps: () => ({ style: { width: "10px" } }),
       },
     },
   ];
   const handleRowClick = (_value, meta) => {};
+
   const options = {
     filterType: "textField",
     selectableRows: false,
     onRowClick: handleRowClick,
   };
-  const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(true);
+  const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const hideModal = () => {
     setIsModalVisible(false);
@@ -224,56 +165,58 @@ export default function Account() {
     overlay: { zIndex: 1000 },
   };
   return (
-    <div className="account_page">
-      <Box marginBottom={5}>
-        <YesNoModal
-          isModalVisible={isYesNoModalVisible}
-          hideModal={() => {}}
-          title={"Hello"}
-          message={
-            "This is a very fucking long status to test the yes-no modal. If you feel ok, press Ok, or not don't press any shit. Thank you"
-          }
-          okText={"OK"}
-          cancelText={"Cancel"}
-          onOk={() => {
-            console.log("OK");
-          }}
-          onCancel={() => {
-            setIsYesNoModalVisible(false);
-          }}
-        />
-        <Typography variant="h4">Tài Khoản</Typography>
-      </Box>
-      <Box marginBottom={5}>
-        <Button
-          startIcon={<AddBoxIcon />}
-          style={{
-            backgroundColor: "#005CC8",
-            width: "200px",
-            color: "white",
-          }}
-          onClick={handleAddAccount}
-        >
-          Thêm Tài Khoản
-        </Button>
-      </Box>
-      <Box marginLeft={0}>
-        <MuiThemeProvider theme={getMuiTheme()}>
-          <MUIDataTable
-            title={"Danh sách tài khoản trong hệ thống"}
-            data={convertDataForTable(data)}
-            columns={columns}
-            options={options}
-          />
-        </MuiThemeProvider>
-      </Box>
-      <ReactModal
-        isOpen={isModalVisible}
-        onRequestClose={hideModal}
-        style={customStyles}
-      >
-        <AddAccount />
-      </ReactModal>
+    <div>
+      {data && (
+        <div className="account_page">
+          <Box marginBottom={5}>
+            <YesNoModal
+              isModalVisible={isYesNoModalVisible}
+              hideModal={() => {}}
+              title={"Xác nhận"}
+              message={"Mời xác nhận"}
+              okText={"OK"}
+              cancelText={"Cancel"}
+              onOk={() => {
+                console.log("OK");
+              }}
+              onCancel={() => {
+                setIsYesNoModalVisible(false);
+              }}
+            />
+            <Typography variant="h4">Tài Khoản</Typography>
+          </Box>
+          <Box marginBottom={5}>
+            <Button
+              startIcon={<AddBoxIcon />}
+              style={{
+                backgroundColor: "#005CC8",
+                width: "200px",
+                color: "white",
+              }}
+              onClick={handleAddAccount}
+            >
+              Thêm Tài Khoản
+            </Button>
+          </Box>
+          <Box marginLeft={0}>
+            <MuiThemeProvider theme={getMuiTheme()}>
+              <MUIDataTable
+                title={"Danh sách tài khoản trong hệ thống"}
+                data={convertDataForTable(data)}
+                columns={columns}
+                options={options}
+              />
+            </MuiThemeProvider>
+          </Box>
+          <ReactModal
+            isOpen={isModalVisible}
+            onRequestClose={hideModal}
+            style={customStyles}
+          >
+            <AddAccount permission={permission} />
+          </ReactModal>
+        </div>
+      )}
     </div>
   );
 }

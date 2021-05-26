@@ -2,17 +2,11 @@ import "react-tabs/style/react-tabs.css";
 import React, { useState, useEffect } from "react";
 import Room from "./Room";
 import MUIDataTable from "mui-datatables";
-import {
-  createMuiTheme,
-  MuiThemeProvider,
-} from "@material-ui/core/styles";
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import "./styles.css";
 import ReactModal from "react-modal";
 import { getRoomDetails, getRooms } from "../../../redux/actions/humanResource";
-import { getRoom } from "../../../utilities/constants/dataRender/checkroom";
+import { getRoom } from "../../../utilities/constants/DataRender/checkroom";
 import queryString from "query-string";
 import Pagination from "../../../components/common/Pagination";
 
@@ -55,10 +49,9 @@ export default function Student() {
   }, [filter]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isModalNotiVisible, setIsModalNotiVisible] = useState(false);
+
   const hideModal = () => {
     setIsModalVisible(false);
-    setIsModalNotiVisible(false);
   };
 
   const customStyles = {
@@ -85,6 +78,7 @@ export default function Student() {
         MUIDataTableBodyCell: {
           root: {
             backgroundColor: "#FFF",
+            height: "15px",
           },
         },
       },
@@ -144,7 +138,7 @@ export default function Student() {
               variant="contained"
               color="secondary"
               onClick={handleDeletePeople}
-              style={{ marginLeft: "20px" }}
+              style={({ marginLeft: "20px" }, { height: "25px" })}
             >
               Xoá
             </Button>
@@ -153,133 +147,24 @@ export default function Student() {
       },
     },
   ];
-  const handleClickAddPeople = () => {
-    console.log("Add people");
-  };
 
   const options = {
     filterType: "textField",
 
-    pagination: true,
+    pagination: false,
     selectableRows: false,
     customHeadRender: () => {
       return null;
     },
     onRowClick: (params, rowMeta) => {},
   };
-  const registrationData = [
-    {
-      id: 1,
-      request: "requestRoom@demailam.com",
-      roomRequested: 101,
-      area: "A",
-      createdDate: "05/09/2021",
-    },
-  ];
-  const columnsNoti = [
-    {
-      name: "id",
-      label: "ID",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "request",
-      label: "Email người gửi",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "roomRequested",
-      label: "Phòng",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "area",
-      label: "Khu",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "createdDate",
-      label: "Ngày gửi yêu cầu",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "",
-      label: "",
-      options: {
-        customBodyRender: (value) => {
-          return (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleClickAddPeople}
-              style={{ marginLeft: "20px" }}
-            >
-              Xác nhận
-            </Button>
-          );
-        },
-      },
-    },
-  ];
+
   const handleClickAddPeopleWithParams = (params) => {
     console.log("AAAAAAAA", params);
   };
-  const handleOpenNotiModal = () => {
-    setIsModalNotiVisible(true);
-  };
+
   return (
     <div className="col col-full pl-48">
-      <Box>
-        <Box
-          className={"notification"}
-          display={registrationData.length > 0 ? "block" : "none"}
-          boxShadow={1}
-          borderRadius={5}
-          marginBottom={5}
-          color="red"
-          width={350}
-          textAlign="center"
-          right={5}
-          style={{ cursor: "pointer" }}
-          onClick={handleOpenNotiModal}
-        >
-          <NotificationsIcon />
-          <span style={{ marginLeft: "5px" }}>
-            Có {registrationData.length} yêu cầu mới
-          </span>
-        </Box>
-      </Box>
-      <ReactModal
-        isOpen={isModalNotiVisible}
-        onRequestClose={hideModal}
-        style={customStyles}
-      >
-        <div>
-          <MuiThemeProvider theme={getMuiTheme()}>
-            <MUIDataTable
-              title={"Yêu cầu vào phòng"}
-              data={registrationData}
-              columns={columnsNoti}
-              options={options}
-            />
-          </MuiThemeProvider>
-        </div>
-      </ReactModal>
       {dataArea &&
         dataArea.map((area, index) => {
           return (

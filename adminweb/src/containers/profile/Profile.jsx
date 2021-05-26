@@ -10,7 +10,7 @@ import Avatar from "./Avatar";
 import SummaryInfo from "./SummaryInfo";
 import EmployeeInfo from "./EmployeeInfo";
 import { getAuth } from "../../utilities/helper";
-import { getHandledEmployeeDataRender } from "../../utilities/constants/dataRender/profile";
+import { getHandledEmployeeDataRender } from "../../utilities/constants/DataRender/profile";
 import { changePass } from "../../redux/actions/changePass";
 import Alertness from "../../components/common/Alertness";
 import * as ALERTMESSAGE from "../../utilities/constants/AlertMessage";
@@ -133,7 +133,7 @@ const Profile = () => {
   return (
     <div>
       {profileState.profile && (
-        <div className="style-background-container">
+        <div className="pl-24 pr-24">
           <div className="col col-full">
             <div className="col col-third justify-content-ct">
               <Avatar />

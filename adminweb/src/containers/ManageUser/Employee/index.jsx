@@ -15,7 +15,7 @@ import {
   week as weekDate,
   typeOption,
 } from "../../../utilities/constants/titles";
-import { getTimeSheetRender } from "../../../utilities/constants/dataRender/humanResource";
+import { getTimeSheetRender } from "../../../utilities/constants/DataRender/humanResource";
 import querystring from "querystring";
 
 const Employee = () => {
@@ -202,7 +202,7 @@ const Employee = () => {
           </div>
           <div>
             <h1 id="title">Bảng phân công công việc</h1>
-            <table id="students">
+            <table id="students" style={{ margin: "auto" }}>
               <thead>
                 <tr>
                   <th style={{ width: "9%" }}></th>

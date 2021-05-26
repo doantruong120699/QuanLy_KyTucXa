@@ -4,7 +4,7 @@ import Button from "../common/Button";
 import FormError from "../common/FormError";
 import InputField from "../common/InputField";
 import validate from "../../utilities/regex";
-import { getRawEmployeeDataRender } from "../../utilities/dataRender/profile";
+import { getRawEmployeeDataRender } from "../../utilities/DataRender/profile";
 
 const EditEmployeeProfile = (props) => {
   const { open, onClose, dataRender, updateOrigin, updateUserProfile } = props;

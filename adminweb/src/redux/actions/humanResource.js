@@ -90,6 +90,36 @@ export async function AcceptRegistrationRoom(slug, resolve = () => {}) {
   }
 }
 
+export async function DenyRegistrationRoom(slug, resolve = () => {}) {
+  store.dispatch({
+    type: types.DENY_REGISTRATION_API,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}deny-registrations/${slug}/`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.DENY_REGISTRATION_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.DENY_REGISTRATION_API_FAIL,
+    });
+  }
+}
+
 export async function addDailySchedule(data, resolve = () => {}) {
   store.dispatch({
     type: types.ADD_DAILY_SCHEDULE_API,

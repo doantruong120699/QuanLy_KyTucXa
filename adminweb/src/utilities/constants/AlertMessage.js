@@ -17,4 +17,6 @@ export const SYSTEM_ERROR = "Lỗi hệ thống!";
 export const INVALID_TIME = "Thời gian bắt đầu phải trước thời gian kết thúc!";
 export const UNAUTHORIZED_ROOM = "Bạn đã đăng kí phòng khác rồi!";
 export const REGISTER_SUCCESSFULLY = "Đăng kí phòng thành công";
+export const ACCEPT_SUCCESSFULLY = "Duyệt thành công";
+export const DENY_SUCCESSFULLY = "Từ chối thành công";
 export const UPDATE_PROFILE_SUCCESSFULLY = "Cập nhật thông tin thành công!";

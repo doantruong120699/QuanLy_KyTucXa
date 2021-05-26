@@ -9,3 +9,7 @@
 .icon-error {
   border: 2px solid #e15b69;
 }
+
+.icon-warning {
+  border: 2px solid orange;
+}

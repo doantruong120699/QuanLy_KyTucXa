@@ -8,23 +8,12 @@ import Button from "@material-ui/core/Button";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import ReactModal from "react-modal";
 import AddBudget from "./AddBudget";
-import { getExpenses } from "../../../redux/actions/financial";
+import { getExpenses, getRevenue } from "../../../redux/actions/financial";
 
 export default function Budget() {
   const [selectedOption, setSelectedOption] = useState("out");
   const [dataOutBudget, setDataOutBudget] = useState([]);
-  const dataInBudget = [
-    {
-      id: 4,
-      type: 0,
-      description: "Phòng A101 đóng tiền điện nước",
-      number: 1,
-      createdBy: "anh_to@datahouse.com",
-
-      price: 200000,
-      createdDate: "04/20/2021",
-    },
-  ];
+  const [dataInBudget, setDataOutbudget] = useState([]);
 
   useEffect(() => {
     getExpenses((output) => {
@@ -42,8 +31,26 @@ export default function Budget() {
             ),
           };
         });
-        console.log(data);
         setDataOutBudget(data);
+      }
+    });
+
+    getRevenue((output) => {
+      if (output) {
+        const data = output.results.map((value, index) => {
+          return {
+            order: index + 1,
+            type: value.type_revenue.name,
+            description: value.description,
+            createdBy:
+              value.created_by.first_name + " " + value.created_by.last_name,
+            price: value.amount,
+            createdDate: moment(new Date(value.created_at)).format(
+              "DD-MM-YYYY"
+            ),
+          };
+        });
+        setDataOutbudget(data);
       }
     });
   }, []);
@@ -208,6 +215,7 @@ export default function Budget() {
                 backgroundColor: "#005CC8",
                 width: "100px",
                 color: "white",
+                zIndex: "-1",
               }}
               onClick={handleAddBudget}
             >
