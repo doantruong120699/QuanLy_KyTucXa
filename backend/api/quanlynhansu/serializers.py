@@ -82,6 +82,7 @@ class ProfileSinhVienSerializer(serializers.ModelSerializer):
             'user',
             'birthday',
             'address',
+            'phone',
             'gender',
             'faculty',
             'my_class',
