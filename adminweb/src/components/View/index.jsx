@@ -1,5 +1,4 @@
 import React from "react";
-import { connect } from "react-redux";
 import cn from "classnames";
 import "./styles.scss";
 
@@ -35,8 +34,4 @@ const View = ({
   );
 };
 
-const mapStateToProps = (state) => ({});
-
-const mapDispatchToProps = {};
-
-export default connect(mapStateToProps, mapDispatchToProps)(View);
+export default View;

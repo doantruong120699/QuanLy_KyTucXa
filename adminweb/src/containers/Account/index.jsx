@@ -9,6 +9,7 @@ import AddBoxIcon from "@material-ui/icons/AddBox";
 import ReactModal from "react-modal";
 import AddAccount from "./AddAccount";
 import MoreButton from "./MoreButton";
+import YesNoModal from "../../components/YesNoModal";
 
 export default function Account() {
   const data = [
@@ -202,7 +203,7 @@ export default function Account() {
     selectableRows: false,
     onRowClick: handleRowClick,
   };
-
+  const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const hideModal = () => {
     setIsModalVisible(false);
@@ -225,6 +226,22 @@ export default function Account() {
   return (
     <div className="account_page">
       <Box marginBottom={5}>
+        <YesNoModal
+          isModalVisible={isYesNoModalVisible}
+          hideModal={() => {}}
+          title={"Hello"}
+          message={
+            "This is a very fucking long status to test the yes-no modal. If you feel ok, press Ok, or not don't press any shit. Thank you"
+          }
+          okText={"OK"}
+          cancelText={"Cancel"}
+          onOk={() => {
+            console.log("OK");
+          }}
+          onCancel={() => {
+            setIsYesNoModalVisible(false);
+          }}
+        />
         <Typography variant="h4">Tài Khoản</Typography>
       </Box>
       <Box marginBottom={5}>
