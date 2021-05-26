@@ -2,6 +2,8 @@ import View from "../View";
 import { Button, Typography, makeStyles } from "@material-ui/core";
 import ReactModal from "react-modal";
 import "./styles.css";
+import Grow from "@material-ui/core/Grow";
+
 const YesNoModal = ({
   isModalVisible,
   hideModal,
