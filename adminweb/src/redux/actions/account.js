@@ -59,3 +59,33 @@ export async function getGroupAndPermission(resolve = () => {}) {
     });
   }
 }
+
+export async function getDetailedAccount(publicId, resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_DETAILED_ACCOUNT_API,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}admin/account/${publicId}/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_DETAILED_ACCOUNT_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_DETAILED_ACCOUNT_API_FAIL,
+    });
+  }
+}

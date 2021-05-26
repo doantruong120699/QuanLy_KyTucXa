@@ -21,9 +21,14 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.secondary,
   },
 }));
-export default function ShowBill({ selectedMonth, selectedYear, area, room, onCancel }) {
+export default function ShowBill({
+  selectedMonth,
+  selectedYear,
+  area,
+  room,
+  onCancel,
+}) {
   const classes = useStyles();
-  console.log("Room", room.id);
   const lastWaterElectrical = {
     room: room.id,
     month: selectedMonth - 1,
@@ -41,18 +46,18 @@ export default function ShowBill({ selectedMonth, selectedYear, area, room, onCa
     water_electrical_unit_price: 1,
   });
   const handleClickCreate = () => {
-    console.log("DATA SEND", dataSend);
     createWaterElectricalIndex(dataSend, (output) => {
-      console.log("output", output);
       if (output.status === "successful") {
         toast("Tạo thành công");
-        setTimeout(onCancel, 4000);
+        setTimeout(onCancel, 1000);
       } else toast(output.notification);
     });
   };
+
   const handleClickCancel = () => {
     onCancel();
   };
+
   const handleChange = (event) => {
     const id = event.target.id;
     const data = event.target.value;

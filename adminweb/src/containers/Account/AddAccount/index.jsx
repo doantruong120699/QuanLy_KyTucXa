@@ -1,6 +1,6 @@
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SendIcon from "@material-ui/icons/Send";
 import { Typography } from "@material-ui/core";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
@@ -13,45 +13,16 @@ import DatePicker from "react-datepicker";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import TextField from "@material-ui/core/TextField";
-import { getAuth } from "../../../../src/utilities/helper";
 import InputBase from "@material-ui/core/InputBase";
 import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
 import moment from "moment";
 
-export default function NotificationForm() {
-  const user = getAuth();
-  const permission = {
-    group: [
-      {
-        id: 2,
-        name: "quanlynhansu_group",
-      },
-      {
-        id: 1,
-        name: "nhanvien_group",
-      },
-      {
-        id: 3,
-        name: "sinhvien_group",
-      },
-      {
-        id: 4,
-        name: "quanlytaichinh_group",
-      },
-      {
-        id: 5,
-        name: "superadmin_group",
-      },
-    ],
-    permission: [
-      { id: 33, name: "can remove area" },
-      { id: 34, name: "can add area" },
-      { id: 35, name: "can add bill" },
-      { id: 36, name: "can change bill" },
-    ],
-  };
+export default function NotificationForm(props) {
+  const { userInfor, permission } = props;
+
   const [dumbBirthDay, setDumbBirthDay] = useState();
+
   const [localData, setLocalData] = useState({
     // this data used to store value, dataSend will be the data to post
     email: "",
@@ -386,7 +357,6 @@ export default function NotificationForm() {
     },
   ];
   const handleClick = () => {
-    console.log("dataSend", localData);
     const dataSend = {
       username: localData.userName,
       password: localData.password,
@@ -417,6 +387,33 @@ export default function NotificationForm() {
   // const [price, setPrice] = useState();
   // const [description, setDescription] = useState();
 
+  useEffect(() => {
+    if (userInfor) {
+      setLocalData({
+        userName: userInfor.user.username || "",
+        password: userInfor.password || "",
+        email: userInfor.user.email || "",
+        permission: userInfor.user.permissions_list
+          ? userInfor.user.permissions_list.map((value) => value.id)
+          : [],
+        group: userInfor.user.group_list
+          ? userInfor.user.group_list.map((value) => value.id)
+          : [],
+        firstName: userInfor.user.first_name || "",
+        lastName: userInfor.user.last_name || "",
+        birthday: userInfor.birthday || "",
+        role: "" || "",
+        address: userInfor.address || "",
+        identify_card: userInfor.identify_card || "",
+        gender: userInfor.gender || "",
+        phone: userInfor.phone || "",
+        faculty: userInfor.faculty?.id ? userInfor.faculty.id : "",
+        my_class: userInfor.my_class ? userInfor.my_class.id : "",
+        position: userInfor.position ? userInfor.position.id : "",
+        area: userInfor.area ? userInfor.area.id : "",
+      });
+    }
+  }, []);
   const SendButton = withStyles((theme) => ({
     root: {
       width: "100px",
@@ -462,6 +459,9 @@ export default function NotificationForm() {
 
   const handleChange = (event) => {
     console.log("event.target", event.target);
+    if (localData.role === "student") {
+      setLocalData({ ...localData, position: "", area: "" });
+    } else setLocalData({ ...localData, faculty: "", my_class: "" });
     const name = event.target.name;
     const data = event.target.value;
     setLocalData({ ...localData, [name]: data });
@@ -474,7 +474,6 @@ export default function NotificationForm() {
       },
     },
   };
-  console.log(localData, localData);
   return (
     <Box style={{ width: "100%" }}>
       <Box marginLeft={"15%"} marginBottom={3}>
@@ -484,6 +483,7 @@ export default function NotificationForm() {
         <TextField
           id="userName"
           name={"userName"}
+          value={localData.userName}
           label="Tên Tài Khoản"
           onChange={handleChange}
           variant="outlined"
@@ -491,6 +491,7 @@ export default function NotificationForm() {
         />
         <TextField
           id="email"
+          value={localData.email}
           name={"email"}
           type="email"
           label="Email"
@@ -515,12 +516,11 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {permission.group.map((index) => {
+            {permission.group.map((value, index) => {
               return (
-                <MenuItem value={index.id}>
-                  {" "}
-                  <Checkbox checked={localData.group.indexOf(index.id) > -1} />
-                  <ListItemText primary={index.name} />
+                <MenuItem key={index} value={value.id}>
+                  <Checkbox checked={localData.group.indexOf(value.id) > -1} />
+                  <ListItemText primary={value.name} />
                 </MenuItem>
               );
             })}
@@ -539,10 +539,10 @@ export default function NotificationForm() {
             marginTop: "20px",
           }}
         >
-          {localData.group.map((index) => {
+          {localData.group.map((value, index) => {
             return (
-              <div>
-                {permission.group.find((value) => value.id === index).name}
+              <div key={index}>
+                {permission.group.find((ele) => ele.id === value).name}
               </div>
             );
           })}
@@ -562,12 +562,12 @@ export default function NotificationForm() {
             renderValue={(selected) => selected.join(", ")}
             MenuProps={MenuProps}
           >
-            {permission.permission.map((index) => (
-              <MenuItem value={index.id}>
+            {permission.permission.map((value, index) => (
+              <MenuItem key={index} value={value.id}>
                 <Checkbox
-                  checked={localData.permission.indexOf(index.id) > -1}
+                  checked={localData.permission.indexOf(value.id) > -1}
                 />
-                <ListItemText primary={index.name} />
+                <ListItemText primary={value.name} />
               </MenuItem>
             ))}
           </Select>
@@ -583,10 +583,10 @@ export default function NotificationForm() {
             display: "block",
           }}
         >
-          {localData.permission.map((index) => {
+          {localData.permission.map((value, index) => {
             return (
-              <div>
-                {permission.permission.find((value) => value.id === index).name}
+              <div key={index}>
+                {permission.permission.find((ele) => ele.id === value).name}
               </div>
             );
           })}
@@ -637,6 +637,7 @@ export default function NotificationForm() {
           id="firstName"
           name={"firstName"}
           label="Tên"
+          value={localData.firstName}
           variant="outlined"
           onChange={handleChange}
           size="small"
@@ -646,6 +647,7 @@ export default function NotificationForm() {
           id="lastName"
           name={"lastName"}
           type="lastName"
+          value={localData.lastName}
           label="Họ "
           variant="outlined"
           onChange={handleChange}
@@ -655,6 +657,7 @@ export default function NotificationForm() {
       </Box>
       <Box marginLeft={"15%"}>
         <TextField
+          value={localData.identify_card}
           id="identify_card"
           name={"identify_card"}
           label="CMND"
@@ -665,6 +668,7 @@ export default function NotificationForm() {
         />
         <TextField
           id="address"
+          value={localData.address}
           name={"address"}
           label="Địa chỉ liên lạc"
           variant="outlined"
@@ -692,6 +696,7 @@ export default function NotificationForm() {
           id="phone"
           name={"phone"}
           label="Số điện thoại"
+          value={localData.phone}
           variant="outlined"
           onChange={handleChange}
           size="small"
@@ -713,8 +718,12 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {position.map((index) => {
-              return <MenuItem value={index.id}>{index.name}</MenuItem>;
+            {position.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              );
             })}
           </Select>
           <FormHelperText>
@@ -736,8 +745,12 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {area.map((index) => {
-              return <MenuItem value={index.id}>{index.name}</MenuItem>;
+            {area.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              );
             })}
           </Select>
           <FormHelperText>
@@ -762,8 +775,12 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {faculty.map((index) => {
-              return <MenuItem value={index.id}>{index.name}</MenuItem>;
+            {faculty.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              );
             })}
           </Select>
           <FormHelperText>
@@ -785,8 +802,8 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {class_in_university.map((index) => {
-              return <MenuItem value={index.id}>{index.name}</MenuItem>;
+            {class_in_university.map((value, index) => {
+              return <MenuItem value={value.id}>{value.name}</MenuItem>;
             })}
           </Select>
           <FormHelperText>

@@ -33,9 +33,9 @@ export default function WaterElectrical() {
 
   const [tableData, setTableData] = useState();
 
-  const [areaSelected, setAreaSelected] = useState("");
+  const [areaSelected, setAreaSelected] = useState();
 
-  const [roomSelected, setRoomSelected] = useState("");
+  const [roomSelected, setRoomSelected] = useState();
 
   const [isShowTable, setIsShowTable] = useState(false);
 
@@ -61,6 +61,7 @@ export default function WaterElectrical() {
         setTableData(output);
       }
     });
+
     setAreaSelected(areaname);
     setIsShowTable(true);
   };
@@ -119,10 +120,8 @@ export default function WaterElectrical() {
     setIsModalVisible(false);
   };
   const handleCellClicked = (params) => {
-    console.log("Xem chi tiet ne!", params);
-    console.log("Data", data, "tableData", tableData);
+    setRoomSelected(params.data);
     setIsModalVisible(true);
-    setRoomSelected(params.data.name);
   };
   const onCancel = () => {
     setIsModalVisible(false);

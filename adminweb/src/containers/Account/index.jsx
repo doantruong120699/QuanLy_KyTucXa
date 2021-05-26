@@ -9,11 +9,17 @@ import AddBoxIcon from "@material-ui/icons/AddBox";
 import ReactModal from "react-modal";
 import AddAccount from "./AddAccount";
 import MoreButton from "./MoreButton";
-import { getAccounts } from "../../redux/actions/account";
+import {
+  getAccounts,
+  getGroupAndPermission,
+} from "../../redux/actions/account";
 import moment from "moment";
+import YesNoModal from "../../components/YesNoModal";
 
 export default function Account() {
   const [data, setData] = useState();
+
+  const [permission, setPermission] = useState();
 
   useEffect(() => {
     const params = "";
@@ -23,6 +29,7 @@ export default function Account() {
         data = output.results.map((value, index) => {
           return {
             order: index + 1,
+            publicId: value.public_id,
             firstName: value.user.first_name,
             lastName: value.user.last_name,
             account: value.user.username,
@@ -32,6 +39,11 @@ export default function Account() {
           };
         });
         setData(data);
+        getGroupAndPermission((output) => {
+          if (output) {
+            setPermission(output);
+          }
+        });
       }
     });
   }, []);
@@ -54,6 +66,7 @@ export default function Account() {
         },
       },
     });
+
   const convertDataForTable = (data) => {
     return data.map((n) => ({
       name: n.lastName + " " + n.firstName,
@@ -63,6 +76,7 @@ export default function Account() {
       isActive: n.isActive,
     }));
   };
+
   const columns = [
     {
       name: "name",
@@ -114,7 +128,10 @@ export default function Account() {
         sort: false,
         filter: false,
         customBodyRender: (userId, tableMetaData) => (
-          <MoreButton rowUser={data[tableMetaData.rowIndex]} />
+          <MoreButton
+            rowUser={data[tableMetaData.rowIndex]}
+            permission={permission}
+          />
         ),
         setCellProps: () => ({ style: { width: "10px" } }),
       },
@@ -127,7 +144,7 @@ export default function Account() {
     selectableRows: false,
     onRowClick: handleRowClick,
   };
-
+  const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const hideModal = () => {
     setIsModalVisible(false);
@@ -152,6 +169,20 @@ export default function Account() {
       {data && (
         <div className="account_page">
           <Box marginBottom={5}>
+            <YesNoModal
+              isModalVisible={isYesNoModalVisible}
+              hideModal={() => {}}
+              title={"Xác nhận"}
+              message={"Mời xác nhận"}
+              okText={"OK"}
+              cancelText={"Cancel"}
+              onOk={() => {
+                console.log("OK");
+              }}
+              onCancel={() => {
+                setIsYesNoModalVisible(false);
+              }}
+            />
             <Typography variant="h4">Tài Khoản</Typography>
           </Box>
           <Box marginBottom={5}>
@@ -182,7 +213,7 @@ export default function Account() {
             onRequestClose={hideModal}
             style={customStyles}
           >
-            <AddAccount />
+            <AddAccount permission={permission} />
           </ReactModal>
         </div>
       )}
