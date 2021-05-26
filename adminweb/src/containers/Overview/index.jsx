@@ -1,4 +1,3 @@
- 
 import React, { useState, useEffect } from "react";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
@@ -75,10 +74,12 @@ function CircularProgressWithLabel(props) {
           color={"primary"}
           size={150}
           style={{ color: "maroon", marginTop: "130px" }}
-          value={(
-            ((props.allRoom - props.availabeRoom) / props.allRoom) *
-            100
-          ).toFixed(3)}
+          value={Number(
+            (
+              ((props.allRoom - props.availabeRoom) / props.allRoom) *
+              100
+            ).toFixed(3)
+          )}
         />
 
         <Box
@@ -133,9 +134,10 @@ export default function Overview() {
       {data && (
         <Grow in={true} timeout={1000} style={{ transformOrigin: "10 10 10" }}>
           <Box style={{ transform: "scale(1)" }}>
-            {data.map((n) => {
+            {data.map((n, index) => {
               return (
                 <CircularProgressWithLabel
+                  key={index}
                   name={n.name}
                   allRoom={n.total}
                   availabeRoom={n.total - n.full}

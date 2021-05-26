@@ -12,7 +12,7 @@ import StudyInfo from "../components/profile/StudyInfo";
 import RoomInfo from "../components/profile/RoomInfo";
 import EmployeeInfo from "../components/profile/EmployeeInfo";
 import { getAuth } from "../utilities/helper";
-import { getHandledEmployeeDataRender } from "../utilities/dataRender/profile";
+import { getHandledEmployeeDataRender } from "../utilities/DataRender/profile";
 import { actFetchTitleNavigation } from "../redux/actions/dashboard";
 import { changePass } from "../redux/actions/changePass";
 import Alertness from "../components/common/Alertness";

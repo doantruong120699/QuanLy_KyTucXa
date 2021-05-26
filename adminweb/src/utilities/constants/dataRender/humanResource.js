@@ -1,5 +1,4 @@
 function getTimeSheetRender(data, numShift) {
-  console.log("data", data === null);
   let timeSheet = [];
   for (var i = 1; i <= numShift * 7; i++) {
     var shift = {

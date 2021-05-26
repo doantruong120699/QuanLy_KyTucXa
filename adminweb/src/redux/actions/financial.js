@@ -425,3 +425,57 @@ export async function getRevenue(resolve = () => {}) {
     });
   }
 }
+
+export async function getContracts(resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_CONTRACTS_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}list-contract/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_CONTRACTS_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_CONTRACTS_API_FAIL,
+    });
+  }
+}
+
+export async function getDetailedContract(id, resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_DETAILED_CONTRACT_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}registrations/${id}/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_DETAILED_CONTRACT_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_DETAILED_CONTRACT_API_FAIL,
+    });
+  }
+}

@@ -10,6 +10,11 @@ import Account from "./containers/Account";
 import * as ROUTER from "./utilities/constants/router";
 import Profile from "./containers/profile/Profile";
 import Budget from "../src/containers/Financial/Budget";
+import Contract from "../src/containers/Financial/Contract";
+import WaterElectrical from "./containers/Financial/WaterElectrical";
+import Student from "./containers/ManageUser/Student";
+import Employee from "./containers/ManageUser/Employee";
+import Registration from "./containers/ManageUser/Registration";
 function App() {
   return (
     <Router history={history()}>
@@ -24,16 +29,6 @@ function App() {
           exact
         />
         <Route
-          path={ROUTER.ROUTE_MANAGE_USER}
-          component={withAuth(ManageUser)}
-          exact
-        />
-        <Route
-          path={ROUTER.ROUTE_MANAGE_FINANCIAL}
-          component={withAuth(Financial)}
-          exact
-        />
-        <Route
           path={ROUTER.ROUTE_ACCOUNT}
           component={withAuth(Account)}
           exact
@@ -44,11 +39,50 @@ function App() {
           exact
         />
         <Route
-          path={`${ROUTER.ROUTE_CONTRACT_DETAIL}/:contractId`}
-          component={withAuth(ContractDetail)}
+          path={`${ROUTER.ROUTE_MANAGE_FINANCIAL}${ROUTER.ROUTE_CONTRACT_DETAIL}/:contractId`}
+          component={withAuth(Financial(ContractDetail))}
           exact
         />
-        <Route path={ROUTER.ROUTE_BUDGET} component={withAuth(Budget)} exact />
+        <Route path={ROUTER.ROUTE_MANAGE_FINANCIAL} exact>
+          <Redirect
+            to={`${ROUTER.ROUTE_MANAGE_FINANCIAL}${ROUTER.ROUTE_BUDGET}`}
+          />
+        </Route>
+        <Route
+          path={`${ROUTER.ROUTE_MANAGE_FINANCIAL}${ROUTER.ROUTE_BUDGET}`}
+          component={withAuth(Financial(Budget))}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_MANAGE_FINANCIAL}${ROUTER.ROUTE_WATER_ELECTRICAL}`}
+          component={withAuth(Financial(WaterElectrical))}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_MANAGE_FINANCIAL}${ROUTER.ROUTE_CONTRACTS}`}
+          component={withAuth(Financial(Contract))}
+          exact
+        />
+        <Route path={ROUTER.ROUTE_MANAGE_USER} exact>
+          <Redirect
+            to={`${ROUTER.ROUTE_MANAGE_USER}${ROUTER.ROUTE_STUDENTS}`}
+          />
+        </Route>
+        <Route
+          path={`${ROUTER.ROUTE_MANAGE_USER}${ROUTER.ROUTE_STUDENTS}`}
+          component={withAuth(ManageUser(Student))}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_MANAGE_USER}${ROUTER.ROUTE_EMPLOYEES}`}
+          component={withAuth(ManageUser(Employee))}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_MANAGE_USER}${ROUTER.ROUTE_REGISTRATIONS}`}
+          component={withAuth(ManageUser(Registration))}
+          exact
+        />
       </Switch>
     </Router>
   );
