@@ -109,6 +109,7 @@ class NotificationViewSet(viewsets.ModelViewSet):
             return Response({'status': 'fail', 'notification' : 'Notification not found!'}, status=status.HTTP_404_NOT_FOUND)
         else:
             return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+    
     def retrieve(self, request, **kwargs):
         try:
             noti = Notification.objects.get(public_id=kwargs['public_id'])
@@ -409,12 +410,79 @@ class GroupPermissionViewSet(viewsets.ModelViewSet):
         try:
             queryset = Group.objects.all()
             list_group = GroupSerializer(queryset, many=True)
-            queryset = Permission.objects.filter(content_type_id__gte = 9).order_by('content_type_id')
+            
+            list_table = [
+                            'user',
+                            'profile',
+                            'room', 
+                            'contract', 
+                            'notification', 
+                            'dailyschedule', 
+                            'waterelectrical', 
+                            'bill', 
+                            'service',
+                            'expense',
+                            'revenue'
+            ]
+            list_content_type = []
+            for index, value in enumerate(list_table):
+                if value == 'user':
+                    val_content_type = ContentType.objects.get(app_label="auth", model="user")
+                else:
+                    val_content_type = ContentType.objects.get(app_label="api", model=value)
+                list_content_type.append(val_content_type)
+            
+            queryset = Permission.objects.filter(content_type_id__in = list_content_type).order_by('content_type_id')
             list_permission = PermissionSerializer(queryset, many=True)
             return Response({'group': list_group.data, 'permission':list_permission.data}, status=status.HTTP_200_OK)
         except:
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
-        
+       
+    @action(methods=["GET"], detail=False, url_path="get_permission_infomation", url_name="get_permission_infomation")
+    def get_permission_infomation(self, request, *args, **kwargs):
+        try:
+            data = {}
+            queryset = Group.objects.all()
+            list_group = GroupSerializer(queryset, many=True)
+            list_table = [
+                            'user',
+                            'profile',
+                            'room', 
+                            'contract', 
+                            'notification', 
+                            'dailyschedule', 
+                            'waterelectrical', 
+                            'bill', 
+                            'service',
+                            'expense',
+                            'revenue'
+            ]
+            list_content_type = []
+            for index, value in enumerate(list_table):
+                if value == 'user':
+                    val_content_type = ContentType.objects.get(app_label="auth", model="user")
+                else:
+                    val_content_type = ContentType.objects.get(app_label="api", model=value)
+                list_content_type.append(val_content_type)
+            
+            queryset = Permission.objects.filter(content_type_id__in = list_content_type).order_by('content_type_id')
+            list_permission = PermissionSerializer(queryset, many=True)
+            data['group'] = list_group.data
+            data['permission'] = list_permission.data
+            
+            faculty = list(Faculty.objects.values().order_by('id'))
+            data['faculty'] = faculty
+            my_class = list(Class.objects.values().order_by('id'))
+            data['class'] = my_class
+            area = list(Area.objects.values().order_by('id'))
+            data['area'] = area
+            position = list(Position.objects.values().order_by('id'))
+            data['position'] = position          
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
+     
 class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileListSerializer
     permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
