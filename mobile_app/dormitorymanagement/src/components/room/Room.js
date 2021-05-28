@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 class Room extends Component {
   render() {
     const RenderPeople = (number) => {
-      var listPeople = [];
+      let listPeople = [];
       for (let i = 0; i < number; i++) {
         listPeople.push(<FontAwesome5 style={styles.iconPeople} name="user-check" />)
       }
@@ -16,7 +16,13 @@ class Room extends Component {
       }
       return listPeople;
     }
-    const icon = this.props.myRoom.number_now !== 8 ? 'check-circle' : 'ban';
+    let icon;
+    if (this.props.myRoom.status == 'A') {
+      icon = 'check-circle';
+    }
+    else {
+      icon = 'ban';
+    }
     return (
       <View>
         <TouchableOpacity onPress={this.props.onClick}>

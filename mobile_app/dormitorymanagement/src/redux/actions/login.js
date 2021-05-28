@@ -1,5 +1,5 @@
 import { actionType } from '../actionType';
-import { storeData } from '../../utils/asyncStorage';
+import { getData, storeData } from '../../utils/asyncStorage';
 import axios from 'axios';
 import { apiUrl } from '../../api/api';
 import _ from 'lodash';
@@ -17,9 +17,11 @@ export const login = (data) => async (dispatch) => {
     storeData('token', token);
     storeData('role', decoded.group[0]);
     storeData('name', decoded.last_name + ' ' + decoded.first_name);
+    storeData('permission', JSON.stringify(decoded.permission));
     dispatch({
       type: LOGIN_SUCCESS,
-      payload: result.data
+      payload: result.data,
+      permission: decoded.permission
     });
   }
   catch (error) {

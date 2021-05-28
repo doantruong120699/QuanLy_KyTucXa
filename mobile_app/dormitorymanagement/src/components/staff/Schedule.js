@@ -15,7 +15,7 @@ const Schedule = (props) => {
 
   const [selectDay, setSelectDay] = useState({
     week: moment().format("w") - 1,
-    start: moment().startOf('isoWeek').add(1, 'w').subtract(7, 'days'),
+    start: moment().startOf('w').add(1, 'days'),
   });
   let daySelect = selectDay.start.toISOString().split('T')[0];
   let dayCalendar;
@@ -23,7 +23,8 @@ const Schedule = (props) => {
   const initData = useSelector((state) => state.getcalendar.payload);
   const fetchData = async (day) => {
     let week = moment(day.dateString).format("w") - 1;
-    await getcalendar(week);
+    let year = moment(day.dateString).get('year');
+    await getcalendar(week, year);
     await setSelectDay({
       week: week,
       start: moment(day.dateString).startOf('week').add(1, 'w').subtract(6, 'days'),
@@ -37,7 +38,7 @@ const Schedule = (props) => {
     setTimeout(() => {
       for (let i = 0; i < 7; i++) {
         dayCalendar = dayRender.toISOString().split('T')[0];
-        console.log(dayCalendar);
+        console.log(dayCalendar)
         dataCalendar[dayCalendar] = [];
         for (let i = 0; i < initData.length; i++) {
           if (initData[i].shift.date == dayCalendar) {

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, View, TouchableOpacity, Alert, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { getprofile } from '../../redux/actions/getprofile';
+import { getprofile, mainmenu } from '../../redux/actions/index';
 import { storeData, getData } from '../../utils/asyncStorage';
 
 const openDrawer = (navigation) => {
@@ -51,8 +51,12 @@ class AppBar extends Component {
           }
         },
         {
-          text: "Đăng xuất", onPress: () => {
-            storeData('token', '');
+          text: "Đăng xuất", onPress: async () => {
+            await storeData('token', '');
+            await storeData('role', '');
+            await storeData('name', '');
+            await storeData('permission', '');
+            this.props.mainmenu('Dashboard');
             this.props.navigation.navigate("Login");
           }
         },
@@ -85,6 +89,7 @@ class AppBar extends Component {
 
 const mapDispatchToProps = {
   getprofile,
+  mainmenu,
 };
 function mapStateToProps(state) {
   return {

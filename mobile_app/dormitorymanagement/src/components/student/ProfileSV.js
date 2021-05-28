@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { styleBtnComeBack, styleImgBg, styleContainer } from '../../styles/index';
+import { getdetailroom } from '../../redux/actions/getdetailroom';
 
 class ProfileSV extends Component {
   constructor(props) {
@@ -17,6 +18,10 @@ class ProfileSV extends Component {
   moveToChangePassword = () => {
     this.props.navigation.navigate("ChangePassword");
   };
+  detailRoom = async () => {
+    await this.props.getdetailroom(this.props.dataProfile.room.name);
+    this.props.navigation.navigate('ShowRoomOfSV');
+  }
   render() {
     let data = this.props.dataProfile;
     return (
@@ -59,8 +64,15 @@ class ProfileSV extends Component {
                 <Text style={styles.info}>{data.profile.faculty.name}</Text>
               </View>
               <View style={styles.viewInfo}>
-                <Text style={styles.title}>Phòng đang đăng ký:</Text>
+                <Text style={styles.title}>Lớp:</Text>
+                <Text style={styles.info}>{data.profile.my_class.name}</Text>
+              </View>
+              <View style={styles.viewInfo}>
+                <Text style={styles.title}>Phòng của bạn:</Text>
                 <Text style={styles.info}>{data.room.name ? data.room.name : 'Bạn chưa đăng ký phòng'}</Text>
+                <TouchableOpacity style={[styles.btnDetailRoom, {display: data.room.name ? 'flex' : 'none'}]} onPress={this.detailRoom}>
+                  <Text style={styles.textDetailRoom}>Xem chi tiết</Text>
+                </TouchableOpacity>
               </View>
               <View style={styles.viewButton}>
                 <TouchableOpacity style={styles.button} onPress={this.moveToChangeProfile}>
@@ -78,12 +90,16 @@ class ProfileSV extends Component {
   }
 }
 
+const mapDispatchToProps = {
+  getdetailroom,
+}
 function mapStateToProps(state) {
   return {
     dataProfile: state.getprofile.payload,
+    detailRoom: state.getdetailroom.payload,
   };
 };
-export default connect(mapStateToProps)(ProfileSV);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileSV);
 
 const styles = StyleSheet.create({
   text: {
@@ -98,12 +114,13 @@ const styles = StyleSheet.create({
   },
   formProfile: {
     backgroundColor: 'white',
-    height: '80%',
-    width: '80%',
+    height: 400,
+    width: 300,
     borderRadius: 20,
     elevation: 7,
   },
   viewInfo: {
+    position: 'relative',
     marginTop: 10,
     marginLeft: 30,
     flexDirection: 'row',
@@ -111,6 +128,9 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     width: '25%',
+  },
+  info: {
+    marginLeft: 5,
   },
   viewButton: {
     flexDirection: 'row',
@@ -132,4 +152,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 15,
   },
+  btnDetailRoom: {
+    marginLeft: 30,
+    borderColor: 'blue',
+    borderWidth: 1,
+    padding:5,
+    paddingLeft: 10,
+    paddingRight: 10,
+    borderRadius: 25
+  }
 })

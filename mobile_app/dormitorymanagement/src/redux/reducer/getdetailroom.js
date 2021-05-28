@@ -1,15 +1,15 @@
 import { actionType } from '../actionType';
 
-const { GET_AREA_FAIL, GET_AREA_SUCCESS } = actionType;
+const { GET_DETAIL_ROOM_SUCCESS, GET_DETAIL_ROOM_FAIL } = actionType;
 const initialState = {
   msg: '',
   payload: [],
 }
-export const getarea = (state = initialState, actions) => {
+export const getdetailroom = (state = initialState, actions) => {
   switch (actions.type) {
-    case GET_AREA_SUCCESS:
+    case GET_DETAIL_ROOM_SUCCESS:
       return { ...state, payload: actions.payload, msg: actions.msg };
-    case GET_AREA_FAIL:
+    case GET_DETAIL_ROOM_FAIL:
       return { ...state, msg: actions.msg };
     default:
       return state;

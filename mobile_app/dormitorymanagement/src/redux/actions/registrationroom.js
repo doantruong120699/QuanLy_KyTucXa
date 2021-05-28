@@ -9,6 +9,7 @@ const { REGISTRATION_ROOM_FAIL, REGISTRATION_ROOM_SUCCESS } = actionType;
 export const registrationroom = (data) => async (dispatch) => {
   let result;
   try {
+    console.log(data)
     let token = await getData('token');
     let config = {
       headers: { 'Authorization': 'Bearer ' + token }

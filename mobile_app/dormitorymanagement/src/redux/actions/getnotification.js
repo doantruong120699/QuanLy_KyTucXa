@@ -4,7 +4,7 @@ import axios from 'axios';
 import { getData } from '../../utils/asyncStorage';
 
 const { GET_NOTIFICATION_SUCCESS, GET_NOTIFICATION_FAIL } = actionType;
-const { GET_NOTIFICATION } = apiUrl;
+const { NOTIFICATION_URL } = apiUrl;
 export const getnotification = (page) => async (dispatch) => {
   let result;
   try {
@@ -13,10 +13,10 @@ export const getnotification = (page) => async (dispatch) => {
       headers: { 'Authorization': 'Bearer ' + token }
     }
     if (page != 1) {
-      result = await axios.get(GET_NOTIFICATION + "?page=" + page, config);
+      result = await axios.get(NOTIFICATION_URL + "?page=" + page, config);
     }
     else {
-      result = await axios.get(GET_NOTIFICATION, config);
+      result = await axios.get(NOTIFICATION_URL, config);
     }
     dispatch({
       type: GET_NOTIFICATION_SUCCESS,

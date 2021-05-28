@@ -27,16 +27,18 @@ class ChangeProfile extends Component {
       this.showToast("Vui lòng nhập đầy đủ thông tin");
     }
     else {
+      let month = parseInt(this.state.birthday.getMonth()) + 1;
       const data = {
         "first_name": this.state.first_name,
         "last_name": this.state.last_name,
         "profile": {
-          "birthday": this.state.birthday.getFullYear() + "-" + this.state.birthday.getMonth() + "-" + this.state.birthday.getDate(),
+          "birthday": this.state.birthday.getFullYear() + "-" + month + "-" + this.state.birthday.getDate(),
           "address": this.state.address,
           "identify_card": this.state.identify_card,
           "phone": this.state.phone
         }
       }
+      console.log(data)
       await this.props.changeprofile(data);
       if (this.props.msg !== 'Success') {
         this.showToast('Đổi thông tin không thành công');
@@ -190,8 +192,8 @@ const styles = StyleSheet.create({
   },
   formChangeInfo: {
     backgroundColor: 'white',
-    height: '90%',
-    width: '80%',
+    height: 460,
+    width: 300,
     borderRadius: 20,
     elevation: 7,
   },

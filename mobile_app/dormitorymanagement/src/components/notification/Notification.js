@@ -52,7 +52,7 @@ class Notification extends Component {
                 onPress={this.minusNumberPage}
                 disabled={this.state.page <= 1}
               >
-                <Text>-</Text>
+                <Text style={stylePages.textOpe}>-</Text>
               </TouchableOpacity>
               <TextInput
                 underlineColorAndroid="transparent"
@@ -67,7 +67,7 @@ class Notification extends Component {
                 onPress={this.plusNumberPage}
                 disabled={this.state.page >= totalPages}
               >
-                <Text>+</Text>
+                <Text style={stylePages.textOpe}>+</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -106,19 +106,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '90%',
     marginBottom: '2%',
-  },
-  item: {
-    padding: 20,
-    marginVertical: 8,
-    marginHorizontal: 16,
-  },
-  item: {
-    marginLeft: 20,
-    marginRight: 20,
-    backgroundColor: 'yellow',
-    borderRadius: 15,
-    marginBottom: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
 });

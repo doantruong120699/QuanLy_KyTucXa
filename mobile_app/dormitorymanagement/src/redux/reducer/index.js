@@ -12,6 +12,9 @@ import { registrationroom } from './registrationroom';
 import { dashboard } from './dashboard';
 import { getcalendar } from './getcalendar';
 import { forgotpassword } from './forgotpassword';
+import { getpaymentmethod } from './getpaymentmethod';
+import { getdetailroom } from './getdetailroom';
+import { createnotification } from './createnotification';
 
 export {
   login,
@@ -28,4 +31,7 @@ export {
   dashboard,
   getcalendar,
   forgotpassword,
+  getpaymentmethod,
+  getdetailroom,
+  createnotification
 };
