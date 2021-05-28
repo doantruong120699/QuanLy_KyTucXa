@@ -16,6 +16,9 @@ from .serializers import *
 from api import status_http
 from api.permissions import *
 from django.http import JsonResponse
+quanlytaichinh_group = 'quanlytaichinh_group'
+quanlynhansu_group = 'quanlynhansu_group'
+nhanvien_group = 'nhanvien_group'
 
 class WaterElectricalUnitPriceViewSet(viewsets.ModelViewSet):
     serializer_class = WaterElectricalUnitPriceSerializer
@@ -111,74 +114,113 @@ class FinancalRoomInAreaViewSet(viewsets.ModelViewSet):
 
 class WaterElectricalViewSet(viewsets.ModelViewSet):
     serializer_class = WaterElectricalSerializer
-    permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
+    # permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
     lookup_field = 'public_id'
 
+    def check_permission(self, request):
+        user = request.user
+        user_group = [g.name for g in user.groups.all()]
+        user_permission = [p.codename for p in user.user_permissions.all()]
+        if quanlytaichinh_group in user_group:
+            return True
+        elif quanlynhansu_group in user_group or nhanvien_group in user_group:
+            action = self.action
+            if action == 'list' or action == 'retrieve':
+                action = 'view'
+            elif action == 'post':
+                action = 'add'
+            elif action == 'update':
+                action = 'change'
+            elif action == 'destroy':
+                action = 'delete'
+
+            required_action = action + '_waterelectrical'
+            return required_action in user_permission
+        else:
+            return False
+    
     def get_queryset(self):
         return WaterElectrical.objects.all().order_by('-created_at')
 
     def list(self, request, *args, **kwargs):
         try:
-            area = Area.objects.get(slug=kwargs['slug'])
-            time = kwargs['time'] + '-01'
-            time = datetime.fromisoformat(time)
-            # Number now in room >=0 
-            room_in_area = Room.objects.filter(area=area).order_by('-id')
-            _list = WaterElectrical.objects.filter(room__in=room_in_area, year=time.year, month=time.month)
-            page = self.paginate_queryset(_list)
-            if page is not None:
+            if self.check_permission(request):
+                area = Area.objects.get(slug=kwargs['slug'])
+                time = kwargs['time'] + '-01'
+                time = datetime.fromisoformat(time)
+                # Number now in room >=0 
+                room_in_area = Room.objects.filter(area=area).order_by('-id')
+                _list = WaterElectrical.objects.filter(room__in=room_in_area, year=time.year, month=time.month)
+                page = self.paginate_queryset(_list)
+                if page is not None:
+                    serializer = self.get_serializer(page, many=True)
+                    return self.get_paginated_response(serializer.data)
+
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
-
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, *args, **kwargs):
-        serializer = WaterElectricalSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            if serializer.exist_validate(request.data):
-                save = serializer.create(request.data)
-                if save:
-                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
-            return Response({'status': 'fail', 'notification' : 'This room added water-electrical bill!'}, status=status.HTTP_201_CREATED)
-        print(serializer.errors)
-        return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        if self.check_permission(request):
+            serializer = WaterElectricalSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                if serializer.exist_validate(request.data):
+                    save = serializer.create(request.data)
+                    if save:
+                        return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
+                return Response({'status': 'fail', 'notification' : 'This room added water-electrical bill!'}, status=status.HTTP_201_CREATED)
+            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
 
     def update(self, request, public_id, format=None):
         try:
-            queryset = WaterElectrical.objects.get(public_id=public_id)
-            datas = request.data
-            serializer = WaterElectricalSerializer(queryset, data=datas, context={'request': request})
-            if serializer.is_valid():
-                if serializer.exist_update_validate(instance=queryset, validated_data = request.data):
-                    save = serializer.update(instance = queryset, validated_data = request.data)
-                    if save:
-                        return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
-                return Response({'status': 'fail', 'notification' : 'This room added water-electrical bill!'}, status=status.HTTP_201_CREATED)
-            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if self.check_permission(request):
+                queryset = WaterElectrical.objects.get(public_id=public_id)
+                datas = request.data
+                serializer = WaterElectricalSerializer(queryset, data=datas, context={'request': request})
+                if serializer.is_valid():
+                    if serializer.exist_update_validate(instance=queryset, validated_data = request.data):
+                        save = serializer.update(instance = queryset, validated_data = request.data)
+                        if save:
+                            return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
+                    return Response({'status': 'fail', 'notification' : 'This room added water-electrical bill!'}, status=status.HTTP_201_CREATED)
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
-            return Response({'status': 'fail', 'notification' : 'Water Electrical Not Found!'}, status=status.HTTP_404_NOT_FOUND)
+            pass
+        return Response({'status': 'fail', 'notification' : 'Water Electrical Not Found!'}, status=status.HTTP_404_NOT_FOUND)
     
     def destroy(self, request, public_id, format=None):
         try:
-            queryset = WaterElectrical.objects.get(public_id=public_id)
-            queryset.delete()
-            return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+            if self.check_permission(request):
+                queryset = WaterElectrical.objects.get(public_id=public_id)
+                queryset.delete()
+                return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except:
-            return Response({'status': 'fail', 'notification' : 'Water Electrical not found!'}, status=status.HTTP_404_NOT_FOUND)
+            pass
+        return Response({'status': 'fail', 'notification' : 'Water Electrical not found!'}, status=status.HTTP_404_NOT_FOUND)
 
     def retrieve(self, request, public_id, **kwargs):
         try:
-            queryset = WaterElectrical.objects.get(public_id=public_id)
-            serializer = WaterElectricalDetailSerializer(queryset)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            if self.check_permission(request):
+                queryset = WaterElectrical.objects.get(public_id=public_id)
+                serializer = WaterElectricalDetailSerializer(queryset)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
-            return Response({'status': 'fail', 'notification' : 'Water Electrical not found!'}, status=status.HTTP_404_NOT_FOUND)
+            pass
+        return Response({'status': 'fail', 'notification' : 'Water Electrical not found!'}, status=status.HTTP_404_NOT_FOUND)
 
 class BillViewSet(viewsets.ModelViewSet):
     serializer_class = BillSerializer
@@ -347,60 +389,97 @@ class TypeExpenseViewSet(viewsets.ModelViewSet):
 
 class ExpenseViewSet(viewsets.ModelViewSet):
     serializer_class = ExpenseListSerializer
-    permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
+    # permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
     lookup_field = 'public_id'
 
+    def check_permission(self, request):
+        user = request.user
+        user_group = [g.name for g in user.groups.all()]
+        user_permission = [p.codename for p in user.user_permissions.all()]
+        if quanlytaichinh_group in user_group:
+            return True
+        elif quanlynhansu_group in user_group:
+            action = self.action
+            if action == 'list' or action == 'retrieve':
+                action = 'view'
+            elif action == 'post':
+                action = 'add'
+            elif action == 'update':
+                action = 'change'
+            elif action == 'destroy':
+                action = 'delete'
+
+            required_action = action + '_expense'
+            return required_action in user_permission
+        else:
+            return False
+    
     def get_queryset(self):
         return Expense.objects.filter(is_delete=False).order_by('-created_at')
     
     def list(self, request, *args, **kwargs):
         try:
-            _list = self.get_queryset()
-            page = self.paginate_queryset(_list)
-            if page is not None:
+            if self.check_permission(request):
+                _list = Expense.objects.filter(is_delete=False).order_by('-created_at')
+                user_group = [g.name for g in request.user.groups.all()]
+                if quanlynhansu_group in user_group:
+                    _list = _list.filter(created_by=request.user)
+                page = self.paginate_queryset(_list)
+                if page is not None:
+                    serializer = self.get_serializer(page, many=True)
+                    return self.get_paginated_response(serializer.data)
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
-            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, *args, **kwargs):
         try:
-            serializer = ExpenseSerializer(data=request.data, context={'request': request})
-            if serializer.is_valid():
-                save = serializer.create(request.data)
-                if save:
-                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
-            print(serializer.errors)
-            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if self.check_permission(request):
+                serializer = ExpenseSerializer(data=request.data, context={'request': request})
+                if serializer.is_valid():
+                    save = serializer.create(request.data)
+                    if save:
+                        return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
+                print(serializer.errors)
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
         return Response({'status': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)    
 
     def update(self, request, public_id, format=None):
         try:
-            queryset = Expense.objects.filter(public_id=public_id, is_delete=False).first()
-            if queryset:
-                datas = request.data
-                serializer = ExpenseUpdateSerializer(queryset, data=datas, context={'request': request})
-                if serializer.is_valid():
-                        save = serializer.update(instance = queryset, validated_data = request.data)
-                        if save:
-                            return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
-                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if self.check_permission(request):
+                queryset = Expense.objects.filter(public_id=public_id, is_delete=False).first()
+                if queryset:
+                    datas = request.data
+                    serializer = ExpenseUpdateSerializer(queryset, data=datas, context={'request': request})
+                    if serializer.is_valid():
+                            save = serializer.update(instance = queryset, validated_data = request.data)
+                            if save:
+                                return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
+                    return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
         return Response({'status': 'fail', 'notification' : 'Expense Not Found!'}, status=status.HTTP_404_NOT_FOUND)
     
     def destroy(self, request, public_id, format=None):
         try:
-            queryset = Expense.objects.filter(public_id=public_id ,is_delete=False).first()
-            if queryset:
-                queryset.is_delete = True
-                queryset.save()
-                return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+            if self.check_permission(request):
+                queryset = Expense.objects.filter(public_id=public_id ,is_delete=False).first()
+                if queryset:
+                    queryset.is_delete = True
+                    queryset.save()
+                    return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
             pass
@@ -408,10 +487,13 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, public_id, **kwargs):
         try:
-            queryset = Expense.objects.filter(public_id=public_id, is_delete=False).first()
-            if queryset:
-                serializer = ExpenseListSerializer(queryset)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+            if self.check_permission(request):
+                queryset = Expense.objects.filter(public_id=public_id, is_delete=False).first()
+                if queryset:
+                    serializer = ExpenseListSerializer(queryset)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
         return Response({'status': 'fail', 'notification' : 'Expense not found!'}, status=status.HTTP_404_NOT_FOUND)
@@ -431,60 +513,96 @@ class TypeRevenueViewSet(viewsets.ModelViewSet):
 
 class RevenueViewSet(viewsets.ModelViewSet):
     serializer_class = RevenueSerializer
-    permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
+    # permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
     lookup_field = 'public_id'
 
+    def check_permission(self, request):
+        user = request.user
+        user_group = [g.name for g in user.groups.all()]
+        user_permission = [p.codename for p in user.user_permissions.all()]
+        if quanlytaichinh_group in user_group:
+            return True
+        elif quanlynhansu_group in user_group:
+            action = self.action
+            if action == 'list' or action == 'retrieve':
+                action = 'view'
+            elif action == 'post':
+                action = 'add'
+            elif action == 'update':
+                action = 'change'
+            elif action == 'destroy':
+                action = 'delete'
+
+            required_action = action + '_revenue'
+            return required_action in user_permission
+        else:
+            return False
+    
     def get_queryset(self):
         return Revenue.objects.filter(is_delete=False).order_by('-created_at')
     
     def list(self, request, *args, **kwargs):
         try:
-            _list = self.get_queryset()
-            page = self.paginate_queryset(_list)
-            if page is not None:
+            if self.check_permission(request):
+                _list = Revenue.objects.filter(is_delete=False).order_by('-created_at')
+                user_group = [g.name for g in request.user.groups.all()]
+                if quanlynhansu_group in user_group:
+                    _list = _list.filter(created_by=request.user)
+                page = self.paginate_queryset(_list)
+                if page is not None:
+                    serializer = self.get_serializer(page, many=True)
+                    return self.get_paginated_response(serializer.data)
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request, *args, **kwargs):
         try:
-            serializer = RevenueSerializer(data=request.data, context={'request': request})
-            if serializer.is_valid():
-                save = serializer.create(request.data)
-                if save:
-                    return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
-            print(serializer.errors)
-            return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if self.check_permission(request):
+                serializer = RevenueSerializer(data=request.data, context={'request': request})
+                if serializer.is_valid():
+                    save = serializer.create(request.data)
+                    if save:
+                        return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
         return Response({'status': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)    
 
     def update(self, request, public_id, format=None):
         try:
-            queryset = Revenue.objects.filter(public_id=public_id, is_delete=False).first()
-            if queryset:
-                datas = request.data
-                serializer = RevenueUpdateSerializer(queryset, data=datas, context={'request': request})
-                if serializer.is_valid():
-                        save = serializer.update(instance = queryset, validated_data = request.data)
-                        if save:
-                            return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
-                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            if self.check_permission(request):
+                queryset = Revenue.objects.filter(public_id=public_id, is_delete=False).first()
+                if queryset:
+                    datas = request.data
+                    serializer = RevenueUpdateSerializer(queryset, data=datas, context={'request': request})
+                    if serializer.is_valid():
+                            save = serializer.update(instance = queryset, validated_data = request.data)
+                            if save:
+                                return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_201_CREATED)
+                    return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
         return Response({'status': 'fail', 'notification' : 'Expense Not Found!'}, status=status.HTTP_404_NOT_FOUND)
     
     def destroy(self, request, public_id, format=None):
         try:
-            queryset = Revenue.objects.filter(public_id=public_id ,is_delete=False).first()
-            if queryset:
-                queryset.is_delete = True
-                queryset.save()
-                return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+            if self.check_permission(request):
+                queryset = Revenue.objects.filter(public_id=public_id ,is_delete=False).first()
+                if queryset:
+                    queryset.is_delete = True
+                    queryset.save()
+                    return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
             pass
@@ -492,10 +610,13 @@ class RevenueViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, public_id, **kwargs):
         try:
-            queryset = Revenue.objects.filter(public_id=public_id, is_delete=False).first()
-            if queryset:
-                serializer = RevenueListSerializer(queryset)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+            if self.check_permission(request):
+                queryset = Revenue.objects.filter(public_id=public_id, is_delete=False).first()
+                if queryset:
+                    serializer = RevenueListSerializer(queryset)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
         return Response({'status': 'fail', 'notification' : 'Revenue not found!'}, status=status.HTTP_404_NOT_FOUND)
