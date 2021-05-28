@@ -23,6 +23,7 @@ export default function Budget() {
   useEffect(() => {
     getContracts((output) => {
       if (output) {
+        console.log("output", output);
         setDataContracts(output.results);
       }
     });
@@ -127,6 +128,21 @@ export default function Budget() {
           moment(new Date(value)).format("DD/MM/YYYY"),
       },
     },
+    {
+      name: "is_expired",
+      label: "Ngày kết thúc",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value) => {
+          return value ? (
+            <div style={{ color: "red" }}>Đã hết hạn</div>
+          ) : (
+            <div style={{ color: "green" }}>Chưa hết hạn</div>
+          );
+        },
+      },
+    },
   ];
   const billColumn = [
     {
@@ -181,6 +197,7 @@ export default function Budget() {
         studentName: `${value.profile.user.last_name} ${value.profile.user.first_name}`,
         studentPhone: value.profile.phone,
         studentClass: `${value.profile.my_class.name} ${value.profile.faculty.name}`,
+        is_expired: value.is_expired,
         startDate: value.start_at,
         endDate: value.end_at,
       };
@@ -235,7 +252,7 @@ export default function Budget() {
   };
   const options = {
     filterType: "textField",
-    selectableRows: false,
+    selectableRows: 'none',
     onRowClick: handleRowClick,
   };
 
@@ -274,7 +291,7 @@ export default function Budget() {
   return (
     <div>
       {dataContracts && (
-        <div className="col col-full pl-48">
+        <div className="col col-full pl-48 ">
           <div style={{ marginBottom: "20px" }}>Bảng thu chi của kí túc xá</div>
           <div className="budget-date-picker" style={{}}>
             <span style={{ fontSize: "16px" }}>Từ: </span>
@@ -325,7 +342,7 @@ export default function Budget() {
             className={"budget-table"}
             style={{ marginTop: "20px", position: "sticky" }}
           >
-            <Box component="div">
+            <Box component="div" marginLeft={15}>
               <MuiThemeProvider theme={getMuiTheme()}>
                 <MUIDataTable
                   title={selectedOption === "contract" ? "Hoá đơn" : "Hợp đồng"}

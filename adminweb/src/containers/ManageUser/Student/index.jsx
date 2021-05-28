@@ -5,16 +5,22 @@ import MUIDataTable from "mui-datatables";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import ReactModal from "react-modal";
-import { getRoomDetails, getRooms } from "../../../redux/actions/humanResource";
+import moment from "moment";
+import {
+  getRoomDetails,
+  getRooms,
+  deleteStudentInRoom,
+} from "../../../redux/actions/humanResource";
 import { getRoom } from "../../../utilities/constants/DataRender/checkroom";
 import queryString from "query-string";
 import Pagination from "../../../components/common/Pagination";
-
+import YesNoModal from "../../../components/YesNoModal";
 export default function Student() {
   const [dataArea, setDataArea] = useState();
-
+  const [studentToDelete, setStudentToDelete] = useState([]);
   const [peopleInRoom, setPeopleInRoom] = useState();
-
+  const [slugSelected, setSlugSelected] = useState();
+  const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     page_size: 20,
@@ -84,6 +90,7 @@ export default function Student() {
       },
     });
   const handleClickRoom = (slug) => {
+    setSlugSelected(slug);
     getRoomDetails(slug, (output) => {
       if (output) {
         setPeopleInRoom(convertDataForTable(output));
@@ -91,16 +98,34 @@ export default function Student() {
     });
     setIsModalVisible(true);
   };
+  useEffect(() => {
+    setStudentToDelete([]);
+  }, [isModalVisible]);
+  const handleDeletePeople = () => {
+    studentToDelete.map((index) => {
+      return deleteStudentInRoom(index.publicId, (output) => {
+        getRoomDetails(slugSelected, (output) => {
+          if (output) {
+            setPeopleInRoom(convertDataForTable(output));
+          }
+        });
+      });
+    });
 
-  const handleDeletePeople = (params) => {
-    console.log(params);
+    setStudentToDelete([]);
+    setIsYesNoModalVisible(false);
   };
+  const getHyphenatedDate = (dateString) =>
+    moment(dateString, "DD-MM-YYYY").format("DD/MM/YYYY");
   const convertDataForTable = (data) => {
     return data.list_user.map((n) => ({
       publicId: n.public_id,
       name: n.last_name + " " + n.first_name,
       account: n.username,
-      activeDate: n.birthday,
+      class: n.my_class_id,
+      phone: n.phone,
+      birth_day: getHyphenatedDate(n.birthday),
+      birth_day_number: moment(n.birthday, "DD-MM-YYYY").toDate().getTime(),
     }));
   };
   const columns = [
@@ -121,38 +146,46 @@ export default function Student() {
       },
     },
     {
-      name: "activeDate",
-      label: "Birthday",
+      name: "class",
+      label: "Lớp học phần",
       options: {
         filter: true,
         sort: true,
       },
     },
     {
-      name: "",
-      label: "",
+      name: "phone",
+      label: "SĐT liên lạc",
       options: {
-        customBodyRender: () => {
-          return (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleDeletePeople}
-              style={({ marginLeft: "20px" }, { height: "25px" })}
-            >
-              Xoá
-            </Button>
-          );
-        },
+        filter: true,
+        sort: true,
       },
+    },
+    {
+      name: "birth_day",
+      label: "Birthday",
+      options: {
+        filter: true,
+        sort: true,
+      },
+      customBodyRender: (value) => moment(new Date(value)).format("DD/MM/YYYY"),
     },
   ];
 
   const options = {
     filterType: "textField",
-
     pagination: false,
-    selectableRows: false,
+    onRowsDelete: (rowsDeleted, dataRows) => {
+      const tempArr = [];
+      console.log("rowsDeleted", rowsDeleted);
+      rowsDeleted.data.map((index) => {
+        const temp = peopleInRoom[index.index];
+        console.log("temp", temp);
+        return tempArr.push(temp);
+      });
+      setStudentToDelete(tempArr);
+      setIsYesNoModalVisible(true);
+    },
     customHeadRender: () => {
       return null;
     },
@@ -160,9 +193,9 @@ export default function Student() {
   };
 
   const handleClickAddPeopleWithParams = (params) => {
-    console.log("AAAAAAAA", params);
+    //console.log("AAAAAAAA", params);
   };
-
+  console.log("Is delete", studentToDelete);
   return (
     <div className="col col-full pl-48">
       {dataArea &&
@@ -222,6 +255,17 @@ export default function Student() {
       <div className="col col-full">
         <Pagination pagination={pagination} onPageChange={handlePageChange} />
       </div>
+      <YesNoModal
+        isModalVisible={isYesNoModalVisible}
+        hideModal={() => setIsYesNoModalVisible(false)}
+        title={"Xoá người"}
+        message={"Bạn có chắc chắn muốn xoá những người này khỏi phòng không?"}
+        okText={"Xoá"}
+        cancelText={"Huỷ"}
+        onOk={handleDeletePeople}
+        onCancel={() => setIsYesNoModalVisible(false)}
+      />
+      ;
     </div>
   );
 }

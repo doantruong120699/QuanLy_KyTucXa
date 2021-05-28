@@ -60,6 +60,114 @@ export async function getGroupAndPermission(resolve = () => {}) {
   }
 }
 
+export async function getFaculty(resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_FACULTY_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}faculty/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_FACULTY_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_FACULTY_API_FAIL,
+    });
+  }
+}
+
+export async function getClass(resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_CLASS_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}class/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_CLASS_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_CLASS_API_FAIL,
+    });
+  }
+}
+
+export async function getPosition(resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_POSITION_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}position/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_POSITION_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_POSITION_API_FAIL,
+    });
+  }
+}
+
+export async function getArea(resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_AREA_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}area/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_AREA_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_AREA_API_FAIL,
+    });
+  }
+}
+
 export async function getDetailedAccount(publicId, resolve = () => {}) {
   store.dispatch({
     type: types.GET_DETAILED_ACCOUNT_API,

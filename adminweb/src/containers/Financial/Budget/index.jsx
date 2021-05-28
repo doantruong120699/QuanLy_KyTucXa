@@ -141,7 +141,7 @@ export default function Budget() {
 
   const options = {
     filterType: "textField",
-    selectableRows: false,
+    selectableRows: 'none',
   };
 
   const handleAddBudget = () => {

@@ -12,15 +12,21 @@ import MoreButton from "./MoreButton";
 import {
   getAccounts,
   getGroupAndPermission,
+  getFaculty,
+  getClass,
+  getPosition,
+  getArea,
 } from "../../redux/actions/account";
 import moment from "moment";
 import YesNoModal from "../../components/YesNoModal";
 
 export default function Account() {
   const [data, setData] = useState();
-
+  const [faculty, setFaculty] = useState();
   const [permission, setPermission] = useState();
-
+  const [class_in_university, setClassInUniversity] = useState();
+  const [position, setPosition] = useState();
+  const [area, setArea] = useState();
   useEffect(() => {
     const params = "";
     getAccounts(params, (output) => {
@@ -42,6 +48,32 @@ export default function Account() {
         getGroupAndPermission((output) => {
           if (output) {
             setPermission(output);
+          }
+        });
+
+        getFaculty((output) => {
+          if (output) {
+            setFaculty(output);
+          }
+        });
+
+        getClass((output) => {
+          if (output) {
+            setClassInUniversity(output);
+          }
+        });
+
+        getPosition((output) => {
+          if (output) {
+            console.log(output);
+            setPosition(output);
+          }
+        });
+
+        getArea((output) => {
+          if (output) {
+            console.log(output);
+            setArea(output);
           }
         });
       }
@@ -131,6 +163,10 @@ export default function Account() {
           <MoreButton
             rowUser={data[tableMetaData.rowIndex]}
             permission={permission}
+            faculty={faculty}
+            class_in_university={class_in_university}
+            position={position}
+            area={area}
           />
         ),
         setCellProps: () => ({ style: { width: "10px" } }),
@@ -141,7 +177,7 @@ export default function Account() {
 
   const options = {
     filterType: "textField",
-    selectableRows: false,
+    selectableRows: "none",
     onRowClick: handleRowClick,
   };
   const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
@@ -213,7 +249,13 @@ export default function Account() {
             onRequestClose={hideModal}
             style={customStyles}
           >
-            <AddAccount permission={permission} />
+            <AddAccount
+              permission={permission}
+              faculty={faculty}
+              class_in_university={class_in_university}
+              position={position}
+              area={area}
+            />
           </ReactModal>
         </div>
       )}

@@ -239,7 +239,7 @@ const Registration = () => {
     filterType: "textField",
 
     pagination: false,
-    selectableRows: false,
+    selectableRows: 'none',
     customHeadRender: () => {
       return null;
     },
