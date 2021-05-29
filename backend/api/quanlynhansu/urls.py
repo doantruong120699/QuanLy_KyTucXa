@@ -46,6 +46,9 @@ notification_list = NotificationViewSet.as_view({
     'get': 'list',
     'post': 'post'
 })
+notification_student_list = NotificationViewSet.as_view({
+    'get': 'get_noti_student',
+})
 # detail - update - delete
 notification_detail = NotificationViewSet.as_view({
     'get': 'retrieve',
@@ -83,6 +86,7 @@ profile_detail = UserProfileViewSet.as_view({
 urlpatterns = [ 
     # ========== notification
     path('notifications/', notification_list, name = 'notification_list'),
+    path('student-notifications/', notification_student_list, name = 'notification_student_list'),
     path('notifications/<str:public_id>/', notification_detail, name = 'notification_detail'),
     # ========= Request Registration
     path('list-registrations/', list_registration_room, name = 'list_registration_room'),

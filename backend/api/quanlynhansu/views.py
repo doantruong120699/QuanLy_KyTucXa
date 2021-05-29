@@ -26,11 +26,6 @@ class NotificationViewSet(viewsets.ModelViewSet):
     serializer_class = NotificationListSerializer
     # permission_classes = [IsAuthenticated]
     lookup_field = 'public_id'
-
-    # def get_permissions(self):
-    #     if self.action == 'list':
-    #         return [IsAuthenticated(), IsSinhVien(),]
-    #     return [IsAuthenticated(), IsSinhVien(),]
         
     def check_permission(self, request):
         user = request.user
@@ -49,7 +44,8 @@ class NotificationViewSet(viewsets.ModelViewSet):
                     action = 'change'
                 elif action == 'destroy':
                     action = 'delete'
-                    
+                elif action == 'get_noti_student' or action == 'retrieve':
+                    action = 'view'    
                 required_action = action + '_notification'
                 return required_action in user_permission
 
@@ -84,9 +80,15 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def update(self, request, public_id, format=None):
         if self.check_permission(request):
             try:
+                user_group = [g.name for g in request.user.groups.all()]
                 queryset = Notification.objects.get(public_id=public_id)
                 datas = request.data
                 serializer = NotificationListSerializer(queryset, data=datas, context={'request': request})
+                if quanlynhansu_group not in user_group:
+                    if queryset.created_by != request.user:
+                        return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+                    else:
+                        pass
                 if serializer.is_valid():
                     save = serializer.save()
                     if save:
@@ -101,23 +103,52 @@ class NotificationViewSet(viewsets.ModelViewSet):
     def destroy(self, request, public_id, format=None):
         if self.check_permission(request):
             try:
+                user_group = [g.name for g in request.user.groups.all()]
                 queryset = Notification.objects.get(public_id=public_id)
-                queryset.delete()
+                if quanlynhansu_group not in user_group:
+                    if queryset.created_by == request.user:
+                        queryset.delete()
+                    else:
+                        return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+                else:
+                    queryset.delete()
                 return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
-            except:
+            except Exception as e:
+                print(e)
                 pass
             return Response({'status': 'fail', 'notification' : 'Notification not found!'}, status=status.HTTP_404_NOT_FOUND)
         else:
-            return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+            pass
+        return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
     
     def retrieve(self, request, **kwargs):
         try:
-            noti = Notification.objects.get(public_id=kwargs['public_id'])
-            serializer = NotificationListSerializer(noti)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            if self.check_permission(request):
+                noti = Notification.objects.get(public_id=kwargs['public_id'])
+                serializer = NotificationListSerializer(noti)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
-            return Response({'status': 'fail', 'notification' : 'Notification not found!'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'status': 'fail', 'notification' : 'Notification not found!'}, status=status.HTTP_404_NOT_FOUND)
+
+    @action(methods=["GET"], detail=False, url_path="get_noti_student", url_name="get_noti_student")
+    def get_noti_student(self, request, *args, **kwargs):
+        try:
+            if self.check_permission(request):
+                list_notification = Notification.objects.filter(created_by=request.user).order_by('-created_at')
+                page = self.paginate_queryset(list_notification)
+                if page is not None:
+                    serializer = self.get_serializer(page, many=True)
+                    return self.get_paginated_response(serializer.data)
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            print(e)
+        return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
 
 class ContractRegistationViewSet(viewsets.ModelViewSet):
     serializer_class = ContractRegistationSerializer
