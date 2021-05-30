@@ -5,7 +5,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import DatePicker from 'react-native-date-picker';
 import { Picker } from '@react-native-picker/picker';
 import moment from 'moment';
-import { registrationroom } from '../../redux/actions/index';
+import { registrationroom, getpaymentmethod } from '../../redux/actions/index';
 import { styleBtnComeBack, styleImgBg, styleContainer } from '../../styles/index';
 
 class RoomDetail extends Component {
@@ -15,9 +15,12 @@ class RoomDetail extends Component {
       modalVisible: false,
       dateStart: new Date(),
       dateEnd: new Date(),
-      paymentMethod: '1',
+      payment: 1,
     }
   };
+  componentDidMount() {
+    this.props.getpaymentmethod();
+  }
   showToast = (msg) => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
   };
@@ -41,7 +44,7 @@ class RoomDetail extends Component {
       "room": this.props.route.params.item.id,
       "start_at": moment(this.state.dateStart).format('YYYY-MM-DD'),
       "end_at": moment(this.state.dateEnd).format('YYYY-MM-DD'),
-      "payment_method": this.state.paymentMethod, 
+      "payment_method": this.state.payment, 
     }
     if (this.state.dateEnd > this.state.dateStart) {
       await this.props.registrationroom(data);
@@ -57,7 +60,26 @@ class RoomDetail extends Component {
     }
   }
   render() {
+    const renderPayment = () => {
+      let listPayment = [];
+      this.props.paymentMethod.forEach(item => {
+        listPayment.push(<Picker.Item label={item.name} value={item.id} />);
+      })
+      return listPayment;
+    }
     const item = this.props.route.params.item;
+    let status;
+    let disable = true;
+    if (item.status == 'A') {
+      status = 'Có thể đăng kí';
+      disable = false;
+    }
+    else if (item.status == 'F') {
+      status = 'Đã đủ người'
+    }
+    else {
+      status = 'Phòng này hiện không thể đăng kí';
+    }
     return (
       <View style={styleContainer.container}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
@@ -94,12 +116,10 @@ class RoomDetail extends Component {
                   <Text style={styles.titleModal}>Thanh toán: </Text>
                   <Picker 
                     style={styles.pickerPayment}
-                    selectedValue={this.state.paymentMethod}
                     onValueChange={(itemValue, itemIndex) =>
-                      this.setState({ paymentMethod: itemValue })
+                      this.setState({ payment: itemValue })
                     }>
-                    <Picker.Item label="Tiền mặt" value="1" />
-                    <Picker.Item label="Chuyển khoản" value="2" />
+                    {renderPayment()}
                   </Picker>
                 </View>
                 <Pressable
@@ -148,11 +168,17 @@ class RoomDetail extends Component {
             </View> */}
             <View style={styles.viewInfo}>
               <Text style={styles.title}>Tình Trạng Phòng:</Text>
-              <Text style={styles.info}>{item.number_now < item.typeroom.number_max ? 'Có Thể Đăng Kí' : 'Đã Đủ Người'}</Text>
+              <Text style={styles.info}>{status}</Text>
             </View>
             <View style={styles.viewButton}>
               <TouchableOpacity style={[styles.button, styles.buttonOpen]} onPress={this.handleAssignRoom}>
-                <Text style={styles.textButton} onPress={() => this.setModalVisible(!this.state.modalVisible)}>Đăng Kí Phòng Này</Text>
+                <Text 
+                  style={styles.textButton} 
+                  onPress={() => this.setModalVisible(!this.state.modalVisible)}
+                  disabled={disable}
+                >
+                  Đăng Kí Phòng Này
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -165,11 +191,13 @@ class RoomDetail extends Component {
 
 const mapDispatchToProps = {
   registrationroom,
+  getpaymentmethod,
 };
 
 function mapStateToProps(state) {
   return {
     msg: state.registrationroom.msg,
+    paymentMethod: state.getpaymentmethod.payload,
   }
 };
 
@@ -199,7 +227,7 @@ const styles = StyleSheet.create({
   },
   formProfile: {
     backgroundColor: 'white',
-    height: '70%',
+    height: 300,
     width: '80%',
     borderRadius: 20,
     elevation: 7,
@@ -217,6 +245,7 @@ const styles = StyleSheet.create({
     width: '45%',
   },
   viewButton: {
+    marginTop: 15,
     flexDirection: 'row',
     marginBottom: 5,
     justifyContent: 'center',
@@ -236,7 +265,7 @@ const styles = StyleSheet.create({
   },
   opacity: {
     backgroundColor: 'gray',
-    opacity: 0.9,
+    opacity: 1,
   },
   modalView: {
     width: '80%',

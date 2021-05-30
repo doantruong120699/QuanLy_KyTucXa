@@ -75,7 +75,7 @@ class AllStaff extends Component {
                 onPress={this.minusNumberPage}
                 disabled={this.state.page <= 1}
               >
-                <Text>-</Text>
+                <Text style={stylePages.textOpe}>-</Text>
               </TouchableOpacity>
               <TextInput
                 underlineColorAndroid="transparent"
@@ -90,7 +90,7 @@ class AllStaff extends Component {
                 onPress={this.plusNumberPage}
                 disabled={this.state.page >= totalPages}
               >
-                <Text>+</Text>
+                <Text style={stylePages.textOpe}>+</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -15,11 +15,11 @@ const Dashboard = (props) => {
     await dashboard();
   }, [])
   let data = useSelector((state) => state.dashboard.payload);
-  let msg = useSelector((state) => state.dashboard.msg);
-  const renderData = () => {
-    let listDashboard = [];
-    if (data) {
-      listDashboard.push(<View style={styles.container_child}>
+  return data ? (
+    <View style={styleContainer.container}>
+      <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
+        <AppBar style={styles.appbar} navigation={navigation} />
+        <View style={styles.container_child}>
         <View style={[styles.students, styles.itemDashboard]}>
           <Text style={styles.numbers}>{data.student.total}</Text>
           <View style={styles.bottom}>
@@ -58,25 +58,10 @@ const Dashboard = (props) => {
             <FontAwesome5 style={styles.icon} name="hotel" />
           </View>
         </View>
-      </View>);
-    }
-    else {
-      listDashboard.push(<View style={styles.container_child}>
-        </View>);
-    }
-    return listDashboard;
-  }
-  if (msg != 'Success') {
-    showToast(msg);
-  }
-  return (
-    <View style={styleContainer.container}>
-      <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
-        <AppBar style={styles.appbar} navigation={navigation} />
-        {renderData()}
+      </View>
       </ImageBackground>
     </View>
-  )
+  ) : <View></View>;
 }
 
 const mapDispatchToProps = {

@@ -6,8 +6,15 @@ import { Drawer, Title } from 'react-native-paper';
 import { allstaff, allstudent, mainmenu, getallroom, getarea, getnotification, getcalendar } from '../../redux/actions/index';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import { getData } from '../../utils/asyncStorage';
 
 class DrawerContent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      permission: ''
+    }
+  }
   getStyle(status) {
     const myStatus = this.props.status;
     if (status === myStatus)
@@ -16,6 +23,23 @@ class DrawerContent extends Component {
   showToast = (msg) => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
   };
+  displayCreateNotification = () => {
+    if (this.state.permission) {
+      if (JSON.parse(this.state.permission).findIndex(item => item="add_notification") !== -1) {
+        return { display: 'flex' };
+      }
+      return { display: 'none' };
+    }
+    return { display: 'none' };
+  }
+  async component() {
+    let getPermission = await getData('permission');
+    if (getPermission) {
+      this.setState({
+        permission: getPermission,
+      })
+    } 
+  }
   render() {
     return (
       <View style={styles.container}>
@@ -93,7 +117,7 @@ class DrawerContent extends Component {
                   else {
                     this.props.mainmenu('AllStudent');
                     this.props.navigation.navigate("AllStudent");
-                  }                
+                  }              
                 }}
               />
               <DrawerItem
@@ -124,11 +148,11 @@ class DrawerContent extends Component {
                   <FontAwesome5
                     color={color}
                     size={size}
-                    name={'globe'}
+                    name={'calendar-week'}
                     style={styles.iconMenu}
                   />
                 )}
-                label="Schedule"
+                label="Lịch trực"
                 onPress={async () => {
                   let week = moment().format("w") - 1;
                   await this.props.getcalendar(week);
@@ -163,6 +187,22 @@ class DrawerContent extends Component {
                   }    
                 }}
               />
+              <DrawerItem
+                style={[this.getStyle('CreateNotification'), this.displayCreateNotification()]}
+                icon={({ color, size }) => (
+                  <FontAwesome5
+                    color={color}
+                    size={size}
+                    name={'clipboard'}
+                    style={styles.iconMenu}
+                  />
+                )}
+                label="Tạo thông báo"
+                onPress={() => {
+                  this.props.navigation.navigate("CreateNotification");
+                  this.props.mainmenu('CreateNotification');  
+                }}
+              />
             </Drawer.Section>
           </View>
         </DrawerContentScrollView>
@@ -194,6 +234,7 @@ function mapStateToProps(state) {
     msgNotification: state.getnotification.msg,
     msgRoom: state.getallroom.msg,
     msgCalendar: state.getcalendar.msg,
+    permission: state.login.permission
   }
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DrawerContent);

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   },
   viewData: {
     width: '80%',
-    borderRadius: 10,
+    borderRadius: 3,
     flexDirection: 'row',
     alignItems: 'center',
     padding: 15,

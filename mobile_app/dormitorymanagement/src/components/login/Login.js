@@ -3,7 +3,7 @@ import { ImageBackground, StyleSheet, View, Text, TouchableOpacity, ToastAndroid
 import { TextInput } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { login, dashboard } from '../../redux/actions/index';
-import { getData } from '../../utils/asyncStorage';
+import { storeData, getData } from '../../utils/asyncStorage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { styleImgBg, styleInput, styleContainer } from '../../styles/index';
 
@@ -17,6 +17,13 @@ class Login extends Component {
       isShow: true,
     };
   };
+  // async componentDidMount() {
+  //   let token = await getData('token');
+  //   console.log(token)
+  //   if(token) {
+  //     this.props.navigation.navigate('HomePage')
+  //   }
+  // }
   changeTextUsername = (text) => {
     this.setState({ username: text });
   };
@@ -37,7 +44,8 @@ class Login extends Component {
       this.showToast('Chưa nhập tài khoản hoặc mật khẩu');
       return;
     }
-    let data = { "username": this.state.username, "password": this.state.password };
+    // let data = { "username": this.state.username, "password": this.state.password };
+    let data = { "username": "doantruong@gmail.com", "password": "123QWE!@#" };
     await this.props.login(data);
     let token = await getData('token');
     let role = await getData('role');
@@ -46,8 +54,16 @@ class Login extends Component {
         this.props.navigation.navigate("Login");
     }
     else {
-      this.showToast('Đăng nhập thành công');
-      this.props.navigation.navigate("HomePage");
+      if (role === "sinhvien_group" || role === "nhanvien_group") {
+        this.showToast('Đăng nhập thành công');
+        this.props.navigation.navigate("HomePage");
+      }
+      else {
+        storeData('token', '');
+        storeData('role', '');
+        storeData('name', '');
+        this.showToast('Sai tài khoản hoặc mật khẩu');
+      }
     }
   };
   forgotPassword = () => {
@@ -117,6 +133,7 @@ const mapDispatchToProps = {
 };
 function mapStateToProps(state) {
   return {
+    result: state.login.payload,
     msg: state.login.msg,
     isLoggedIn: state.login.isLoggedIn,
   };
@@ -137,7 +154,7 @@ const styles = StyleSheet.create({
   formLogin: {
     elevation: 7,
     backgroundColor: 'white',
-    width: '80%',
+    width: 300,
     height: 300,
     borderRadius: 20,
   },

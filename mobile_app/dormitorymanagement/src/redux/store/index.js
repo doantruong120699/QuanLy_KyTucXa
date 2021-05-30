@@ -14,6 +14,9 @@ import {
   dashboard,
   getcalendar,
   forgotpassword,
+  getpaymentmethod,
+  getdetailroom,
+  createnotification
 } from '../reducer/index';
 import thunkMiddleware from 'redux-thunk';
 
@@ -31,7 +34,10 @@ const AppReduces = combineReducers({
   registrationroom,
   dashboard,
   getcalendar,
-  forgotpassword
+  forgotpassword,
+  getpaymentmethod,
+  getdetailroom,
+  createnotification
 });
 
 const rootReducer = (state, action) => {
