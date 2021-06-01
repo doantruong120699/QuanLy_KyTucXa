@@ -304,20 +304,24 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 phone = data_profile['phone'],
             )
             if 'faculty' in data_profile:
-                faculty = Faculty.objects.get(pk=data_profile['faculty'])
-                profile.faculty = faculty
+                if len(str(data_profile['faculty'])):
+                    faculty = Faculty.objects.get(pk=data_profile['faculty'])
+                    profile.faculty = faculty
                 
             if 'my_class' in data_profile:
-                my_class = Class.objects.get(pk=data_profile['my_class'])
-                profile.my_class = my_class
+                if len(str(data_profile['my_class'])):
+                    my_class = Class.objects.get(pk=data_profile['my_class'])
+                    profile.my_class = my_class
                 
             if 'area' in data_profile:
-                faculty = Area.objects.get(pk=data_profile['area'])
-                profile.faculty = area
+                if len(str(data_profile['area'])):
+                    area = Area.objects.get(pk=data_profile['area'])
+                    profile.area = area
                 
             if 'position' in data_profile:
-                faculty = Position.objects.get(pk=data_profile['position'])
-                profile.position = position                
+                if len(str(data_profile['position'])):
+                    position = Position.objects.get(pk=data_profile['position'])
+                    profile.position = position                
             
             if 'group_list' in validated_data:
                 group_list = validated_data['group_list']
