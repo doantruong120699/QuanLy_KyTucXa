@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { getFaculty } from "../../../redux/actions/account";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import DatePicker from "react-datepicker";
-import { createAccount } from "../../../redux/actions/account";
+import { createAccount, updateAccount } from "../../../redux/actions/account";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import TextField from "@material-ui/core/TextField";
@@ -21,13 +21,14 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
 import moment from "moment";
 
-export default function NotificationForm(props) {
+export default function AddAccount(props) {
   const {
     userInfor,
     permission,
     faculty,
     class_in_university,
     area,
+    type = "create",
     position,
     onSuccess,
   } = props;
@@ -65,7 +66,7 @@ export default function NotificationForm(props) {
         birthday: localData.birthday,
         address: localData.address,
         identify_card: localData.identify_card,
-        gender: localData.gender === 1 ? true : false,
+        gender: localData.gender,
         phone: localData.phone,
         faculty: localData.role !== "student" ? "" : localData.faculty,
         my_class: localData.role !== "student" ? "" : localData.my_class,
@@ -75,13 +76,24 @@ export default function NotificationForm(props) {
       group_list: localData.group,
       permission_list: localData.permission,
     }; //this is right format of data to post
-    createAccount(dataSend, (output) => {
-      console.log("output", output);
-      if (output.status === "successful") {
-        toast("Tạo tài khoản mới thành công!");
-        setTimeout(onSuccess, 4000);
-      } else toast(output.notification);
-    });
+    if (type === "create") {
+      createAccount(dataSend, (output) => {
+        console.log("output", output);
+        if (output.status === "successful") {
+          toast("Tạo tài khoản mới thành công!");
+          setTimeout(onSuccess, 4000);
+        } else toast(output.notification);
+      });
+    } else {
+      console.log("Update");
+      updateAccount( userInfor.public_id, dataSend, (output) => {
+        console.log("output", output);
+        if (output.status === "successful") {
+          toast("Cập nhật tài khoản thành công!");
+          setTimeout(onSuccess, 4000);
+        } else toast(output.notification);
+      });
+    }
   };
   // const [typeSelect, setTypeSelect] = useState("");
   // const [amount, setAmount] = useState();
@@ -174,6 +186,7 @@ export default function NotificationForm(props) {
       },
     },
   };
+  console.log("type", userInfor.public_id);
   return (
     <Box style={{ width: "100%" }}>
       <Box marginLeft={"15%"} marginBottom={3}>
@@ -325,8 +338,8 @@ export default function NotificationForm(props) {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            <MenuItem value="1">Nam</MenuItem>
-            <MenuItem value="0">Nữ</MenuItem>
+            <MenuItem value={true}>Nam</MenuItem>
+            <MenuItem value={false}>Nữ</MenuItem>
           </Select>
           <FormHelperText>Lựa chọn giới tính</FormHelperText>
         </FormControl>

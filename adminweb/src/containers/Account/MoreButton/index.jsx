@@ -69,7 +69,7 @@ export default function MoreButton(props) {
     console.log("rowUser", rowUser);
     console.log("rowUser.isActive", rowUser.isActive);
   };
-
+  console.log("rowUser.id", rowUser.publicId);
   return (
     <div>
       <Button
@@ -112,6 +112,7 @@ export default function MoreButton(props) {
           class_in_university={class_in_university}
           position={position}
           area={area}
+          type={"update"}
         />
       </ReactModal>
     </div>

@@ -19,7 +19,7 @@ import {
 } from "../../redux/actions/account";
 import moment from "moment";
 import YesNoModal from "../../components/YesNoModal";
-
+import './styles.css'
 export default function Account() {
   const [data, setData] = useState();
   const [faculty, setFaculty] = useState();
@@ -32,6 +32,7 @@ export default function Account() {
     getAccounts(params, (output) => {
       var data;
       if (output) {
+        console.log("output", output);
         data = output.results.map((value, index) => {
           return {
             order: index + 1,
@@ -39,7 +40,14 @@ export default function Account() {
             firstName: value.user.first_name,
             lastName: value.user.last_name,
             account: value.user.username,
-            role: value.position ? value.position.name : null,
+            role: value.position ? value.position.name : "--",
+            faculty: value.faculty ? value.faculty.name : "--",
+            my_class: value.my_class ? value.my_class.name : "--",
+            area: value.area ? value.area.name : "--",
+            phone: value.phone,
+            birthday: value.birthday,
+            address: value.address,
+            identify_card: value.identify_card,
             isActive: true,
             activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
           };
@@ -82,11 +90,13 @@ export default function Account() {
     createMuiTheme({
       overrides: {
         MUIDataTable: {
+          width: "fit-content",
+
           root: {
             backgroundColor: "#re",
           },
           paper: {
-            width: "1200px",
+            width: "fit-content",
           },
         },
         MUIDataTableBodyCell: {
@@ -98,10 +108,17 @@ export default function Account() {
     });
 
   const convertDataForTable = (data) => {
+    console.log("Data", data);
     return data.map((n) => ({
       name: n.lastName + " " + n.firstName,
       account: n.account,
       role: n.role,
+      area: n.area,
+      faculty: n.faculty,
+      my_class: n.my_class,
+      phone: n.phone,
+      birthday: n.birthday,
+      identify_card: n.identify_card,
       activeDate: n.activeDate,
       isActive: n.isActive,
     }));
@@ -126,7 +143,47 @@ export default function Account() {
     },
     {
       name: "role",
-      label: "Role",
+      label: "Chức vụ",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "area",
+      label: "Khu vực",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "my_class",
+      label: "Lớp học phần",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "faculty",
+      label: "Khoa",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "phone",
+      label: "SĐT liên lạc",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "identify_card",
+      label: "CCCD/CMND",
       options: {
         filter: true,
         sort: true,
@@ -224,7 +281,7 @@ export default function Account() {
     <div>
       {data && (
         <div className="account_page">
-          <Box marginBottom={5}>
+          <Box marginBottom={5} className="account-header">
             <YesNoModal
               isModalVisible={isYesNoModalVisible}
               hideModal={() => {}}
@@ -239,21 +296,25 @@ export default function Account() {
                 setIsYesNoModalVisible(false);
               }}
             />
-            <Typography variant="h4">Tài Khoản</Typography>
+            <Typography variant="h4" style={{ marginLeft: "5%" }}>
+              Tài Khoản
+            </Typography>
+            <Box>
+              <Button
+                startIcon={<AddBoxIcon />}
+                style={{
+                  backgroundColor: "#005CC8",
+                  width: "200px",
+                  
+                  color: "white",
+                }}
+                onClick={handleAddAccount}
+              >
+                Thêm Tài Khoản
+              </Button>
+            </Box>
           </Box>
-          <Box marginBottom={5}>
-            <Button
-              startIcon={<AddBoxIcon />}
-              style={{
-                backgroundColor: "#005CC8",
-                width: "200px",
-                color: "white",
-              }}
-              onClick={handleAddAccount}
-            >
-              Thêm Tài Khoản
-            </Button>
-          </Box>
+
           <Box marginLeft={0}>
             <MuiThemeProvider theme={getMuiTheme()}>
               <MUIDataTable

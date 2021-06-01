@@ -224,3 +224,33 @@ export async function createAccount(data, resolve = () => {}) {
     });
   }
 }
+export async function updateAccount(publicId,data, resolve = () => {}) {
+  store.dispatch({
+    type: types.UPDATE_ACCOUNT,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}admin/account/${publicId}/`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.UPDATE_ACCOUNT_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.UPDATE_ACCOUNT_API_FAIL,
+    });
+  }
+}
