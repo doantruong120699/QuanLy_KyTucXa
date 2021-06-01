@@ -7,10 +7,12 @@ import { withStyles, makeStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import "./styles.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { getFaculty } from "../../../redux/actions/account";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import DatePicker from "react-datepicker";
-
+import { createAccount } from "../../../redux/actions/account";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import TextField from "@material-ui/core/TextField";
@@ -27,6 +29,7 @@ export default function NotificationForm(props) {
     class_in_university,
     area,
     position,
+    onSuccess,
   } = props;
 
   const [dumbBirthDay, setDumbBirthDay] = useState();
@@ -52,7 +55,6 @@ export default function NotificationForm(props) {
     area: "",
   });
   const handleClick = () => {
-    console.log("Local data",localData)
     const dataSend = {
       username: localData.userName,
       password: localData.password,
@@ -73,10 +75,13 @@ export default function NotificationForm(props) {
       group_list: localData.group,
       permission_list: localData.permission,
     }; //this is right format of data to post
-    if (localData.password !== localData.confirmPassword) {
-      alert("xác nhận đúng mật khẩu");
-    }
-    console.log("Data send", dataSend);
+    createAccount(dataSend, (output) => {
+      console.log("output", output);
+      if (output.status === "successful") {
+        toast("Tạo tài khoản mới thành công!");
+        setTimeout(onSuccess, 4000);
+      } else toast(output.notification);
+    });
   };
   // const [typeSelect, setTypeSelect] = useState("");
   // const [amount, setAmount] = useState();
@@ -538,6 +543,7 @@ export default function NotificationForm(props) {
         >
           Gửi
         </SendButton>
+        <ToastContainer />
       </Box>
     </Box>
   );

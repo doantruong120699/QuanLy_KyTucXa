@@ -7,7 +7,8 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { getDetailedAccount } from "../../../redux/actions/account";
 
 export default function MoreButton(props) {
-  const { rowUser, permission } = props;
+  const { rowUser, permission, faculty, class_in_university, position, area } =
+    props;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -104,7 +105,14 @@ export default function MoreButton(props) {
         onRequestClose={hideModal}
         style={customStyles}
       >
-        <AddAccount userInfor={user} permission={permission} />
+        <AddAccount
+          userInfor={user}
+          permission={permission}
+          faculty={faculty}
+          class_in_university={class_in_university}
+          position={position}
+          area={area}
+        />
       </ReactModal>
     </div>
   );

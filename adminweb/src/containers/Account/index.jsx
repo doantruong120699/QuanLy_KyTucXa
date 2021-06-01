@@ -45,37 +45,35 @@ export default function Account() {
           };
         });
         setData(data);
-        getGroupAndPermission((output) => {
-          if (output) {
-            setPermission(output);
-          }
-        });
+      }
+    });
+    getGroupAndPermission((output) => {
+      if (output) {
+        setPermission(output);
+      }
+    });
 
-        getFaculty((output) => {
-          if (output) {
-            setFaculty(output);
-          }
-        });
+    getFaculty((output) => {
+      if (output) {
+        setFaculty(output);
+      }
+    });
 
-        getClass((output) => {
-          if (output) {
-            setClassInUniversity(output);
-          }
-        });
+    getClass((output) => {
+      if (output) {
+        setClassInUniversity(output);
+      }
+    });
 
-        getPosition((output) => {
-          if (output) {
-            console.log(output);
-            setPosition(output);
-          }
-        });
+    getPosition((output) => {
+      if (output) {
+        setPosition(output);
+      }
+    });
 
-        getArea((output) => {
-          if (output) {
-            console.log(output);
-            setArea(output);
-          }
-        });
+    getArea((output) => {
+      if (output) {
+        setArea(output);
       }
     });
   }, []);
@@ -188,6 +186,28 @@ export default function Account() {
   const handleAddAccount = () => {
     setIsModalVisible(true);
   };
+  const handleSuccessSubmit = () => {
+    setIsModalVisible(false);
+    const params = "";
+    getAccounts(params, (output) => {
+      var data;
+      if (output) {
+        data = output.results.map((value, index) => {
+          return {
+            order: index + 1,
+            publicId: value.public_id,
+            firstName: value.user.first_name,
+            lastName: value.user.last_name,
+            account: value.user.username,
+            role: value.position ? value.position.name : null,
+            isActive: true,
+            activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
+          };
+        });
+        setData(data);
+      }
+    });
+  };
   const customStyles = {
     content: {
       top: "50%",
@@ -255,6 +275,7 @@ export default function Account() {
               class_in_university={class_in_university}
               position={position}
               area={area}
+              onSuccess={handleSuccessSubmit}
             />
           </ReactModal>
         </div>

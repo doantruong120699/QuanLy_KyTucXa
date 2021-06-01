@@ -197,3 +197,30 @@ export async function getDetailedAccount(publicId, resolve = () => {}) {
     });
   }
 }
+export async function createAccount(data, resolve = () => {}) {
+  store.dispatch({
+    type: types.CREATE_ACCOUNT,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}admin/account/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.CREATE_ACCOUNT_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.CREATE_ACCOUNT_API_FAIL,
+    });
+  }
+}

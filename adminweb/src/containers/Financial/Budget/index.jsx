@@ -18,6 +18,8 @@ export default function Budget() {
   useEffect(() => {
     getExpenses((output) => {
       if (output) {
+        console.log("BBBB", output);
+
         const data = output.results.map((value, index) => {
           return {
             order: index + 1,
@@ -37,6 +39,7 @@ export default function Budget() {
 
     getRevenue((output) => {
       if (output) {
+        console.log("AAAA", output);
         const data = output.results.map((value, index) => {
           return {
             order: index + 1,
@@ -141,7 +144,7 @@ export default function Budget() {
 
   const options = {
     filterType: "textField",
-    selectableRows: 'none',
+    selectableRows: "none",
   };
 
   const handleAddBudget = () => {
@@ -215,7 +218,6 @@ export default function Budget() {
                 backgroundColor: "#005CC8",
                 width: "100px",
                 color: "white",
-                zIndex: "-1",
               }}
               onClick={handleAddBudget}
             >
