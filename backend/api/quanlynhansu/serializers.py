@@ -358,20 +358,24 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 profile.phone = profile_data.get('phone', profile.phone)
                 
                 if 'faculty' in profile_data:
-                    faculty = Faculty.objects.get(pk=profile_data.get('faculty', profile.faculty).pk)
-                    profile.faculty = faculty
+                    if len(str(profile_data['faculty'])):
+                        faculty = Faculty.objects.get(pk=profile_data.get('faculty', profile.faculty).pk)
+                        profile.faculty = faculty
                     
                 if 'my_class' in profile_data:
-                    my_class = Class.objects.get(pk= profile_data.get('my_class', profile.my_class).pk)
-                    profile.my_class = my_class
+                    if len(str(profile_data['my_class'])):
+                        my_class = Class.objects.get(pk= profile_data.get('my_class', profile.my_class).pk)
+                        profile.my_class = my_class
                     
                 if 'area' in profile_data:
-                    area = Area.objects.get(pk= profile_data.get('area', profile.area).pk)
-                    profile.area = area
+                    if len(str(profile_data['area'])):
+                        area = Area.objects.get(pk= profile_data.get('area', profile.area).pk)
+                        profile.area = area
                     
                 if 'position' in profile_data:
-                    position = Position.objects.get(pk= profile_data.get('position', profile.position).pk)
-                    profile.position = position
+                    if len(str(profile_data['position'])):
+                        position = Position.objects.get(pk= profile_data.get('position', profile.position).pk)
+                        profile.position = position
                 
             if 'group_list' in validated_data:
                 instance.groups.clear()
@@ -379,14 +383,14 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 group = Group.objects.filter(pk__in=group_list)
                 for g in group:
                     instance.groups.add(g)
-            
+                
             if 'permission_list' in validated_data:
                 instance.user_permissions.clear()
                 permission_list = validated_data['permission_list']
                 permission = Permission.objects.filter(pk__in=permission_list)
                 for p in permission:
                     instance.user_permissions.add(p)
-            
+        
             instance.save()
             profile.save()
             return True
