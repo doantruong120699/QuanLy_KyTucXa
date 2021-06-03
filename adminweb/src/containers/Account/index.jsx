@@ -19,7 +19,7 @@ import {
 } from "../../redux/actions/account";
 import moment from "moment";
 import YesNoModal from "../../components/YesNoModal";
-import './styles.css'
+import "./styles.css";
 export default function Account() {
   const [data, setData] = useState();
   const [faculty, setFaculty] = useState();
@@ -277,6 +277,7 @@ export default function Account() {
     },
     overlay: { zIndex: 1000 },
   };
+  console.log("permission", permission);
   return (
     <div>
       {data && (
@@ -305,7 +306,7 @@ export default function Account() {
                 style={{
                   backgroundColor: "#005CC8",
                   width: "200px",
-                  
+
                   color: "white",
                 }}
                 onClick={handleAddAccount}

@@ -86,7 +86,7 @@ export default function AddAccount(props) {
       });
     } else {
       console.log("Update");
-      updateAccount( userInfor.public_id, dataSend, (output) => {
+      updateAccount(userInfor.public_id, dataSend, (output) => {
         console.log("output", output);
         if (output.status === "successful") {
           toast("Cập nhật tài khoản thành công!");
@@ -102,12 +102,13 @@ export default function AddAccount(props) {
 
   useEffect(() => {
     if (userInfor) {
+      setDumbBirthDay(new Date(userInfor.birthday));
       setLocalData({
         userName: userInfor.user.username || "",
         password: userInfor.password || "",
         email: userInfor.user.email || "",
-        permission: userInfor.user.permissions_list
-          ? userInfor.user.permissions_list.map((value) => value.id)
+        permission: userInfor.user.permission_list
+          ? userInfor.user.permission_list.map((value) => value.id)
           : [],
         group: userInfor.user.group_list
           ? userInfor.user.group_list.map((value) => value.id)
@@ -186,7 +187,7 @@ export default function AddAccount(props) {
       },
     },
   };
-  console.log("type", userInfor.public_id);
+  console.log("type", userInfor);
   return (
     <Box style={{ width: "100%" }}>
       <Box marginLeft={"15%"} marginBottom={3}>
@@ -275,7 +276,7 @@ export default function AddAccount(props) {
             renderValue={(selected) => selected.join(", ")}
             MenuProps={MenuProps}
           >
-            {permission.permission.map((value, index) => (
+            {permission?.permission.map((value, index) => (
               <MenuItem key={index} value={value.id}>
                 <Checkbox
                   checked={localData.permission.indexOf(value.id) > -1}
@@ -299,7 +300,7 @@ export default function AddAccount(props) {
           {localData.permission.map((value, index) => {
             return (
               <div key={index}>
-                {permission.permission.find((ele) => ele.id === value).name}
+                {permission?.permission.find((ele) => ele.id === value)?.name}
               </div>
             );
           })}
