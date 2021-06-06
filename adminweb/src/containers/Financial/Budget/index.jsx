@@ -215,7 +215,7 @@ export default function Budget() {
               <Button
                 startIcon={<AddBoxIcon />}
                 style={{
-                  marginLeft: "60%",
+                  marginLeft: "70%",
                   backgroundColor: "#005CC8",
                   width: "100px",
                   color: "white",
