@@ -15,6 +15,51 @@ import InputBase from "@material-ui/core/InputBase";
 
 export default function NotificationForm() {
   const user = getAuth();
+  const [type, setType] = useState([
+    {
+      id: 1,
+      name: "Tiền Phòng",
+      description: "Tiền phòng",
+      slug: "tien-phong",
+    },
+    {
+      id: 2,
+      name: "Mặt Bằng",
+      description: "mặt bằng căng tin, ....",
+      slug: "mat-bang",
+    },
+    {
+      id: 3,
+      name: "Giữ xe",
+      description: "Giữ xe",
+      slug: "giu-xe",
+    },
+    {
+      id: 4,
+      name: "Phí đảm bảo tài sản",
+      description: "Phí dảm bảo tài sản",
+      slug: "phi-dam-bao-tai-san",
+    },
+    {
+      id: 5,
+      name: "Phí đăng ký tạm trú",
+      description: "phí đăng ký tam trú",
+      slug: "phi-dang-ky-tam-tru",
+    },
+    {
+      id: 6,
+      name: "Phí lưu trú đối với người thân sinh viên",
+      description: "Phí lưu trú đối với người thân sinh viên",
+      slug: "phi-luu-tru-nguoi-than",
+    },
+    {
+      id: 7,
+      name: "Khác",
+      description: "khác",
+      slug: "khac",
+    },
+  ]);
+
   const handleClick = () => {
     console.log("dataSend", dataSend);
   };
@@ -23,12 +68,14 @@ export default function NotificationForm() {
   // const [price, setPrice] = useState();
   // const [description, setDescription] = useState();
   const [dataSend, setDataSend] = useState({
-    createdBy: user.email,
-    typeSelect: "",
-    amount: 0,
-    price: 0,
+    name: "",
+    type_revenue: 1,
     description: "",
+    amount: undefined,
+    user_recieve: undefined,
+    time_recieve: new Date(),
   });
+  const [typeSelect, setTypeSelect] = useState("none");
   const SendButton = withStyles((theme) => ({
     root: {
       width: "100px",
@@ -74,39 +121,65 @@ export default function NotificationForm() {
   return (
     <Box>
       <Box>
-        <Typography variant="h6">Thêm khoản chi</Typography>
+        <Typography variant="h6" style={{ marginLeft: "5%" }}>
+          Thêm khoản chi
+        </Typography>
       </Box>
-      <Box marginTop={3}>
+      <Box marginTop={3} marginLeft={13}>
         <TextField
-          id="outlined-helperText"
-          label="Từ"
-          name={"createdBy"}
-          defaultValue={`${user.first_name} ${user.last_name}`}
+          label="Tên Khoản Thu Chi"
+          onChange={handleChange}
+          name={"name"}
           variant="outlined"
           size="small"
-          disabled
           style={{ color: "white" }}
-          className={"add-budget-disable"}
+        />
+        <TextField
+          label="Tới"
+          name={"user_recieve"}
+          onChange={handleChange}
+          variant="outlined"
+          size="small"
+          style={{ color: "white", marginLeft: "3%" }}
         />
       </Box>
-      <Box>
+      <Box marginTop={2} marginLeft={13}>
         <FormControl className={classes.margin}>
           <InputLabel id="demo-customized-select-label">Loại</InputLabel>
           <Select
-            value={dataSend.typeSelect}
-            onChange={handleChange}
+            value={typeSelect}
+            onChange={(value) => {
+              setTypeSelect(value.target.value);
+              console.log("value", value);
+            }}
             name={"typeSelect"}
             displayEmpty
             className={classes.selectEmpty}
             input={<Input />}
           >
-            <MenuItem value="">None</MenuItem>
+            <MenuItem value="none">None</MenuItem>
             <MenuItem value={"out"}>Chi</MenuItem>
             <MenuItem value={"in"}>Thu</MenuItem>
           </Select>
         </FormControl>
+
+        <FormControl className={classes.margin} style={{ marginLeft: "3%" }}>
+          <InputLabel id="demo-customized-select-label">Loại</InputLabel>
+          <Select
+            onChange={handleChange}
+            name={"type_revenue"}
+            displayEmpty
+            value={dataSend.type_revenue}
+            className={classes.selectEmpty}
+            input={<Input />}
+          >
+            {type.map((index) => {
+              return <MenuItem value={index.id}>{index.name}</MenuItem>;
+            })}
+          </Select>
+        </FormControl>
       </Box>
-      <Box marginTop={3}>
+      <Box marginTop={3} marginLeft={13}>
         <TextField
           id="amount"
           name={"amount"}
@@ -116,8 +189,6 @@ export default function NotificationForm() {
           size="small"
           type="number"
         />
-      </Box>
-      <Box marginTop={3}>
         <TextField
           id="price"
           label="Giá tiền"
@@ -131,16 +202,17 @@ export default function NotificationForm() {
           variant="outlined"
           size="small"
           type="number"
+          style={{ color: "white", marginLeft: "3%" }}
         />
       </Box>
-      <Box marginTop={3}>
+      <Box marginTop={3} marginLeft={13}>
         <TextField
-          id="outlined-helperText"
           label="Chi tiết"
           name={"description"}
           placeholder="Chi tiết"
           variant="outlined"
           fullWidth
+          style={{ width: "470px" }}
           onChange={handleChange}
           rows={4}
           multiline
