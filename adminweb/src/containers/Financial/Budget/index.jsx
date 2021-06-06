@@ -186,8 +186,8 @@ export default function Budget() {
         },
       },
     });
-  console.log("dataInBudget && dataOutBudget", dataInBudget);
-  if (dataInBudget.length > 0 && dataOutBudget.length > 0) {
+  console.log("dataInBudget && dataOutBudget", dataInBudget.length === 0 && dataOutBudget.length === 0);
+  if (!(dataInBudget.length === 0 && dataOutBudget.length === 0)) {
     return (
       <div className="col col-full pl-48">
         {dataInBudget && dataOutBudget && (
@@ -252,6 +252,11 @@ export default function Budget() {
       </div>
     );
   } else {
-    return <div style={{textAlign:'center', fontWeight:'700', fontSize:'24px'}}> Không có dữ liệu</div>;
+    return (
+      <div style={{ textAlign: "center", fontWeight: "700", fontSize: "24px" }}>
+        {" "}
+        Không có dữ liệu
+      </div>
+    );
   }
 }
