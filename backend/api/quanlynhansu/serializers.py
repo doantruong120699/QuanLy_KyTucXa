@@ -304,22 +304,23 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 phone = data_profile['phone'],
             )
             if 'faculty' in data_profile:
-                if len(str(data_profile['faculty'])):
+                print(len(str(data_profile['faculty'])))
+                if data_profile['faculty'] != None and len(str(data_profile['faculty'])) > 0:
                     faculty = Faculty.objects.get(pk=data_profile['faculty'])
                     profile.faculty = faculty
                 
             if 'my_class' in data_profile:
-                if len(str(data_profile['my_class'])):
+                if data_profile['my_class'] != None and len(str(data_profile['my_class'])) >0:
                     my_class = Class.objects.get(pk=data_profile['my_class'])
                     profile.my_class = my_class
                 
             if 'area' in data_profile:
-                if len(str(data_profile['area'])):
+                if data_profile['area'] != None  and len(str(data_profile['area'])) > 0:
                     area = Area.objects.get(pk=data_profile['area'])
                     profile.area = area
                 
-            if 'position' in data_profile:
-                if len(str(data_profile['position'])):
+            if 'position' in data_profile :
+                if data_profile['position'] != None and len(str(data_profile['position'])) > 0:
                     position = Position.objects.get(pk=data_profile['position'])
                     profile.position = position                
             
@@ -358,23 +359,23 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 profile.phone = profile_data.get('phone', profile.phone)
                 
                 if 'faculty' in profile_data:
-                    if len(str(profile_data['faculty'])):
-                        faculty = Faculty.objects.get(pk=profile_data.get('faculty', profile.faculty).pk)
+                    if profile_data['faculty'] != None and len(str(profile_data['faculty'])) > 0:
+                        faculty = Faculty.objects.get(pk=profile_data.get('faculty').pk)
                         profile.faculty = faculty
                     
                 if 'my_class' in profile_data:
-                    if len(str(profile_data['my_class'])):
-                        my_class = Class.objects.get(pk= profile_data.get('my_class', profile.my_class).pk)
+                    if profile_data['my_class'] != None and len(str(profile_data['my_class'])) > 0: 
+                        my_class = Class.objects.get(pk= profile_data.get('my_class').pk)
                         profile.my_class = my_class
                     
                 if 'area' in profile_data:
-                    if len(str(profile_data['area'])):
-                        area = Area.objects.get(pk= profile_data.get('area', profile.area).pk)
+                    if profile_data['area'] != None and len(str(profile_data['area'])) > 0:
+                        area = Area.objects.get(pk= profile_data.get('area').pk)
                         profile.area = area
                     
                 if 'position' in profile_data:
-                    if len(str(profile_data['position'])):
-                        position = Position.objects.get(pk= profile_data.get('position', profile.position).pk)
+                    if profile_data['position'] != None and len(str(profile_data['position'])) > 0:
+                        position = Position.objects.get(pk= profile_data.get('position').pk)
                         profile.position = position
                 
             if 'group_list' in validated_data:
