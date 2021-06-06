@@ -186,68 +186,72 @@ export default function Budget() {
         },
       },
     });
-
-  return (
-    <div className="col col-full pl-48">
-      {dataInBudget && dataOutBudget && (
-        <div>
-          <div>Bảng thu chi của kí túc xá</div>
-          <span style={{ display: "flex" }}>
-            <div style={{ fontSize: "16px", marginTop: "20px" }}>
-              <input
-                type="radio"
-                value="out"
-                checked={selectedOption === "out"}
-                onChange={handleOptionChange}
-                style={{ marginRight: "10px" }}
-              />
-              Chi
-              <input
-                type="radio"
-                value="in"
-                checked={selectedOption === "in"}
-                onChange={handleOptionChange}
-                style={{ margin: "0px 10px" }}
-              />
-              Thu
-            </div>
-            <Button
-              startIcon={<AddBoxIcon />}
-              style={{
-                marginLeft: "78%",
-                backgroundColor: "#005CC8",
-                width: "100px",
-                color: "white",
-              }}
-              onClick={handleAddBudget}
-            >
-              Thêm
-            </Button>
-          </span>
-          <div
-            className={"budget-table"}
-            style={{ marginTop: "20px", position: "sticky" }}
-          >
-            <Box component="div">
-              <MuiThemeProvider theme={getMuiTheme()}>
-                <MUIDataTable
-                  title={selectedOption === "in" ? "Bảng thu" : "Bảng chi"}
-                  data={selectedOption === "in" ? gridInData : gridOutData}
-                  columns={columns}
-                  options={options}
+  console.log("dataInBudget && dataOutBudget", dataInBudget);
+  if (dataInBudget.length > 0 && dataOutBudget.length > 0) {
+    return (
+      <div className="col col-full pl-48">
+        {dataInBudget && dataOutBudget && (
+          <div style={{ marginLeft: "5%" }}>
+            <div>Bảng thu chi của kí túc xá</div>
+            <span style={{ display: "flex" }}>
+              <div style={{ fontSize: "16px", marginTop: "20px" }}>
+                <input
+                  type="radio"
+                  value="out"
+                  checked={selectedOption === "out"}
+                  onChange={handleOptionChange}
+                  style={{ marginRight: "10px" }}
                 />
-              </MuiThemeProvider>
-            </Box>
-            <ReactModal
-              isOpen={isModalVisible}
-              onRequestClose={hideModal}
-              style={customStyles}
+                Chi
+                <input
+                  type="radio"
+                  value="in"
+                  checked={selectedOption === "in"}
+                  onChange={handleOptionChange}
+                  style={{ margin: "0px 10px" }}
+                />
+                Thu
+              </div>
+              <Button
+                startIcon={<AddBoxIcon />}
+                style={{
+                  marginLeft: "60%",
+                  backgroundColor: "#005CC8",
+                  width: "100px",
+                  color: "white",
+                }}
+                onClick={handleAddBudget}
+              >
+                Thêm
+              </Button>
+            </span>
+            <div
+              className={"budget-table"}
+              style={{ marginTop: "20px", position: "sticky" }}
             >
-              <AddBudget />
-            </ReactModal>
+              <Box component="div">
+                <MuiThemeProvider theme={getMuiTheme()}>
+                  <MUIDataTable
+                    title={selectedOption === "in" ? "Bảng thu" : "Bảng chi"}
+                    data={selectedOption === "in" ? gridInData : gridOutData}
+                    columns={columns}
+                    options={options}
+                  />
+                </MuiThemeProvider>
+              </Box>
+              <ReactModal
+                isOpen={isModalVisible}
+                onRequestClose={hideModal}
+                style={customStyles}
+              >
+                <AddBudget />
+              </ReactModal>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
+  } else {
+    return <div style={{textAlign:'center', fontWeight:'700', fontSize:'24px'}}> Không có dữ liệu</div>;
+  }
 }
