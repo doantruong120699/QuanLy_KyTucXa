@@ -2,7 +2,10 @@ import * as types from "../constants";
 
 const initialState = {
   financialRooms: {},
+  contracts: {},
+  currentContract: {},
   expenses: {},
+  revenues: {},
   statisticalBill: {},
   waterElectricalBills: {},
   detailedWaterElectricalBill: {},
@@ -16,6 +19,10 @@ const initialState = {
 export default function reducer(state = initialState, actions) {
   switch (actions.type) {
     case types.GET_FINANCIAL_API:
+    case types.ADD_FINANCIAL_API:
+    case types.GET_CONTRACTS_API:
+    case types.GET_DETAILED_CONTRACT_API:
+    case types.GET_REVENUES_API:
     case types.GET_WATER_ELECTRICAL_UNIT_PRICE_API:
     case types.UPDATE_WATER_ELECTRICAL_BILL_API:
     case types.DELETE_WATER_ELECTRICAL_BILL_API:
@@ -51,6 +58,12 @@ export default function reducer(state = initialState, actions) {
         unitPrice: actions.payload,
         loading: false,
       };
+    case types.GET_ACCOUNTS_API_SUCCEED:
+      return {
+        ...state,
+        contracts: actions.payload,
+        loading: false,
+      };
     case types.GET_DETAILED_WATER_ELECTRICAL_BILL_API_SUCCEED:
       return {
         ...state,
@@ -81,7 +94,23 @@ export default function reducer(state = initialState, actions) {
         detailedWaterElectricalIndex: actions.payload,
         loading: false,
       };
+    case types.GET_REVENUES_API_SUCCEED:
+      return {
+        ...state,
+        revenues: actions.payload,
+        loading: false,
+      };
+    case types.GET_DETAILED_CONTRACT_API_SUCCEED:
+      return {
+        ...state,
+        currentContract: actions.payload,
+        loading: false,
+      };
     case types.GET_FINANCIAL_API_FAIL:
+    case types.GET_CONTRACTS_API_FAIL:
+    case types.GET_DETAILED_CONTRACT_API_FAIL:
+    case types.ADD_CONTRACTS_API_SUCCEED:
+    case types.GET_REVENUES_API_FAIL:
     case types.GET_EXPENSES_API_FAIL:
     case types.GET_STATISTICAL_BILL_API_FAIL:
     case types.GET_WATER_ELECTRICAL_UNIT_PRICE_API_FAIL:

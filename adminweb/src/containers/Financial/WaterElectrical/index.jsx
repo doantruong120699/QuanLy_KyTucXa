@@ -33,6 +33,12 @@ export default function WaterElectrical() {
 
   const [tableData, setTableData] = useState();
 
+  const [areaSelected, setAreaSelected] = useState();
+
+  const [roomSelected, setRoomSelected] = useState();
+
+  const [isShowTable, setIsShowTable] = useState(false);
+
   useEffect(() => {
     const params = queryString.stringify(time);
     getStatistical(params, (output) => {
@@ -55,13 +61,11 @@ export default function WaterElectrical() {
         setTableData(output);
       }
     });
+
     setAreaSelected(areaname);
     setIsShowTable(true);
   };
 
-  const [areaSelected, setAreaSelected] = useState("");
-  const [roomSelected, setRoomSelected] = useState("");
-  const [isShowTable, setIsShowTable] = useState(false);
   const onGridReady = (params) => {
     let _gridApi = params.api;
     _gridApi.forEachNode(function (rowNode, index) {
@@ -116,10 +120,8 @@ export default function WaterElectrical() {
     setIsModalVisible(false);
   };
   const handleCellClicked = (params) => {
-    console.log("Xem chi tiet ne!", params);
-    console.log("Data", data, "tableData", tableData);
+    setRoomSelected(params.data);
     setIsModalVisible(true);
-    setRoomSelected(params.data.name);
   };
   const onCancel = () => {
     setIsModalVisible(false);
@@ -151,31 +153,31 @@ export default function WaterElectrical() {
     },
   };
   return (
-    <div style={{ display: "flex" }}>
+    <div className="col col-full pl-48 pr-48">
       {data && (
         <Box paddingRight={15} style={{ width: "100%" }} display={"flex"}>
-          <div>
-            <div className="col col-full">
-              <div className="col col-third">
+          <div className="col col-half">
+            <div className="col col-two-third">
+              <div className="col col-half  pd-8">
                 <Typography>Lựa chọn tháng</Typography>
                 <Select
-                  className="week-select"
+                  className="week-select col-full"
                   options={month}
                   value={month.find((index) => index.value === time.month)}
                   onChange={(params) => handleTimeChange(params, "month")}
                 />
               </div>
-              <div className="col col-third">
+              <div className="col col-half pd-8">
                 <Typography>Lựa chọn năm</Typography>
                 <Select
-                  className="week-select"
+                  className="week-select col-full"
                   options={year}
                   value={year.find((index) => index.value === time.year)}
                   onChange={(params) => handleTimeChange(params, "year")}
                 />
               </div>
             </div>
-            <div style={{width:'600px'}}>
+            <div className="col col-full">
               <Box>
                 {data.map((n, index) => {
                   return (
@@ -195,17 +197,17 @@ export default function WaterElectrical() {
               </Box>
             </div>
           </div>
-          <div className="dataTable">
-            <div
-              style={{
-                margin: "20px 0 20px 0",
-                fontSize: "40px",
-              }}
-            >
-              {areaSelected}
-            </div>
+          {tableData && isShowTable && (
+            <div className="dataTable col col-half">
+              <div
+                style={{
+                  margin: "20px 0 20px 0",
+                  fontSize: "20px",
+                }}
+              >
+                {areaSelected}
+              </div>
 
-            {tableData && (
               <div className="ag-theme-alpine grid">
                 <AgGridReact
                   animateRows
@@ -221,8 +223,8 @@ export default function WaterElectrical() {
                   paginationAutoPageSize={true}
                 />
               </div>
-            )}
-          </div>
+            </div>
+          )}
           <ReactModal
             isOpen={isModalVisible}
             onRequestClose={hideModal}

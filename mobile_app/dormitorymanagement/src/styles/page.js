@@ -23,19 +23,24 @@ const stylePages = StyleSheet.create({
     alignItems: 'center',
   },
   inputPage: {
-    width: 50,
+    width: 70,
     height: 30,
     marginLeft: 5,
     marginRight: 5,
-    color: 'black',
+    color: 'white',
     padding: 5,
+    borderRadius: 5,
     textAlign: 'center',
-    backgroundColor: 'white',
+    backgroundColor: '#DE404C',
   },
   btnOperation: {
-    width: 30,
+    width: 50,
     height: 30,
-    backgroundColor: 'gray',
+    backgroundColor: 'white',
+    borderRadius: 5,
+  },
+  textOpe: {
+    color: '#DE404C',
   }
 })
 

@@ -2,25 +2,25 @@ import "react-tabs/style/react-tabs.css";
 import React, { useState, useEffect } from "react";
 import Room from "./Room";
 import MUIDataTable from "mui-datatables";
-import {
-  createMuiTheme,
-  MuiThemeProvider,
-} from "@material-ui/core/styles";
+import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import NotificationsIcon from "@material-ui/icons/Notifications";
-import "./styles.css";
 import ReactModal from "react-modal";
-import { getRoomDetails, getRooms } from "../../../redux/actions/humanResource";
-import { getRoom } from "../../../utilities/constants/dataRender/checkroom";
+import moment from "moment";
+import {
+  getRoomDetails,
+  getRooms,
+  deleteStudentInRoom,
+} from "../../../redux/actions/humanResource";
+import { getRoom } from "../../../utilities/constants/DataRender/checkroom";
 import queryString from "query-string";
 import Pagination from "../../../components/common/Pagination";
-
+import YesNoModal from "../../../components/YesNoModal";
 export default function Student() {
   const [dataArea, setDataArea] = useState();
-
+  const [studentToDelete, setStudentToDelete] = useState([]);
   const [peopleInRoom, setPeopleInRoom] = useState();
-
+  const [slugSelected, setSlugSelected] = useState();
+  const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     page_size: 20,
@@ -55,10 +55,9 @@ export default function Student() {
   }, [filter]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isModalNotiVisible, setIsModalNotiVisible] = useState(false);
+
   const hideModal = () => {
     setIsModalVisible(false);
-    setIsModalNotiVisible(false);
   };
 
   const customStyles = {
@@ -85,11 +84,13 @@ export default function Student() {
         MUIDataTableBodyCell: {
           root: {
             backgroundColor: "#FFF",
+            height: "15px",
           },
         },
       },
     });
   const handleClickRoom = (slug) => {
+    setSlugSelected(slug);
     getRoomDetails(slug, (output) => {
       if (output) {
         setPeopleInRoom(convertDataForTable(output));
@@ -97,16 +98,34 @@ export default function Student() {
     });
     setIsModalVisible(true);
   };
+  useEffect(() => {
+    setStudentToDelete([]);
+  }, [isModalVisible]);
+  const handleDeletePeople = () => {
+    studentToDelete.map((index) => {
+      return deleteStudentInRoom(index.publicId, (output) => {
+        getRoomDetails(slugSelected, (output) => {
+          if (output) {
+            setPeopleInRoom(convertDataForTable(output));
+          }
+        });
+      });
+    });
 
-  const handleDeletePeople = (params) => {
-    console.log(params);
+    setStudentToDelete([]);
+    setIsYesNoModalVisible(false);
   };
+  const getHyphenatedDate = (dateString) =>
+    moment(dateString, "DD-MM-YYYY").format("DD/MM/YYYY");
   const convertDataForTable = (data) => {
     return data.list_user.map((n) => ({
       publicId: n.public_id,
       name: n.last_name + " " + n.first_name,
       account: n.username,
-      activeDate: n.birthday,
+      class: n.my_class_id,
+      phone: n.phone,
+      birth_day: getHyphenatedDate(n.birthday),
+      birth_day_number: moment(n.birthday, "DD-MM-YYYY").toDate().getTime(),
     }));
   };
   const columns = [
@@ -127,159 +146,58 @@ export default function Student() {
       },
     },
     {
-      name: "activeDate",
+      name: "class",
+      label: "Lớp học phần",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "phone",
+      label: "SĐT liên lạc",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "birth_day",
       label: "Birthday",
       options: {
         filter: true,
         sort: true,
       },
-    },
-    {
-      name: "",
-      label: "",
-      options: {
-        customBodyRender: () => {
-          return (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleDeletePeople}
-              style={{ marginLeft: "20px" }}
-            >
-              Xoá
-            </Button>
-          );
-        },
-      },
+      customBodyRender: (value) => moment(new Date(value)).format("DD/MM/YYYY"),
     },
   ];
-  const handleClickAddPeople = () => {
-    console.log("Add people");
-  };
 
   const options = {
     filterType: "textField",
-
-    pagination: true,
-    selectableRows: false,
+    pagination: false,
+    onRowsDelete: (rowsDeleted, dataRows) => {
+      const tempArr = [];
+      console.log("rowsDeleted", rowsDeleted);
+      rowsDeleted.data.map((index) => {
+        const temp = peopleInRoom[index.index];
+        console.log("temp", temp);
+        return tempArr.push(temp);
+      });
+      setStudentToDelete(tempArr);
+      setIsYesNoModalVisible(true);
+    },
     customHeadRender: () => {
       return null;
     },
     onRowClick: (params, rowMeta) => {},
   };
-  const registrationData = [
-    {
-      id: 1,
-      request: "requestRoom@demailam.com",
-      roomRequested: 101,
-      area: "A",
-      createdDate: "05/09/2021",
-    },
-  ];
-  const columnsNoti = [
-    {
-      name: "id",
-      label: "ID",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "request",
-      label: "Email người gửi",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "roomRequested",
-      label: "Phòng",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "area",
-      label: "Khu",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "createdDate",
-      label: "Ngày gửi yêu cầu",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "",
-      label: "",
-      options: {
-        customBodyRender: (value) => {
-          return (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleClickAddPeople}
-              style={{ marginLeft: "20px" }}
-            >
-              Xác nhận
-            </Button>
-          );
-        },
-      },
-    },
-  ];
+
   const handleClickAddPeopleWithParams = (params) => {
-    console.log("AAAAAAAA", params);
+    //console.log("AAAAAAAA", params);
   };
-  const handleOpenNotiModal = () => {
-    setIsModalNotiVisible(true);
-  };
+  console.log("Is delete", studentToDelete);
   return (
     <div className="col col-full pl-48">
-      <Box>
-        <Box
-          className={"notification"}
-          display={registrationData.length > 0 ? "block" : "none"}
-          boxShadow={1}
-          borderRadius={5}
-          marginBottom={5}
-          color="red"
-          width={350}
-          textAlign="center"
-          right={5}
-          style={{ cursor: "pointer" }}
-          onClick={handleOpenNotiModal}
-        >
-          <NotificationsIcon />
-          <span style={{ marginLeft: "5px" }}>
-            Có {registrationData.length} yêu cầu mới
-          </span>
-        </Box>
-      </Box>
-      <ReactModal
-        isOpen={isModalNotiVisible}
-        onRequestClose={hideModal}
-        style={customStyles}
-      >
-        <div>
-          <MuiThemeProvider theme={getMuiTheme()}>
-            <MUIDataTable
-              title={"Yêu cầu vào phòng"}
-              data={registrationData}
-              columns={columnsNoti}
-              options={options}
-            />
-          </MuiThemeProvider>
-        </div>
-      </ReactModal>
       {dataArea &&
         dataArea.map((area, index) => {
           return (
@@ -337,6 +255,17 @@ export default function Student() {
       <div className="col col-full">
         <Pagination pagination={pagination} onPageChange={handlePageChange} />
       </div>
+      <YesNoModal
+        isModalVisible={isYesNoModalVisible}
+        hideModal={() => setIsYesNoModalVisible(false)}
+        title={"Xoá người"}
+        message={"Bạn có chắc chắn muốn xoá những người này khỏi phòng không?"}
+        okText={"Xoá"}
+        cancelText={"Huỷ"}
+        onOk={handleDeletePeople}
+        onCancel={() => setIsYesNoModalVisible(false)}
+      />
+      ;
     </div>
   );
 }

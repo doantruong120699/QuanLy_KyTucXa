@@ -8,7 +8,7 @@ import {
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
 import { getSchedule } from "../../redux/actions/profile";
-import { colorData, getTaskList } from "../../utilities/dataRender/schedule";
+import { colorData, getTaskList } from "../../utilities/DataRender/schedule";
 import moment from "moment-timezone";
 import querystring from "querystring";
 
@@ -70,10 +70,12 @@ const MySchedule = () => {
     });
     setFilter({ ...filter, week: newWeek });
   }
+
   function handleChangeYear(event) {
     const { name, value } = event.target;
     setFilter({ ...filter, [name]: value });
   }
+  
   return (
     <div className="style-background-container">
       <div className="col col-5">

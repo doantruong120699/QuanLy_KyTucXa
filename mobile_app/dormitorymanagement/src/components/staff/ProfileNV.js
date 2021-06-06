@@ -19,6 +19,7 @@ class ProfileNV extends Component {
   };
   render() {
     let data = this.props.dataProfile;
+    console.log(data)
     return (
       <View style={styleContainer.container}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
@@ -80,7 +81,7 @@ class ProfileNV extends Component {
 
 function mapStateToProps(state) {
   return {
-    dataProfile: state.getprofile.msg,
+    dataProfile: state.getprofile.payload,
   };
 };
 export default connect(mapStateToProps)(ProfileNV);
@@ -98,8 +99,8 @@ const styles = StyleSheet.create({
   },
   formProfile: {
     backgroundColor: 'white',
-    height: '70%',
-    width: '80%',
+    height: 400,
+    width: 300,
     borderRadius: 20,
     elevation: 7,
   },
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontWeight: 'bold',
-    width: '35%',
+    width: '25%',
   },
   viewButton: {
     flexDirection: 'row',

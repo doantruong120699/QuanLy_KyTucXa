@@ -49,6 +49,10 @@ class Student extends Component {
                   <Text style={styleItemSvNv.title}>Khoa: </Text>
                   <Text style={styleItemSvNv.modalText}>{this.props.student.profile.faculty.name}</Text>
                 </View>
+                <View style={styleItemSvNv.rowItem}>
+                  <Text style={styleItemSvNv.title}>Lớp: </Text>
+                  <Text style={styleItemSvNv.modalText}>{this.props.student.profile.my_class.name}</Text>
+                </View>
                 <Pressable
                   style={[styleItemSvNv.button, styleItemSvNv.buttonClose]}
                   onPress={() => this.setModalVisible(!modalVisible)}

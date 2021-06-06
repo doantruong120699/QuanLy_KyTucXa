@@ -10,9 +10,9 @@ class ChangePassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      old_password: 'quang111',
-      new_password: 'quang19999',
-      repeat_new_password: 'quang19999',
+      old_password: '',
+      new_password: '',
+      repeat_new_password: '',
     };
   };
   changTextOldPassword = (text) => {
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   formChangePassword: {
     elevation: 7,
     borderRadius: 20,
-    width: '80%',
+    width: 300,
     height: 300,
     backgroundColor: 'white',
   },

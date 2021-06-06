@@ -46,6 +46,9 @@ notification_list = NotificationViewSet.as_view({
     'get': 'list',
     'post': 'post'
 })
+notification_student_list = NotificationViewSet.as_view({
+    'get': 'get_noti_student',
+})
 # detail - update - delete
 notification_detail = NotificationViewSet.as_view({
     'get': 'retrieve',
@@ -62,6 +65,9 @@ used_room_in_area_list = UsedRoomInAreaViewSet.as_view({
 # ========== List Permission
 permission_list = GroupPermissionViewSet.as_view({
     'get': 'list',
+})
+permission_information_list = GroupPermissionViewSet.as_view({
+    'get': 'get_permission_infomation',
 })
 # =========== Profile =========
 # list - create
@@ -80,6 +86,7 @@ profile_detail = UserProfileViewSet.as_view({
 urlpatterns = [ 
     # ========== notification
     path('notifications/', notification_list, name = 'notification_list'),
+    path('student-notifications/', notification_student_list, name = 'notification_student_list'),
     path('notifications/<str:public_id>/', notification_detail, name = 'notification_detail'),
     # ========= Request Registration
     path('list-registrations/', list_registration_room, name = 'list_registration_room'),
@@ -101,6 +108,7 @@ urlpatterns = [
     path('used-room-area/', used_room_in_area_list, name = 'used_room_in_area_list'),
     # =========== Permission
     path('permission/', permission_list, name = 'permission_list'),
+    path('permission-and-information/', permission_information_list, name = 'permission_information_list'),
     # ========== notification
     path('admin/account/', profile_list, name = 'profile_list'),
     path('admin/account/<str:public_id>/', profile_detail, name = 'profile_detail'),

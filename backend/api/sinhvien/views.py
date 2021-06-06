@@ -122,3 +122,36 @@ class SinhVienViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
             return Response({"status":"Fail"}, status=status.HTTP_200_OK)
+        
+class ContractRegistationViewSet(viewsets.ModelViewSet):
+    serializer_class = ContractRegistationSerializer
+    permission_classes = [IsAuthenticated, IsSinhVien]
+    lookup_field = 'public_id'
+
+    def list(self, request, *args, **kwargs):
+        try:
+            list_contract_room = Contract.objects.filter(profile__user=request.user).order_by('-created_at')
+            
+            is_expired = request.GET.get('is_expired', None)
+            if is_expired:
+                list_contract_room = list_contract_room.filter(is_expired = is_expired)
+                
+            page = self.paginate_queryset(list_contract_room)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        except Exception as e:
+            print(e)
+        return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, **kwargs):
+        try:
+            request_regis = Contract.objects.get(public_id=kwargs['public_id'])
+            serializer = ContractRegistationSerializer(request_regis)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
+        

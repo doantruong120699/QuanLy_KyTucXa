@@ -6,7 +6,7 @@ import { getRooms as GetRooms } from "../redux/actions/checkroom";
 import Room from "../components/checkroom/Room";
 import Pagination from "../components/common/Pagination";
 import PostFilterForm from "../components/common/PostFilterForm";
-import { getRoom } from "../utilities/dataRender/checkroom";
+import { getRoom } from "../utilities/DataRender/checkroom";
 import * as TitleList from "../utilities/constants/titles";
 import { actFetchTitleNavigation } from "../redux/actions/dashboard";
 import * as ROUTER from "../utilities/constants/router";

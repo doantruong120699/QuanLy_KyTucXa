@@ -3,7 +3,7 @@ import * as types from "../constants";
 const initialState = {
   listRooms: {},
   currentRoom: {},
-  resgistrations: {},
+  registrations: {},
   employeeList: [],
   schedules: {},
   currentRegistration: {},
@@ -19,6 +19,7 @@ export default function reducer(state = initialState, actions) {
     case types.GET_ROOM_DETAILS_API:
     case types.GET_DETAILED_REGISTRATION_API:
     case types.ACCEPT_REGISTRATION_API:
+    case types.DENY_REGISTRATION_API:
     case types.ADD_DAILY_SCHEDULE_API:
     case types.GET_ROOMS_API:
     case types.DELETE_STUDENT_IN_ROOM_API:
@@ -42,7 +43,7 @@ export default function reducer(state = initialState, actions) {
     case types.GET_LIST_REGISTRATION_API_SUCCEED:
       return {
         ...state,
-        resgistrations: actions.payload,
+        registrations: actions.payload,
         loading: false,
       };
     case types.GET_ROOMS_API_SUCCEED:
@@ -72,6 +73,8 @@ export default function reducer(state = initialState, actions) {
     case types.GET_ROOMS_API_FAIL:
     case types.GET_DETAILED_REGISTRATION_API_FAIL:
     case types.ACCEPT_REGISTRATION_API_FAIL:
+    case types.DENY_REGISTRATION_API_FAIL:
+    case types.DENY_REGISTRATION_API_SUCCEED:
     case types.ACCEPT_REGISTRATION_API_SUCCEED:
     case types.ADD_DAILY_SCHEDULE_API_FAIL:
     case types.ADD_DAILY_SCHEDULE_API_SUCCEED:

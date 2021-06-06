@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 
 from api.models import *
+from api.room.serializers import *
 from api.serializers import FacultySerializer, ClassSerializer
 
 class StringListField(serializers.ListField): # get from http://www.django-rest-framework.org/api-guide/fields/#listfield
@@ -23,6 +24,14 @@ class ProfileInListSerializer(serializers.ModelSerializer):
             'faculty',
             'my_class'
         ]
+
+class RoomSerializer(serializers.ModelSerializer):
+    typeroom = TypeRoomSerializer(required=False)
+    area = AreaSerializer(required=False)
+
+    class Meta:
+        model = Room
+        fields = ['id', 'name', 'number_now', 'typeroom', 'area', 'status'] 
 
 class ProfileSinhVienSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
@@ -54,3 +63,18 @@ class SinhVienListSerializer(serializers.ModelSerializer):
         ]
 
 
+class ContractRegistationSerializer(serializers.ModelSerializer):
+    # profile = ProfileSinhVienSerializer()
+    room = RoomSerializer()
+    class Meta:
+        model = Contract
+        fields = [
+            'public_id',
+            'room', 
+            'start_at', 
+            'end_at', 
+            'payment_method', 
+            'created_at',
+            # 'profile',
+            'is_expired',
+        ] 

@@ -49,6 +49,10 @@ class Staff extends Component {
                   <Text style={styleItemSvNv.title}>Vị trí: </Text>
                   <Text style={styleItemSvNv.modalText}>{this.props.staff.profile.position.name}</Text>
                 </View>
+                <View style={styleItemSvNv.rowItem}>
+                  <Text style={styleItemSvNv.title}>Khu vực: </Text>
+                  <Text style={styleItemSvNv.modalText}>{this.props.staff.profile.area.name}</Text>
+                </View>
                 <Pressable
                   style={[styleItemSvNv.button, styleItemSvNv.buttonClose]}
                   onPress={() => this.setModalVisible(!modalVisible)}

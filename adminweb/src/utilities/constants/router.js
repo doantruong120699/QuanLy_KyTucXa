@@ -12,4 +12,7 @@ export const ROUTE_OVERVIEW = "/overview";
 export const ROUTE_ACCOUNT = "/account";
 export const ROUTE_MANAGE_FINANCIAL = "/financial";
 export const ROUTE_BUDGET = "/budget";
+export const ROUTE_REGISTRATIONS = "/registrations";
+export const ROUTE_WATER_ELECTRICAL = "/water-electrical";
+export const ROUTE_CONTRACTS = "/contracts";
 export const ROUTE_CONTRACT_DETAIL = "/contract/detail";

@@ -66,7 +66,7 @@ const ShowAllRoom = (props) => {
       await setTextSearch(value);
     }, 1000);
   }
-  return (
+  return newData != [] ? (
     <View style={styles.container}>
       <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
         <AppBar style={styles.appBar} navigation={navigation} onChange={(t) => {
@@ -86,7 +86,7 @@ const ShowAllRoom = (props) => {
           <SectionList
             style={styles.sectionList}
             sections={newData}
-            keyExtrator={(item, index) => item.id}
+            keyExtrator={(item, index) => {console.log(item)}}
             renderItem={renderItem}
             renderSectionHeader={({ section: { title } }) => (
               <Text style={styles.header}>{title}</Text>
@@ -98,7 +98,7 @@ const ShowAllRoom = (props) => {
                 onPress={() => { minusNumberPage() }}
                 disabled={page.current_page <= 1}
               >
-                <Text>-</Text>
+                <Text style={stylePages.textOpe}>{'<'}</Text>
               </TouchableOpacity>
               <TextInput
                 underlineColorAndroid="transparent"
@@ -114,13 +114,13 @@ const ShowAllRoom = (props) => {
                 onPress={() => { plusNumberPage() }}
                 disabled={page.current_page >= totalPages}
               >
-                <Text>+</Text>
+                <Text style={stylePages.textOpe}>{'>'}</Text>
               </TouchableOpacity>
             </View> 
         </View>
       </ImageBackground>
     </View>
-  );
+  ) : (<View></View>);
 }
 const mapDispatchToProps = {
   getallroom: getallroom,

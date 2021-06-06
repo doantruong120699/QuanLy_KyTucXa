@@ -21,7 +21,7 @@ const styleItemSvNv = StyleSheet.create({
   },
   opacity: {
     backgroundColor: 'gray',
-    opacity: 0.9,
+    opacity: 1,
   },
   modalView: {
     margin: 20,

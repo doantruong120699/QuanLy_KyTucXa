@@ -1,57 +1,40 @@
 import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SendIcon from "@material-ui/icons/Send";
 import { Typography } from "@material-ui/core";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import "./styles.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { getFaculty } from "../../../redux/actions/account";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import DatePicker from "react-datepicker";
-
+import { createAccount, updateAccount } from "../../../redux/actions/account";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import TextField from "@material-ui/core/TextField";
-import { getAuth } from "../../../../src/utilities/helper";
 import InputBase from "@material-ui/core/InputBase";
 import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
 import moment from "moment";
 
-export default function NotificationForm() {
-  const user = getAuth();
-  const permission = {
-    group: [
-      {
-        id: 2,
-        name: "quanlynhansu_group",
-      },
-      {
-        id: 1,
-        name: "nhanvien_group",
-      },
-      {
-        id: 3,
-        name: "sinhvien_group",
-      },
-      {
-        id: 4,
-        name: "quanlytaichinh_group",
-      },
-      {
-        id: 5,
-        name: "superadmin_group",
-      },
-    ],
-    permission: [
-      { id: 33, name: "can remove area" },
-      { id: 34, name: "can add area" },
-      { id: 35, name: "can add bill" },
-      { id: 36, name: "can change bill" },
-    ],
-  };
+export default function AddAccount(props) {
+  const {
+    userInfor,
+    permission,
+    faculty,
+    class_in_university,
+    area,
+    type = "create",
+    position,
+    onSuccess,
+  } = props;
+
   const [dumbBirthDay, setDumbBirthDay] = useState();
+
   const [localData, setLocalData] = useState({
     // this data used to store value, dataSend will be the data to post
     email: "",
@@ -72,332 +55,18 @@ export default function NotificationForm() {
     position: "",
     area: "",
   });
-  const faculty = [
-    {
-      id: 1,
-      name: "Khoa Công Nghệ Thông Tin",
-      slug: "cong-nghe-thong-tin",
-    },
-    {
-      id: 2,
-      name: "Khoa Cơ Khí",
-      slug: "khoa-co-khi",
-    },
-    {
-      id: 3,
-      name: "Khoa Xây dựng",
-      slug: "khoa-xay-dung",
-    },
-    {
-      id: 9,
-      name: "Khoa Công nghệ Nhiệt – Điện lạnh",
-      slug: "khoa-cong-nghe-nhiet-dien-lanh",
-    },
-    {
-      id: 10,
-      name: "Khoa Cơ khí Giao thông",
-      slug: "khoa-co-khi-giao-thong",
-    },
-    {
-      id: 11,
-      name: "Khoa Điện",
-      slug: "khoa-dien",
-    },
-    {
-      id: 12,
-      name: "Khoa Điện tử - Viễn thông",
-      slug: "khoa-dien-tu-vien-thong",
-    },
-    {
-      id: 13,
-      name: "Khoa Hóa",
-      slug: "khoa-hoa",
-    },
-    {
-      id: 14,
-      name: "Khoa Khoa Học Công nghệ tiên tiến",
-      slug: "khoa-khoa-hoc-cong-nghe-tien-tien",
-    },
-    {
-      id: 15,
-      name: "Khoa kiến trúc",
-      slug: "khoa-kien-truc",
-    },
-    {
-      id: 16,
-      name: "Khoa môi trường",
-      slug: "khoa-moi-truong",
-    },
-    {
-      id: 17,
-      name: "khoa quản lý dự án",
-      slug: "khoa-quan-li-du-an",
-    },
-    {
-      id: 18,
-      name: "khoa xây dựng cầu đường",
-      slug: "khoa-xay-dung-cau-duong",
-    },
-    {
-      id: 19,
-      name: "khoa xây dựng công trình thủy",
-      slug: "khoa-xay-dung-cong-trinh-thuy",
-    },
-    {
-      id: 20,
-      name: "khoa xây dựng dân dụng và công nghiệp",
-      slug: "khoa-xay-dung-dan-dung-va-cong-nghiep",
-    },
-  ];
-  const position = [
-    {
-      id: 1,
-      name: "Ban Lãnh Đạo",
-      slug: "ban-lanh-dao",
-    },
-    {
-      id: 2,
-      name: "Tổ Quản Lý Sinh Viên",
-      slug: "to-quan-ly-sinh-vien",
-    },
-    {
-      id: 3,
-      name: "Tổ Kế Toán",
-      slug: "to-ke-toan",
-    },
-    {
-      id: 4,
-      name: "Tổ Điện Nước - Sữa Chữa",
-      slug: "to-dien-nuoc-sua-chua",
-    },
-    {
-      id: 5,
-      name: "Tổ Vệ Sinh Môi Trường",
-      slug: "to-ve-sinh-moi-truong",
-    },
-    {
-      id: 6,
-      name: "Tổ Công Tác Quản Lý Sinh Viên",
-      slug: "to-cong-tac-quan-ly-sinh-vien",
-    },
-    {
-      id: 7,
-      name: "Đội Tự Quản Nội Trú",
-      slug: "doi-tu-quan-noi-tru",
-    },
-    {
-      id: 8,
-      name: "Trưởng Phòng",
-      slug: "truong-phong",
-    },
-    {
-      id: 9,
-      name: "Tổ Công tác thông tin tuyên truyền và văn hoá nghệ thuật",
-      slug: "to-tuyen-truyen-nghe-thuat",
-    },
-  ];
-  const class_in_university = [
-    {
-      id: 1,
-      name: "17T1",
-      slug: "17t1",
-    },
-    {
-      id: 2,
-      name: "17T2",
-      slug: "17t2",
-    },
-    {
-      id: 3,
-      name: "17T3",
-      slug: null,
-    },
-    {
-      id: 4,
-      name: "17X1",
-      slug: null,
-    },
-    {
-      id: 5,
-      name: "17X2",
-      slug: null,
-    },
-    {
-      id: 6,
-      name: "17C1A",
-      slug: null,
-    },
-    {
-      id: 7,
-      name: "19N1",
-      slug: "19n1",
-    },
-    {
-      id: 8,
-      name: "19N2",
-      slug: "19n2",
-    },
-    {
-      id: 9,
-      name: "18N3",
-      slug: "18n3",
-    },
-    {
-      id: 10,
-      name: "18C1A",
-      slug: "18c1a",
-    },
-    {
-      id: 11,
-      name: "19C1A",
-      slug: "19c1a",
-    },
-    {
-      id: 12,
-      name: "18D1",
-      slug: "18d1",
-    },
-    {
-      id: 13,
-      name: "18D2",
-      slug: "18d2",
-    },
-    {
-      id: 14,
-      name: "18D3",
-      slug: "18d3",
-    },
-    {
-      id: 15,
-      name: "18DT1",
-      slug: "18dt1",
-    },
-    {
-      id: 16,
-      name: "18DT2",
-      slug: "18dt2",
-    },
-    {
-      id: 17,
-      name: "17DT3",
-      slug: "17dt3",
-    },
-    {
-      id: 18,
-      name: "17H1",
-      slug: "17h1",
-    },
-    {
-      id: 19,
-      name: "18H2",
-      slug: "18h2",
-    },
-    {
-      id: 20,
-      name: "19H3",
-      slug: "19h3",
-    },
-    {
-      id: 21,
-      name: "20PFIEV1",
-      slug: "20pfiev1",
-    },
-    {
-      id: 22,
-      name: "17PFIEV2",
-      slug: "17pfiev2",
-    },
-    {
-      id: 23,
-      name: "18PFIEV3",
-      slug: "18pfiev3",
-    },
-    {
-      id: 24,
-      name: "19KT1",
-      slug: "19kt2",
-    },
-    {
-      id: 25,
-      name: "20KT2",
-      slug: "20kt2",
-    },
-    {
-      id: 26,
-      name: "17KT3",
-      slug: "17kt3",
-    },
-    {
-      id: 27,
-      name: "18MT1",
-      slug: "18mt1",
-    },
-    {
-      id: 28,
-      name: "19MT2",
-      slug: "19mt2",
-    },
-    {
-      id: 29,
-      name: "20MT3",
-      slug: "20mt3",
-    },
-    {
-      id: 30,
-      name: "17QLDA1",
-      slug: "17qlda1",
-    },
-    {
-      id: 31,
-      name: "18QLDA2",
-      slug: "18qlda2",
-    },
-    {
-      id: 32,
-      name: "19QLDA3",
-      slug: "19qlda3",
-    },
-    {
-      id: 33,
-      name: "18X3",
-      slug: "18x3",
-    },
-  ];
-  const area = [
-    {
-      id: 1,
-      name: "Khu A",
-      slug: "KhuA",
-    },
-    {
-      id: 2,
-      name: "Khu B",
-      slug: "KhuB",
-    },
-    {
-      id: 3,
-      name: "Khu C",
-      slug: "KhuC",
-    },
-    {
-      id: 4,
-      name: "Khu D",
-      slug: "KhuD",
-    },
-  ];
   const handleClick = () => {
-    console.log("dataSend", localData);
     const dataSend = {
       username: localData.userName,
       password: localData.password,
-      firstName: localData.firstName,
-      lastName: localData.lastName,
+      first_name: localData.firstName,
+      last_name: localData.lastName,
       email: localData.email,
       profile: {
         birthday: localData.birthday,
         address: localData.address,
         identify_card: localData.identify_card,
-        gender: localData.gender === 1 ? true : false,
+        gender: localData.gender,
         phone: localData.phone,
         faculty: localData.role !== "student" ? "" : localData.faculty,
         my_class: localData.role !== "student" ? "" : localData.my_class,
@@ -407,16 +76,58 @@ export default function NotificationForm() {
       group_list: localData.group,
       permission_list: localData.permission,
     }; //this is right format of data to post
-    if (localData.password !== localData.confirmPassword) {
-      alert("xác nhận đúng mật khẩu");
+    if (type === "create") {
+      createAccount(dataSend, (output) => {
+        console.log("output", output);
+        if (output.status === "successful") {
+          toast("Tạo tài khoản mới thành công!");
+          setTimeout(onSuccess, 4000);
+        } else toast(output.notification);
+      });
+    } else {
+      console.log("Update");
+      updateAccount(userInfor.public_id, dataSend, (output) => {
+        console.log("output", output);
+        if (output.status === "successful") {
+          toast("Cập nhật tài khoản thành công!");
+          setTimeout(onSuccess, 4000);
+        } else toast(output.notification);
+      });
     }
-    console.log("Data send", dataSend);
   };
   // const [typeSelect, setTypeSelect] = useState("");
   // const [amount, setAmount] = useState();
   // const [price, setPrice] = useState();
   // const [description, setDescription] = useState();
 
+  useEffect(() => {
+    if (userInfor) {
+      setDumbBirthDay(new Date(userInfor.birthday));
+      setLocalData({
+        userName: userInfor.user.username || "",
+        password: userInfor.password || "",
+        email: userInfor.user.email || "",
+        permission: userInfor.user.permission_list
+          ? userInfor.user.permission_list.map((value) => value.id)
+          : [],
+        group: userInfor.user.group_list
+          ? userInfor.user.group_list.map((value) => value.id)
+          : [],
+        firstName: userInfor.user.first_name || "",
+        lastName: userInfor.user.last_name || "",
+        birthday: userInfor.birthday || "",
+        role: "" || "",
+        address: userInfor.address || "",
+        identify_card: userInfor.identify_card || "",
+        gender: userInfor.gender || "",
+        phone: userInfor.phone || "",
+        faculty: userInfor.faculty?.id ? userInfor.faculty.id : "",
+        my_class: userInfor.my_class ? userInfor.my_class.id : "",
+        position: userInfor.position ? userInfor.position.id : "",
+        area: userInfor.area ? userInfor.area.id : "",
+      });
+    }
+  }, []);
   const SendButton = withStyles((theme) => ({
     root: {
       width: "100px",
@@ -459,16 +170,11 @@ export default function NotificationForm() {
     },
   }))(InputBase);
   const classes = useStyles();
-  const convertDataSelect = (data, type) => {
-    return data.map((index) => {
-      return {
-        value: index.id,
-        label: index.name,
-      };
-    });
-  };
+
   const handleChange = (event) => {
-    console.log("event.target", event.target);
+    if (localData.role === "student") {
+      setLocalData({ ...localData, position: "", area: "" });
+    } else setLocalData({ ...localData, faculty: "", my_class: "" });
     const name = event.target.name;
     const data = event.target.value;
     setLocalData({ ...localData, [name]: data });
@@ -481,7 +187,7 @@ export default function NotificationForm() {
       },
     },
   };
-  console.log(localData, localData);
+  console.log("type", userInfor);
   return (
     <Box style={{ width: "100%" }}>
       <Box marginLeft={"15%"} marginBottom={3}>
@@ -491,6 +197,7 @@ export default function NotificationForm() {
         <TextField
           id="userName"
           name={"userName"}
+          value={localData.userName}
           label="Tên Tài Khoản"
           onChange={handleChange}
           variant="outlined"
@@ -498,6 +205,7 @@ export default function NotificationForm() {
         />
         <TextField
           id="email"
+          value={localData.email}
           name={"email"}
           type="email"
           label="Email"
@@ -522,14 +230,11 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(permission.group).map((index) => {
+            {permission.group.map((value, index) => {
               return (
-                <MenuItem value={index.value}>
-                  {" "}
-                  <Checkbox
-                    checked={localData.group.indexOf(index.value) > -1}
-                  />
-                  <ListItemText primary={index.label} />
+                <MenuItem key={index} value={value.id}>
+                  <Checkbox checked={localData.group.indexOf(value.id) > -1} />
+                  <ListItemText primary={value.name} />
                 </MenuItem>
               );
             })}
@@ -548,10 +253,10 @@ export default function NotificationForm() {
             marginTop: "20px",
           }}
         >
-          {localData.group.map((index) => {
+          {localData.group.map((value, index) => {
             return (
-              <div>
-                {permission.group.find((value) => value.id === index).name}
+              <div key={index}>
+                {permission.group.find((ele) => ele.id === value).name}
               </div>
             );
           })}
@@ -571,12 +276,12 @@ export default function NotificationForm() {
             renderValue={(selected) => selected.join(", ")}
             MenuProps={MenuProps}
           >
-            {convertDataSelect(permission.permission).map((index) => (
-              <MenuItem value={index.value}>
+            {permission?.permission.map((value, index) => (
+              <MenuItem key={index} value={value.id}>
                 <Checkbox
-                  checked={localData.permission.indexOf(index.value) > -1}
+                  checked={localData.permission.indexOf(value.id) > -1}
                 />
-                <ListItemText primary={index.label} />
+                <ListItemText primary={value.name} />
               </MenuItem>
             ))}
           </Select>
@@ -592,10 +297,10 @@ export default function NotificationForm() {
             display: "block",
           }}
         >
-          {localData.permission.map((index) => {
+          {localData.permission.map((value, index) => {
             return (
-              <div>
-                {permission.permission.find((value) => value.id === index).name}
+              <div key={index}>
+                {permission?.permission.find((ele) => ele.id === value)?.name}
               </div>
             );
           })}
@@ -634,8 +339,8 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            <MenuItem value="1">Nam</MenuItem>
-            <MenuItem value="0">Nữ</MenuItem>
+            <MenuItem value={true}>Nam</MenuItem>
+            <MenuItem value={false}>Nữ</MenuItem>
           </Select>
           <FormHelperText>Lựa chọn giới tính</FormHelperText>
         </FormControl>
@@ -646,6 +351,7 @@ export default function NotificationForm() {
           id="firstName"
           name={"firstName"}
           label="Tên"
+          value={localData.firstName}
           variant="outlined"
           onChange={handleChange}
           size="small"
@@ -655,6 +361,7 @@ export default function NotificationForm() {
           id="lastName"
           name={"lastName"}
           type="lastName"
+          value={localData.lastName}
           label="Họ "
           variant="outlined"
           onChange={handleChange}
@@ -664,6 +371,7 @@ export default function NotificationForm() {
       </Box>
       <Box marginLeft={"15%"}>
         <TextField
+          value={localData.identify_card}
           id="identify_card"
           name={"identify_card"}
           label="CMND"
@@ -674,6 +382,7 @@ export default function NotificationForm() {
         />
         <TextField
           id="address"
+          value={localData.address}
           name={"address"}
           label="Địa chỉ liên lạc"
           variant="outlined"
@@ -701,6 +410,7 @@ export default function NotificationForm() {
           id="phone"
           name={"phone"}
           label="Số điện thoại"
+          value={localData.phone}
           variant="outlined"
           onChange={handleChange}
           size="small"
@@ -722,8 +432,12 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(position).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {position.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              );
             })}
           </Select>
           <FormHelperText>
@@ -745,8 +459,12 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(area).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {area.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              );
             })}
           </Select>
           <FormHelperText>
@@ -771,8 +489,12 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(faculty).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {faculty.map((value, index) => {
+              return (
+                <MenuItem key={index} value={value.id}>
+                  {value.name}
+                </MenuItem>
+              );
             })}
           </Select>
           <FormHelperText>
@@ -794,8 +516,8 @@ export default function NotificationForm() {
             className={classes.selectEmpty}
             input={<Input />}
           >
-            {convertDataSelect(class_in_university).map((index) => {
-              return <MenuItem value={index.value}>{index.label}</MenuItem>;
+            {class_in_university.map((value, index) => {
+              return <MenuItem value={value.id}>{value.name}</MenuItem>;
             })}
           </Select>
           <FormHelperText>
@@ -835,6 +557,7 @@ export default function NotificationForm() {
         >
           Gửi
         </SendButton>
+        <ToastContainer />
       </Box>
     </Box>
   );

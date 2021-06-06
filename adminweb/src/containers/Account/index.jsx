@@ -1,6 +1,6 @@
 import MUIDataTable from "mui-datatables";
 import Box from "@material-ui/core/Box";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
@@ -9,118 +9,94 @@ import AddBoxIcon from "@material-ui/icons/AddBox";
 import ReactModal from "react-modal";
 import AddAccount from "./AddAccount";
 import MoreButton from "./MoreButton";
-
+import {
+  getAccounts,
+  getGroupAndPermission,
+  getFaculty,
+  getClass,
+  getPosition,
+  getArea,
+} from "../../redux/actions/account";
+import moment from "moment";
+import YesNoModal from "../../components/YesNoModal";
+import "./styles.css";
 export default function Account() {
-  const data = [
-    {
-      id: 1,
-      firstName: "Anh",
-      lastName: "To",
-      account: "anh_to@datahouse.com",
-      role: "Student",
-      activeDate: "20/3/2020",
-      isActive: true,
-    },
-    {
-      id: 2,
-      firstName: "Ben",
-      lastName: "Phan",
-      account: "ben_phan@datahouse.com",
-      role: "Student",
-      activeDate: "21/3/2020",
-      isActive: false,
-    },
-    {
-      id: 3,
-      firstName: "Truong",
-      lastName: "Doan",
-      account: "doan_truong@demailam.com",
-      role: "Student",
-      activeDate: "20/4/2020",
-      isActive: true,
-    },
-    {
-      id: 4,
-      firstName: "Quang",
-      lastName: "Tran",
-      account: "quang_tran@demailam.com",
-      role: "Student",
-      activeDate: "22/5/2020",
-      isActive: true,
-    },
-    {
-      id: 5,
-      firstName: "Admin",
-      lastName: "le",
-      account: "admin_le@datahouse.com",
-      role: "Super Admin",
-      activeDate: "21/2/2017",
-      isActive: true,
-    },
-    {
-      id: 6,
-      firstName: "Financial",
-      lastName: "Admin",
-      account: "financial_admin@demailam.com",
-      role: "Student",
-      activeDate: "21/3/2020",
-      isActive: true,
-    },
-    {
-      id: 7,
-      firstName: "Human",
-      lastName: "Resource",
-      account: "human_resource@demailam.com",
-      role: "Student",
-      activeDate: "20/3/2020",
-      isActive: true,
-    },
-    {
-      id: 8,
-      firstName: "Van",
-      lastName: "Pham",
-      account: "pham_van@demailam.com",
-      role: "Staff",
-      activeDate: "20/3/2020",
-      isActive: true,
-    },
-    {
-      id: 9,
-      firstName: "Ton",
-      lastName: "Hoang",
-      account: "hoang_lan_ton@demailam.com",
-      role: "Staff",
-      activeDate: "20/3/2020",
-      isActive: true,
-    },
-    {
-      id: 10,
-      firstName: "De Boer",
-      lastName: "Frank",
-      account: "fboer@demailam.com",
-      role: "Student",
-      activeDate: "20/3/2020",
-      isActive: true,
-    },
-    {
-      id: 11,
-      firstName: "B",
-      lastName: "Nguyen",
-      account: "nguyen_b@demailam.com",
-      role: "Staff",
-      isActive: true,
-      activeDate: "20/3/2020",
-    },
-  ];
+  const [data, setData] = useState();
+  const [faculty, setFaculty] = useState();
+  const [permission, setPermission] = useState();
+  const [class_in_university, setClassInUniversity] = useState();
+  const [position, setPosition] = useState();
+  const [area, setArea] = useState();
+  useEffect(() => {
+    const params = "";
+    getAccounts(params, (output) => {
+      var data;
+      if (output) {
+        console.log("output", output);
+        data = output.results.map((value, index) => {
+          return {
+            order: index + 1,
+            publicId: value.public_id,
+            firstName: value.user.first_name,
+            lastName: value.user.last_name,
+            account: value.user.username,
+            role: value.position ? value.position.name : "--",
+            faculty: value.faculty ? value.faculty.name : "--",
+            my_class: value.my_class ? value.my_class.name : "--",
+            area: value.area ? value.area.name : "--",
+            phone: value.phone,
+            birthday: value.birthday,
+            address: value.address,
+            identify_card: value.identify_card,
+            isActive: true,
+            activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
+          };
+        });
+        setData(data);
+      }
+    });
+    getGroupAndPermission((output) => {
+      if (output) {
+        setPermission(output);
+      }
+    });
+
+    getFaculty((output) => {
+      if (output) {
+        setFaculty(output);
+      }
+    });
+
+    getClass((output) => {
+      if (output) {
+        setClassInUniversity(output);
+      }
+    });
+
+    getPosition((output) => {
+      if (output) {
+        setPosition(output);
+      }
+    });
+
+    getArea((output) => {
+      if (output) {
+        setArea(output);
+      }
+    });
+  }, []);
+
   const getMuiTheme = () =>
     createMuiTheme({
       overrides: {
         MUIDataTable: {
+          width: "fit-content",
+
           root: {
             backgroundColor: "#re",
           },
           paper: {
-            width: "1200px",
+            width: "fit-content",
           },
         },
         MUIDataTableBodyCell: {
@@ -130,15 +106,24 @@ export default function Account() {
         },
       },
     });
+
   const convertDataForTable = (data) => {
+    console.log("Data", data);
     return data.map((n) => ({
       name: n.lastName + " " + n.firstName,
       account: n.account,
       role: n.role,
+      area: n.area,
+      faculty: n.faculty,
+      my_class: n.my_class,
+      phone: n.phone,
+      birthday: n.birthday,
+      identify_card: n.identify_card,
       activeDate: n.activeDate,
       isActive: n.isActive,
     }));
   };
+
   const columns = [
     {
       name: "name",
@@ -158,7 +143,47 @@ export default function Account() {
     },
     {
       name: "role",
-      label: "Role",
+      label: "Chức vụ",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "area",
+      label: "Khu vực",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "my_class",
+      label: "Lớp học phần",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "faculty",
+      label: "Khoa",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "phone",
+      label: "SĐT liên lạc",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "identify_card",
+      label: "CCCD/CMND",
       options: {
         filter: true,
         sort: true,
@@ -190,25 +215,55 @@ export default function Account() {
         sort: false,
         filter: false,
         customBodyRender: (userId, tableMetaData) => (
-          <MoreButton rowUser={data[tableMetaData.rowIndex]} />
+          <MoreButton
+            rowUser={data[tableMetaData.rowIndex]}
+            permission={permission}
+            faculty={faculty}
+            class_in_university={class_in_university}
+            position={position}
+            area={area}
+          />
         ),
         setCellProps: () => ({ style: { width: "10px" } }),
       },
     },
   ];
   const handleRowClick = (_value, meta) => {};
+
   const options = {
     filterType: "textField",
-    selectableRows: false,
+    selectableRows: "none",
     onRowClick: handleRowClick,
   };
-
+  const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const hideModal = () => {
     setIsModalVisible(false);
   };
   const handleAddAccount = () => {
     setIsModalVisible(true);
+  };
+  const handleSuccessSubmit = () => {
+    setIsModalVisible(false);
+    const params = "";
+    getAccounts(params, (output) => {
+      var data;
+      if (output) {
+        data = output.results.map((value, index) => {
+          return {
+            order: index + 1,
+            publicId: value.public_id,
+            firstName: value.user.first_name,
+            lastName: value.user.last_name,
+            account: value.user.username,
+            role: value.position ? value.position.name : null,
+            isActive: true,
+            activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
+          };
+        });
+        setData(data);
+      }
+    });
   };
   const customStyles = {
     content: {
@@ -222,41 +277,71 @@ export default function Account() {
     },
     overlay: { zIndex: 1000 },
   };
+  console.log("permission", permission);
   return (
-    <div className="account_page">
-      <Box marginBottom={5}>
-        <Typography variant="h4">Tài Khoản</Typography>
-      </Box>
-      <Box marginBottom={5}>
-        <Button
-          startIcon={<AddBoxIcon />}
-          style={{
-            backgroundColor: "#005CC8",
-            width: "200px",
-            color: "white",
-          }}
-          onClick={handleAddAccount}
-        >
-          Thêm Tài Khoản
-        </Button>
-      </Box>
-      <Box marginLeft={0}>
-        <MuiThemeProvider theme={getMuiTheme()}>
-          <MUIDataTable
-            title={"Danh sách tài khoản trong hệ thống"}
-            data={convertDataForTable(data)}
-            columns={columns}
-            options={options}
-          />
-        </MuiThemeProvider>
-      </Box>
-      <ReactModal
-        isOpen={isModalVisible}
-        onRequestClose={hideModal}
-        style={customStyles}
-      >
-        <AddAccount />
-      </ReactModal>
+    <div>
+      {data && (
+        <div className="account_page">
+          <Box marginBottom={5} className="account-header">
+            <YesNoModal
+              isModalVisible={isYesNoModalVisible}
+              hideModal={() => {}}
+              title={"Xác nhận"}
+              message={"Mời xác nhận"}
+              okText={"OK"}
+              cancelText={"Cancel"}
+              onOk={() => {
+                console.log("OK");
+              }}
+              onCancel={() => {
+                setIsYesNoModalVisible(false);
+              }}
+            />
+            <Typography variant="h4" style={{ marginLeft: "5%" }}>
+              Tài Khoản
+            </Typography>
+            <Box>
+              <Button
+                startIcon={<AddBoxIcon />}
+                style={{
+                  backgroundColor: "#005CC8",
+                  width: "200px",
+
+                  color: "white",
+                }}
+                onClick={handleAddAccount}
+              >
+                Thêm Tài Khoản
+              </Button>
+            </Box>
+          </Box>
+
+          <Box marginLeft={0}>
+            <MuiThemeProvider theme={getMuiTheme()}>
+              <MUIDataTable
+                title={"Danh sách tài khoản trong hệ thống"}
+                data={convertDataForTable(data)}
+                columns={columns}
+                options={options}
+              />
+            </MuiThemeProvider>
+          </Box>
+          <ReactModal
+            isOpen={isModalVisible}
+            onRequestClose={hideModal}
+            style={customStyles}
+          >
+            <AddAccount
+              permission={permission}
+              faculty={faculty}
+              class_in_university={class_in_university}
+              position={position}
+              area={area}
+              onSuccess={handleSuccessSubmit}
+            />
+          </ReactModal>
+        </div>
+      )}
     </div>
   );
 }

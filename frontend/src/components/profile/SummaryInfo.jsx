@@ -4,7 +4,7 @@ import EditProfile from "./EditProfile";
 import * as AlertMessage from "../../utilities/constants/AlertMessage";
 import validate from "../../utilities/regex";
 import ChangePass from "./ChangePass";
-import { getFormResetPass } from "../../utilities/dataRender/password";
+import { getFormResetPass } from "../../utilities/DataRender/password";
 import moment from "moment";
 
 const SummaryInfo = (props) => {

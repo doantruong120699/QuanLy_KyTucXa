@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "./styles.css";
 import * as ROUTER from "../../../utilities/constants/router";
@@ -7,11 +7,10 @@ import Box from "@material-ui/core/Box";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
 import moment from "moment";
-import Button from "@material-ui/core/Button";
-import AddBoxIcon from "@material-ui/icons/AddBox";
 import ReactModal from "react-modal";
 import AddBudget from "../Budget/AddBudget";
-import {useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+import { getContracts } from "../../../redux/actions/financial";
 
 export default function Budget() {
   let history = useHistory();
@@ -19,161 +18,59 @@ export default function Budget() {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [selectedOption, setSelectedOption] = useState("contract");
-  const dataContract = [
-    {
-      public_id: "123abcde",
-      room: {
-        id: 3,
-        name: "101",
-        slug: "101",
-        number_now: 5,
-      },
-      profile: {
-        id: 1,
-        lastName: "Anh",
-        firstName: "To",
-        phone: "0786662297",
-        faculty: "CNTT",
-        class: "17T1",
-      },
-      start_at: "2021-03-01",
-      end_at: "2021-03-23",
-      payment_method: {
-        id: 1,
-        name: "Banking",
-      },
-      is_expired: false,
-    },
-    {
-      public_id: "123abcdef",
+  const [dataContracts, setDataContracts] = useState([]);
 
-      room: {
-        id: 4,
-        name: "102",
-        slug: "102",
-        number_now: 5,
-      },
-      profile: {
-        id: 2,
-        lastName: "Truong",
-        firstName: "Doan",
-        phone: "08989789",
-        faculty: "CNTT",
-        class: "17T1",
-      },
-      start_at: "2020-03-01",
-      end_at: "2021-03-23",
-      payment_method: {
-        id: 1,
-        name: "Banking",
-      },
-      is_expired: true,
-    },
-    {
-      public_id: "123abcdefg",
+  useEffect(() => {
+    getContracts((output) => {
+      if (output) {
+        console.log("output", output);
+        setDataContracts(output.results);
+      }
+    });
+  }, []);
 
-      room: {
-        id: 5,
-        name: "103",
-        slug: "103",
-        number_now: 5,
-      },
-      profile: {
-        id: 1,
-        lastName: "Ben",
-        firstName: "Phan",
-        phone: "081289037",
-        faculty: "CNTT",
-        class: "17T1",
-      },
-      start_at: "2019-03-01",
-      end_at: "2021-03-23",
-      payment_method: {
-        id: 1,
-        name: "Banking",
-      },
-      is_expired: false,
-    },
-    {
-      public_id: "123abcdegh",
-
-      room: {
-        id: 7,
-        name: "105",
-        slug: "105",
-        number_now: 5,
-      },
-      profile: {
-        id: 7,
-        lastName: "Quang",
-        firstName: "Tran",
-        phone: "089028189",
-        faculty: "CNTT",
-        class: "17T1",
-      },
-      start_at: "2021-05-01",
-      end_at: "2021-07-23",
-      payment_method: {
-        id: 1,
-        name: "Banking",
-      },
-      is_expired: false,
-    },
-    {
-      public_id: "123abcdeyij",
-
-      room: {
-        id: 3,
-        name: "101",
-        slug: "101",
-        number_now: 5,
-      },
-      profile: {
-        id: 1,
-        lastName: "Thao",
-        firstName: "Hoang",
-        phone: "018923789",
-        faculty: "CNTT",
-        class: "17T1",
-      },
-      start_at: "2021-03-01",
-      end_at: "2021-03-23",
-      payment_method: {
-        id: 1,
-        name: "Banking",
-      },
-      is_expired: false,
-    },
-  ];
   const dataInBudget = [
     {
-      id: 4,
-      type: 0,
-      description: "Phòng A101 đóng tiền điện nước",
-      number: 1,
-      createdBy: "anh_to@datahouse.com",
-
-      price: 200000,
-      createdDate: "04/20/2021",
+      public_id: 4,
+      water_electrical: {
+        public_id: 1,
+        room: { name: "101", slug: "101-b", number_now: 0 },
+        month: 4,
+        year: 2021,
+        water_price: 89313,
+        electrical_price: 891564,
+      },
     },
     {
-      id: 5,
-      type: 0,
-      description: "Phòng A102 đóng tiền điện nước",
-      number: 1,
-      createdBy: "anh_to@datahouse.com",
-
-      price: 200000,
-      createdDate: "04/21/2021",
+      public_id: 2,
+      water_electrical: {
+        public_id: 2,
+        room: { name: "102", slug: "101-a", number_now: 0 },
+        month: 4,
+        year: 2021,
+        water_price: 89313,
+        electrical_price: 891564,
+      },
+    },
+    {
+      public_id: 3,
+      water_electrical: {
+        public_id: 3,
+        room: { name: "103", slug: "101-b", number_now: 0 },
+        month: 4,
+        year: 2021,
+        water_price: 89313,
+        electrical_price: 891564,
+      },
     },
   ];
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.defaultValue);
   };
-  const columns = [
+  const contractColumn = [
     {
-      label: "ID Phòng",
-      name: "roomId",
+      label: "Thứ tự",
+      name: "order",
       options: {
         filter: true,
         sort: true,
@@ -231,24 +128,96 @@ export default function Budget() {
           moment(new Date(value)).format("DD/MM/YYYY"),
       },
     },
+    {
+      name: "is_expired",
+      label: "Ngày kết thúc",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value) => {
+          return value ? (
+            <div style={{ color: "red" }}>Đã hết hạn</div>
+          ) : (
+            <div style={{ color: "green" }}>Chưa hết hạn</div>
+          );
+        },
+      },
+    },
+  ];
+  const billColumn = [
+    {
+      label: "Tên phòng",
+      name: "room_name",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      label: "Thời gian",
+      name: "date",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      label: "Giá điện",
+      name: "water_price",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value) =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value),
+      },
+    },
+    {
+      label: "Giá nước",
+      name: "electrical_price",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value) =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value),
+      },
+    },
   ];
   const formatData = (data) => {
+    return data.map((value, index) => {
+      return {
+        contractId: value.public_id,
+        order: index + 1,
+        roomName: value.room.name,
+        studentName: `${value.profile.user.last_name} ${value.profile.user.first_name}`,
+        studentPhone: value.profile.phone,
+        studentClass: `${value.profile.my_class.name} ${value.profile.faculty.name}`,
+        is_expired: value.is_expired,
+        startDate: value.start_at,
+        endDate: value.end_at,
+      };
+    });
+  };
+  const formatDataBill = (data) => {
     return data.map((index) => {
       return {
-        contractId: index.public_id,
-        roomId: index.room.id,
-        roomName: index.room.name,
-        studentName: `${index.profile.lastName} ${index.profile.firstName}`,
-        studentPhone: index.profile.phone,
-        studentClass: `${index.profile.class} ${index.profile.faculty}`,
-        startDate: index.start_at,
-        endDate: index.end_at,
+        id: index.id,
+        water_electrical_id: index.water_electrical.id,
+        room_name: index.water_electrical.room.name,
+        date: `${index.water_electrical.month}/${index.water_electrical.year}`,
+        water_price: index.water_electrical.water_price,
+        electrical_price: index.water_electrical.electrical_price,
       };
     });
   };
   const getHyphenatedDate = (dateString) =>
     moment(dateString, "YYYY/MM/DD").format("YYYY/MM/DD");
-  const gridContractData = formatData(dataContract).map((row) => {
+  const gridContractData = formatData(dataContracts).map((row) => {
     const updatedRow = {
       ...row,
       startDate: getHyphenatedDate(row.startDate),
@@ -264,7 +233,7 @@ export default function Budget() {
       ...row,
       id: parseInt(row.id),
       description: `${row.description}`,
-      number: row.number, // lastUpdateDate: row.lastUpdateDate,
+      number: row.number,
       createdDate: getHyphenatedDate(row.createdDate),
       createdDateNumber: moment(row.createdDate, "MM/DD/YYYY")
         .toDate()
@@ -274,19 +243,19 @@ export default function Budget() {
   });
   const handleRowClick = (params, rowMeta) => {
     console.log("params", params, "meta", rowMeta);
-    
+
     history.push(
-      `${ROUTER.ROUTE_CONTRACT_DETAIL}/${dataContract[rowMeta.rowIndex].public_id}`
+      `${ROUTER.ROUTE_MANAGE_FINANCIAL}${ROUTER.ROUTE_CONTRACT_DETAIL}/${
+        dataContracts[rowMeta.rowIndex].public_id
+      }`
     );
   };
   const options = {
     filterType: "textField",
-    selectableRows: false,
+    selectableRows: 'none',
     onRowClick: handleRowClick,
   };
-  const handleAddBudget = () => {
-    setIsModalVisible(true);
-  };
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const hideModal = () => {
     setIsModalVisible(false);
@@ -320,87 +289,83 @@ export default function Budget() {
       },
     });
   return (
-    <div className="col col-full pl-48">
-      <div style={{ marginBottom: "20px" }}>Bảng thu chi của kí túc xá</div>
-      <div className="budget-date-picker" style={{}}>
-        <span style={{ fontSize: "16px" }}>Từ: </span>
-        <DatePicker
-          selected={startDate}
-          onChange={(date) => setStartDate(date)}
-          selectsStart
-          startDate={startDate}
-          dateFormat="dd/MM/yyyy"
-          endDate={endDate}
-          className={"budget-date-picker-calendar"}
-        />
-        <span style={{ fontSize: "16px", marginLeft: "20px" }}>Đến: </span>
-
-        <DatePicker
-          selected={endDate}
-          onChange={(date) => setEndDate(date)}
-          selectsEnd
-          startDate={startDate}
-          dateFormat="dd/MM/yyyy"
-          endDate={endDate}
-          minDate={startDate}
-          className={"budget-date-picker-calendar"}
-        />
-      </div>
-      <span style={{ display: "flex" }}>
-        <div style={{ fontSize: "16px", marginTop: "20px", width: "230px" }}>
-          <input
-            type="radio"
-            value="contract"
-            checked={selectedOption === "contract"}
-            onChange={handleOptionChange}
-          />
-          Hợp đồng
-          <input
-            type="radio"
-            value="bill"
-            checked={selectedOption === "bill"}
-            onChange={handleOptionChange}
-            style={{ marginLeft: "20px" }}
-          />
-          Hoá đơn
-        </div>
-        <Button
-          startIcon={<AddBoxIcon />}
-          style={{
-            marginLeft: "75%",
-            backgroundColor: "#005CC8",
-            width: "100px",
-            color: "white",
-          }}
-          onClick={handleAddBudget}
-        >
-          Thêm
-        </Button>
-      </span>
-      <div
-        className={"budget-table"}
-        style={{ marginTop: "20px", position: "sticky" }}
-      >
-        <Box component="div">
-          <MuiThemeProvider theme={getMuiTheme()}>
-            <MUIDataTable
-              title={selectedOption === "contract" ? "Hoá đơn" : "Hợp đồng"}
-              data={
-                selectedOption === "contract" ? gridContractData : gridBillData
-              }
-              columns={columns}
-              options={options}
+    <div>
+      {dataContracts && (
+        <div className="col col-full pl-48 ">
+          <div style={{ marginBottom: "20px" }}>Bảng thu chi của kí túc xá</div>
+          <div className="budget-date-picker" style={{}}>
+            <span style={{ fontSize: "16px" }}>Từ: </span>
+            <DatePicker
+              selected={startDate}
+              onChange={(date) => setStartDate(date)}
+              selectsStart
+              startDate={startDate}
+              dateFormat="dd/MM/yyyy"
+              endDate={endDate}
+              className={"budget-date-picker-calendar"}
             />
-          </MuiThemeProvider>
-        </Box>
-        <ReactModal
-          isOpen={isModalVisible}
-          onRequestClose={hideModal}
-          style={customStyles}
-        >
-          <AddBudget />
-        </ReactModal>
-      </div>
+            <span style={{ fontSize: "16px", marginLeft: "20px" }}>Đến: </span>
+
+            <DatePicker
+              selected={endDate}
+              onChange={(date) => setEndDate(date)}
+              selectsEnd
+              startDate={startDate}
+              dateFormat="dd/MM/yyyy"
+              endDate={endDate}
+              minDate={startDate}
+              className={"budget-date-picker-calendar"}
+            />
+          </div>
+          <span style={{ display: "flex" }}>
+            <div
+              style={{ fontSize: "16px", marginTop: "20px", width: "230px" }}
+            >
+              <input
+                type="radio"
+                value="contract"
+                checked={selectedOption === "contract"}
+                onChange={handleOptionChange}
+              />
+              Hợp đồng
+              <input
+                type="radio"
+                value="bill"
+                checked={selectedOption === "bill"}
+                onChange={handleOptionChange}
+                style={{ marginLeft: "20px" }}
+              />
+              Hoá đơn
+            </div>
+          </span>
+          <div
+            className={"budget-table"}
+            style={{ marginTop: "20px", position: "sticky" }}
+          >
+            <Box component="div" marginLeft={15}>
+              <MuiThemeProvider theme={getMuiTheme()}>
+                <MUIDataTable
+                  title={selectedOption === "contract" ? "Hoá đơn" : "Hợp đồng"}
+                  data={
+                    selectedOption === "contract"
+                      ? gridContractData
+                      : gridBillData
+                  }
+                  columns={contractColumn}
+                  options={options}
+                />
+              </MuiThemeProvider>
+            </Box>
+            <ReactModal
+              isOpen={isModalVisible}
+              onRequestClose={hideModal}
+              style={customStyles}
+            >
+              <AddBudget />
+            </ReactModal>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   formForgot: {
     elevation: 7,
     borderRadius: 20,
-    width: '80%',
+    width: 300,
     height: 250,
     backgroundColor: 'white',
   },
