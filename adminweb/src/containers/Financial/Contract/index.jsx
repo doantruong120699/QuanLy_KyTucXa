@@ -252,8 +252,8 @@ export default function Budget() {
   };
   const options = {
     filterType: "textField",
-    selectableRows: 'none',
-    onRowClick: handleRowClick,
+    selectableRows: "none",
+    onRowClick: selectedOption === "contract" ? handleRowClick : () => {},
   };
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -288,6 +288,7 @@ export default function Budget() {
         },
       },
     });
+  console.log("gridBillData", gridBillData);
   return (
     <div>
       {dataContracts && (
@@ -344,16 +345,21 @@ export default function Budget() {
           >
             <Box component="div" marginLeft={15}>
               <MuiThemeProvider theme={getMuiTheme()}>
-                <MUIDataTable
-                  title={selectedOption === "contract" ? "Hoá đơn" : "Hợp đồng"}
-                  data={
-                    selectedOption === "contract"
-                      ? gridContractData
-                      : gridBillData
-                  }
-                  columns={contractColumn}
-                  options={options}
-                />
+                {selectedOption === "contract" ? (
+                  <MUIDataTable
+                    title={"Hợp đồng"}
+                    data={gridContractData}
+                    columns={contractColumn}
+                    options={options}
+                  />
+                ) : (
+                  <MUIDataTable
+                    title={"Hoá đơn"}
+                    data={gridBillData}
+                    columns={billColumn}
+                    options={options}
+                  />
+                )}
               </MuiThemeProvider>
             </Box>
             <ReactModal

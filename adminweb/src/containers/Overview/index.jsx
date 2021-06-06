@@ -166,32 +166,35 @@ export default function Overview() {
     <div>
       {data && (
         <Grow in={true} timeout={1000} style={{ transformOrigin: "10 10 10" }}>
-          <Box style={{ transform: "scale(1)" }}>
-            {data.map((n, index) => {
-              return (
-                <CircularProgressWithLabel
-                  key={index}
-                  name={n.name}
-                  allRoom={n.total}
-                  availabeRoom={n.total - n.full}
-                />
-              );
-            })}
-            <Button
-              startIcon={<AddBoxIcon />}
-              style={{
-                marginLeft: "50%",
-                backgroundColor: "#005CC8",
-                width: "300px",
-                color: "white",
-                cursor: "pointer",
-              }}
-              onClick={handleSendNoti}
-            >
-              Thêm một thông báo mới
-            </Button>
-            <Box marginLeft={"10%"} className={"notification-area"}>
-              {notifications && <NotificationList listNoti={notifications} />}
+          <Box style={{ transform: "scale(1)", marginLeft: "5%" }}>
+            <Box>
+              {data.map((n, index) => {
+                return (
+                  <CircularProgressWithLabel
+                    key={index}
+                    name={n.name}
+                    allRoom={n.total}
+                    availabeRoom={n.total - n.full}
+                  />
+                );
+              })}
+            </Box>
+            <Box>
+              <Button
+                startIcon={<AddBoxIcon />}
+                style={{
+                  backgroundColor: "#005CC8",
+                  width: "300px",
+                  color: "white",
+                  cursor: "pointer",
+                }}
+                onClick={handleSendNoti}
+              >
+                Thêm một thông báo mới
+              </Button>
+              <Box className={"notification-area"}>
+                {notifications && <NotificationList listNoti={notifications} />}
+              </Box>
             </Box>
           </Box>
         </Grow>
