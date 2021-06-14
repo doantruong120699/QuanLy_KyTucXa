@@ -569,7 +569,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         # print(list(serializer.errors.values()))
         try:
             return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
-        except:
+        except Exception as e:
+            print(e)
             return Response({'status': 'fail', 'notification' : list(list(serializer.errors.values())[0].values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, public_id, format=None):
