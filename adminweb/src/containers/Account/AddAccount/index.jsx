@@ -244,10 +244,10 @@ export default function AddAccount(props) {
         <div
           placeholder={"nhóm chức năng"}
           style={{
-            width: "220px",
+            width: "225px",
             height: "50px",
             border: "1px solid",
-            marginLeft: "7%",
+            marginLeft: "8%",
             overflowY: "scroll",
             display: "block",
             marginTop: "20px",
@@ -289,10 +289,10 @@ export default function AddAccount(props) {
         </FormControl>
         <div
           style={{
-            width: "220px",
+            width: "225px",
             height: "50px",
             border: "1px solid",
-            marginLeft: "7%",
+            marginLeft: "8%",
             overflowY: "scroll",
             display: "block",
           }}

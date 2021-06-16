@@ -278,70 +278,77 @@ export default function Account() {
     overlay: { zIndex: 1000 },
   };
   console.log("permission", permission);
-  return (
-    <div>
-      {data && (
-        <div className="account_page">
-          <Box marginBottom={5} className="account-header">
-            <YesNoModal
-              isModalVisible={isYesNoModalVisible}
-              hideModal={() => {}}
-              title={"Xác nhận"}
-              message={"Mời xác nhận"}
-              okText={"OK"}
-              cancelText={"Cancel"}
-              onOk={() => {
-                console.log("OK");
-              }}
-              onCancel={() => {
-                setIsYesNoModalVisible(false);
-              }}
-            />
-            <Typography variant="h4" style={{ marginLeft: "5%" }}>
-              Tài Khoản
-            </Typography>
-            <Box>
-              <Button
-                startIcon={<AddBoxIcon />}
-                style={{
-                  backgroundColor: "#005CC8",
-                  width: "200px",
-
-                  color: "white",
+  if (data) {
+    return (
+      <div>
+        {data && (
+          <div className="account_page">
+            <Box marginBottom={5} className="account-header">
+              <YesNoModal
+                isModalVisible={isYesNoModalVisible}
+                hideModal={() => {}}
+                title={"Xác nhận"}
+                message={"Mời xác nhận"}
+                okText={"OK"}
+                cancelText={"Cancel"}
+                onOk={() => {
+                  console.log("OK");
                 }}
-                onClick={handleAddAccount}
-              >
-                Thêm Tài Khoản
-              </Button>
-            </Box>
-          </Box>
-
-          <Box marginLeft={0}>
-            <MuiThemeProvider theme={getMuiTheme()}>
-              <MUIDataTable
-                title={"Danh sách tài khoản trong hệ thống"}
-                data={convertDataForTable(data)}
-                columns={columns}
-                options={options}
+                onCancel={() => {
+                  setIsYesNoModalVisible(false);
+                }}
               />
-            </MuiThemeProvider>
-          </Box>
-          <ReactModal
-            isOpen={isModalVisible}
-            onRequestClose={hideModal}
-            style={customStyles}
-          >
-            <AddAccount
-              permission={permission}
-              faculty={faculty}
-              class_in_university={class_in_university}
-              position={position}
-              area={area}
-              onSuccess={handleSuccessSubmit}
-            />
-          </ReactModal>
-        </div>
-      )}
-    </div>
-  );
+              <Typography variant="h4" style={{ marginLeft: "5%" }}>
+                Tài Khoản
+              </Typography>
+              <Box>
+                <Button
+                  startIcon={<AddBoxIcon />}
+                  style={{
+                    backgroundColor: "#005CC8",
+                    width: "200px",
+
+                    color: "white",
+                  }}
+                  onClick={handleAddAccount}
+                >
+                  Thêm Tài Khoản
+                </Button>
+              </Box>
+            </Box>
+
+            <Box marginLeft={0}>
+              <MuiThemeProvider theme={getMuiTheme()}>
+                <MUIDataTable
+                  title={"Danh sách tài khoản trong hệ thống"}
+                  data={convertDataForTable(data)}
+                  columns={columns}
+                  options={options}
+                />
+              </MuiThemeProvider>
+            </Box>
+            <ReactModal
+              isOpen={isModalVisible}
+              onRequestClose={hideModal}
+              style={customStyles}
+            >
+              <AddAccount
+                permission={permission}
+                faculty={faculty}
+                class_in_university={class_in_university}
+                position={position}
+                area={area}
+                onSuccess={handleSuccessSubmit}
+              />
+            </ReactModal>
+          </div>
+        )}
+      </div>
+    );
+  } else
+    return (
+      <div style={{ fontSize: "30px", textAlign: "center", fontWeight: "700" }}>
+        Không có dữ liệu hoặc bạn không có quyền để xem mục này
+      </div>
+    );
 }

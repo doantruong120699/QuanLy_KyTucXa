@@ -233,7 +233,9 @@ export async function getListWaterElectricalBills(
   });
   try {
     const response = await fetch(
-      `${REACT_APP_BASE_API}bills/${area}/${time}/`,
+      area
+        ? `${REACT_APP_BASE_API}bills/?${area}&${time}/`
+        : `${REACT_APP_BASE_API}bills/?${time}/`,
       {
         method: "GET",
         headers: {

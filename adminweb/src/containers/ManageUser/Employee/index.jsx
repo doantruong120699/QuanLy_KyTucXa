@@ -177,10 +177,10 @@ const Employee = () => {
   };
 
   return (
-    <div className="col col-full pl-48">
+    <div className="col col-full pl-48" >
       {initData && employeeOption && (
-        <div>
-          <div className="col col-full">
+        <div >
+          <div className="col col-full" style={{marginLeft:'7%', marginBottom:'2%'}}>
             <div className="col col-third">
               <Typography>Lựa chọn tuần</Typography>
               <Select
@@ -202,7 +202,7 @@ const Employee = () => {
           </div>
           <div>
             <h1 id="title">Bảng phân công công việc</h1>
-            <table id="students" style={{ margin: "auto" }}>
+            <table id="students" style={{ marginLeft:'7%'}}>
               <thead>
                 <tr>
                   <th style={{ width: "9%" }}></th>

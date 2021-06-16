@@ -250,11 +250,15 @@ class BillViewSet(viewsets.ModelViewSet):
     
     def list(self, request, *args, **kwargs):
         try:
-            area = self.request.GET.get('area','') 
+            area = self.request.GET.get('area', None) 
             month = self.request.GET.get('month',None)                    
             year = self.request.GET.get('year',None)
             month, year = self.check_month_year(month, year)
-            area = Area.objects.filter(Q(name=area) | Q(slug=area)) 
+            if area != None:
+                area = Area.objects.filter(Q(name=area) | Q(slug=area)) 
+            else:
+                area = Area.objects.all()
+            
             room_in_area = Room.objects.filter(area__in=area).order_by('-id')
             _list = Bill.objects.filter(water_electrical__room__in=room_in_area, 
                                                               water_electrical__year=year,

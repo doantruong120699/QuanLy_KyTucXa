@@ -260,6 +260,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=False)
     last_name = serializers.CharField(required=False)
     email = serializers.CharField(required=False)
+    is_active = serializers.BooleanField(required=False)
     profile = AddProfileSerializer(required=False)
     group_list = serializers.ListField(required=False)
     permission_list = serializers.ListField(required=False)
@@ -272,6 +273,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'email',
+            'is_active',
             'profile',
             'group_list',
             'permission_list'
@@ -292,6 +294,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 first_name=validated_data['first_name'],
                 last_name=validated_data['last_name'],
                 email=validated_data['email'],
+                is_active=validated_data['is_active']
             )
             user.save()
             data_profile = validated_data['profile']
@@ -349,6 +352,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             instance.first_name = validated_data.get('first_name', instance.first_name)
             instance.last_name = validated_data.get('last_name', instance.last_name)
             instance.email = validated_data.get('email', instance.email)
+            instance.is_active = validated_data.get('is_active', instance.is_active)
             profile = instance.user_profile
             if 'profile' in validated_data:
                 profile_data = validated_data.get('profile', instance.user_profile)
@@ -415,6 +419,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
         
         if 'email' not in data:
             raise serializers.ValidationError({'email': required_message}) 
+        
+        if 'is_active' not in data:
+            raise serializers.ValidationError({'is_active': required_message}) 
                         
         profile_data = data['profile']
         
@@ -454,6 +461,7 @@ class UserProfileListSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=False)
     last_name = serializers.CharField(required=False)
     email = serializers.CharField(required=False)
+    is_active = serializers.BooleanField(required=False)
     group_list = serializers.ListField(required=False)
     permission_list = serializers.ListField(required=False)
     
@@ -464,6 +472,7 @@ class UserProfileListSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'email',
+            "is_active",
             'group_list',
             'permission_list'
         ]
