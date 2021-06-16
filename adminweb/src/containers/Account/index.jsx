@@ -127,7 +127,7 @@ export default function Account() {
   const columns = [
     {
       name: "name",
-      label: "Name",
+      label: "Tên",
       options: {
         filter: true,
         sort: true,
@@ -135,7 +135,7 @@ export default function Account() {
     },
     {
       name: "account",
-      label: "Account",
+      label: "Tài khoản",
       options: {
         filter: true,
         sort: true,
@@ -181,17 +181,17 @@ export default function Account() {
         sort: true,
       },
     },
-    {
-      name: "identify_card",
-      label: "CCCD/CMND",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
+    // {
+    //   name: "identify_card",
+    //   label: "CCCD/CMND",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //   },
+    // },
     {
       name: "activeDate",
-      label: "Active Date",
+      label: "Ngày kích hoạt",
       options: {
         filter: true,
         sort: true,
@@ -199,17 +199,17 @@ export default function Account() {
     },
     {
       name: "isActive",
-      label: "Status",
+      label: "Trạng thái",
       options: {
         filter: true,
         sort: true,
         customBodyRender: (value) => {
-          return <div>{value === true ? "Enable" : "Disable"}</div>;
+          return <div>{value === true ? "Mở" : "Khoá"}</div>;
         },
       },
     },
     {
-      label: "ACTION",
+      label: "Khác",
       name: "userId",
       options: {
         sort: false,
