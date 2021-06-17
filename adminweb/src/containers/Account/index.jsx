@@ -298,7 +298,7 @@ export default function Account() {
                   setIsYesNoModalVisible(false);
                 }}
               />
-              <Typography variant="h4" style={{ marginLeft: "5%" }}>
+              <Typography variant="h4" style={{ width: "100%" }}>
                 Tài Khoản
               </Typography>
               <Box>
