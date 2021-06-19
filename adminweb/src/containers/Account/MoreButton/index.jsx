@@ -90,9 +90,9 @@ export default function MoreButton(props) {
         >
           <MenuItem onClick={onConfirmChangeStatus}>
             {rowUser.isActive === true ? (
-              <div style={{ color: "red" }}>Disable User</div>
+              <div style={{ color: "red" }}>Khoá tài khoản</div>
             ) : (
-              <div style={{ color: "green" }}>Enable User</div>
+              <div style={{ color: "green" }}>Mở tài khoản</div>
             )}
           </MenuItem>
           <MenuItem onClick={onOpenEditForm}>
