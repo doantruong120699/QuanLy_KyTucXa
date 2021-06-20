@@ -212,14 +212,14 @@ export default function AddAccount(props) {
           variant="outlined"
           onChange={handleChange}
           size="small"
-          style={{ marginLeft: "42px" }}
+          style={{ marginLeft: "8%" }}
         />
       </Box>
-      <Box marginLeft={"15%"} display="flex">
-        <FormControl className={classes.margin}>
+      <Box marginLeft={"15%"} display="flex" className="row">
+        <FormControl className={`col ${classes.formControl}`}>
           <InputLabel id="demo-simple-select-label">Nhóm Chức năng</InputLabel>
           <Select
-            labelId={"demo-customized-select-label"}
+            labelId="demo-mutiple-checkbox-label"
             value={localData.group}
             onChange={handleChange}
             name={"group"}
@@ -242,6 +242,7 @@ export default function AddAccount(props) {
           <FormHelperText>Lựa chọn nhóm chức năng</FormHelperText>
         </FormControl>
         <div
+          className="col"
           placeholder={"nhóm chức năng"}
           style={{
             width: "225px",
@@ -262,7 +263,7 @@ export default function AddAccount(props) {
           })}
         </div>
       </Box>
-      <Box display="flex" marginLeft={"15%"}>
+      <Box display="flex" marginLeft={"15%"} marginTop={"3%"}>
         <FormControl className={classes.formControl}>
           <InputLabel id="demo-mutiple-checkbox-label">Quyền</InputLabel>
           <Select
@@ -329,7 +330,7 @@ export default function AddAccount(props) {
           </Select>
           <FormHelperText>Lựa chọn loại tài khoản</FormHelperText>
         </FormControl>
-        <FormControl className={classes.margin} style={{ marginLeft: "40px" }}>
+        <FormControl className={classes.margin} style={{ marginLeft: "8%" }}>
           <InputLabel id="demo-customized-select-label">Giới tính </InputLabel>
           <Select
             value={localData.gender}
@@ -346,7 +347,7 @@ export default function AddAccount(props) {
         </FormControl>
       </Box>
 
-      <Box marginLeft={"15%"}>
+      <Box marginLeft={"15%"} marginTop={"3%"}>
         <TextField
           id="firstName"
           name={"firstName"}
@@ -366,7 +367,7 @@ export default function AddAccount(props) {
           variant="outlined"
           onChange={handleChange}
           size="small"
-          style={{ marginTop: "15px", marginLeft: "40px" }}
+          style={{ marginTop: "15px", marginLeft: "8%" }}
         />
       </Box>
       <Box marginLeft={"15%"}>
@@ -388,7 +389,7 @@ export default function AddAccount(props) {
           variant="outlined"
           onChange={handleChange}
           size="small"
-          style={{ marginTop: "15px", marginLeft: "40px" }}
+          style={{ marginTop: "15px", marginLeft: "8%" }}
         />
       </Box>
 
@@ -414,7 +415,7 @@ export default function AddAccount(props) {
           variant="outlined"
           onChange={handleChange}
           size="small"
-          style={{ marginTop: "15px", marginLeft: "42px" }}
+          style={{ marginTop: "15px",marginLeft: "8%" }}
         />
       </Box>
 
@@ -446,7 +447,7 @@ export default function AddAccount(props) {
               : "Lựa chọn phòng ban"}
           </FormHelperText>
         </FormControl>
-        <FormControl className={classes.margin} style={{ marginLeft: "40px" }}>
+        <FormControl className={classes.margin} style={{marginLeft: "8%" }}>
           <InputLabel id="demo-simple-select-label">Khu Vực</InputLabel>
           <Select
             labelId={"demo-customized-select-label"}
@@ -503,7 +504,7 @@ export default function AddAccount(props) {
               : "Lựa chọn khoa đang theo học"}
           </FormHelperText>
         </FormControl>
-        <FormControl className={classes.margin} style={{ marginLeft: "40px" }}>
+        <FormControl className={classes.margin} style={{ marginLeft: "8%"}}>
           <InputLabel id="demo-simple-select-label">Lớp Sinh Hoạt</InputLabel>
           <Select
             labelId={"demo-customized-select-label"}
@@ -545,7 +546,7 @@ export default function AddAccount(props) {
           variant="outlined"
           size="small"
           type="password"
-          style={{ marginLeft: "40px" }}
+          style={{ marginLeft: "8%"}}
         />
       </Box>
       <Box textAlign="center" marginTop={3}>

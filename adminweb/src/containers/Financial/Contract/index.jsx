@@ -390,5 +390,5 @@ export default function Budget() {
       )}
     </div>
   );
-} else return (<div>Không có dữ liệu</div>)
+} else return (<div style={{fontSize:'30px',textAlign:'center',fontWeight:'700'}}>Không có dữ liệu hoặc bạn không có quyền để xem mục này</div>)
 }

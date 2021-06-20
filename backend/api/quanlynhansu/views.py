@@ -435,7 +435,7 @@ class UsedRoomInAreaViewSet(viewsets.ModelViewSet):
 class GroupPermissionViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+    permission_classes = [IsAuthenticated, IsAdmin]
 
     def list(self, request, *args, **kwargs):
         try:
@@ -516,7 +516,7 @@ class GroupPermissionViewSet(viewsets.ModelViewSet):
      
 class UserProfileViewSet(viewsets.ModelViewSet):
     serializer_class = ProfileListSerializer
-    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+    permission_classes = [IsAuthenticated, IsAdmin]
 
     def list(self, request, *args, **kwargs):
         try:
