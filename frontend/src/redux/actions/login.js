@@ -3,7 +3,7 @@ import store from "../store";
 
 const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
 
-export async function login(data, resolve = () => {}) {
+export async function login(user, resolve = () => {}) {
   store.dispatch({
     type: types.LOGIN_API,
   });
@@ -14,12 +14,13 @@ export async function login(data, resolve = () => {}) {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(user),
     });
-    const data_1 = await response.json();
-    resolve(data_1);
+    const data = await response.json();
+    const isOk = response.ok;
+    resolve(data, isOk);
     store.dispatch({
-      payload: data_1,
+      payload: data,
       type: types.LOGIN_API_SUCCEED,
     });
   } catch (error) {

@@ -18,3 +18,6 @@ export const INVALID_TIME = "Thời gian bắt đầu phải trước thời gia
 export const UNAUTHORIZED_ROOM = "Bạn đã đăng kí phòng khác rồi!";
 export const REGISTER_SUCCESSFULLY = "Đăng kí phòng thành công";
 export const UPDATE_PROFILE_SUCCESSFULLY = "Cập nhật thông tin thành công!";
+export const EMPTY_STRING = "Trường này không được để trống!";
+export const CREATE_POST_SUCCESSFULLY = "Thêm bài thành công!";
+export const INCORRECT_OLD_PASSWORD = "Mật khẩu cũ không đúng!";

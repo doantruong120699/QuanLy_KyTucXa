@@ -13,8 +13,11 @@ const Header = () => {
     }
   };
   useEffect(() => {
-    window.onscroll = () => handleScroll();
-    
+    let mounted = true;
+    if (mounted) {
+      window.onscroll = () => handleScroll();
+    }
+    return () => (mounted = false);
   }, []);
 
   return (

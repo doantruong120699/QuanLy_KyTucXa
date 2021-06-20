@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Button from "../common/Button";
 import Popup from "reactjs-popup";
 import InputField from "../common/InputField";
-import { getPaymentMethods } from "../../redux/actions/checkroom";
 import moment from "moment";
 const RoomRegistration = (props) => {
-  const { open, onClose, name, id, registerRoom } = props;
+  const { open, onClose, name, id, registerRoom, payment } = props;
 
   const [resgistrationState, setRegistration] = useState({
     room: id,
@@ -19,22 +18,13 @@ const RoomRegistration = (props) => {
     setRegistration({ ...resgistrationState, [name]: value });
   };
 
-  const [paymentState, setPayment] = useState();
-  useEffect(() => {
-    getPaymentMethods((output) => {
-      if (output) {
-        setPayment(output);
-      }
-    });
-  }, []);
-
   const register = () => {
     registerRoom(resgistrationState);
     onClose();
   };
   return (
     <Popup open={open} closeOnDocumentClick onClose={onClose}>
-      {paymentState && (
+      {payment && (
         <div className="col modal style-lg-box bg-color-white">
           <div className="col col-full text-align-ct">
             <h2>Đăng kí phòng</h2>
@@ -83,7 +73,7 @@ const RoomRegistration = (props) => {
                 className="col col-full form-control"
                 onChange={handleChange}
               >
-                {paymentState.map((value, index) => {
+                {payment.map((value, index) => {
                   return (
                     <option key={index} value={value.id}>
                       {value.name}

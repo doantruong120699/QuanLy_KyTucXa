@@ -32,7 +32,6 @@ export default function Account() {
     getAccounts(params, (output) => {
       var data;
       if (output) {
-        console.log("output", output);
         data = output.results.map((value, index) => {
           return {
             order: index + 1,
@@ -108,7 +107,6 @@ export default function Account() {
     });
 
   const convertDataForTable = (data) => {
-    console.log("Data", data);
     return data.map((n) => ({
       name: n.lastName + " " + n.firstName,
       account: n.account,

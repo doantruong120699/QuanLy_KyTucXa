@@ -63,12 +63,6 @@ function getHandledEmployeeDataRender(origin) {
         [false]: "Nữ",
       },
     },
-    faculty: {
-      value: origin.profile.faculty ? origin.profile.faculty.name : null,
-    },
-    grade: {
-      value: origin.profile.my_class ? origin.profile.my_class.name : null,
-    },
   };
 }
 
