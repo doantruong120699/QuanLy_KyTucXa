@@ -87,8 +87,8 @@ const Login = () => {
         username: errorState.accountTxt.value,
         password: errorState.passwordTxt.value,
       };
-      LoginUser(user, (output) => {
-        if (output && output.access) {
+      LoginUser(user, (output, isOk) => {
+        if (isOk && output.access) {
           setAuth(output.access);
 
           dispatch(actFetchUserNavigation(getAuth()));

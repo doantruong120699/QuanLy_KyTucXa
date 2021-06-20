@@ -5,7 +5,7 @@ const validate = {
   },
 
   string: (value) => {
-    const regex = /\w+/;
+    const regex = /^(?!\s*$).+/;
     return regex.test(value);
   },
 

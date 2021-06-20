@@ -14,3 +14,15 @@
   border-color: red;
   box-shadow: rgba(255, 24, 24, 1) 0px 0px 10px;
 }
+.form-area-control {
+  border-radius: 20px;
+  width: 100%;
+  padding: 8px 16px;
+  border: none;
+  outline: none;
+  background-color: #efefef;
+}
+.form-area-control:focus {
+  border: 2px solid #d6d5f8;
+  padding: 6px 14px;
+}

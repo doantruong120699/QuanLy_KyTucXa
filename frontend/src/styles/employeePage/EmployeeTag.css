@@ -1,5 +1,7 @@
 .style-avatar-container {
   position: relative;
+}
+.style-employee-tag {
   cursor: pointer;
 }
 .style-employee-tag:hover {

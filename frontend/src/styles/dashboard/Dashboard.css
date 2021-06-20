@@ -11,8 +11,12 @@
   margin: 10px;
   font-size: 20px;
 }
+.style-list-notifications {
+  height: 60vh;
+  overflow: auto;
+  text-align: justify;
+}
 .style-notiTitle {
-  margin: 15px;
   font-size: 20px;
   font-weight: 700;
 }

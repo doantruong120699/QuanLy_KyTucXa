@@ -22,7 +22,7 @@ const RoomInfo = (props) => {
   const onOpen = () => setOpen(true);
 
   const viewRoom = (room) => {
-    if (!room) {
+    if (!room||!room.slug) {
       setNotification({
         type: "type-error",
         content: ALERTMESSAGE.UNSIGNED_ROOM,

@@ -214,6 +214,9 @@
 .pr-48 {
   padding-right: 48px;
 }
+.mg-auto {
+  margin: auto;
+}
 .col {
   float: left;
 }
@@ -290,6 +293,9 @@
 .text-is-pink {
   color: #fe6276;
 }
+.text-is-orange {
+  color: #ffaa2b;
+}
 .text-is-red {
   color: #e15b69;
 }
@@ -306,7 +312,6 @@
   color: #fff;
 }
 .style-background-container {
-  height: 200vh; /* You must set a specified height */
   padding: 20px;
   background-image: url(../../assets/images/backgrounds/background.jpg);
   background-repeat: repeat;
@@ -326,4 +331,8 @@
 }
 .inline-block {
   display: inline-block;
+}
+.display-flex-space-between {
+  display: flex;
+  justify-content: space-between;
 }

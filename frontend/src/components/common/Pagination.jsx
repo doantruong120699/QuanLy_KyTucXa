@@ -24,6 +24,8 @@ function Pagination(props) {
   function handlePageChange(newPage) {
     setCurrentPage(newPage);
 
+    window.scrollTo(0, 0);
+
     if (onPageChange) {
       onPageChange(newPage);
     }
