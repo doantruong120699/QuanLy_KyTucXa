@@ -9,7 +9,6 @@ import Select from "@material-ui/core/Select";
 import "./styles.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { getFaculty } from "../../../redux/actions/account";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import DatePicker from "react-datepicker";
 import { createAccount, updateAccount } from "../../../redux/actions/account";
@@ -56,6 +55,7 @@ export default function AddAccount(props) {
     area: "",
   });
   const handleClick = () => {
+    console.log(localData);
     const dataSend = {
       username: localData.userName,
       password: localData.password,
@@ -78,7 +78,7 @@ export default function AddAccount(props) {
     }; //this is right format of data to post
     if (type === "create") {
       createAccount(dataSend, (output) => {
-        console.log("output", output);
+        console.log("output", dataSend);
         if (output.status === "successful") {
           toast("Tạo tài khoản mới thành công!");
           setTimeout(onSuccess, 4000);
@@ -87,7 +87,7 @@ export default function AddAccount(props) {
     } else {
       console.log("Update");
       updateAccount(userInfor.public_id, dataSend, (output) => {
-        console.log("output", output);
+        console.log("output", dataSend);
         if (output.status === "successful") {
           toast("Cập nhật tài khoản thành công!");
           setTimeout(onSuccess, 4000);
