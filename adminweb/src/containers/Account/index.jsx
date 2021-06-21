@@ -22,13 +22,14 @@ import YesNoModal from "../../components/YesNoModal";
 import "./styles.css";
 export default function Account() {
   const [data, setData] = useState();
+  const [page, setPage] = useState(1);
   const [faculty, setFaculty] = useState();
   const [permission, setPermission] = useState();
   const [class_in_university, setClassInUniversity] = useState();
   const [position, setPosition] = useState();
   const [area, setArea] = useState();
   useEffect(() => {
-    const params = "";
+    const params = `page=${page}`;
     getAccounts(params, (output) => {
       var data;
       if (output) {
@@ -83,7 +84,7 @@ export default function Account() {
         setArea(output);
       }
     });
-  }, []);
+  }, [page]);
 
   const getMuiTheme = () =>
     createMuiTheme({
@@ -237,6 +238,17 @@ export default function Account() {
     filterType: "textField",
     selectableRows: "none",
     onRowClick: handleRowClick,
+    serverSide: true,
+    jumpToPage: true,
+    count: 500,
+    //count, // Use total number of items
+    onTableChange: (action, tableState) => {
+      console.log({ action, tableState });
+      console.log("AA", tableState.page);
+      if (action === "changePage") {
+        setPage(tableState.page + 1);
+      }
+    },
   };
   const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
