@@ -22,7 +22,6 @@ export default function NotificationForm() {
     notification: "",
   });
   const handleClick = () => {
-    console.log("Hello");
   };
   const SendButton = withStyles((theme) => ({
     root: {

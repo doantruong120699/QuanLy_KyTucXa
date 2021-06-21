@@ -6,6 +6,8 @@ const initialState = {
   currentContract: {},
   expenses: {},
   revenues: {},
+  revenueTypes: [],
+  expenseTypes: [],
   statisticalBill: {},
   waterElectricalBills: {},
   detailedWaterElectricalBill: {},
@@ -19,6 +21,8 @@ const initialState = {
 export default function reducer(state = initialState, actions) {
   switch (actions.type) {
     case types.GET_FINANCIAL_API:
+    case types.GET_REVENUE_TYPE_API:
+    case types.GET_EXPENSE_TYPE_API:
     case types.ADD_FINANCIAL_API:
     case types.GET_CONTRACTS_API:
     case types.GET_DETAILED_CONTRACT_API:
@@ -106,7 +110,21 @@ export default function reducer(state = initialState, actions) {
         currentContract: actions.payload,
         loading: false,
       };
+    case types.GET_REVENUE_TYPE_API_SUCCEED:
+      return {
+        ...state,
+        revenueTypes: actions.payload,
+        loading: false,
+      };
+    case types.GET_EXPENSE_TYPE_API_SUCCEED:
+      return {
+        ...state,
+        expenseTypes: actions.payload,
+        loading: false,
+      };
     case types.GET_FINANCIAL_API_FAIL:
+    case types.GET_REVENUE_TYPE_API_FAIL:
+    case types.GET_EXPENSE_TYPE_API_FAIL:
     case types.GET_CONTRACTS_API_FAIL:
     case types.GET_DETAILED_CONTRACT_API_FAIL:
     case types.ADD_CONTRACTS_API_SUCCEED:

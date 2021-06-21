@@ -17,12 +17,12 @@ export default function NotificationForm(props) {
     is_display: true,
   });
   const handleClick = () => {
-    createNotification(dataSend, (output) => {
-      console.log("output", output);
+    createNotification(dataSend, (output, isOk) => {
+      if (isOk) {
+        toast("Gửi thông báo thành công!");
+        setTimeout(onSuccess, 4000);
+      }
     });
-    console.log("dataSend", dataSend);
-    toast("Gửi thông báo thành công!");
-    setTimeout(onSuccess, 4000);
   };
 
   const SendButton = withStyles((theme) => ({
@@ -31,9 +31,8 @@ export default function NotificationForm(props) {
     },
   }))(Button);
   const handleChange = (event) => {
-    const name = event.target.name;
-    const data = event.target.value;
-    setDataSend({ ...dataSend, [name]: data });
+    const { value, name } = event.target;
+    setDataSend({ ...dataSend, [name]: value });
   };
   return (
     <Box>

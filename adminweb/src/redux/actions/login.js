@@ -1,11 +1,14 @@
 import * as types from "../constants";
 import store from "../store";
+
+const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
+
 export async function login(data, resolve = () => {}) {
   store.dispatch({
     type: types.LOGIN_API,
   });
   try {
-    const response = await fetch("http://127.0.0.1:8000/api/auth/login/", {
+    const response = await fetch(`${REACT_APP_BASE_API}auth/login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,4 +29,3 @@ export async function login(data, resolve = () => {}) {
     });
   }
 }
-

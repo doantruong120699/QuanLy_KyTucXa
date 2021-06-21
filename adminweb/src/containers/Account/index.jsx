@@ -275,7 +275,7 @@ export default function Account() {
     },
     overlay: { zIndex: 1000 },
   };
-  console.log("permission", permission);
+
   if (data) {
     return (
       <div>
@@ -289,9 +289,6 @@ export default function Account() {
                 message={"Mời xác nhận"}
                 okText={"OK"}
                 cancelText={"Cancel"}
-                onOk={() => {
-                  console.log("OK");
-                }}
                 onCancel={() => {
                   setIsYesNoModalVisible(false);
                 }}

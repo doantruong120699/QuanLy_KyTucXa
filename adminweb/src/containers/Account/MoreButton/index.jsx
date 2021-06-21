@@ -66,10 +66,9 @@ export default function MoreButton(props) {
   };
 
   const onConfirmChangeStatus = () => {
-    console.log("rowUser", rowUser);
-    console.log("rowUser.isActive", rowUser.isActive);
+
   };
-  console.log("rowUser.id", rowUser.publicId);
+
   return (
     <div>
       <Button

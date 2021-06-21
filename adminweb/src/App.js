@@ -4,6 +4,8 @@ import withAuth from "./components/layout/withAuth";
 import ContractDetail from "./containers/Financial/Contract/ContractDetail";
 import Login from "./containers/Login";
 import Overview from "./containers/Overview";
+import Summary from "./containers/Overview/Summary";
+import NotificationList from "./containers/Overview/NotificationList";
 import ManageUser from "./containers/ManageUser";
 import Financial from "./containers/Financial";
 import Account from "./containers/Account";
@@ -23,9 +25,17 @@ function App() {
           <Redirect to={ROUTER.ROUTE_OVERVIEW} />
         </Route>
         <Route path={ROUTER.ROUTE_LOGIN} component={Login} exact />
+        <Route path={ROUTER.ROUTE_OVERVIEW} exact>
+          <Redirect to={`${ROUTER.ROUTE_OVERVIEW}${ROUTER.ROUTER_SUMMARY}`} />
+        </Route>
         <Route
-          path={ROUTER.ROUTE_OVERVIEW}
-          component={withAuth(Overview)}
+          path={`${ROUTER.ROUTE_OVERVIEW}${ROUTER.ROUTER_SUMMARY}`}
+          component={withAuth(Overview(Summary))}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_OVERVIEW}${ROUTER.ROUTER_NOTIFICATION}`}
+          component={withAuth(Overview(NotificationList))}
           exact
         />
         <Route
