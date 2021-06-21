@@ -193,6 +193,7 @@ export default function Account() {
       options: {
         filter: true,
         sort: true,
+        display: false,
       },
     },
     {
@@ -202,7 +203,11 @@ export default function Account() {
         filter: true,
         sort: true,
         customBodyRender: (value) => {
-          return <div>{value === true ? "Mở" : "Khoá"}</div>;
+          return (
+            <div className={`${value === true ? "green" : "red"}`}>
+              {value === true ? "Mở" : "Khoá"}
+            </div>
+          );
         },
       },
     },
@@ -296,16 +301,13 @@ export default function Account() {
                   setIsYesNoModalVisible(false);
                 }}
               />
-              <Typography variant="h4" style={{ width: "100%" }}>
-                Tài Khoản
-              </Typography>
-              <Box>
+              <div className="label"> Tài Khoản</div>
+              <Box style={{ marginRight: "2%" }}>
                 <Button
                   startIcon={<AddBoxIcon />}
                   style={{
                     backgroundColor: "#005CC8",
                     width: "200px",
-
                     color: "white",
                   }}
                   onClick={handleAddAccount}
