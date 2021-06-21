@@ -23,6 +23,7 @@ export default function Overview() {
           justifyContent="center"
           marginRight={"20px"}
           marginBottom={"20px"}
+          className={'card'}
         >
           <Box
             top={0}

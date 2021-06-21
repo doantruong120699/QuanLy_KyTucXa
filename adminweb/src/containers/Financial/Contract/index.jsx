@@ -145,7 +145,7 @@ export default function Budget() {
     },
     {
       name: "is_expired",
-      label: "Ngày kết thúc",
+      label: "Hết hạn",
       options: {
         filter: true,
         sort: true,
