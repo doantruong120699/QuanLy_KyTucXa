@@ -635,7 +635,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     def count_profile(self, request, **kwargs):
         try:
-            queryset = User.objects.filter(is_active=True)
+            queryset = User.objects.filter(is_active=True).exclude(is_superuser=True)
             return Response({'number_user': queryset.count()}, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
