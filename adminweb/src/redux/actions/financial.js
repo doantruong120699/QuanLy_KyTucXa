@@ -374,12 +374,12 @@ export async function getStatistical(param, resolve = () => {}) {
   }
 }
 
-export async function getExpenses(resolve = () => {}) {
+export async function getExpenses(params, resolve = () => {}) {
   store.dispatch({
     type: types.GET_EXPENSES_API,
   });
   try {
-    const response = await fetch(`${REACT_APP_BASE_API}expense/`, {
+    const response = await fetch(`${REACT_APP_BASE_API}expense/?${params}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
@@ -401,12 +401,12 @@ export async function getExpenses(resolve = () => {}) {
   }
 }
 
-export async function getRevenue(resolve = () => {}) {
+export async function getRevenue(params, resolve = () => {}) {
   store.dispatch({
     type: types.GET_REVENUES_API,
   });
   try {
-    const response = await fetch(`${REACT_APP_BASE_API}revenue/`, {
+    const response = await fetch(`${REACT_APP_BASE_API}revenue/?${params}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
@@ -478,6 +478,60 @@ export async function getDetailedContract(id, resolve = () => {}) {
     store.dispatch({
       payload: error,
       type: types.GET_DETAILED_CONTRACT_API_FAIL,
+    });
+  }
+}
+
+export async function getRevenueType(resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_REVENUE_TYPE_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}type-revenue/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_REVENUE_TYPE_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_REVENUE_TYPE_API_FAIL,
+    });
+  }
+}
+
+export async function getExpenseType(resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_EXPENSE_TYPE_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}type-expense/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_EXPENSE_TYPE_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_EXPENSE_TYPE_API_FAIL,
     });
   }
 }

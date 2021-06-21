@@ -17,10 +17,15 @@ import Pagination from "../../../components/common/Pagination";
 import YesNoModal from "../../../components/YesNoModal";
 export default function Student() {
   const [dataArea, setDataArea] = useState();
+
   const [studentToDelete, setStudentToDelete] = useState([]);
+
   const [peopleInRoom, setPeopleInRoom] = useState();
+
   const [slugSelected, setSlugSelected] = useState();
+
   const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
+
   const [pagination, setPagination] = useState({
     page: 1,
     page_size: 20,
@@ -177,10 +182,8 @@ export default function Student() {
     pagination: false,
     onRowsDelete: (rowsDeleted, dataRows) => {
       const tempArr = [];
-      console.log("rowsDeleted", rowsDeleted);
       rowsDeleted.data.map((index) => {
         const temp = peopleInRoom[index.index];
-        console.log("temp", temp);
         return tempArr.push(temp);
       });
       setStudentToDelete(tempArr);
@@ -195,7 +198,7 @@ export default function Student() {
   const handleClickAddPeopleWithParams = (params) => {
     //console.log("AAAAAAAA", params);
   };
-  console.log("Is delete", studentToDelete);
+
   return (
     <div className="col col-full pl-48">
       {dataArea &&
@@ -252,9 +255,9 @@ export default function Student() {
           </div>
         </div>
       </ReactModal>
-      <div className="col col-full">
-        <Pagination pagination={pagination} onPageChange={handlePageChange} />
-      </div>
+        <div className="col col-full">
+          <Pagination pagination={pagination} onPageChange={handlePageChange} />
+        </div>
       <YesNoModal
         isModalVisible={isYesNoModalVisible}
         hideModal={() => setIsYesNoModalVisible(false)}

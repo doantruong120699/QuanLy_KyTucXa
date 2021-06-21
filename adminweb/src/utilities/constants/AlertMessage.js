@@ -20,3 +20,5 @@ export const REGISTER_SUCCESSFULLY = "Đăng kí phòng thành công";
 export const ACCEPT_SUCCESSFULLY = "Duyệt thành công";
 export const DENY_SUCCESSFULLY = "Từ chối thành công";
 export const UPDATE_PROFILE_SUCCESSFULLY = "Cập nhật thông tin thành công!";
+export const INCORRECT_FORMAT = "Định dạng không đúng!";
+export const BLANK_NOT_ALLOWED = "Không được để trống!";

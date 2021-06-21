@@ -217,6 +217,7 @@
 .mg-auto {
   margin: auto;
 }
+
 .pd-auto {
   padding: auto;
 }
@@ -303,7 +304,10 @@
   color: #003eff;
 }
 .text-is-grey {
-  color: #7b8191;
+  color: #808080;
+}
+.text-is-gray {
+  color: #e5d8c4;
 }
 .text-is-green {
   color: #82ce34;
