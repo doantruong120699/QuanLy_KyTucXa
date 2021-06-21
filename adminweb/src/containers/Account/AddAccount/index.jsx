@@ -55,7 +55,6 @@ export default function AddAccount(props) {
     area: "",
   });
   const handleClick = () => {
-    console.log(localData);
     const dataSend = {
       username: localData.userName,
       password: localData.password,
@@ -78,16 +77,13 @@ export default function AddAccount(props) {
     }; //this is right format of data to post
     if (type === "create") {
       createAccount(dataSend, (output) => {
-        console.log("output", dataSend);
         if (output.status === "successful") {
           toast("Tạo tài khoản mới thành công!");
           setTimeout(onSuccess, 4000);
         } else toast(output.notification);
       });
     } else {
-      console.log("Update");
       updateAccount(userInfor.public_id, dataSend, (output) => {
-        console.log("output", dataSend);
         if (output.status === "successful") {
           toast("Cập nhật tài khoản thành công!");
           setTimeout(onSuccess, 4000);
@@ -187,7 +183,6 @@ export default function AddAccount(props) {
       },
     },
   };
-  console.log("type", userInfor);
   return (
     <Box style={{ width: "100%" }}>
       <Box marginLeft={"15%"} marginBottom={3}>
@@ -415,7 +410,7 @@ export default function AddAccount(props) {
           variant="outlined"
           onChange={handleChange}
           size="small"
-          style={{ marginTop: "15px",marginLeft: "8%" }}
+          style={{ marginTop: "15px", marginLeft: "8%" }}
         />
       </Box>
 
@@ -447,7 +442,7 @@ export default function AddAccount(props) {
               : "Lựa chọn phòng ban"}
           </FormHelperText>
         </FormControl>
-        <FormControl className={classes.margin} style={{marginLeft: "8%" }}>
+        <FormControl className={classes.margin} style={{ marginLeft: "8%" }}>
           <InputLabel id="demo-simple-select-label">Khu Vực</InputLabel>
           <Select
             labelId={"demo-customized-select-label"}
@@ -504,7 +499,7 @@ export default function AddAccount(props) {
               : "Lựa chọn khoa đang theo học"}
           </FormHelperText>
         </FormControl>
-        <FormControl className={classes.margin} style={{ marginLeft: "8%"}}>
+        <FormControl className={classes.margin} style={{ marginLeft: "8%" }}>
           <InputLabel id="demo-simple-select-label">Lớp Sinh Hoạt</InputLabel>
           <Select
             labelId={"demo-customized-select-label"}
@@ -546,7 +541,7 @@ export default function AddAccount(props) {
           variant="outlined"
           size="small"
           type="password"
-          style={{ marginLeft: "8%"}}
+          style={{ marginLeft: "8%" }}
         />
       </Box>
       <Box textAlign="center" marginTop={3}>

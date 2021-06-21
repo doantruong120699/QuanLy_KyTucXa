@@ -8,7 +8,7 @@ import { getRawEmployeeDataRender } from "../../utilities/constants/DataRender/p
 
 const EditEmployeeProfile = (props) => {
   const { open, onClose, dataRender, updateOrigin, updateUserProfile } = props;
-  console.log(dataRender.firstName.value);
+
   const [infoState, setInfo] = useState(dataRender);
 
   const handleInput = (event) => {

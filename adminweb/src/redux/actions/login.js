@@ -1,5 +1,8 @@
 import * as types from "../constants";
 import store from "../store";
+
+const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
+
 export async function login(data, resolve = () => {}) {
   const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
 

@@ -152,7 +152,7 @@ export default function WaterElectrical() {
       transform: "translate(-50%, -50%)",
     },
   };
-  console.log("Data", isShowTable);
+
   if (data !== undefined) {
     return (
       <div className="col col-full pl-48 pr-48">
@@ -161,7 +161,7 @@ export default function WaterElectrical() {
             <div className="col col-half">
               <div className="col col-two-third">
                 <div className="col col-half  pd-8">
-                  <Typography>Lựa chọn tháng</Typography>
+                  <Typography>Chọn tháng</Typography>
                   <Select
                     className="week-select col-full"
                     options={month}
@@ -170,7 +170,7 @@ export default function WaterElectrical() {
                   />
                 </div>
                 <div className="col col-half pd-8">
-                  <Typography>Lựa chọn năm</Typography>
+                  <Typography>Chọn năm</Typography>
                   <Select
                     className="week-select col-full"
                     options={year}
