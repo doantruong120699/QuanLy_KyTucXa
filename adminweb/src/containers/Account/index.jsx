@@ -30,6 +30,7 @@ export default function Account() {
   const [area, setArea] = useState();
   useEffect(() => {
     const params = `page=${page}`;
+    const keyword = ``;
     getAccounts(params, (output) => {
       var data;
       if (output) {
@@ -55,6 +56,8 @@ export default function Account() {
         setData(data);
       }
     });
+  }, [page]);
+  useEffect(() => {
     getGroupAndPermission((output) => {
       if (output) {
         setPermission(output);
@@ -84,14 +87,11 @@ export default function Account() {
         setArea(output);
       }
     });
-  }, [page]);
-
+  }, []);
   const getMuiTheme = () =>
     createMuiTheme({
       overrides: {
         MUIDataTable: {
-          width: "fit-content",
-
           root: {
             backgroundColor: "#re",
           },
