@@ -82,7 +82,9 @@ profile_detail = UserProfileViewSet.as_view({
     # 'patch': 'partial_update',
     'delete': 'destroy'
 })
-
+count_profile = UserProfileViewSet.as_view({
+    'get': 'count_profile',
+})
 urlpatterns = [ 
     # ========== notification
     path('notifications/', notification_list, name = 'notification_list'),
@@ -112,4 +114,5 @@ urlpatterns = [
     # ========== notification
     path('admin/account/', profile_list, name = 'profile_list'),
     path('admin/account/<str:public_id>/', profile_detail, name = 'profile_detail'),
+    path('admin/count-profile/', count_profile, name = 'count_profile'),
 ]
