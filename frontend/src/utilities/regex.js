@@ -5,7 +5,7 @@ const validate = {
   },
 
   string: (value) => {
-    const regex = /\w+/;
+    const regex = /^(?!\s*$).+/;
     return regex.test(value);
   },
 
@@ -22,9 +22,9 @@ const validate = {
     const regex = /^[a-zA-Z0-9]+$/;
     return regex.test(value);
   },
-  
+
   password: (value) => {
-    const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    const regex = /^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
     return regex.test(value);
   },
 };

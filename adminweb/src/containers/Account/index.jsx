@@ -22,17 +22,17 @@ import YesNoModal from "../../components/YesNoModal";
 import "./styles.css";
 export default function Account() {
   const [data, setData] = useState();
+  const [page, setPage] = useState(1);
   const [faculty, setFaculty] = useState();
   const [permission, setPermission] = useState();
   const [class_in_university, setClassInUniversity] = useState();
   const [position, setPosition] = useState();
   const [area, setArea] = useState();
   useEffect(() => {
-    const params = "";
+    const params = `page=${page}`;
     getAccounts(params, (output) => {
       var data;
       if (output) {
-        console.log("output", output);
         data = output.results.map((value, index) => {
           return {
             order: index + 1,
@@ -84,7 +84,7 @@ export default function Account() {
         setArea(output);
       }
     });
-  }, []);
+  }, [page]);
 
   const getMuiTheme = () =>
     createMuiTheme({
@@ -108,7 +108,6 @@ export default function Account() {
     });
 
   const convertDataForTable = (data) => {
-    console.log("Data", data);
     return data.map((n) => ({
       name: n.lastName + " " + n.firstName,
       account: n.account,
@@ -195,6 +194,7 @@ export default function Account() {
       options: {
         filter: true,
         sort: true,
+        display: false,
       },
     },
     {
@@ -204,7 +204,11 @@ export default function Account() {
         filter: true,
         sort: true,
         customBodyRender: (value) => {
-          return <div>{value === true ? "Mở" : "Khoá"}</div>;
+          return (
+            <div className={`${value === true ? "green" : "red"}`}>
+              {value === true ? "Mở" : "Khoá"}
+            </div>
+          );
         },
       },
     },
@@ -234,6 +238,17 @@ export default function Account() {
     filterType: "textField",
     selectableRows: "none",
     onRowClick: handleRowClick,
+    serverSide: true,
+    jumpToPage: true,
+    count: 500,
+    //count, // Use total number of items
+    onTableChange: (action, tableState) => {
+      console.log({ action, tableState });
+      console.log("AA", tableState.page);
+      if (action === "changePage") {
+        setPage(tableState.page + 1);
+      }
+    },
   };
   const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -277,7 +292,7 @@ export default function Account() {
     },
     overlay: { zIndex: 1000 },
   };
-  console.log("permission", permission);
+
   if (data) {
     return (
       <div>
@@ -291,23 +306,17 @@ export default function Account() {
                 message={"Mời xác nhận"}
                 okText={"OK"}
                 cancelText={"Cancel"}
-                onOk={() => {
-                  console.log("OK");
-                }}
                 onCancel={() => {
                   setIsYesNoModalVisible(false);
                 }}
               />
-              <Typography variant="h4" style={{ width: "100%" }}>
-                Tài Khoản
-              </Typography>
-              <Box>
+              <div className="label"> Tài Khoản</div>
+              <Box style={{ marginRight: "2%" }}>
                 <Button
                   startIcon={<AddBoxIcon />}
                   style={{
                     backgroundColor: "#005CC8",
                     width: "200px",
-
                     color: "white",
                   }}
                   onClick={handleAddAccount}

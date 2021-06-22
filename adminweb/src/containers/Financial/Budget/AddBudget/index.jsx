@@ -10,11 +10,10 @@ import "./styles.css";
 import FormControl from "@material-ui/core/FormControl";
 import InputLabel from "@material-ui/core/InputLabel";
 import TextField from "@material-ui/core/TextField";
-import { getAuth } from "../../../../../src/utilities/helper";
 import InputBase from "@material-ui/core/InputBase";
 
 export default function NotificationForm() {
-  const user = getAuth();
+
   const [type, setType] = useState([
     {
       id: 1,

@@ -26,7 +26,6 @@ export default function Budget() {
   useEffect(() => {
     getContracts((output) => {
       if (output) {
-        console.log("output", output);
         setDataContracts(output.results);
       }
     });
@@ -38,7 +37,6 @@ export default function Budget() {
       )}`,
       (output) => {
         if (output) {
-          console.log("output", output);
         }
       }
     );
@@ -145,7 +143,7 @@ export default function Budget() {
     },
     {
       name: "is_expired",
-      label: "Ngày kết thúc",
+      label: "Hết hạn",
       options: {
         filter: true,
         sort: true,
@@ -257,7 +255,6 @@ export default function Budget() {
     return updatedRow;
   });
   const handleRowClick = (params, rowMeta) => {
-    console.log("params", params, "meta", rowMeta);
 
     history.push(
       `${ROUTER.ROUTE_MANAGE_FINANCIAL}${ROUTER.ROUTE_CONTRACT_DETAIL}/${
@@ -303,7 +300,7 @@ export default function Budget() {
         },
       },
     });
-  console.log("gridBillData", moment(startDate).format("MM"));
+
   if(dataContracts){
   return (
     <div>

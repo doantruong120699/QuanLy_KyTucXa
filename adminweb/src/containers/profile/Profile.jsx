@@ -26,12 +26,13 @@ const Profile = () => {
 
   const [filter, setFilter] = useState({ profile: profileState.profile });
 
-  const [open, setOpen] = useState(false);
-
+  
   const [notification, setNotification] = useState({
     type: "",
     content: "",
   });
+  
+  const [open, setOpen] = useState(false);
 
   const onClose = () => setOpen(false);
 

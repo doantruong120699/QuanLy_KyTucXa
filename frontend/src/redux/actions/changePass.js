@@ -21,7 +21,8 @@ export async function changePass(data, resolve = () => {}) {
       }
     );
     const data_1 = await response.json();
-    resolve(data_1);
+    const status = response.status;
+    resolve(response, status);
     store.dispatch({
       payload: data_1,
       type: types.CHANGE_PASS_API_SUCCEED,

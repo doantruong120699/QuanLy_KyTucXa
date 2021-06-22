@@ -22,7 +22,11 @@ const validate = {
     return regex.test(value);
   },
   password: (value) => {
-    const regex = /^(?=.*[A-Za-z])(?=.*[0-9]).{8,}$/;
+    const regex = /^(?=.*?[A-Za-z])(?=.*?[0-9]).{8,}$/;
+    return regex.test(value);
+  },
+  money: (value) => {
+    const regex = /^[0-9]+(\.[0-9]{1,2})?$/;
     return regex.test(value);
   },
 };

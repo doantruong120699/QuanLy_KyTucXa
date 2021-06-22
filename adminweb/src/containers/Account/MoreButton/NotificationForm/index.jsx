@@ -17,7 +17,7 @@ export default function NotificationForm(rowUser) {
     notification: "",
   });
   const handleClick = () => {
-    console.log("Hello", rowUser);
+
   };
   const SendButton = withStyles((theme) => ({
     root: {

@@ -633,6 +633,14 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             print(e)
         return Response({'status': 'fail', 'notification' : 'Profile not found!'}, status=status.HTTP_404_NOT_FOUND)
 
+    def count_profile(self, request, **kwargs):
+        try:
+            queryset = User.objects.filter(is_active=True).exclude(is_superuser=True)
+            return Response({'number_user': queryset.count()}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Bad Request!'}, status=status.HTTP_400_BAD_REQUEST)
+   
 # =====================================================
 
 
