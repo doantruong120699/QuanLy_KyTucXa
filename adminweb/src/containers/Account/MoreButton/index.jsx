@@ -7,8 +7,16 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { getDetailedAccount } from "../../../redux/actions/account";
 
 export default function MoreButton(props) {
-  const { rowUser, permission, faculty, class_in_university, position, area } =
-    props;
+  const {
+    rowUser,
+    permission,
+    faculty,
+    class_in_university,
+    position,
+    area,
+    onCloseModal,
+  } = props;
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -42,12 +50,14 @@ export default function MoreButton(props) {
     },
   });
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
   const hideModal = () => {
     setIsModalVisible(false);
   };
-
+  const handleSuccessSubmit = () => {
+    console.log("ON SUCCESS");
+    setIsModalVisible(false);
+    onCloseModal();
+  };
   const customStyles = {
     content: {
       top: "50%",
@@ -65,9 +75,7 @@ export default function MoreButton(props) {
     setIsModalVisible(true);
   };
 
-  const onConfirmChangeStatus = () => {
-
-  };
+  const onConfirmChangeStatus = () => {};
 
   return (
     <div>
@@ -112,6 +120,7 @@ export default function MoreButton(props) {
           position={position}
           area={area}
           type={"update"}
+          onSuccess={handleSuccessSubmit}
         />
       </ReactModal>
     </div>

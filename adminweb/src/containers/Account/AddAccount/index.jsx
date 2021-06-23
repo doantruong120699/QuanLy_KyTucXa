@@ -21,7 +21,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import moment from "moment";
 
 export default function AddAccount(props) {
-  const {
+  var {
     userInfor,
     permission,
     faculty,
@@ -45,6 +45,7 @@ export default function AddAccount(props) {
     lastName: "",
     birthday: "",
     role: "",
+    is_active: true,
     address: "",
     identify_card: "",
     gender: "",
@@ -56,11 +57,12 @@ export default function AddAccount(props) {
   });
   const handleClick = () => {
     const dataSend = {
-      username: localData.userName,
+      username: localData.userName ? localData.userName : undefined,
       password: localData.password,
       first_name: localData.firstName,
       last_name: localData.lastName,
       email: localData.email,
+      is_active: localData.is_active,
       profile: {
         birthday: localData.birthday,
         address: localData.address,
@@ -73,7 +75,7 @@ export default function AddAccount(props) {
         position: localData.role === "student" ? "" : localData.position,
       },
       group_list: localData.group,
-      permission_list: localData.permission,
+      permission_list: localData.permission ? localData.permission : undefined,
     }; //this is right format of data to post
     if (type === "create") {
       createAccount(dataSend, (output) => {

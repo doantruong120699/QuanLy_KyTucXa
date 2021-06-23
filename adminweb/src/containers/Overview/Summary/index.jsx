@@ -98,10 +98,14 @@ export default function Overview() {
                 fontSize: "20px",
               }}
             >
-              {`${(
-                ((props.allRoom - props.availabeRoom) / props.allRoom) *
-                100
-              ).toFixed(2)}%`}
+              {`${
+                props.availabeRoom
+                  ? (
+                      ((props.allRoom - props.availabeRoom) / props.allRoom) *
+                      100
+                    ).toFixed(2)
+                  : "0"
+              }%`}
             </Typography>
           </Box>
           <Box position="absolute" bottom={5}>
@@ -114,7 +118,6 @@ export default function Overview() {
     );
   }
 
-
   const [data, setData] = useState(null);
 
   useEffect(() => {
@@ -123,7 +126,6 @@ export default function Overview() {
         setData(output);
       }
     });
-
   }, []);
 
   return (
@@ -148,7 +150,6 @@ export default function Overview() {
                 );
               })}
             </Box>
-          
           </Box>
         </Grow>
       )}

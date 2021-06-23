@@ -1,9 +1,8 @@
 import MUIDataTable from "mui-datatables";
 import Box from "@material-ui/core/Box";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import ReactModal from "react-modal";
@@ -16,20 +15,163 @@ import {
   getClass,
   getPosition,
   getArea,
+  getNumberOfAccount,
 } from "../../redux/actions/account";
 import moment from "moment";
 import YesNoModal from "../../components/YesNoModal";
 import "./styles.css";
 export default function Account() {
   const [data, setData] = useState();
-  const [page, setPage] = useState(1);
   const [faculty, setFaculty] = useState();
   const [permission, setPermission] = useState();
   const [class_in_university, setClassInUniversity] = useState();
   const [position, setPosition] = useState();
   const [area, setArea] = useState();
+  const [isMoreButtonModal, setIsMoreButtonModal] = useState(false);
+  const [numberOfAccount, setNumberOfAccount] = useState();
+  const tableStateRef = useRef();
+
+  const columns = [
+    {
+      name: "name",
+      label: "Tên",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "account",
+      label: "Tài khoản",
+      options: {
+        filter: true,
+        sort: true,
+      },
+    },
+    {
+      name: "role",
+      label: "Chức vụ",
+      options: {
+        filter: false,
+        sort: true,
+      },
+    },
+    {
+      name: "area",
+      label: "Khu vực",
+      options: {
+        filter: false,
+        sort: true,
+      },
+    },
+    {
+      name: "my_class",
+      label: "Lớp học phần",
+      options: {
+        filter: false,
+        sort: true,
+      },
+    },
+    {
+      name: "faculty",
+      label: "Khoa",
+      options: {
+        filter: false,
+        sort: true,
+      },
+    },
+    {
+      name: "phone",
+      label: "SĐT liên lạc",
+      options: {
+        filter: false,
+        sort: true,
+      },
+    },
+    // {
+    //   name: "identify_card",
+    //   label: "CCCD/CMND",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //   },
+    // },
+    {
+      name: "activeDate",
+      label: "Ngày kích hoạt",
+      options: {
+        filter: false,
+        sort: true,
+        display: false,
+      },
+    },
+    {
+      name: "isActive",
+      label: "Trạng thái",
+      options: {
+        filter: false,
+        sort: true,
+        customBodyRender: (value) => {
+          return (
+            <div className={`${value === true ? "green" : "red"}`}>
+              {value === true ? "Mở" : "Khoá"}
+            </div>
+          );
+        },
+      },
+    },
+    {
+      label: "Khác",
+      name: "userId",
+      options: {
+        sort: false,
+        filter: false,
+        customBodyRender: (userId, tableMetaData) => (
+          <MoreButton
+            rowUser={data[tableMetaData.rowIndex]}
+            permission={permission}
+            faculty={faculty}
+            class_in_university={class_in_university}
+            position={position}
+            area={area}
+            onCloseModal={handleCloseModal}
+          />
+        ),
+        setCellProps: () => ({ style: { width: "10px" } }),
+      },
+    },
+  ];
+  const getMuiTheme = () =>
+    createMuiTheme({
+      overrides: {
+        MUIDataTable: {
+          root: {
+            backgroundColor: "#re",
+          },
+          paper: {
+            width: "fit-content",
+          },
+        },
+        MUIDataTableBodyCell: {
+          root: {
+            backgroundColor: "#FFF",
+          },
+        },
+      },
+    });
+
   useEffect(() => {
-    const params = `page=${page}`;
+    //console.log("RERENDER");
+    if (setIsMoreButtonModal) {
+      setIsMoreButtonModal(false);
+    }
+    getNumberOfAccount((output) => {
+      // console.log("output.results", output.number_user);
+      setNumberOfAccount(output.number_user);
+    });
+    const params = `page=${
+      tableStateRef.current?.page ? tableStateRef.current.page + 1 : 1
+    }`;
     getAccounts(params, (output) => {
       var data;
       if (output) {
@@ -55,6 +197,8 @@ export default function Account() {
         setData(data);
       }
     });
+  }, [isMoreButtonModal]);
+  useEffect(() => {
     getGroupAndPermission((output) => {
       if (output) {
         setPermission(output);
@@ -84,28 +228,7 @@ export default function Account() {
         setArea(output);
       }
     });
-  }, [page]);
-
-  const getMuiTheme = () =>
-    createMuiTheme({
-      overrides: {
-        MUIDataTable: {
-          width: "fit-content",
-
-          root: {
-            backgroundColor: "#re",
-          },
-          paper: {
-            width: "fit-content",
-          },
-        },
-        MUIDataTableBodyCell: {
-          root: {
-            backgroundColor: "#FFF",
-          },
-        },
-      },
-    });
+  }, []);
 
   const convertDataForTable = (data) => {
     return data.map((n) => ({
@@ -123,131 +246,23 @@ export default function Account() {
     }));
   };
 
-  const columns = [
-    {
-      name: "name",
-      label: "Tên",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "account",
-      label: "Tài khoản",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "role",
-      label: "Chức vụ",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "area",
-      label: "Khu vực",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "my_class",
-      label: "Lớp học phần",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "faculty",
-      label: "Khoa",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    {
-      name: "phone",
-      label: "SĐT liên lạc",
-      options: {
-        filter: true,
-        sort: true,
-      },
-    },
-    // {
-    //   name: "identify_card",
-    //   label: "CCCD/CMND",
-    //   options: {
-    //     filter: true,
-    //     sort: true,
-    //   },
-    // },
-    {
-      name: "activeDate",
-      label: "Ngày kích hoạt",
-      options: {
-        filter: true,
-        sort: true,
-        display: false,
-      },
-    },
-    {
-      name: "isActive",
-      label: "Trạng thái",
-      options: {
-        filter: true,
-        sort: true,
-        customBodyRender: (value) => {
-          return (
-            <div className={`${value === true ? "green" : "red"}`}>
-              {value === true ? "Mở" : "Khoá"}
-            </div>
-          );
-        },
-      },
-    },
-    {
-      label: "Khác",
-      name: "userId",
-      options: {
-        sort: false,
-        filter: false,
-        customBodyRender: (userId, tableMetaData) => (
-          <MoreButton
-            rowUser={data[tableMetaData.rowIndex]}
-            permission={permission}
-            faculty={faculty}
-            class_in_university={class_in_university}
-            position={position}
-            area={area}
-          />
-        ),
-        setCellProps: () => ({ style: { width: "10px" } }),
-      },
-    },
-  ];
   const handleRowClick = (_value, meta) => {};
-
+  const handleCloseModal = () => {
+    //console.log("AAAAA");
+    setIsMoreButtonModal(true);
+  };
   const options = {
-    filterType: "textField",
+    filter: false,
     selectableRows: "none",
     onRowClick: handleRowClick,
     serverSide: true,
     jumpToPage: true,
-    count: 500,
+    count: numberOfAccount,
+    searchPlaceholder: "Tìm kiếm theo tên hoặc tài khoản",
     //count, // Use total number of items
-    onTableChange: (action, tableState) => {
-      console.log({ action, tableState });
-      console.log("AA", tableState.page);
-      if (action === "changePage") {
-        setPage(tableState.page + 1);
-      }
+    onTableChange: (action, tableState, event) => {
+      handleTableChange(action, tableState);
+      //handleKeypress();
     },
   };
   const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
@@ -255,10 +270,78 @@ export default function Account() {
   const hideModal = () => {
     setIsModalVisible(false);
   };
+  const handleTableChange = async (action, tableState) => {
+    console.log("tableState", tableState);
+    tableStateRef.current = tableState;
+    switch (action) {
+      case "changeRowsPerPage":
+      case "changePage":
+      case "sort":
+      case "search":
+      case "filterChange":
+      case "resetFilters":
+        handleTriggerAction();
+        break;
+      default:
+        break;
+    }
+  };
+  const handleTriggerAction = () => {
+    const params = getActionParams();
+    handleGetUser(params);
+  };
+  const handleGetUser = (params) => {
+    console.log("params", params.search);
+    const query = `page=${
+      tableStateRef.current?.page ? tableStateRef.current.page + 1 : 1
+    }${params.search !== null ? "&keyword=" + params.search : ""}`;
+    getAccounts(query, (output) => {
+      var data;
+      if (output) {
+        data = output.results.map((value, index) => {
+          return {
+            order: index + 1,
+            publicId: value.public_id,
+            firstName: value.user.first_name,
+            lastName: value.user.last_name,
+            account: value.user.username,
+            role: value.position ? value.position.name : "--",
+            faculty: value.faculty ? value.faculty.name : "--",
+            my_class: value.my_class ? value.my_class.name : "--",
+            area: value.area ? value.area.name : "--",
+            phone: value.phone,
+            birthday: value.birthday,
+            address: value.address,
+            identify_card: value.identify_card,
+            isActive: true,
+            activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
+          };
+        });
+        setData(data);
+      }
+    });
+    getNumberOfAccount(query, (output) => {
+      // console.log("output.results", output.number_user);
+      setNumberOfAccount(output.number_user);
+    });
+  };
+  const getActionParams = () => {
+    const tableState = tableStateRef.current;
+    const page = tableState?.page || 0;
+    const searchText = tableState?.searchText;
+    console.log(tableState);
+    const params = {
+      page: page,
+      search: searchText,
+    };
+
+    return params;
+  };
   const handleAddAccount = () => {
     setIsModalVisible(true);
   };
   const handleSuccessSubmit = () => {
+    // console.log("ON SUCCESS");
     setIsModalVisible(false);
     const params = "";
     getAccounts(params, (output) => {
@@ -292,7 +375,6 @@ export default function Account() {
     },
     overlay: { zIndex: 1000 },
   };
-
   if (data) {
     return (
       <div>
