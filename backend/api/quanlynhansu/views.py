@@ -566,8 +566,8 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                 save = serializer.create(request.data)
                 if save:
                     return Response({'status': 'successful', 'notification' : 'Create successful!'}, status=status.HTTP_201_CREATED)
-        # print(list(serializer.errors.values()))
         try:
+            print("try")
             return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             print(e)
@@ -633,9 +633,20 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             print(e)
         return Response({'status': 'fail', 'notification' : 'Profile not found!'}, status=status.HTTP_404_NOT_FOUND)
 
-    def count_profile(self, request, **kwargs):
+    @action(methods=["GET"], detail=False, url_path="count_profile", url_name="count_profile")
+    def count_profile(self, request, *args, **kwargs):
         try:
             queryset = User.objects.filter(is_active=True).exclude(is_superuser=True)
+            keyword = self.request.GET.get('keyword')
+            if keyword and len(keyword) > 0:
+                words = re.split(r"[-;,.\s]\s*", keyword)
+                query = Q()
+                for word in words:
+                    query |= Q(first_name__icontains=word)
+                    query |= Q(last_name__icontains=word)
+                    query |= Q(email__icontains=word)
+                queryset=queryset.filter(query).distinct()
+            
             return Response({'number_user': queryset.count()}, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
