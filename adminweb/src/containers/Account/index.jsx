@@ -169,7 +169,9 @@ export default function Account() {
       // console.log("output.results", output.number_user);
       setNumberOfAccount(output.number_user);
     });
-    const params = `page=${tableStateRef.current?.page?tableStateRef.current.page+1:1}`;
+    const params = `page=${
+      tableStateRef.current?.page ? tableStateRef.current.page + 1 : 1
+    }`;
     getAccounts(params, (output) => {
       var data;
       if (output) {
@@ -256,6 +258,7 @@ export default function Account() {
     serverSide: true,
     jumpToPage: true,
     count: numberOfAccount,
+    searchPlaceholder: "Tìm kiếm theo tên hoặc tài khoản",
     //count, // Use total number of items
     onTableChange: (action, tableState, event) => {
       handleTableChange(action, tableState);
@@ -289,9 +292,9 @@ export default function Account() {
   };
   const handleGetUser = (params) => {
     console.log("params", params.search);
-    const query = `page=${tableStateRef.current?.page?tableStateRef.current.page+1:1}${
-      params.search !== null ? "&keyword=" + params.search : ""
-    }`;
+    const query = `page=${
+      tableStateRef.current?.page ? tableStateRef.current.page + 1 : 1
+    }${params.search !== null ? "&keyword=" + params.search : ""}`;
     getAccounts(query, (output) => {
       var data;
       if (output) {
