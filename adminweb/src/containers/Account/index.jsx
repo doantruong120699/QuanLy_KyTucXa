@@ -1,6 +1,6 @@
 import MUIDataTable from "mui-datatables";
 import Box from "@material-ui/core/Box";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import { Typography } from "@material-ui/core";
@@ -31,108 +31,7 @@ export default function Account() {
   const [area, setArea] = useState();
   const [isMoreButtonModal, setIsMoreButtonModal] = useState(false);
   const [numberOfAccount, setNumberOfAccount] = useState();
-  useEffect(() => {
-    console.log("RERENDER");
-    if (setIsMoreButtonModal) {
-      setIsMoreButtonModal(false);
-    }
-    getNumberOfAccount((output) => {
-      console.log("output.results", output.number_user);
-      setNumberOfAccount(output.number_user);
-    });
-    const params = `page=${page}`;
-    const keyword = ``;
-    getAccounts(params, (output) => {
-      var data;
-      if (output) {
-        data = output.results.map((value, index) => {
-          return {
-            order: index + 1,
-            publicId: value.public_id,
-            firstName: value.user.first_name,
-            lastName: value.user.last_name,
-            account: value.user.username,
-            role: value.position ? value.position.name : "--",
-            faculty: value.faculty ? value.faculty.name : "--",
-            my_class: value.my_class ? value.my_class.name : "--",
-            area: value.area ? value.area.name : "--",
-            phone: value.phone,
-            birthday: value.birthday,
-            address: value.address,
-            identify_card: value.identify_card,
-            isActive: true,
-            activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
-          };
-        });
-        setData(data);
-      }
-    });
-  }, [page, isMoreButtonModal]);
-  useEffect(() => {
-    getGroupAndPermission((output) => {
-      if (output) {
-        setPermission(output);
-      }
-    });
-
-    getFaculty((output) => {
-      if (output) {
-        setFaculty(output);
-      }
-    });
-
-    getClass((output) => {
-      if (output) {
-        setClassInUniversity(output);
-      }
-    });
-
-    getPosition((output) => {
-      if (output) {
-        setPosition(output);
-      }
-    });
-
-    getArea((output) => {
-      if (output) {
-        setArea(output);
-      }
-    });
-  }, []);
-  const getMuiTheme = () =>
-    createMuiTheme({
-      overrides: {
-        MUIDataTable: {
-          root: {
-            backgroundColor: "#re",
-          },
-          paper: {
-            width: "fit-content",
-          },
-        },
-        MUIDataTableBodyCell: {
-          root: {
-            backgroundColor: "#FFF",
-          },
-        },
-      },
-    });
-
-  const convertDataForTable = (data) => {
-    return data.map((n) => ({
-      name: n.lastName + " " + n.firstName,
-      account: n.account,
-      role: n.role,
-      area: n.area,
-      faculty: n.faculty,
-      my_class: n.my_class,
-      phone: n.phone,
-      birthday: n.birthday,
-      identify_card: n.identify_card,
-      activeDate: n.activeDate,
-      isActive: n.isActive,
-    }));
-  };
+  const tableStateRef = useRef();
 
   const columns = [
     {
@@ -244,25 +143,125 @@ export default function Account() {
       },
     },
   ];
+  const getMuiTheme = () =>
+    createMuiTheme({
+      overrides: {
+        MUIDataTable: {
+          root: {
+            backgroundColor: "#re",
+          },
+          paper: {
+            width: "fit-content",
+          },
+        },
+        MUIDataTableBodyCell: {
+          root: {
+            backgroundColor: "#FFF",
+          },
+        },
+      },
+    });
+
+  useEffect(() => {
+    //console.log("RERENDER");
+    if (setIsMoreButtonModal) {
+      setIsMoreButtonModal(false);
+    }
+    getNumberOfAccount((output) => {
+      // console.log("output.results", output.number_user);
+      setNumberOfAccount(output.number_user);
+    });
+    const params = `page=${page}`;
+    getAccounts(params, (output) => {
+      var data;
+      if (output) {
+        data = output.results.map((value, index) => {
+          return {
+            order: index + 1,
+            publicId: value.public_id,
+            firstName: value.user.first_name,
+            lastName: value.user.last_name,
+            account: value.user.username,
+            role: value.position ? value.position.name : "--",
+            faculty: value.faculty ? value.faculty.name : "--",
+            my_class: value.my_class ? value.my_class.name : "--",
+            area: value.area ? value.area.name : "--",
+            phone: value.phone,
+            birthday: value.birthday,
+            address: value.address,
+            identify_card: value.identify_card,
+            isActive: true,
+            activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
+          };
+        });
+        setData(data);
+      }
+    });
+  }, [page, isMoreButtonModal]);
+  useEffect(() => {
+    getGroupAndPermission((output) => {
+      if (output) {
+        setPermission(output);
+      }
+    });
+
+    getFaculty((output) => {
+      if (output) {
+        setFaculty(output);
+      }
+    });
+
+    getClass((output) => {
+      if (output) {
+        setClassInUniversity(output);
+      }
+    });
+
+    getPosition((output) => {
+      if (output) {
+        setPosition(output);
+      }
+    });
+
+    getArea((output) => {
+      if (output) {
+        setArea(output);
+      }
+    });
+  }, []);
+
+  const convertDataForTable = (data) => {
+    return data.map((n) => ({
+      name: n.lastName + " " + n.firstName,
+      account: n.account,
+      role: n.role,
+      area: n.area,
+      faculty: n.faculty,
+      my_class: n.my_class,
+      phone: n.phone,
+      birthday: n.birthday,
+      identify_card: n.identify_card,
+      activeDate: n.activeDate,
+      isActive: n.isActive,
+    }));
+  };
+
   const handleRowClick = (_value, meta) => {};
   const handleCloseModal = () => {
-    console.log("AAAAA");
+    //console.log("AAAAA");
     setIsMoreButtonModal(true);
   };
   const options = {
-    filterType: "textField",
+    filter: false,
     selectableRows: "none",
     onRowClick: handleRowClick,
     serverSide: true,
     jumpToPage: true,
     count: numberOfAccount,
     //count, // Use total number of items
-    onTableChange: (action, tableState) => {
-      console.log({ action, tableState });
-      console.log("AA", tableState.page);
-      if (action === "changePage") {
-        setPage(tableState.page + 1);
-      }
+    onTableChange: (action, tableState, event) => {
+      handleTableChange(action, tableState);
+      //handleKeypress();
     },
   };
   const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
@@ -270,11 +269,73 @@ export default function Account() {
   const hideModal = () => {
     setIsModalVisible(false);
   };
+  const handleTableChange = async (action, tableState) => {
+    tableStateRef.current = tableState;
+    switch (action) {
+      case "changeRowsPerPage":
+      case "changePage":
+      case "sort":
+      case "search":
+      case "filterChange":
+      case "resetFilters":
+        handleTriggerAction();
+        break;
+      default:
+        break;
+    }
+  };
+  const handleTriggerAction = () => {
+    const params = getActionParams();
+    handleGetUser(params);
+  };
+  const handleGetUser = (params) => {
+    console.log("params", params.search);
+    const query = `page=${page}${
+      params.search !== null ? "&keyword=" + params.search : ""
+    }`;
+    getAccounts(query, (output) => {
+      var data;
+      if (output) {
+        data = output.results.map((value, index) => {
+          return {
+            order: index + 1,
+            publicId: value.public_id,
+            firstName: value.user.first_name,
+            lastName: value.user.last_name,
+            account: value.user.username,
+            role: value.position ? value.position.name : "--",
+            faculty: value.faculty ? value.faculty.name : "--",
+            my_class: value.my_class ? value.my_class.name : "--",
+            area: value.area ? value.area.name : "--",
+            phone: value.phone,
+            birthday: value.birthday,
+            address: value.address,
+            identify_card: value.identify_card,
+            isActive: true,
+            activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
+          };
+        });
+        setData(data);
+      }
+    });
+  };
+  const getActionParams = () => {
+    const tableState = tableStateRef.current;
+    const page = tableState?.page || 0;
+    const searchText = tableState?.searchText;
+    console.log(tableState);
+    const params = {
+      page: page,
+      search: searchText,
+    };
+
+    return params;
+  };
   const handleAddAccount = () => {
     setIsModalVisible(true);
   };
   const handleSuccessSubmit = () => {
-    console.log("ON SUCCESS");
+    // console.log("ON SUCCESS");
     setIsModalVisible(false);
     const params = "";
     getAccounts(params, (output) => {
@@ -308,7 +369,6 @@ export default function Account() {
     },
     overlay: { zIndex: 1000 },
   };
-
   if (data) {
     return (
       <div>
