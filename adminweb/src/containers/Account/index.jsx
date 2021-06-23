@@ -3,7 +3,6 @@ import Box from "@material-ui/core/Box";
 import React, { useState, useEffect, useRef } from "react";
 
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
 import Button from "@material-ui/core/Button";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import ReactModal from "react-modal";
@@ -23,7 +22,6 @@ import YesNoModal from "../../components/YesNoModal";
 import "./styles.css";
 export default function Account() {
   const [data, setData] = useState();
-  const [page, setPage] = useState(1);
   const [faculty, setFaculty] = useState();
   const [permission, setPermission] = useState();
   const [class_in_university, setClassInUniversity] = useState();
@@ -171,7 +169,7 @@ export default function Account() {
       // console.log("output.results", output.number_user);
       setNumberOfAccount(output.number_user);
     });
-    const params = `page=${page}`;
+    const params = `page=${tableStateRef.current?.page?tableStateRef.current.page:1}`;
     getAccounts(params, (output) => {
       var data;
       if (output) {
@@ -197,7 +195,7 @@ export default function Account() {
         setData(data);
       }
     });
-  }, [page, isMoreButtonModal]);
+  }, [isMoreButtonModal]);
   useEffect(() => {
     getGroupAndPermission((output) => {
       if (output) {
@@ -270,6 +268,7 @@ export default function Account() {
     setIsModalVisible(false);
   };
   const handleTableChange = async (action, tableState) => {
+    console.log("tableState", tableState);
     tableStateRef.current = tableState;
     switch (action) {
       case "changeRowsPerPage":
@@ -290,7 +289,7 @@ export default function Account() {
   };
   const handleGetUser = (params) => {
     console.log("params", params.search);
-    const query = `page=${page}${
+    const query = `page=${tableStateRef.current?.page?tableStateRef.current.page:1}${
       params.search !== null ? "&keyword=" + params.search : ""
     }`;
     getAccounts(query, (output) => {
@@ -317,6 +316,10 @@ export default function Account() {
         });
         setData(data);
       }
+    });
+    getNumberOfAccount(query, (output) => {
+      // console.log("output.results", output.number_user);
+      setNumberOfAccount(output.number_user);
     });
   };
   const getActionParams = () => {

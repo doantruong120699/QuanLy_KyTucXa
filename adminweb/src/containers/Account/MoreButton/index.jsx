@@ -28,7 +28,7 @@ export default function MoreButton(props) {
         setUser(output);
       }
     });
-  }, [rowUser]);
+  }, []);
 
   const handleClick = (event) => {
     if (anchorEl !== event.currentTarget) {
