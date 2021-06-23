@@ -574,7 +574,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
             return Response({'status': 'fail', 'notification' : list(list(serializer.errors.values())[0].values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, public_id, format=None):
-        try:
+        # try:
             queryset = Profile.objects.filter(public_id=public_id, is_delete=False)
             if len(queryset) > 0:
                 profile = queryset.first()
@@ -585,9 +585,9 @@ class UserProfileViewSet(viewsets.ModelViewSet):
                     if save:
                         return Response({'status': 'successful', 'notification' : 'Update successful!'}, status=status.HTTP_200_OK)
                 return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            print(e)
-        return Response({'status': 'fail', 'notification' : 'Not Found Profile!'}, status=status.HTTP_404_NOT_FOUND)
+        # except Exception as e:
+        #     print("Error main update: ", e)
+        # return Response({'status': 'fail', 'notification' : 'Not Found Profile!'}, status=status.HTTP_404_NOT_FOUND)
     
     def destroy(self, request, public_id, format=None):
         try:
