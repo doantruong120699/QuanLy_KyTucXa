@@ -16,6 +16,7 @@ import {
   getClass,
   getPosition,
   getArea,
+  getNumberOfAccount,
 } from "../../redux/actions/account";
 import moment from "moment";
 import YesNoModal from "../../components/YesNoModal";
@@ -28,7 +29,17 @@ export default function Account() {
   const [class_in_university, setClassInUniversity] = useState();
   const [position, setPosition] = useState();
   const [area, setArea] = useState();
+  const [isMoreButtonModal, setIsMoreButtonModal] = useState(false);
+  const [numberOfAccount, setNumberOfAccount] = useState();
   useEffect(() => {
+    console.log("RERENDER");
+    if (setIsMoreButtonModal) {
+      setIsMoreButtonModal(false);
+    }
+    getNumberOfAccount((output) => {
+      console.log("output.results", output.number_user);
+      setNumberOfAccount(output.number_user);
+    });
     const params = `page=${page}`;
     const keyword = ``;
     getAccounts(params, (output) => {
@@ -56,7 +67,7 @@ export default function Account() {
         setData(data);
       }
     });
-  }, [page]);
+  }, [page, isMoreButtonModal]);
   useEffect(() => {
     getGroupAndPermission((output) => {
       if (output) {
@@ -144,7 +155,7 @@ export default function Account() {
       name: "role",
       label: "Chức vụ",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -152,7 +163,7 @@ export default function Account() {
       name: "area",
       label: "Khu vực",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -160,7 +171,7 @@ export default function Account() {
       name: "my_class",
       label: "Lớp học phần",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -168,7 +179,7 @@ export default function Account() {
       name: "faculty",
       label: "Khoa",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -176,7 +187,7 @@ export default function Account() {
       name: "phone",
       label: "SĐT liên lạc",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -192,7 +203,7 @@ export default function Account() {
       name: "activeDate",
       label: "Ngày kích hoạt",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         display: false,
       },
@@ -201,7 +212,7 @@ export default function Account() {
       name: "isActive",
       label: "Trạng thái",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRender: (value) => {
           return (
@@ -226,6 +237,7 @@ export default function Account() {
             class_in_university={class_in_university}
             position={position}
             area={area}
+            onCloseModal={handleCloseModal}
           />
         ),
         setCellProps: () => ({ style: { width: "10px" } }),
@@ -233,14 +245,17 @@ export default function Account() {
     },
   ];
   const handleRowClick = (_value, meta) => {};
-
+  const handleCloseModal = () => {
+    console.log("AAAAA");
+    setIsMoreButtonModal(true);
+  };
   const options = {
     filterType: "textField",
     selectableRows: "none",
     onRowClick: handleRowClick,
     serverSide: true,
     jumpToPage: true,
-    count: 500,
+    count: numberOfAccount,
     //count, // Use total number of items
     onTableChange: (action, tableState) => {
       console.log({ action, tableState });
@@ -259,6 +274,7 @@ export default function Account() {
     setIsModalVisible(true);
   };
   const handleSuccessSubmit = () => {
+    console.log("ON SUCCESS");
     setIsModalVisible(false);
     const params = "";
     getAccounts(params, (output) => {

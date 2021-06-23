@@ -4,8 +4,6 @@ import store from "../store";
 const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
 
 export async function login(data, resolve = () => {}) {
-  const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
-
   store.dispatch({
     type: types.LOGIN_API,
   });
