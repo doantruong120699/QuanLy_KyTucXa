@@ -106,7 +106,7 @@ export default function Account() {
       },
     },
     {
-      name: "isActive",
+      name: "is_active",
       label: "Trạng thái",
       options: {
         filter: false,
@@ -175,6 +175,7 @@ export default function Account() {
     getAccounts(params, (output) => {
       var data;
       if (output) {
+        console.log("output",output)
         data = output.results.map((value, index) => {
           return {
             order: index + 1,
@@ -190,7 +191,7 @@ export default function Account() {
             birthday: value.birthday,
             address: value.address,
             identify_card: value.identify_card,
-            isActive: true,
+            is_active: value.user.is_active,
             activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
           };
         });
@@ -242,7 +243,7 @@ export default function Account() {
       birthday: n.birthday,
       identify_card: n.identify_card,
       activeDate: n.activeDate,
-      isActive: n.isActive,
+      is_active: n.is_active,
     }));
   };
 
@@ -313,7 +314,7 @@ export default function Account() {
             birthday: value.birthday,
             address: value.address,
             identify_card: value.identify_card,
-            isActive: true,
+            is_active: value.is_active,
             activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
           };
         });
@@ -355,7 +356,7 @@ export default function Account() {
             lastName: value.user.last_name,
             account: value.user.username,
             role: value.position ? value.position.name : null,
-            isActive: true,
+            is_active: value.is_active,
             activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
           };
         });
@@ -375,6 +376,7 @@ export default function Account() {
     },
     overlay: { zIndex: 1000 },
   };
+  console.log("convertDataForTable(data)",data)
   if (data) {
     return (
       <div>
