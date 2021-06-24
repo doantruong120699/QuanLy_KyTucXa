@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import moment from "moment";
 import {
@@ -47,11 +48,11 @@ export default function InBudget() {
           page_size: output.page_size,
           totals: output.totals,
         };
-
+        
         const data = output.results.map((value, index) => {
           return {
             order: index + 1,
-            type: value.type_revenue,
+            type: value.type_revenue.name,
             description: value.description,
             createdBy:
               value.created_by.first_name + " " + value.created_by.last_name,
@@ -62,9 +63,13 @@ export default function InBudget() {
             receivedDate: moment(new Date(value.time_recieve)).format(
               "DD-MM-YYYY"
             ),
-            userReceive: value.user_recieve,
+            userReceive:
+              value.user_recieve.user.first_name +
+              " " +
+              value.user_recieve.user.last_name,
           };
         });
+
         if (mouted) {
           setPagination(pagination);
           setDataInBudget(data);

@@ -268,7 +268,7 @@ const Registration = () => {
   return (
     <div className="col col-full">
       {registrationData && (
-        <div className="col col-full pt-16">
+        <div className="col col-full pt-16" style={{ zIndex: "1" }}>
           <MuiThemeProvider theme={getMuiTheme()}>
             <MUIDataTable
               className="mg-auto"

@@ -224,7 +224,7 @@ export async function createAccount(data, resolve = () => {}) {
     });
   }
 }
-export async function updateAccount(publicId,data, resolve = () => {}) {
+export async function updateAccount(publicId, data, resolve = () => {}) {
   store.dispatch({
     type: types.UPDATE_ACCOUNT,
   });

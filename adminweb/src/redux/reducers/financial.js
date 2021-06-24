@@ -23,8 +23,6 @@ export default function reducer(state = initialState, actions) {
     case types.GET_FINANCIAL_API:
     case types.GET_REVENUE_TYPE_API:
     case types.GET_EXPENSE_TYPE_API:
-    case types.ADD_FINANCIAL_API:
-    case types.GET_CONTRACTS_API:
     case types.GET_DETAILED_CONTRACT_API:
     case types.GET_REVENUES_API:
     case types.GET_WATER_ELECTRICAL_UNIT_PRICE_API:
@@ -127,7 +125,6 @@ export default function reducer(state = initialState, actions) {
     case types.GET_EXPENSE_TYPE_API_FAIL:
     case types.GET_CONTRACTS_API_FAIL:
     case types.GET_DETAILED_CONTRACT_API_FAIL:
-    case types.ADD_CONTRACTS_API_SUCCEED:
     case types.GET_REVENUES_API_FAIL:
     case types.GET_EXPENSES_API_FAIL:
     case types.GET_STATISTICAL_BILL_API_FAIL:

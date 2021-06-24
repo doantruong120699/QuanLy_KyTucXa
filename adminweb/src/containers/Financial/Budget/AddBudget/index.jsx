@@ -80,11 +80,7 @@ export default function NotificationForm() {
       width: "100px",
     },
   }))(Button);
-  const CancelButton = withStyles((theme) => ({
-    root: {
-      width: "100px",
-    },
-  }))(Button);
+  
   const useStyles = makeStyles((theme) => ({
     formControl: {
       minWidth: 120,

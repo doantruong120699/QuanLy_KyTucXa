@@ -53,13 +53,18 @@ const Employee = () => {
   }
 
   useEffect(() => {
+    let mounted = true;
     const params = querystring.stringify(time);
     getSchedule(params, (output) => {
       if (output) {
         if (output.status === "fail") {
-          setInitData(getTimeSheetRender([], shiftTime.length));
+          if (mounted) {
+            setInitData(getTimeSheetRender([], shiftTime.length));
+          }
         } else {
-          setInitData(getTimeSheetRender(output, shiftTime.length));
+          if (mounted) {
+            setInitData(getTimeSheetRender(output, shiftTime.length));
+          }
         }
       }
     });
@@ -72,9 +77,12 @@ const Employee = () => {
             label: value.first_name + " " + value.last_name,
           };
         });
-        setEmployeeOption(data);
+        if (mounted) {
+          setEmployeeOption(data);
+        }
       }
     });
+    return () => (mounted = false);
   }, [time]);
 
   const handleSelectionChange = (event, params, shiftId) => {
@@ -177,10 +185,13 @@ const Employee = () => {
   };
 
   return (
-    <div className="col col-full pl-48" >
+    <div className="col col-full pl-48">
       {initData && employeeOption && (
-        <div >
-          <div className="col col-full" style={{marginLeft:'7%', marginBottom:'2%'}}>
+        <div>
+          <div
+            className="col col-full"
+            style={{ marginLeft: "7%", marginBottom: "2%" }}
+          >
             <div className="col col-third">
               <Typography>Lựa chọn tuần</Typography>
               <Select
@@ -202,7 +213,7 @@ const Employee = () => {
           </div>
           <div>
             <h1 id="title">Bảng phân công công việc</h1>
-            <table id="students" style={{ marginLeft:'7%'}}>
+            <table id="students" style={{ marginLeft: "7%" }}>
               <thead>
                 <tr>
                   <th style={{ width: "9%" }}></th>

@@ -4,16 +4,17 @@ import Popup from "reactjs-popup";
 import Button from "../../../components/common/Button";
 import FormError from "../../../components/common/FormError";
 import InputField from "../../../components/common/InputField";
-import { getSendData } from "../../../utilities/constants/DataRender/account";
+import { getUpdateData } from "../../../utilities/constants/DataRender/account";
 import ReactTags from "react-tag-autocomplete";
 import validate from "../../../utilities/regex";
-import { createAccount } from "../../../redux/actions/account";
+import { updateAccount } from "../../../redux/actions/account";
 import Alertness from "../../../components/common/Alertness";
 import * as ALERTMESSAGE from "../../../utilities/constants/AlertMessage";
 import * as APIALERTMESSAGE from "../../../utilities/constants/APIAlertMessage";
 
-export default function AddAccount(props) {
+export default function UpdateAccount(props) {
   const {
+    public_id,
     userInfor,
     updateState,
     permission,
@@ -107,26 +108,22 @@ export default function AddAccount(props) {
       newAccount.group.length === 0 ||
       !newAccount.identify_card.isValid ||
       !newAccount.phone.isValid ||
-      !newAccount.password.isValid ||
-      newAccount.password.value !== newAccount.confirm.value ||
-      !newAccount.confirm.isValid ||
       !newAccount.username.isValid
     ) {
       return;
     }
 
-    const data = getSendData(newAccount);
-    createAccount(data, (output) => {
+    const data = getUpdateData(newAccount);
+    updateAccount(public_id, data, (output) => {
       if (output) {
         switch (output.status) {
           case APIALERTMESSAGE.STATUS_SUCCESS:
             setNotification({
               type: "type-success",
-              content: ALERTMESSAGE.CREATE_SUCCESSFULLY,
+              content: ALERTMESSAGE.UPDATE_PROFILE_SUCCESSFULLY,
             });
 
             updateState();
-            setAccount(userInfor);
             break;
           default:
             setNotification({
@@ -150,7 +147,7 @@ export default function AddAccount(props) {
       {permission && faculty && area && class_in_university && position && (
         <Popup open={isOpen} closeOnDocumentClick onClose={() => hideModal()}>
           <div className="col lg-modal style-lg-box bg-color-white text-align-ct">
-            <h2>Nhập thông tin cá nhân mới</h2>
+            <h2>Cập nhật thông tin </h2>
             <div className="col col-full">
               <div className="col col-full pd-24 style-account-modal">
                 <div className="col col-full mt-8">
@@ -364,104 +361,71 @@ export default function AddAccount(props) {
                   </div>
                 </div>
                 <div className="col col-full mt-8">
-                  <FormError
-                    isHidden={newAccount.username.isHidden}
-                    errorMessage={newAccount.username.errorMessage}
-                  />
-                  <InputField
-                    name="username"
-                    isValid={newAccount.username.isValid}
-                    value={newAccount.username.value}
-                    type={newAccount.username.type}
-                    placeholder={newAccount.username.title}
-                    onChange={handleInput}
-                    autocomplete="off"
-                  />
-                </div>
-                <div className="col col-full mt-8">
-                  <div className="col col-half pr-4">
-                    <FormError
-                      isHidden={
-                        newAccount.password.isHidden ||
-                        newAccount.confirm.isHidden
-                      }
-                      errorMessage={newAccount.password.errorMessage}
-                    />
-                  </div>
                   <div className="col col-half pl-4">
                     <FormError
-                      isHidden={
-                        newAccount.password.value === newAccount.confirm.value
-                      }
-                      errorMessage={newAccount.confirm.errorMessage}
+                      isHidden={newAccount.username.isHidden}
+                      errorMessage={newAccount.username.errorMessage}
                     />
-                  </div>
-                </div>
-                <div className="col col-full mt-8">
-                  <div className="col col-half pr-4">
                     <InputField
-                      name="password"
-                      isValid={newAccount.password.isValid}
-                      value={newAccount.password.value}
-                      type={newAccount.password.type}
-                      placeholder={newAccount.password.title}
+                      name="username"
+                      isValid={newAccount.username.isValid}
+                      value={newAccount.username.value}
+                      type={newAccount.username.type}
+                      placeholder={newAccount.username.title}
                       onChange={handleInput}
                       autocomplete="off"
                     />
                   </div>
                   <div className="col col-half pl-4">
-                    <InputField
-                      name="confirm"
-                      isValid={
-                        newAccount.confirm.isValid ||
-                        newAccount.password.value === newAccount.confirm.value
-                      }
-                      value={newAccount.confirm.value}
-                      type={newAccount.confirm.type}
-                      placeholder={newAccount.confirm.title}
+                    <select
+                      className="form-control"
+                      name="is_active"
+                      value={newAccount.is_active.value}
                       onChange={handleInput}
-                      autocomplete="off"
-                    />
+                    >
+                      <option value={true}>Enable</option>
+                      <option value={false}>Disable</option>
+                    </select>
                   </div>
-                  <div className="col col-full mt-8">
-                    <ReactTags
-                      name="group"
-                      tags={newAccount.group}
-                      suggestions={permission.group}
-                      onAddition={handleGroupAddition}
-                      onDelete={handleGroupDelete}
-                      placeholderText="Thêm group"
-                    />
-                  </div>
-                  <div className="col col-full mt-8">
-                    <ReactTags
-                      name="permission"
-                      tags={newAccount.permission}
-                      suggestions={permission.permission}
-                      onAddition={handlePermissionAddition}
-                      onDelete={handlePermissionDelete}
-                      placeholderText="Thêm quyền"
-                    />
-                  </div>
+                </div>
+                <div className="col col-full mt-8">
+                  <ReactTags
+                    name="group"
+                    tags={newAccount.group}
+                    suggestions={permission.group}
+                    onAddition={handleGroupAddition}
+                    onDelete={handleGroupDelete}
+                    placeholderText="Thêm group"
+                  />
+                </div>
+                <div className="col col-full mt-8">
+                  <ReactTags
+                    name="permission"
+                    tags={newAccount.permission}
+                    suggestions={permission.permission}
+                    onAddition={handlePermissionAddition}
+                    onDelete={handlePermissionDelete}
+                    placeholderText="Thêm quyền"
+                  />
                 </div>
               </div>
-              <div className="col col-full mt-24">
-                <div className="col col-half">
-                  <Button
-                    type="normal-red"
-                    content="HỦY"
-                    isDisable={false}
-                    onClick={hideModal}
-                  />
-                </div>
-                <div className="col col-half">
-                  <Button
-                    type="normal-ubg"
-                    content="LƯU"
-                    isDisable={false}
-                    onClick={onSave}
-                  />
-                </div>
+            </div>
+            <div className="col col-full mt-24">
+              <div className="col col-half">
+                <Button
+                  type="normal-red"
+                  content="HỦY"
+                  isDisable={false}
+                  onClick={hideModal}
+                />
+              </div>
+              <div className="col col-half">
+                <Button
+                  type="normal-ubg"
+                  content="LƯU"
+                  isDisable={false}
+                  onClick={onSave}
+                />
               </div>
             </div>
           </div>

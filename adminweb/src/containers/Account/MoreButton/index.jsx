@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { ThemeProvider } from "@material-ui/styles";
 import { Button, createMuiTheme, Menu, MenuItem } from "@material-ui/core";
-import ReactModal from "react-modal";
-import AddAccount from "../AddAccount/index";
+import UpdateAccount from "../UpdateAccount/index";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { getDetailedAccount } from "../../../redux/actions/account";
+import {
+  getDetailedAccount,
+} from "../../../redux/actions/account";
+import { renderAccount } from "../../../utilities/constants/DataRender/account";
 
 export default function MoreButton(props) {
-  const { rowUser, permission, faculty, class_in_university, position, area } =
-    props;
+  const {
+    rowUser,
+    permission,
+    faculty,
+    class_in_university,
+    position,
+    area,
+    updateState,
+  } = props;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -48,25 +57,8 @@ export default function MoreButton(props) {
     setIsModalVisible(false);
   };
 
-  const customStyles = {
-    content: {
-      top: "50%",
-      left: "53%",
-      right: "50%",
-      bottom: "-40%",
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      overflow: "scroll",
-    },
-    overlay: { zIndex: 1000 },
-  };
-
   const onOpenEditForm = () => {
     setIsModalVisible(true);
-  };
-
-  const onConfirmChangeStatus = () => {
-
   };
 
   return (
@@ -87,33 +79,25 @@ export default function MoreButton(props) {
           onClose={handleClose}
           MenuListProps={{ onMouseLeave: handleClose }}
         >
-          <MenuItem onClick={onConfirmChangeStatus}>
-            {rowUser.isActive === true ? (
-              <div style={{ color: "red" }}>Khoá tài khoản</div>
-            ) : (
-              <div style={{ color: "green" }}>Mở tài khoản</div>
-            )}
-          </MenuItem>
           <MenuItem onClick={onOpenEditForm}>
             <div style={{ color: "#005CC8" }}>Chỉnh sửa</div>
           </MenuItem>
         </Menu>
       </ThemeProvider>
-      <ReactModal
-        isOpen={isModalVisible}
-        onRequestClose={hideModal}
-        style={customStyles}
-      >
-        <AddAccount
-          userInfor={user}
+      {user && (
+        <UpdateAccount
+          public_id={user.public_id}
+          userInfor={renderAccount(user)}
+          hideModal={hideModal}
+          updateState={updateState}
+          isOpen={isModalVisible}
           permission={permission}
           faculty={faculty}
           class_in_university={class_in_university}
           position={position}
           area={area}
-          type={"update"}
         />
-      </ReactModal>
+      )}
     </div>
   );
 }

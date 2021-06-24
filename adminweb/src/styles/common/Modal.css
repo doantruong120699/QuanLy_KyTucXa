@@ -2,6 +2,9 @@
   width: 400px;
 }
 
+.lg-modal {
+  width: 530px;
+}
 .popup-overlay {
   background-color: rgba(10, 10, 10, 0.5);
 }

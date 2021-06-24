@@ -1,12 +1,8 @@
 import MUIDataTable from "mui-datatables";
 import Box from "@material-ui/core/Box";
 import React, { useState, useEffect } from "react";
-
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-import { Typography } from "@material-ui/core";
-import Button from "@material-ui/core/Button";
-import AddBoxIcon from "@material-ui/icons/AddBox";
-import ReactModal from "react-modal";
+import Button from "../../components/common/Button";
 import AddAccount from "./AddAccount";
 import MoreButton from "./MoreButton";
 import {
@@ -20,8 +16,10 @@ import {
 import moment from "moment";
 import YesNoModal from "../../components/YesNoModal";
 import "./styles.css";
+import { getEmptyAccount } from "../../utilities/constants/DataRender/account";
 export default function Account() {
   const [data, setData] = useState();
+  const [isUpdate, setUpdate] = useState();
   const [faculty, setFaculty] = useState();
   const [permission, setPermission] = useState();
   const [class_in_university, setClassInUniversity] = useState();
@@ -54,6 +52,7 @@ export default function Account() {
         setData(data);
       }
     });
+
     getGroupAndPermission((output) => {
       if (output) {
         setPermission(output);
@@ -83,14 +82,16 @@ export default function Account() {
         setArea(output);
       }
     });
-  }, []);
+  }, [isUpdate]);
+
+  function updateState() {
+    setUpdate((prev) => !prev);
+  }
 
   const getMuiTheme = () =>
     createMuiTheme({
       overrides: {
         MUIDataTable: {
-          width: "fit-content",
-
           root: {
             backgroundColor: "#re",
           },
@@ -179,14 +180,6 @@ export default function Account() {
         sort: true,
       },
     },
-    // {
-    //   name: "identify_card",
-    //   label: "CCCD/CMND",
-    //   options: {
-    //     filter: true,
-    //     sort: true,
-    //   },
-    // },
     {
       name: "activeDate",
       label: "Ngày kích hoạt",
@@ -215,6 +208,7 @@ export default function Account() {
         customBodyRender: (userId, tableMetaData) => (
           <MoreButton
             rowUser={data[tableMetaData.rowIndex]}
+            updateState={updateState}
             permission={permission}
             faculty={faculty}
             class_in_university={class_in_university}
@@ -222,7 +216,6 @@ export default function Account() {
             area={area}
           />
         ),
-        setCellProps: () => ({ style: { width: "10px" } }),
       },
     },
   ];
@@ -241,44 +234,10 @@ export default function Account() {
   const handleAddAccount = () => {
     setIsModalVisible(true);
   };
-  const handleSuccessSubmit = () => {
-    setIsModalVisible(false);
-    const params = "";
-    getAccounts(params, (output) => {
-      var data;
-      if (output) {
-        data = output.results.map((value, index) => {
-          return {
-            order: index + 1,
-            publicId: value.public_id,
-            firstName: value.user.first_name,
-            lastName: value.user.last_name,
-            account: value.user.username,
-            role: value.position ? value.position.name : null,
-            isActive: true,
-            activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
-          };
-        });
-        setData(data);
-      }
-    });
-  };
-  const customStyles = {
-    content: {
-      top: "50%",
-      left: "53%",
-      right: "50%",
-      bottom: "-40%",
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      overflow: "scroll",
-    },
-    overlay: { zIndex: 1000 },
-  };
 
   if (data) {
     return (
-      <div>
+      <div className="pl-24 pr-24">
         {data && (
           <div className="account_page">
             <Box marginBottom={5} className="account-header">
@@ -293,23 +252,14 @@ export default function Account() {
                   setIsYesNoModalVisible(false);
                 }}
               />
-              <Typography variant="h4" style={{ width: "100%" }}>
-                Tài Khoản
-              </Typography>
-              <Box>
+              <div className="col col-full">
                 <Button
-                  startIcon={<AddBoxIcon />}
-                  style={{
-                    backgroundColor: "#005CC8",
-                    width: "200px",
-
-                    color: "white",
-                  }}
+                  type="normal-blue"
+                  content="Tạo"
+                  isDisable={false}
                   onClick={handleAddAccount}
-                >
-                  Thêm Tài Khoản
-                </Button>
-              </Box>
+                />
+              </div>
             </Box>
 
             <Box marginLeft={0}>
@@ -322,20 +272,17 @@ export default function Account() {
                 />
               </MuiThemeProvider>
             </Box>
-            <ReactModal
+            <AddAccount
+              userInfor={getEmptyAccount()}
+              hideModal={hideModal}
+              updateState={updateState}
               isOpen={isModalVisible}
-              onRequestClose={hideModal}
-              style={customStyles}
-            >
-              <AddAccount
-                permission={permission}
-                faculty={faculty}
-                class_in_university={class_in_university}
-                position={position}
-                area={area}
-                onSuccess={handleSuccessSubmit}
-              />
-            </ReactModal>
+              permission={permission}
+              faculty={faculty}
+              class_in_university={class_in_university}
+              position={position}
+              area={area}
+            />
           </div>
         )}
       </div>
