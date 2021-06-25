@@ -7,7 +7,6 @@ import { renderAccount } from "../../../utilities/constants/DataRender/account";
 
 export default function MoreButton(props) {
   const {
-    rowUser,
     permission,
     faculty,
     class_in_university,
@@ -15,9 +14,8 @@ export default function MoreButton(props) {
     area,
     updateState,
   } = props;
-
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  console.log("MoreButton", props.rowUser);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -71,10 +69,10 @@ export default function MoreButton(props) {
           </MenuItem>
         </Menu>
       </ThemeProvider>
-      {rowUser && (
+      {props.rowUser && (
         <UpdateAccount
-          public_id={rowUser.public_id}
-          userInfor={renderAccount(rowUser)}
+          public_id={props.rowUser.public_id}
+          userInfor={renderAccount(props.rowUser)}
           hideModal={hideModal}
           updateState={updateState}
           isOpen={isModalVisible}
