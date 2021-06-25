@@ -15,7 +15,6 @@ export default function MoreButton(props) {
     updateState,
   } = props;
   const [isModalVisible, setIsModalVisible] = useState(false);
-  console.log("MoreButton", props.rowUser);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {

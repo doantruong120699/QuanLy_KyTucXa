@@ -14,7 +14,6 @@ import * as APIALERTMESSAGE from "../../../utilities/constants/APIAlertMessage";
 import { useEffect } from "react";
 
 export default function UpdateAccount(props) {
-  console.log("Update Account: ", props);
   const [newAccount, setAccount] = useState(props.userInfor);
 
   const [notification, setNotification] = useState(null);

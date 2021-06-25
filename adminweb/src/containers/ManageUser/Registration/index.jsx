@@ -42,7 +42,6 @@ const Registration = () => {
   useEffect(() => {
     GetListRegistrationRoom((output) => {
       if (output) {
-        console.log(output);
         let data = output.results.map((value, index) => {
           return {
             order: index + 1,
