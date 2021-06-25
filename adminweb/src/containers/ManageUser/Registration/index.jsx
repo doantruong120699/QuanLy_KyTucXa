@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import Loader from "../../../components/common/Loader";
 import Button from "@material-ui/core/Button";
 import StyledButton from "../../../components/common/Button";
 import MUIDataTable from "mui-datatables";
@@ -25,6 +27,8 @@ const Registration = () => {
     type: "",
     content: "",
   });
+
+  const loader = useSelector((state) => state.humanResource.loading);
 
   const onCloseAlert = () => setOpenAlert(false);
 
@@ -267,62 +271,70 @@ const Registration = () => {
 
   return (
     <div className="col col-full">
-      {registrationData && (
-        <div className="col col-full pt-16" style={{ zIndex: "1" }}>
-          <MuiThemeProvider theme={getMuiTheme()}>
-            <MUIDataTable
-              className="mg-auto"
-              title={"Yêu cầu vào phòng"}
-              data={registrationData}
-              columns={columnsNoti}
-              options={options}
+      {loader ? (
+        <div className="align-item-ct">
+          <Loader />
+        </div>
+      ) : (
+        <div>
+          {registrationData && (
+            <div className="col col-full pt-16" style={{ zIndex: "1" }}>
+              <MuiThemeProvider theme={getMuiTheme()}>
+                <MUIDataTable
+                  className="mg-auto"
+                  title={"Yêu cầu vào phòng"}
+                  data={registrationData}
+                  columns={columnsNoti}
+                  options={options}
+                />
+              </MuiThemeProvider>
+            </div>
+          )}
+          <div>
+            <Alertness
+              open={openAlert}
+              onClose={onCloseAlert}
+              type={notification.type}
+              content={notification.content}
             />
-          </MuiThemeProvider>
+          </div>
+          <div>
+            <Popup
+              open={openSubmission}
+              closeOnDocumentClick
+              onClose={() => onCloseSubmission()}
+            >
+              <div className="col modal style-lg-box bg-color-white text-align-ct">
+                <div className="col col-full pd-8">
+                  <div className="style-alertness-icon icon-warning text-20 pd-8 text-is-orange inline-block mr-16">
+                    <i class="fi-rr-info"></i>
+                  </div>
+                  <div className="inline-block text-20 bold-text">Xác nhận</div>
+                </div>
+                <div className="col col-full mb-16 text-is-grey">
+                  <span>Mời xác nhận</span>
+                </div>
+                <div className="col col-half">
+                  <StyledButton
+                    type="normal-blue"
+                    content="Đồng ý"
+                    onClick={handleConfirmation}
+                    isDisable={false}
+                  />
+                </div>
+                <div className="col col-half">
+                  <StyledButton
+                    type="normal-red"
+                    content="Đóng"
+                    onClick={onCloseSubmission}
+                    isDisable={false}
+                  />
+                </div>
+              </div>
+            </Popup>
+          </div>
         </div>
       )}
-      <div>
-        <Alertness
-          open={openAlert}
-          onClose={onCloseAlert}
-          type={notification.type}
-          content={notification.content}
-        />
-      </div>
-      <div>
-        <Popup
-          open={openSubmission}
-          closeOnDocumentClick
-          onClose={() => onCloseSubmission()}
-        >
-          <div className="col modal style-lg-box bg-color-white text-align-ct">
-            <div className="col col-full pd-8">
-              <div className="style-alertness-icon icon-warning text-20 pd-8 text-is-orange inline-block mr-16">
-                <i class="fi-rr-info"></i>
-              </div>
-              <div className="inline-block text-20 bold-text">Xác nhận</div>
-            </div>
-            <div className="col col-full mb-16 text-is-grey">
-              <span>Mời xác nhận</span>
-            </div>
-            <div className="col col-half">
-              <StyledButton
-                type="normal-blue"
-                content="Đồng ý"
-                onClick={handleConfirmation}
-                isDisable={false}
-              />
-            </div>
-            <div className="col col-half">
-              <StyledButton
-                type="normal-red"
-                content="Đóng"
-                onClick={onCloseSubmission}
-                isDisable={false}
-              />
-            </div>
-          </div>
-        </Popup>
-      </div>
     </div>
   );
 };

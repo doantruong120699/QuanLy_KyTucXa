@@ -13,7 +13,7 @@ import * as ALERTMESSAGE from "../../../utilities/constants/AlertMessage";
 import * as APIALERTMESSAGE from "../../../utilities/constants/APIAlertMessage";
 
 export default function AddAccount(props) {
-  const {
+  var {
     userInfor,
     updateState,
     permission,

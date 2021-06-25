@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import MUIDataTable from "mui-datatables";
 import Box from "@material-ui/core/Box";
-import React, { useState, useEffect } from "react";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import Button from "../../components/common/Button";
+import React, { useState, useEffect } from "react";
 import AddAccount from "./AddAccount";
 import MoreButton from "./MoreButton";
 import {
@@ -17,72 +18,26 @@ import moment from "moment";
 import YesNoModal from "../../components/YesNoModal";
 import "./styles.css";
 import { getEmptyAccount } from "../../utilities/constants/DataRender/account";
+import queryString from "querystring";
 export default function Account() {
-  const [data, setData] = useState();
+  const [data, setData] = useState({
+    list: null,
+    totals: null,
+  });
+
   const [isUpdate, setUpdate] = useState();
-  const [faculty, setFaculty] = useState();
-  const [permission, setPermission] = useState();
-  const [class_in_university, setClassInUniversity] = useState();
-  const [position, setPosition] = useState();
-  const [area, setArea] = useState();
-  useEffect(() => {
-    const params = "";
-    getAccounts(params, (output) => {
-      var data;
-      if (output) {
-        data = output.results.map((value, index) => {
-          return {
-            order: index + 1,
-            publicId: value.public_id,
-            firstName: value.user.first_name,
-            lastName: value.user.last_name,
-            account: value.user.username,
-            role: value.position ? value.position.name : "--",
-            faculty: value.faculty ? value.faculty.name : "--",
-            my_class: value.my_class ? value.my_class.name : "--",
-            area: value.area ? value.area.name : "--",
-            phone: value.phone,
-            birthday: value.birthday,
-            address: value.address,
-            identify_card: value.identify_card,
-            isActive: true,
-            activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
-          };
-        });
-        setData(data);
-      }
-    });
 
-    getGroupAndPermission((output) => {
-      if (output) {
-        setPermission(output);
-      }
-    });
+  const [selection, setSelection] = useState({
+    faculty: null,
+    permission: null,
+    class_in_university: null,
+    position: null,
+    area: null,
+  });
 
-    getFaculty((output) => {
-      if (output) {
-        setFaculty(output);
-      }
-    });
-
-    getClass((output) => {
-      if (output) {
-        setClassInUniversity(output);
-      }
-    });
-
-    getPosition((output) => {
-      if (output) {
-        setPosition(output);
-      }
-    });
-
-    getArea((output) => {
-      if (output) {
-        setArea(output);
-      }
-    });
-  }, [isUpdate]);
+  const [filter, setFilter] = useState({
+    page: 1,
+  });
 
   function updateState() {
     setUpdate((prev) => !prev);
@@ -107,22 +62,6 @@ export default function Account() {
       },
     });
 
-  const convertDataForTable = (data) => {
-    return data.map((n) => ({
-      name: n.lastName + " " + n.firstName,
-      account: n.account,
-      role: n.role,
-      area: n.area,
-      faculty: n.faculty,
-      my_class: n.my_class,
-      phone: n.phone,
-      birthday: n.birthday,
-      identify_card: n.identify_card,
-      activeDate: n.activeDate,
-      isActive: n.isActive,
-    }));
-  };
-
   const columns = [
     {
       name: "name",
@@ -144,7 +83,7 @@ export default function Account() {
       name: "role",
       label: "Chức vụ",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -152,7 +91,7 @@ export default function Account() {
       name: "area",
       label: "Khu vực",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -160,7 +99,7 @@ export default function Account() {
       name: "my_class",
       label: "Lớp học phần",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -168,7 +107,7 @@ export default function Account() {
       name: "faculty",
       label: "Khoa",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -176,7 +115,7 @@ export default function Account() {
       name: "phone",
       label: "SĐT liên lạc",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -184,18 +123,23 @@ export default function Account() {
       name: "activeDate",
       label: "Ngày kích hoạt",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
+        display: false,
       },
     },
     {
-      name: "isActive",
+      name: "is_active",
       label: "Trạng thái",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         customBodyRender: (value) => {
-          return <div>{value === true ? "Mở" : "Khoá"}</div>;
+          return (
+            <div className={`${value === true ? "green" : "red"}`}>
+              {value === true ? "Mở" : "Khoá"}
+            </div>
+          );
         },
       },
     },
@@ -207,38 +151,133 @@ export default function Account() {
         filter: false,
         customBodyRender: (userId, tableMetaData) => (
           <MoreButton
-            rowUser={data[tableMetaData.rowIndex]}
+            rowUser={data.list[tableMetaData.rowIndex]}
             updateState={updateState}
-            permission={permission}
-            faculty={faculty}
-            class_in_university={class_in_university}
-            position={position}
-            area={area}
+            permission={selection.permission}
+            faculty={selection.faculty}
+            class_in_university={selection.class_in_university}
+            position={selection.position}
+            area={selection.area}
           />
         ),
       },
     },
   ];
-  const handleRowClick = (_value, meta) => {};
+
+  function convertDataForTable(data) {
+    let result = data.map((value, index) => {
+      return {
+        order: index + 1,
+        name: value.user.last_name + " " + value.user.first_name,
+        account: value.user.username,
+        role: value.position ? value.position.name : "--",
+        faculty: value.faculty ? value.faculty.name : "--",
+        my_class: value.my_class ? value.my_class.name : "--",
+        area: value.area ? value.area.name : "--",
+        phone: value.phone,
+        birthday: value.birthday,
+        address: value.address,
+        identify_card: value.identify_card,
+        is_active: value.user.is_active,
+        activeDate: moment(new Date(value.created_at)).format("DD-MM-YYYY"),
+      };
+    });
+    return result;
+  }
+  useEffect(() => {
+    const paramsString = queryString.stringify(filter);
+
+    getAccounts(paramsString, (output) => {
+      if (output) {
+        setData({ list: output.results, totals: output.totals });
+      }
+    });
+  }, [isUpdate, filter]);
+
+  useEffect(() => {
+    const option = { ...selection };
+    getGroupAndPermission((output) => {
+      if (output) {
+        option.permission = output;
+      }
+    });
+
+    getFaculty((output) => {
+      if (output) {
+        option.faculty = output;
+      }
+    });
+
+    getClass((output) => {
+      if (output) {
+        option.class_in_university = output;
+      }
+    });
+
+    getPosition((output) => {
+      if (output) {
+        option.position = output;
+      }
+    });
+
+    getArea((output) => {
+      if (output) {
+        option.area = output;
+      }
+    });
+
+    setSelection(option);
+  }, []);
 
   const options = {
-    filterType: "textField",
+    filter: false,
     selectableRows: "none",
-    onRowClick: handleRowClick,
+    onRowClick: null,
+    serverSide: true,
+    jumpToPage: true,
+    count: data.totals,
+    searchPlaceholder: "Tìm kiếm theo tên hoặc tài khoản",
+    //count, // Use total number of items
+    onTableChange: (action, tableState) => {
+      handleTableChange(action, tableState);
+      //handleKeypress();git
+    },
   };
   const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const hideModal = () => {
     setIsModalVisible(false);
   };
+  const handleTableChange = (action, tableState) => {
+    switch (action) {
+      case "changeRowsPerPage":
+      case "changePage":
+      case "sort":
+      case "search":
+      case "filterChange":
+      case "resetFilters":
+        handleTriggerAction(tableState);
+        break;
+      default:
+        break;
+    }
+  };
+  const handleTriggerAction = (tableState) => {
+    let keyword = "";
+    if (tableState.sesearchText !== "") {
+      keyword = tableState.sesearchText;
+    }
+    setFilter({ ...filter, page: tableState.page + 1, keyword: keyword });
+  };
+
   const handleAddAccount = () => {
     setIsModalVisible(true);
   };
 
-  if (data) {
-    return (
-      <div className="pl-24 pr-24">
-        {data && (
+  return (
+    <div className="pl-24 pr-24">
+      <div>
+        {data.list && (
           <div className="account_page">
             <Box marginBottom={5} className="account-header">
               <YesNoModal
@@ -266,7 +305,7 @@ export default function Account() {
               <MuiThemeProvider theme={getMuiTheme()}>
                 <MUIDataTable
                   title={"Danh sách tài khoản trong hệ thống"}
-                  data={convertDataForTable(data)}
+                  data={convertDataForTable(data.list)}
                   columns={columns}
                   options={options}
                 />
@@ -277,20 +316,15 @@ export default function Account() {
               hideModal={hideModal}
               updateState={updateState}
               isOpen={isModalVisible}
-              permission={permission}
-              faculty={faculty}
-              class_in_university={class_in_university}
-              position={position}
-              area={area}
+              permission={selection.permission}
+              faculty={selection.faculty}
+              class_in_university={selection.class_in_university}
+              position={selection.position}
+              area={selection.area}
             />
           </div>
         )}
       </div>
-    );
-  } else
-    return (
-      <div style={{ fontSize: "30px", textAlign: "center", fontWeight: "700" }}>
-        Không có dữ liệu hoặc bạn không có quyền để xem mục này
-      </div>
-    );
+    </div>
+  );
 }

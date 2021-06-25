@@ -16,6 +16,7 @@ import queryString from "query-string";
 import Pagination from "../../../components/common/Pagination";
 import Loader from "../../../components/common/Loader";
 import YesNoModal from "../../../components/YesNoModal";
+
 export default function Student() {
   const [dataArea, setDataArea] = useState();
 

@@ -234,11 +234,11 @@ class GroupSerializer(serializers.ModelSerializer):
 # =====================================================
 
 class AddProfileSerializer(serializers.ModelSerializer):
-    birthday = serializers.CharField(required=False)
-    address = serializers.CharField(required=False)
-    identify_card = serializers.CharField(required=False)
-    gender = serializers.BooleanField(required=False)
-    phone = serializers.CharField(required=False)
+    birthday = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    address = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    identify_card = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    gender = serializers.BooleanField(required=False, allow_null=True)
+    phone = serializers.CharField(required=False, allow_null=True, allow_blank=True)
     class Meta:
         model = Profile
         fields = [
@@ -255,15 +255,15 @@ class AddProfileSerializer(serializers.ModelSerializer):
         ]
         
 class UserProfileSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(required=False)
-    password = serializers.CharField(required=False)
-    first_name = serializers.CharField(required=False)
-    last_name = serializers.CharField(required=False)
-    email = serializers.CharField(required=False)
-    is_active = serializers.BooleanField(required=False)
+    username = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    password = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    first_name = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    last_name = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    email = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    is_active = serializers.BooleanField(required=False, allow_null=True)
     profile = AddProfileSerializer(required=False)
-    group_list = serializers.ListField(required=False)
-    permission_list = serializers.ListField(required=False)
+    group_list = serializers.ListField(required=False, allow_null=True)
+    permission_list = serializers.ListField(required=False,allow_null=True)
     
     class Meta:
         model = User
@@ -347,20 +347,53 @@ class UserProfileSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         try:
-            instance.username = validated_data.get('username', instance.username)
-            instance.set_password(validated_data.get('password', instance.password))
-            instance.first_name = validated_data.get('first_name', instance.first_name)
-            instance.last_name = validated_data.get('last_name', instance.last_name)
-            instance.email = validated_data.get('email', instance.email)
-            instance.is_active = validated_data.get('is_active', instance.is_active)
+            if 'username' in validated_data:
+                if validated_data['username'] != None and len(str(validated_data['username'])) > 0:
+                    instance.username = validated_data.get('username', instance.username)
+                    
+            if 'password' in validated_data:
+                if validated_data['password'] != None and len(str(validated_data['password'])) > 0:
+                    instance.set_password(validated_data.get('password', instance.password))
+                    
+            if 'first_name' in validated_data:
+                if validated_data['first_name'] != None and len(str(validated_data['first_name'])) > 0:
+                    instance.first_name = validated_data.get('first_name', instance.first_name)
+                    
+            if 'last_name' in validated_data:
+                if validated_data['last_name'] != None and len(str(validated_data['last_name'])) > 0:
+                    instance.last_name = validated_data.get('last_name', instance.last_name)
+                    
+            if 'email' in validated_data:
+                if validated_data['email'] != None and len(str(validated_data['email'])) > 0:
+                    instance.email = validated_data.get('email', instance.email)
+                    
+            if 'is_active' in validated_data:
+                if validated_data['is_active'] != None and len(str(validated_data['is_active'])) > 0:
+                    instance.is_active = validated_data.get('is_active', instance.is_active)
+                    
             profile = instance.user_profile
             if 'profile' in validated_data:
                 profile_data = validated_data.get('profile', instance.user_profile)
-                profile.birthday = profile_data.get('birthday', profile.birthday)
-                profile.address = profile_data.get('address', profile.address)
-                profile.identify_card = profile_data.get('identify_card', profile.identify_card)
-                profile.gender = profile_data.get('gender', profile.gender)
-                profile.phone = profile_data.get('phone', profile.phone)
+                
+                if 'birthday' in profile_data:
+                    if profile_data['birthday'] != None and len(str(profile_data['birthday'])) > 0:
+                        profile.birthday = profile_data.get('birthday', profile.birthday)
+                        
+                if 'address' in profile_data:
+                    if profile_data['address'] != None and len(str(profile_data['address'])) > 0:
+                        profile.address = profile_data.get('address', profile.address)
+                        
+                if 'identify_card' in profile_data:
+                    if profile_data['identify_card'] != None and len(str(profile_data['identify_card'])) > 0:
+                        profile.identify_card = profile_data.get('identify_card', profile.identify_card)
+                        
+                if 'gender' in profile_data:
+                    if profile_data['gender'] != None and len(str(profile_data['gender'])) > 0:
+                        profile.gender = profile_data.get('gender', profile.gender)
+                        
+                if 'phone' in profile_data:
+                    if profile_data['phone'] != None and len(str(profile_data['phone'])) > 0:
+                        profile.phone = profile_data.get('phone', profile.phone)
                 
                 if 'faculty' in profile_data:
                     if profile_data['faculty'] != None and len(str(profile_data['faculty'])) > 0:
@@ -400,60 +433,74 @@ class UserProfileSerializer(serializers.ModelSerializer):
             profile.save()
             return True
         except Exception as e:
-            print(e)
+            print("Error update: ", e)
             return serializers.ValidationError("Error")
         return serializers.ValidationError("Server error")
     
     def add_validate(self, data):
         if 'username' not in data:
-            raise serializers.ValidationError({'username': required_message}) 
+            # raise serializers.ValidationError({'username': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
         
         if 'password' not in data:
-            raise serializers.ValidationError({'password': required_message}) 
+            # raise serializers.ValidationError({'password': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
         
         if 'last_name' not in data:
-            raise serializers.ValidationError({'last_name': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
         
         if 'first_name' not in data:
-            raise serializers.ValidationError({'first_name': required_message}) 
+            # raise serializers.ValidationError({'first_name': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
         
         if 'email' not in data:
-            raise serializers.ValidationError({'email': required_message}) 
+            # raise serializers.ValidationError({'email': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
         
         if 'is_active' not in data:
-            raise serializers.ValidationError({'is_active': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
+            # raise serializers.ValidationError({'is_active': required_message}) 
                         
         profile_data = data['profile']
         
         if 'birthday' not in profile_data:
-            raise serializers.ValidationError({'birthday': required_message}) 
+            # raise serializers.ValidationError({'birthday': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
         
         if 'address' not in profile_data:
-            raise serializers.ValidationError({'address': required_message}) 
+            # raise serializers.ValidationError({'address': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
         
         if 'identify_card' not in profile_data:
-            raise serializers.ValidationError({'identify_card': required_message}) 
+            # raise serializers.ValidationError({'identify_card': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
         
         if 'gender' not in profile_data:
-            raise serializers.ValidationError({'gender': required_message}) 
+            # raise serializers.ValidationError({'gender': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
         
         if 'phone' not in profile_data:
-            raise serializers.ValidationError({'phone': required_message}) 
+            # raise serializers.ValidationError({'phone': required_message}) 
+            raise serializers.ValidationError({'status':'fail', 'notification': required_message}) 
         
         if 'password' in data:
             if len(data['password']) < 5:
-                raise serializers.ValidationError({'password': 'Password must be at least 5 characters.'}) 
+                # raise serializers.ValidationError({'password': 'Password must be at least 5 characters.'}) 
+                raise serializers.ValidationError({'status':'fail', 'notification': 'Password must be at least 5 characters.'}) 
             
         if 'email' in data:
             if data['email']:
                 user = User.objects.filter(email = data['email'])
                 if len(user) > 0:
-                    raise serializers.ValidationError({'email': 'Email is exist.'}) 
+                    # raise serializers.ValidationError({'email': 'Email is exist.'})
+                    raise serializers.ValidationError({'status':'fail', 'notification': 'Email is exist.'})  
+        
         if 'username' in data:
             if data['username']:
                 user = User.objects.filter(username = data['username'])
                 if len(user) > 0:
-                    raise serializers.ValidationError({'username': 'Username is exist.'}) 
+                    # raise serializers.ValidationError({'username': 'Username is exist.'}) 
+                    raise serializers.ValidationError({'status':'fail', 'notification': 'Username is exist.'}) 
         return data   
 
 class UserProfileListSerializer(serializers.ModelSerializer):

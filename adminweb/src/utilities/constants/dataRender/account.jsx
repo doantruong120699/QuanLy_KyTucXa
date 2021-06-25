@@ -122,7 +122,7 @@ function renderAccount(data) {
     permission: data.user.permission_list,
     group: data.user.group_list,
     is_active: {
-      value: data.is_active,
+      value: data.user.is_active,
       title: "Kích hoạt",
     },
     position: {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import "./styles.css";
 import Select from "react-select";
 import moment from "moment";
@@ -17,6 +18,7 @@ import {
 } from "../../../utilities/constants/titles";
 import { getTimeSheetRender } from "../../../utilities/constants/DataRender/humanResource";
 import querystring from "querystring";
+import Loader from "../../../components/common/Loader";
 
 const Employee = () => {
   const current = new Date();
@@ -33,6 +35,8 @@ const Employee = () => {
   const [disable, setDisable] = useState(true);
 
   const [employeeOption, setEmployeeOption] = useState();
+
+  const loader = useSelector((state) => state.humanResource.loading);
 
   var week = [];
 
@@ -186,58 +190,70 @@ const Employee = () => {
 
   return (
     <div className="col col-full pl-48">
-      {initData && employeeOption && (
+      {loader ? (
+        <div className="align-item-ct">
+          <Loader />
+        </div>
+      ) : (
         <div>
-          <div
-            className="col col-full"
-            style={{ marginLeft: "7%", marginBottom: "2%" }}
-          >
-            <div className="col col-third">
-              <Typography>Lựa chọn tuần</Typography>
-              <Select
-                className="week-select"
-                options={week}
-                value={week.find((index) => index.value === time.week)}
-                onChange={(params) => handleTimeChange(params, "week")}
-              />
+          {initData && employeeOption && (
+            <div>
+              <div
+                className="col col-full"
+                style={{ marginLeft: "7%", marginBottom: "2%" }}
+              >
+                <div className="col col-third">
+                  <Typography>Lựa chọn tuần</Typography>
+                  <Select
+                    className="week-select"
+                    options={week}
+                    value={week.find((index) => index.value === time.week)}
+                    onChange={(params) => handleTimeChange(params, "week")}
+                  />
+                </div>
+                <div className="col col-third">
+                  <Typography>Lựa chọn năm</Typography>
+                  <Select
+                    className="week-select"
+                    options={year}
+                    value={year.find((index) => index.value === time.year)}
+                    onChange={(params) => handleTimeChange(params, "year")}
+                  />
+                </div>
+              </div>
+              <div>
+                <h1 id="title">Bảng phân công công việc</h1>
+                <table id="students" style={{ marginLeft: "7%" }}>
+                  <thead>
+                    <tr>
+                      <th style={{ width: "9%" }}></th>
+                      {weekDate.map((date, index) => (
+                        <th key={index}>{date.label}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  {renderTableData()}
+                </table>
+              </div>
+              <div
+                style={{
+                  textAlign: "end",
+                  marginRight: "11%",
+                  marginTop: "2%",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSaveSchedule}
+                  startIcon={<SaveIcon></SaveIcon>}
+                  disabled={disable}
+                >
+                  Lưu lịch làm
+                </Button>
+              </div>
             </div>
-            <div className="col col-third">
-              <Typography>Lựa chọn năm</Typography>
-              <Select
-                className="week-select"
-                options={year}
-                value={year.find((index) => index.value === time.year)}
-                onChange={(params) => handleTimeChange(params, "year")}
-              />
-            </div>
-          </div>
-          <div>
-            <h1 id="title">Bảng phân công công việc</h1>
-            <table id="students" style={{ marginLeft: "7%" }}>
-              <thead>
-                <tr>
-                  <th style={{ width: "9%" }}></th>
-                  {weekDate.map((date, index) => (
-                    <th key={index}>{date.label}</th>
-                  ))}
-                </tr>
-              </thead>
-              {renderTableData()}
-            </table>
-          </div>
-          <div
-            style={{ textAlign: "end", marginRight: "11%", marginTop: "2%" }}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSaveSchedule}
-              startIcon={<SaveIcon></SaveIcon>}
-              disabled={disable}
-            >
-              Lưu lịch làm
-            </Button>
-          </div>
+          )}
         </div>
       )}
     </div>

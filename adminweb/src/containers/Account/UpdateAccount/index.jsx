@@ -114,6 +114,7 @@ export default function UpdateAccount(props) {
     }
 
     const data = getUpdateData(newAccount);
+
     updateAccount(public_id, data, (output) => {
       if (output) {
         switch (output.status) {

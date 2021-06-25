@@ -403,6 +403,14 @@ class BillDetailSerializer(serializers.ModelSerializer):
 
 # ===========================================================
 
+class ProfileInListlSerializer(serializers.ModelSerializer):
+    user = UserSerializer(required=False)
+    class Meta:
+        model = Profile
+        fields = [
+            'user'
+        ]
+
 class PaidBillInAreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
@@ -560,6 +568,29 @@ class ExpenseUpdateSerializer(serializers.ModelSerializer):
             return False
 
 class ExpenseListSerializer(serializers.ModelSerializer):
+    type_expense = TypeExpenseSerializer()
+    user_paid =ProfileInListlSerializer()
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+
+    class Meta:
+        model = Expense
+        fields = [
+            'public_id',
+            'name',
+            'type_expense',
+            'description',
+            'price',
+            'user_paid',
+            'time_paid',
+            # 
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+
+class ExpenseDetailSerializer(serializers.ModelSerializer):
     type_expense = TypeExpenseSerializer()
     user_paid =ProfileStaffListBillSerializer()
     created_by = UserSerializer(required=False)
@@ -736,6 +767,29 @@ class RevenueUpdateSerializer(serializers.ModelSerializer):
 
 class RevenueListSerializer(serializers.ModelSerializer):
     type_revenue = TypeRevenueSerializer()
+    user_recieve =ProfileInListlSerializer()
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+
+    class Meta:
+        model = Revenue
+        fields = [
+            'public_id',
+            'name',
+            'type_revenue',
+            'description',
+            'amount',
+            'user_recieve',
+            'time_recieve',
+            # 
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+        
+class RevenueDetailSerializer(serializers.ModelSerializer):
+    type_revenue = TypeRevenueSerializer()
     user_recieve =ProfileStaffListBillSerializer()
     created_by = UserSerializer(required=False)
     updated_by = UserSerializer(required=False)
@@ -758,7 +812,13 @@ class RevenueListSerializer(serializers.ModelSerializer):
         ]
         
         
+# ====================================================================
 
+class UserRecievePaidSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'username', 'email']
+ 
 
 
 

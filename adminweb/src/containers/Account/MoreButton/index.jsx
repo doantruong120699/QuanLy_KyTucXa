@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ThemeProvider } from "@material-ui/styles";
 import { Button, createMuiTheme, Menu, MenuItem } from "@material-ui/core";
 import UpdateAccount from "../UpdateAccount/index";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import {
-  getDetailedAccount,
-} from "../../../redux/actions/account";
 import { renderAccount } from "../../../utilities/constants/DataRender/account";
 
 export default function MoreButton(props) {
@@ -19,17 +16,9 @@ export default function MoreButton(props) {
     updateState,
   } = props;
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const [user, setUser] = useState();
-
-  useEffect(() => {
-    getDetailedAccount(rowUser.publicId, (output) => {
-      if (output) {
-        setUser(output);
-      }
-    });
-  }, []);
 
   const handleClick = (event) => {
     if (anchorEl !== event.currentTarget) {
@@ -50,8 +39,6 @@ export default function MoreButton(props) {
       },
     },
   });
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const hideModal = () => {
     setIsModalVisible(false);
@@ -84,10 +71,10 @@ export default function MoreButton(props) {
           </MenuItem>
         </Menu>
       </ThemeProvider>
-      {user && (
+      {rowUser && (
         <UpdateAccount
-          public_id={user.public_id}
-          userInfor={renderAccount(user)}
+          public_id={rowUser.public_id}
+          userInfor={renderAccount(rowUser)}
           hideModal={hideModal}
           updateState={updateState}
           isOpen={isModalVisible}

@@ -15,6 +15,7 @@ from api.custom_pagination import LibraryCustomPagination
 from .serializers import *
 from api import status_http
 from api.permissions import *
+import re
 from django.http import JsonResponse
 quanlytaichinh_group = 'quanlytaichinh_group'
 quanlynhansu_group = 'quanlynhansu_group'
@@ -428,6 +429,23 @@ class ExpenseViewSet(viewsets.ModelViewSet):
                 user_group = [g.name for g in request.user.groups.all()]
                 if quanlynhansu_group in user_group:
                     _list = _list.filter(created_by=request.user)
+                    
+                keyword = self.request.GET.get('keyword')
+                if keyword and len(keyword) > 0:
+                    words = re.split(r"[-;,.\s]\s*", keyword)
+                    query = Q()
+                    for word in words:
+                        query |= ( Q(name__icontains=word)| 
+                                Q(type_expense__name__icontains=word) | 
+                                Q(description__icontains=word) | 
+                                Q(user_paid__user__first_name__icontains=word)| 
+                                Q(user_paid__user__last_name__icontains=word)| 
+                                Q(user_paid__user__username__icontains=word) )
+                        if word.isnumeric():
+                            query |= Q(price=int(word))
+                            
+                    _list=_list.filter(query).distinct()
+                
                 page = self.paginate_queryset(_list)
                 if page is not None:
                     serializer = self.get_serializer(page, many=True)
@@ -494,7 +512,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             if self.check_permission(request):
                 queryset = Expense.objects.filter(public_id=public_id, is_delete=False).first()
                 if queryset:
-                    serializer = ExpenseListSerializer(queryset)
+                    serializer = ExpenseDetailSerializer(queryset)
                     return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
@@ -552,11 +570,28 @@ class RevenueViewSet(viewsets.ModelViewSet):
                 user_group = [g.name for g in request.user.groups.all()]
                 if quanlynhansu_group in user_group:
                     _list = _list.filter(created_by=request.user)
+                
+                keyword = self.request.GET.get('keyword')
+                if keyword and len(keyword) > 0:
+                    words = re.split(r"[-;,.\s]\s*", keyword)
+                    query = Q()
+                    for word in words:
+                        query |= ( Q(name__icontains=word)| 
+                                Q(type_revenue__name__icontains=word) | 
+                                Q(description__icontains=word) | 
+                                Q(user_recieve__user__first_name__icontains=word)| 
+                                Q(user_recieve__user__last_name__icontains=word)| 
+                                Q(user_recieve__user__username__icontains=word) )
+                        if word.isnumeric():
+                            query |= Q(amount=int(word))
+                            
+                    _list=_list.filter(query).distinct()
+
                 page = self.paginate_queryset(_list)
                 if page is not None:
-                    serializer = self.get_serializer(page, many=True)
+                    serializer = RevenueListSerializer(page, many=True)
                     return self.get_paginated_response(serializer.data)
-                serializer = self.get_serializer(page, many=True)
+                serializer = RevenueListSerializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
@@ -617,7 +652,7 @@ class RevenueViewSet(viewsets.ModelViewSet):
             if self.check_permission(request):
                 queryset = Revenue.objects.filter(public_id=public_id, is_delete=False).first()
                 if queryset:
-                    serializer = RevenueListSerializer(queryset)
+                    serializer = RevenueDetailSerializer(queryset)
                     return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
@@ -625,5 +660,33 @@ class RevenueViewSet(viewsets.ModelViewSet):
             print(e)
         return Response({'status': 'fail', 'notification' : 'Revenue not found!'}, status=status.HTTP_404_NOT_FOUND)
 
+# ========================================================
+
+class UserRecievePaidViewSet(viewsets.ModelViewSet):
+    queryset = TypeExpense.objects.all()
+    serializer_class = UserRecievePaidSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = list(User.objects.filter((Q(groups__name='quanlynhansu_group')|
+                                            Q(groups__name='quanlytaichinh_group')|
+                                            Q(groups__name='nhanvien_group'))).distinct().values().order_by('id'))
+        for i in range(len(queryset)):
+            queryset[i].pop('password', None)
+            queryset[i].pop('last_login', None)
+            queryset[i].pop('is_superuser', None)
+            queryset[i].pop('is_staff', None)
+            queryset[i].pop('is_active', None)
+            queryset[i].pop('date_joined', None)
+            user = User.objects.get(pk=queryset[i]['id'])
+            l = []
+            for g in user.groups.all():
+                l.append(g.name)
+            per = []
+            for p in user.user_permissions.all():
+                per.append(p.codename)
+            queryset[i]['group'] = l
+            queryset[i]['permission'] = per
+
+        return JsonResponse(queryset, safe=False, status=status.HTTP_200_OK)
 
 
