@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import Loader from "../../../components/common/Loader";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
@@ -120,6 +122,8 @@ export default function Overview() {
 
   const [data, setData] = useState(null);
 
+  const loader = useSelector((state) => state.overview.loading);
+
   useEffect(() => {
     getUsedRoom((output) => {
       if (output) {
@@ -130,28 +134,40 @@ export default function Overview() {
 
   return (
     <div className="col col-full">
-      {data && (
-        <Grow in={true} timeout={1000} style={{ transformOrigin: "10 10 10" }}>
-          <Box style={{ transform: "scale(1)", marginLeft: "5%" }}>
-            <Box
-              style={{
-                transform: "scale(1)",
-                marginLeft: "13%",
-              }}
+      {loader ? (
+        <div className="align-item-ct">
+          <Loader />
+        </div>
+      ) : (
+        <div>
+          {data && (
+            <Grow
+              in={true}
+              timeout={1000}
+              style={{ transformOrigin: "10 10 10" }}
             >
-              {data.map((n, index) => {
-                return (
-                  <CircularProgressWithLabel
-                    key={index}
-                    name={n.name}
-                    allRoom={n.total}
-                    availabeRoom={n.total - n.full}
-                  />
-                );
-              })}
-            </Box>
-          </Box>
-        </Grow>
+              <Box style={{ transform: "scale(1)", marginLeft: "5%" }}>
+                <Box
+                  style={{
+                    transform: "scale(1)",
+                    marginLeft: "13%",
+                  }}
+                >
+                  {data.map((n, index) => {
+                    return (
+                      <CircularProgressWithLabel
+                        key={index}
+                        name={n.name}
+                        allRoom={n.total}
+                        availabeRoom={n.total - n.full}
+                      />
+                    );
+                  })}
+                </Box>
+              </Box>
+            </Grow>
+          )}
+        </div>
       )}
     </div>
   );

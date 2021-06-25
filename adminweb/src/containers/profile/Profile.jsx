@@ -49,7 +49,6 @@ const Profile = () => {
   useEffect(() => {
     const GetProfileUser = () => {
       GetProfile((output) => {
-        console.log(output);
         if (output) {
           setProfile({
             profile: getHandledEmployeeDataRender(output),

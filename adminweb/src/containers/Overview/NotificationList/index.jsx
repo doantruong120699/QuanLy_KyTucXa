@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
+import { useSelector } from "react-redux";
+import Loader from "../../../components/common/Loader";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
@@ -14,6 +16,8 @@ export default function NotificationList() {
   const [notifications, setNotifications] = useState([]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const loader = useSelector((state) => state.overview.loading);
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -85,41 +89,54 @@ export default function NotificationList() {
   }
 
   return (
-    <Box>
-      <Button
-        startIcon={<AddBoxIcon />}
-        style={{
-          backgroundColor: "#005CC8",
-          width: "175px",
-          color: "white",
-          cursor: "pointer",
-        }}
-        onClick={handleSendNoti}
-      >
-        Thêm thông báo
-      </Button>
-      <Box className={"notification-area"}>
-        <div className="notification-list-box">
-          {notifications && (
-            <div>
-              {notifications.map((value, index) => {
-                return <NotificationItem key={index} notification={value} />;
-              })}
-            </div>
-          )}
+    <div>
+      {loader ? (
+        <div className="align-item-ct">
+          <Loader />
         </div>
-      </Box>
-      <div className="col col-full">
-        <Pagination pagination={pagination} onPageChange={handlePageChange} />
-      </div>
-      <Modal
-        isOpen={isModalVisible}
-        onRequestClose={hideModal}
-        style={customStyles}
-        ariaHideApp={false}
-      >
-        <NotificationForm onSuccess={handleSuccessSubmit} />
-      </Modal>
-    </Box>
+      ) : (
+        <Box>
+          <Button
+            startIcon={<AddBoxIcon />}
+            style={{
+              backgroundColor: "#005CC8",
+              width: "175px",
+              color: "white",
+              cursor: "pointer",
+            }}
+            onClick={handleSendNoti}
+          >
+            Thêm thông báo
+          </Button>
+          <Box className={"notification-area"}>
+            <div className="notification-list-box">
+              {notifications && (
+                <div>
+                  {notifications.map((value, index) => {
+                    return (
+                      <NotificationItem key={index} notification={value} />
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </Box>
+          <div className="col col-full">
+            <Pagination
+              pagination={pagination}
+              onPageChange={handlePageChange}
+            />
+          </div>
+          <Modal
+            isOpen={isModalVisible}
+            onRequestClose={hideModal}
+            style={customStyles}
+            ariaHideApp={false}
+          >
+            <NotificationForm onSuccess={handleSuccessSubmit} />
+          </Modal>
+        </Box>
+      )}
+    </div>
   );
 }

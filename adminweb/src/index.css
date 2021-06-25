@@ -20,5 +20,6 @@
 @import './styles/common/Pagination.css';
 @import './styles/common/Alertness.css';
 @import './styles/common/Box.css';
+@import './styles/common/Loader.css';
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100&display=swap');
 @import './styles/common/general.css';

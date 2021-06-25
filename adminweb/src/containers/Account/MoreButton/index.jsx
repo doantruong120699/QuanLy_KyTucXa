@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { ThemeProvider } from "@material-ui/styles";
 import { Button, createMuiTheme, Menu, MenuItem } from "@material-ui/core";
-import ReactModal from "react-modal";
-import AddAccount from "../AddAccount/index";
+import UpdateAccount from "../UpdateAccount/index";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { getDetailedAccount } from "../../../redux/actions/account";
+import { renderAccount } from "../../../utilities/constants/DataRender/account";
 
 export default function MoreButton(props) {
   const {
@@ -14,21 +13,12 @@ export default function MoreButton(props) {
     class_in_university,
     position,
     area,
-    onCloseModal,
+    updateState,
   } = props;
+
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const [user, setUser] = useState();
-
-  useEffect(() => {
-    getDetailedAccount(rowUser.publicId, (output) => {
-      if (output) {
-        setUser(output);
-      }
-    });
-  }, []);
 
   const handleClick = (event) => {
     if (anchorEl !== event.currentTarget) {
@@ -53,29 +43,10 @@ export default function MoreButton(props) {
   const hideModal = () => {
     setIsModalVisible(false);
   };
-  const handleSuccessSubmit = () => {
-    console.log("ON SUCCESS");
-    setIsModalVisible(false);
-    onCloseModal();
-  };
-  const customStyles = {
-    content: {
-      top: "50%",
-      left: "53%",
-      right: "50%",
-      bottom: "-40%",
-      marginRight: "-50%",
-      transform: "translate(-50%, -50%)",
-      overflow: "scroll",
-    },
-    overlay: { zIndex: 1000 },
-  };
 
   const onOpenEditForm = () => {
     setIsModalVisible(true);
   };
-
-  const onConfirmChangeStatus = () => {};
 
   return (
     <div>
@@ -95,34 +66,25 @@ export default function MoreButton(props) {
           onClose={handleClose}
           MenuListProps={{ onMouseLeave: handleClose }}
         >
-          <MenuItem onClick={onConfirmChangeStatus}>
-            {rowUser.isActive === true ? (
-              <div style={{ color: "red" }}>Khoá tài khoản</div>
-            ) : (
-              <div style={{ color: "green" }}>Mở tài khoản</div>
-            )}
-          </MenuItem>
           <MenuItem onClick={onOpenEditForm}>
             <div style={{ color: "#005CC8" }}>Chỉnh sửa</div>
           </MenuItem>
         </Menu>
       </ThemeProvider>
-      <ReactModal
-        isOpen={isModalVisible}
-        onRequestClose={hideModal}
-        style={customStyles}
-      >
-        <AddAccount
-          userInfor={user}
+      {rowUser && (
+        <UpdateAccount
+          public_id={rowUser.public_id}
+          userInfor={renderAccount(rowUser)}
+          hideModal={hideModal}
+          updateState={updateState}
+          isOpen={isModalVisible}
           permission={permission}
           faculty={faculty}
           class_in_university={class_in_university}
           position={position}
           area={area}
-          type={"update"}
-          onSuccess={handleSuccessSubmit}
         />
-      </ReactModal>
+      )}
     </div>
   );
 }

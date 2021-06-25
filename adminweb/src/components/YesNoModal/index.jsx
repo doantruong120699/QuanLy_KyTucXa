@@ -1,6 +1,7 @@
 import { Button, makeStyles } from "@material-ui/core";
 import ReactModal from "react-modal";
 import "./styles.css";
+
 const YesNoModal = ({
   isModalVisible,
   hideModal,
@@ -54,6 +55,7 @@ const YesNoModal = ({
       isOpen={isModalVisible}
       onRequestClose={hideModal}
       style={customStyles}
+      ariaHideApp={false}
     >
       <div className="yes-no-modal__title">{title}</div>
       <div className="yes-no-modal__message">{message}</div>

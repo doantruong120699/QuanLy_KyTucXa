@@ -24,11 +24,7 @@ export default function NotificationForm(rowUser) {
       width: "100px",
     },
   }))(Button);
-  const CancelButton = withStyles((theme) => ({
-    root: {
-      width: "100px",
-    },
-  }))(Button);
+
   const handleChange = (event) => {
     const name = event.target.name;
     const data = event.target.value;
