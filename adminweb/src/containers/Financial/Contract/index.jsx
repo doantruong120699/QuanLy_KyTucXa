@@ -216,6 +216,7 @@ export default function Budget() {
       };
     });
   };
+
   const formatDataBill = (data) => {
     return data.map((index) => {
       return {
@@ -228,6 +229,7 @@ export default function Budget() {
       };
     });
   };
+  
   const getHyphenatedDate = (dateString) =>
     moment(dateString, "YYYY/MM/DD").format("YYYY/MM/DD");
   const gridContractData = formatData(dataContracts)?.map((row) => {

@@ -13,7 +13,6 @@ import TextField from "@material-ui/core/TextField";
 import InputBase from "@material-ui/core/InputBase";
 
 export default function NotificationForm() {
-
   const [type, setType] = useState([
     {
       id: 1,
@@ -59,9 +58,7 @@ export default function NotificationForm() {
     },
   ]);
 
-  const handleClick = () => {
-    console.log("dataSend", dataSend);
-  };
+  const handleClick = () => {};
   // const [typeSelect, setTypeSelect] = useState("");
   // const [amount, setAmount] = useState();
   // const [price, setPrice] = useState();
@@ -80,11 +77,7 @@ export default function NotificationForm() {
       width: "100px",
     },
   }))(Button);
-  const CancelButton = withStyles((theme) => ({
-    root: {
-      width: "100px",
-    },
-  }))(Button);
+
   const useStyles = makeStyles((theme) => ({
     formControl: {
       minWidth: 120,
@@ -149,7 +142,6 @@ export default function NotificationForm() {
             value={typeSelect}
             onChange={(value) => {
               setTypeSelect(value.target.value);
-              console.log("value", value);
             }}
             name={"typeSelect"}
             displayEmpty
