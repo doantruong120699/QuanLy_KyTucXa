@@ -170,8 +170,8 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
         return False
 
 class ResetPasswordSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
-        style={'input_type': 'password'}, write_only=True)
+    # email = serializers.EmailField(
+    #     style={'input_type': 'password'}, write_only=True)
     new_password = serializers.CharField(
         style={'input_type': 'password'}, write_only=True)
     confirm_password = serializers.CharField(
@@ -197,9 +197,9 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
             return False
         return True 
 
-    def reset_password(self):
+    def reset_password(self, email):
         try:
-            user = User.objects.get(email=self.validated_data['email'])
+            user = User.objects.get(email=email)
             new_password = self.validated_data['new_password']
             user.set_password(new_password)
             user.save()
