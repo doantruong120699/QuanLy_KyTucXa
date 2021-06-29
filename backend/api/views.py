@@ -149,6 +149,7 @@ def reset_password_view(request, uidb64, token):
     check = check_link_forgot_password(request, uidb64, token).data
     if check['status'] == True: 
         data = {}
+        email = check['email']
         if request.method == 'GET':
             return Response(check, status=status.HTTP_200_OK)
         if request.method == 'POST':
@@ -158,12 +159,18 @@ def reset_password_view(request, uidb64, token):
                     data['status'] = False
                     data['message'] = 'Confirm password is incorrect!'
                     return Response(data, status=status_http.HTTP_ME_456_CONFIRM_PASSWORD_IS_INCORRECT)
-                serializer.reset_password()    
-                data['status'] = True
-                data['message'] = 'Reset Password successful!'
-                return Response(data, status=status.HTTP_200_OK)
+                
+                check_send_mail = serializer.reset_password(email) 
+                if check_send_mail: 
+                    data['status'] = True
+                    data['message'] = 'Reset Password successful!'
+                    return Response(data, status=status.HTTP_200_OK)
             data['status'] = False
-            data['message'] = list(serializer.errors.values())[0][0]
+            try:
+                data['message'] = list(serializer.errors.values())[0][0]
+            except Exception as ex_validate:
+                print("Exceptiopn validate: ", ex_validate)
+                data['message'] = 'Error!'
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response(check, status=status.HTTP_400_BAD_REQUEST)
@@ -177,7 +184,8 @@ def check_link_forgot_password(request, uidb64, token):
             data['status'] = True
             data['email'] = user.email
             return Response(data, status=status.HTTP_200_OK) 
-    except:
+    except Exception as e:
+        print(e)
         pass
     data['status'] = False
     data['message'] = 'Link activate is expired!'
