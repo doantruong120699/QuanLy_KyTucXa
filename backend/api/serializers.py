@@ -153,9 +153,11 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': forgot_password_token,
             } 
+            url_frontend = 'https://dormitory-user-web.vercel.app/reset-password/'
             # Create link active
-            link = reverse('reset_password', kwargs={'uidb64': email_body['uid'], 'token': email_body['token']})
-            activate_url = 'http://'+current_site.domain+link
+            # link = reverse('reset_password', kwargs={'uidb64': email_body['uid'], 'token': email_body['token']})
+            # activate_url = 'http://'+current_site.domain+link
+            activate_url = url_frontend  + '?uidb64=' + email_body['uid'] + '&token=' +  email_body['token']
             # Create body of email
             message = render_to_string('api/forgot_password.html', {'activate_url': activate_url, 'time_expire':settings.PASSWORD_RESET_TIMEOUT/60})  
             # Create object email  
@@ -165,7 +167,7 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
             send.send()
             return True
         except Exception as e:
-            print(e)
+            print("Exception send mail: ", e)
             pass
         return False
 

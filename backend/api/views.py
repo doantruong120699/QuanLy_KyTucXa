@@ -147,7 +147,6 @@ def forgot_password_view(request):
 @api_view(['GET', 'POST'])
 def reset_password_view(request, uidb64, token):
     check = check_link_forgot_password(request, uidb64, token).data
-    print(check)
     if check['status'] == True: 
         data = {}
         email = check['email']
