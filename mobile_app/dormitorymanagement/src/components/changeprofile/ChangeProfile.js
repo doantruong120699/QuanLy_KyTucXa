@@ -38,7 +38,6 @@ class ChangeProfile extends Component {
           "phone": this.state.phone
         }
       }
-      console.log(data)
       await this.props.changeprofile(data);
       if (this.props.msg !== 'Success') {
         this.showToast('Đổi thông tin không thành công');

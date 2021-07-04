@@ -9,7 +9,6 @@ const { CREATE_NOTIFICATION_SUCCESS, CREATE_NOTIFICATION_FAIL } = actionType;
 export const createnotification = (data) => async (dispatch) => {
   let result;
   try {
-    console.log(data)
     let token = await getData('token');
     let config = {
       headers: { 'Authorization': 'Bearer ' + token }

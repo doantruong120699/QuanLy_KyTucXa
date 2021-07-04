@@ -15,7 +15,7 @@ const ShowAllRoom = (props) => {
   }
   const renderItem = ({ item }) => {
     return (
-      <Room myRoom={item} onClick={() => handleClickItem(item)} />
+      <Room myRoom={item} onClick={() => handleClickItem(item)} key={item.name}/>
     )
   }
   const showToast = (msg) => {
@@ -86,7 +86,7 @@ const ShowAllRoom = (props) => {
           <SectionList
             style={styles.sectionList}
             sections={newData}
-            keyExtrator={(item, index) => {console.log(item)}}
+            keyExtrator={(item, index) => {item + index}}
             renderItem={renderItem}
             renderSectionHeader={({ section: { title } }) => (
               <Text style={styles.header}>{title}</Text>
