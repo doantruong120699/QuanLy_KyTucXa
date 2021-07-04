@@ -30,6 +30,9 @@ water_electrical_list = WaterElectricalViewSet.as_view({
     'get': 'list',
     'post': 'post'
 })
+water_electrical_list_not_pagination = WaterElectricalViewSet.as_view({
+    'get': 'get_list_water_electrical_not_pagination'
+})
 # detail - update - delete
 water_electrical_detail = WaterElectricalViewSet.as_view({
     'get': 'retrieve',
@@ -100,6 +103,7 @@ urlpatterns = [
     path('water-electricals/<slug:slug>/<str:time>/', water_electrical_list, name = 'water_electrical_list'),
     path('water-electricals/', water_electrical_list, name = 'water_electrical_list'),
     path('water-electricals/<str:public_id>/', water_electrical_detail, name = 'water_electrical_detail'),
+    path('water-electricals-not-pagination/', water_electrical_list_not_pagination, name = 'water_electrical_list_not_pagination'),
     # ========== Bill
     path('bills/', bill_list, name = 'bill_list'),
     path('room-bills/', bill_of_room, name = 'bill_of_room'),

@@ -150,6 +150,19 @@ class RoomViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
             return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
+        
+    @action(methods=["GET"], detail=False, url_path="get_list_room_in_area_not_pagination", url_name="get_list_room_in_area_not_pagination")
+    def get_list_room_in_area_not_pagination(self, request, *args, **kwargs):
+        try:
+            area = kwargs['slug']
+            queryset = Room.objects.filter(area__slug = area)
+            
+            serializer = RoomListSerializer(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK) 
+
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
 
         # list_room = (Room.objects.all())
