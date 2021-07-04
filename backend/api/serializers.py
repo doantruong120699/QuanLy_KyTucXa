@@ -159,12 +159,18 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
             # activate_url = 'http://'+current_site.domain+link
             activate_url = url_frontend  + '/' + email_body['uid'] + '/' +  email_body['token'] 
             # Create body of email
+            subject = '[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY'
+            # message = f'Hi {user.username}, thank you for registering in geeksforgeeks.'
             message = render_to_string('api/forgot_password.html', {'activate_url': activate_url, 'time_expire':settings.PASSWORD_RESET_TIMEOUT/60})  
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [self.validated_data['email']]
+            send_mail( subject, message, email_from, recipient_list )
+            
             # Create object email  
-            send = EmailMessage('[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY', message, from_email=settings.EMAIL_HOST_USER, to=[self.validated_data['email']])
-            send.content_subtype = 'html'
+            # send = EmailMessage('[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY', message, from_email=settings.EMAIL_HOST_USER, to=[self.validated_data['email']])
+            # send.content_subtype = 'html'
             # Send email to user
-            send.send()
+            # send.send()
             return True
         except Exception as e:
             print("Exception send mail: ", e)

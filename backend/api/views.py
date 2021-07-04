@@ -15,7 +15,7 @@ from .serializers import *
 from django.http import JsonResponse
 from . import status_http
 from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
-
+from django.core.mail import send_mail
 
 # API Change Password
 @api_view(['PUT'])
@@ -130,6 +130,7 @@ def forgot_password_view(request):
                 data['status'] = False
                 data['message'] = 'The account is not activated. Contact management to resolve!'
                 return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)    
+                
             x = serializer.send_mail(request)  
             print(x)
             if x:
