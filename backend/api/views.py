@@ -136,9 +136,9 @@ def forgot_password_view(request):
                 print(data['message'])         
                 return Response(data, status=status.HTTP_200_OK)
         print("Serializer Error: ")
-        # data['status'] = False
+        data['status'] = False
         # data['message'] = list(serializer.errors.values())[0][0]
-        # return Response(data, status=status.HTTP_400_BAD_REQUEST)    
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)    
     # return Response(data, status=status.HTTP_400_BAD_REQUEST)
     # except Exception as e:
     #     print(e) 
