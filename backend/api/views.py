@@ -129,8 +129,10 @@ def forgot_password_view(request):
             if not serializer.is_account_active():
                 data['status'] = False
                 data['message'] = 'The account is not activated. Contact management to resolve!'
-                return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)     
-            if serializer.send_mail(request):
+                return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)    
+            x = serializer.send_mail(request)  
+            print(x)
+            if x:
                 data['status'] = True
                 data['message'] = 'Send an activation link to your email successfully!'       
                 print(data['message'])         
