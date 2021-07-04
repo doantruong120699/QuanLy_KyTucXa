@@ -8,11 +8,11 @@ const Services = () => {
 
   useEffect(() => {
     dispatch(actFetchTitleNavigation(TitleList.NAVIGATION_TITLE[4].title));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="style-background-container">
+    <div className="style-background-container" style={{ height: "85vh" }}>
       <h2 className="bold-text text-24">
         Hiện tại chưa có dịch vụ để đăng kí @_@
       </h2>

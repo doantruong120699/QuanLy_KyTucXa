@@ -30,6 +30,9 @@ water_electrical_list = WaterElectricalViewSet.as_view({
     'get': 'list',
     'post': 'post'
 })
+water_electrical_list_not_pagination = WaterElectricalViewSet.as_view({
+    'get': 'get_list_water_electrical_not_pagination'
+})
 # detail - update - delete
 water_electrical_detail = WaterElectricalViewSet.as_view({
     'get': 'retrieve',
@@ -86,6 +89,10 @@ revenue_detail = RevenueViewSet.as_view({
     'put': 'update',
     'delete': 'destroy'
 })
+# ========= list uset
+user_list = UserRecievePaidViewSet.as_view({
+    'get': 'list',
+})
 urlpatterns = [ 
     # ========== room
     path('financal-room-area/', financal_room_in_area_list, name = 'financal_room_in_area_list'),
@@ -96,6 +103,7 @@ urlpatterns = [
     path('water-electricals/<slug:slug>/<str:time>/', water_electrical_list, name = 'water_electrical_list'),
     path('water-electricals/', water_electrical_list, name = 'water_electrical_list'),
     path('water-electricals/<str:public_id>/', water_electrical_detail, name = 'water_electrical_detail'),
+    path('water-electricals-not-pagination/', water_electrical_list_not_pagination, name = 'water_electrical_list_not_pagination'),
     # ========== Bill
     path('bills/', bill_list, name = 'bill_list'),
     path('room-bills/', bill_of_room, name = 'bill_of_room'),
@@ -111,4 +119,6 @@ urlpatterns = [
     path('type-revenue/', type_revenue_list),
     path('revenue/', revenue_list, name = 'revenue_list'),
     path('revenue/<str:public_id>/', revenue_detail, name = 'revenue_detail'),
+    # ========= user lisst
+    path('list-user-recieve-paid/', user_list),
 ]

@@ -15,6 +15,7 @@ from api.custom_pagination import LibraryCustomPagination
 from .serializers import *
 from api import status_http
 from api.permissions import *
+import re
 from django.http import JsonResponse
 quanlytaichinh_group = 'quanlytaichinh_group'
 quanlynhansu_group = 'quanlynhansu_group'
@@ -100,7 +101,7 @@ class FinancalRoomInAreaViewSet(viewsets.ModelViewSet):
                                                               water_electrical__month=month)
             list_room_add_json = []
             for bill in all_bill:
-                list_room_add_json.append({'id': bill.water_electrical.room.pk, 'name': bill.water_electrical.room.name, 'isPaid' : bill.is_paid})
+                list_room_add_json.append({'id': bill.water_electrical.room.pk, 'name': bill.water_electrical.room.name, 'isPaid' : bill.is_paid, 'public_id_water_electrical':bill.water_electrical.public_id, 'public_id_bill':bill.public_id})
             
             serializer = FinancalRoomInAreaSerializer(area)
             data_room = serializer.data
@@ -117,6 +118,24 @@ class WaterElectricalViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
     lookup_field = 'public_id'
 
+    def check_month_year(self, _month, _year):
+        d = datetime.now()
+        month = _month
+        year = _year
+        if _month == None or not _month.isnumeric():
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        elif int(_month) > 12 or int(_month) < 1:
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        if _year == None or not _year.isnumeric():
+            year = d.year
+        return (month, year)
+    
     def check_permission(self, request):
         user = request.user
         user_group = [g.name for g in user.groups.all()]
@@ -222,6 +241,36 @@ class WaterElectricalViewSet(viewsets.ModelViewSet):
             pass
         return Response({'status': 'fail', 'notification' : 'Water Electrical not found!'}, status=status.HTTP_404_NOT_FOUND)
 
+    # get list all room 
+    @action(methods=["GET"], detail=False, url_path="get_list_water_electrical_not_pagination", url_name="get_list_water_electrical_not_pagination")
+    def get_list_water_electrical_not_pagination(self, request, *args, **kwargs):
+        try:
+            if self.check_permission(request):
+                
+                area = self.request.GET.get('area', None) 
+                month = self.request.GET.get('month',None)                    
+                year = self.request.GET.get('year',None)
+                month, year = self.check_month_year(month, year)
+                if area != None:
+                    area = Area.objects.filter(Q(name=area) | Q(slug=area)) 
+                else:
+                    area = Area.objects.all()
+                               
+                room_in_area = Room.objects.filter(area__in=area).order_by('-id')
+                _list = WaterElectrical.objects.filter(room__in=room_in_area, year=year, month=month)
+                serializer = WaterElectricalDetailSerializer(_list, many=True)
+                data = serializer.data
+                for index, value in enumerate(_list):
+                    # print(value.bill_water_electrical.all().first())
+                    data[index]['isPaid'] = value.bill_water_electrical.all().first().is_paid
+            
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
 class BillViewSet(viewsets.ModelViewSet):
     serializer_class = BillSerializer
     permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
@@ -250,11 +299,15 @@ class BillViewSet(viewsets.ModelViewSet):
     
     def list(self, request, *args, **kwargs):
         try:
-            area = self.request.GET.get('area','') 
+            area = self.request.GET.get('area', None) 
             month = self.request.GET.get('month',None)                    
             year = self.request.GET.get('year',None)
             month, year = self.check_month_year(month, year)
-            area = Area.objects.filter(Q(name=area) | Q(slug=area)) 
+            if area != None:
+                area = Area.objects.filter(Q(name=area) | Q(slug=area)) 
+            else:
+                area = Area.objects.all()
+            
             room_in_area = Room.objects.filter(area__in=area).order_by('-id')
             _list = Bill.objects.filter(water_electrical__room__in=room_in_area, 
                                                               water_electrical__year=year,
@@ -321,12 +374,12 @@ class BillViewSet(viewsets.ModelViewSet):
             _list = Bill.objects.filter(water_electrical__room__in=room, 
                                                               water_electrical__year=year,
                                                               water_electrical__month=month)
-            _list = _list.filter(is_delete=False).first()
+            _list = _list.filter(is_delete=False).order_by('created_at')
             if _list:
-                serializer = BillDetailSerializer(_list)
+                serializer = BillDetailSerializer(_list, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                return Response({'status': 'fail', 'notification' : 'Bill not found!'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'status': 'fail', 'notification' : 'Room not have bill!'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
@@ -424,6 +477,23 @@ class ExpenseViewSet(viewsets.ModelViewSet):
                 user_group = [g.name for g in request.user.groups.all()]
                 if quanlynhansu_group in user_group:
                     _list = _list.filter(created_by=request.user)
+                    
+                keyword = self.request.GET.get('keyword')
+                if keyword and len(keyword) > 0:
+                    words = re.split(r"[-;,.\s]\s*", keyword)
+                    query = Q()
+                    for word in words:
+                        query |= ( Q(name__icontains=word)| 
+                                Q(type_expense__name__icontains=word) | 
+                                Q(description__icontains=word) | 
+                                Q(user_paid__user__first_name__icontains=word)| 
+                                Q(user_paid__user__last_name__icontains=word)| 
+                                Q(user_paid__user__username__icontains=word) )
+                        if word.isnumeric():
+                            query |= Q(price=int(word))
+                            
+                    _list=_list.filter(query).distinct()
+                
                 page = self.paginate_queryset(_list)
                 if page is not None:
                     serializer = self.get_serializer(page, many=True)
@@ -490,7 +560,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             if self.check_permission(request):
                 queryset = Expense.objects.filter(public_id=public_id, is_delete=False).first()
                 if queryset:
-                    serializer = ExpenseListSerializer(queryset)
+                    serializer = ExpenseDetailSerializer(queryset)
                     return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
@@ -548,11 +618,28 @@ class RevenueViewSet(viewsets.ModelViewSet):
                 user_group = [g.name for g in request.user.groups.all()]
                 if quanlynhansu_group in user_group:
                     _list = _list.filter(created_by=request.user)
+                
+                keyword = self.request.GET.get('keyword')
+                if keyword and len(keyword) > 0:
+                    words = re.split(r"[-;,.\s]\s*", keyword)
+                    query = Q()
+                    for word in words:
+                        query |= ( Q(name__icontains=word)| 
+                                Q(type_revenue__name__icontains=word) | 
+                                Q(description__icontains=word) | 
+                                Q(user_recieve__user__first_name__icontains=word)| 
+                                Q(user_recieve__user__last_name__icontains=word)| 
+                                Q(user_recieve__user__username__icontains=word) )
+                        if word.isnumeric():
+                            query |= Q(amount=int(word))
+                            
+                    _list=_list.filter(query).distinct()
+
                 page = self.paginate_queryset(_list)
                 if page is not None:
-                    serializer = self.get_serializer(page, many=True)
+                    serializer = RevenueListSerializer(page, many=True)
                     return self.get_paginated_response(serializer.data)
-                serializer = self.get_serializer(page, many=True)
+                serializer = RevenueListSerializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
@@ -613,7 +700,7 @@ class RevenueViewSet(viewsets.ModelViewSet):
             if self.check_permission(request):
                 queryset = Revenue.objects.filter(public_id=public_id, is_delete=False).first()
                 if queryset:
-                    serializer = RevenueListSerializer(queryset)
+                    serializer = RevenueDetailSerializer(queryset)
                     return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
@@ -621,5 +708,33 @@ class RevenueViewSet(viewsets.ModelViewSet):
             print(e)
         return Response({'status': 'fail', 'notification' : 'Revenue not found!'}, status=status.HTTP_404_NOT_FOUND)
 
+# ========================================================
+
+class UserRecievePaidViewSet(viewsets.ModelViewSet):
+    queryset = TypeExpense.objects.all()
+    serializer_class = UserRecievePaidSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = list(User.objects.filter((Q(groups__name='quanlynhansu_group')|
+                                            Q(groups__name='quanlytaichinh_group')|
+                                            Q(groups__name='nhanvien_group'))).distinct().values().order_by('id'))
+        for i in range(len(queryset)):
+            queryset[i].pop('password', None)
+            queryset[i].pop('last_login', None)
+            queryset[i].pop('is_superuser', None)
+            queryset[i].pop('is_staff', None)
+            queryset[i].pop('is_active', None)
+            queryset[i].pop('date_joined', None)
+            user = User.objects.get(pk=queryset[i]['id'])
+            l = []
+            for g in user.groups.all():
+                l.append(g.name)
+            per = []
+            for p in user.user_permissions.all():
+                per.append(p.codename)
+            queryset[i]['group'] = l
+            queryset[i]['permission'] = per
+
+        return JsonResponse(queryset, safe=False, status=status.HTTP_200_OK)
 
 

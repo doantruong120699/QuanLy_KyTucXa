@@ -9,6 +9,7 @@
   font-weight: 700;
 }
 .style-roomOfArea {
+  cursor: pointer;
   background-color: #ffaa2b;
   color: #fff;
 }

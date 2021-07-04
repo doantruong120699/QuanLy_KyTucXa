@@ -152,96 +152,114 @@ export default function WaterElectrical() {
       transform: "translate(-50%, -50%)",
     },
   };
-  return (
-    <div className="col col-full pl-48 pr-48">
-      {data && (
-        <Box paddingRight={15} style={{ width: "100%" }} display={"flex"}>
-          <div className="col col-half">
-            <div className="col col-two-third">
-              <div className="col col-half  pd-8">
-                <Typography>Lựa chọn tháng</Typography>
-                <Select
-                  className="week-select col-full"
-                  options={month}
-                  value={month.find((index) => index.value === time.month)}
-                  onChange={(params) => handleTimeChange(params, "month")}
-                />
-              </div>
-              <div className="col col-half pd-8">
-                <Typography>Lựa chọn năm</Typography>
-                <Select
-                  className="week-select col-full"
-                  options={year}
-                  value={year.find((index) => index.value === time.year)}
-                  onChange={(params) => handleTimeChange(params, "year")}
-                />
-              </div>
-            </div>
-            <div className="col col-full">
-              <Box>
-                {data.map((n, index) => {
-                  return (
-                    <CircularProgressWithLabel
-                      key={index}
-                      name={n.name}
-                      value={10}
-                      paid={n.paid}
-                      total={n.total}
-                      percentage={Number(((n.paid / n.total) * 100).toFixed(2))}
-                      onClick={() => {
-                        handleClickBox(n.name, n.slug);
-                      }}
-                    />
-                  );
-                })}
-              </Box>
-            </div>
-          </div>
-          {tableData && isShowTable && (
-            <div className="dataTable col col-half">
-              <div
-                style={{
-                  margin: "20px 0 20px 0",
-                  fontSize: "20px",
-                }}
-              >
-                {areaSelected}
-              </div>
 
-              <div className="ag-theme-alpine grid">
-                <AgGridReact
-                  animateRows
-                  enableColResize
-                  pagination={true}
-                  columnDefs={columnDefs}
-                  defaultColDef={defaultColDef}
-                  rowClassRules={rowClassRules}
-                  onCellClicked={handleCellClicked}
-                  getRowNodeId={(data) => data.name}
-                  onGridReady={onGridReady}
-                  rowData={tableData.room}
-                  paginationAutoPageSize={true}
-                />
+  if (data !== undefined) {
+    return (
+      <div className="col col-full pl-48 pr-48">
+        {data && (
+          <Box paddingRight={15} style={{ width: "100%" }} display={"flex"}>
+            <div className="col col-half">
+              <div className="col col-two-third">
+                <div className="col col-half  pd-8">
+                  <Typography>Chọn tháng</Typography>
+                  <Select
+                    className="week-select col-full"
+                    options={month}
+                    value={month.find((index) => index.value === time.month)}
+                    onChange={(params) => handleTimeChange(params, "month")}
+                  />
+                </div>
+                <div className="col col-half pd-8">
+                  <Typography>Chọn năm</Typography>
+                  <Select
+                    className="week-select col-full"
+                    options={year}
+                    value={year.find((index) => index.value === time.year)}
+                    onChange={(params) => handleTimeChange(params, "year")}
+                  />
+                </div>
+              </div>
+              <div className="col col-full">
+                <Box>
+                  {data.map((n, index) => {
+                    return (
+                      <CircularProgressWithLabel
+                        key={index}
+                        name={n.name}
+                        value={10}
+                        paid={n.paid}
+                        total={n.total}
+                        percentage={
+                          n.total !== 0
+                            ? Number(((n.paid / n.total) * 100).toFixed(2))
+                            : 0
+                        }
+                        onClick={() => {
+                          handleClickBox(n.name, n.slug);
+                        }}
+                      />
+                    );
+                  })}
+                </Box>
               </div>
             </div>
-          )}
-          <ReactModal
-            isOpen={isModalVisible}
-            onRequestClose={hideModal}
-            style={customStyles}
-          >
-            <ShowBill
-              selectedMonth={time.month}
-              selectedYear={time.year}
-              room={roomSelected}
-              area={areaSelected}
-              onCancel={onCancel}
-            />
-          </ReactModal>
-        </Box>
-      )}
-    </div>
-  );
+            {tableData ? (
+              <div className="dataTable col col-half">
+                <div
+                  style={{
+                    margin: "20px 0 20px 0",
+                    fontSize: "20px",
+                  }}
+                >
+                  {areaSelected}
+                </div>
+
+                <div className={"ag-theme-alpine grid"}>
+                  {
+                    <AgGridReact
+                      animateRows
+                      enableColResize
+                      pagination={true}
+                      columnDefs={columnDefs}
+                      defaultColDef={defaultColDef}
+                      rowClassRules={rowClassRules}
+                      onCellClicked={handleCellClicked}
+                      getRowNodeId={(data) => data.name}
+                      onGridReady={onGridReady}
+                      rowData={tableData.room}
+                      paginationAutoPageSize={true}
+                    />
+                  }
+                </div>
+              </div>
+            ) : (
+              <div style={{fontWeight:'700',fontSize:'24px'}}> Chọn vào một khu để hiện ra thông tin chi tiết</div>
+            )}
+            <ReactModal
+              isOpen={isModalVisible}
+              onRequestClose={hideModal}
+              style={customStyles}
+            >
+              <ShowBill
+                selectedMonth={time.month}
+                selectedYear={time.year}
+                room={roomSelected}
+                area={areaSelected}
+                onCancel={onCancel}
+              />
+            </ReactModal>
+          </Box>
+        )}
+      </div>
+    );
+  } else {
+    return (
+      <div style={{ textAlign: "center", fontWeight: "700", fontSize: "24px" }}>
+        {" "}
+        Không có dữ liệu
+      </div>
+    );
+  }
 }
 
 function CircularProgressWithLabel(props) {

@@ -1,544 +1,482 @@
-import Box from "@material-ui/core/Box";
-import Button from "@material-ui/core/Button";
-import React, { useEffect, useState } from "react";
-import SendIcon from "@material-ui/icons/Send";
-import { Typography } from "@material-ui/core";
-import { withStyles, makeStyles } from "@material-ui/core/styles";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
+import React, { useState } from "react";
 import "./styles.css";
-import { getFaculty } from "../../../redux/actions/account";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import DatePicker from "react-datepicker";
+import Popup from "reactjs-popup";
+import Button from "../../../components/common/Button";
+import FormError from "../../../components/common/FormError";
+import InputField from "../../../components/common/InputField";
+import { getSendData } from "../../../utilities/constants/DataRender/account";
+import ReactTags from "react-tag-autocomplete";
+import validate from "../../../utilities/regex";
+import { createAccount } from "../../../redux/actions/account";
+import Alertness from "../../../components/common/Alertness";
+import * as ALERTMESSAGE from "../../../utilities/constants/AlertMessage";
+import * as APIALERTMESSAGE from "../../../utilities/constants/APIAlertMessage";
 
-import FormControl from "@material-ui/core/FormControl";
-import InputLabel from "@material-ui/core/InputLabel";
-import TextField from "@material-ui/core/TextField";
-import InputBase from "@material-ui/core/InputBase";
-import ListItemText from "@material-ui/core/ListItemText";
-import Checkbox from "@material-ui/core/Checkbox";
-import moment from "moment";
-
-export default function NotificationForm(props) {
-  const {
+export default function AddAccount(props) {
+  var {
     userInfor,
+    updateState,
     permission,
     faculty,
     class_in_university,
     area,
     position,
+    hideModal,
+    isOpen,
   } = props;
 
-  const [dumbBirthDay, setDumbBirthDay] = useState();
+  const [newAccount, setAccount] = useState(userInfor);
 
-  const [localData, setLocalData] = useState({
-    // this data used to store value, dataSend will be the data to post
-    email: "",
-    password: "0",
-    userName: "",
-    permission: [],
-    group: [],
-    firstName: "",
-    lastName: "",
-    birthday: "",
-    role: "",
-    address: "",
-    identify_card: "",
-    gender: "",
-    phone: "",
-    faculty: "",
-    my_class: "",
-    position: "",
-    area: "",
-  });
-  const handleClick = () => {
-    console.log("Local data",localData)
-    const dataSend = {
-      username: localData.userName,
-      password: localData.password,
-      first_name: localData.firstName,
-      last_name: localData.lastName,
-      email: localData.email,
-      profile: {
-        birthday: localData.birthday,
-        address: localData.address,
-        identify_card: localData.identify_card,
-        gender: localData.gender === 1 ? true : false,
-        phone: localData.phone,
-        faculty: localData.role !== "student" ? "" : localData.faculty,
-        my_class: localData.role !== "student" ? "" : localData.my_class,
-        area: localData.role === "student" ? "" : localData.area,
-        position: localData.role === "student" ? "" : localData.position,
-      },
-      group_list: localData.group,
-      permission_list: localData.permission,
-    }; //this is right format of data to post
-    if (localData.password !== localData.confirmPassword) {
-      alert("xác nhận đúng mật khẩu");
-    }
-    console.log("Data send", dataSend);
-  };
-  // const [typeSelect, setTypeSelect] = useState("");
-  // const [amount, setAmount] = useState();
-  // const [price, setPrice] = useState();
-  // const [description, setDescription] = useState();
+  const [notification, setNotification] = useState(null);
 
-  useEffect(() => {
-    if (userInfor) {
-      setLocalData({
-        userName: userInfor.user.username || "",
-        password: userInfor.password || "",
-        email: userInfor.user.email || "",
-        permission: userInfor.user.permissions_list
-          ? userInfor.user.permissions_list.map((value) => value.id)
-          : [],
-        group: userInfor.user.group_list
-          ? userInfor.user.group_list.map((value) => value.id)
-          : [],
-        firstName: userInfor.user.first_name || "",
-        lastName: userInfor.user.last_name || "",
-        birthday: userInfor.birthday || "",
-        role: "" || "",
-        address: userInfor.address || "",
-        identify_card: userInfor.identify_card || "",
-        gender: userInfor.gender || "",
-        phone: userInfor.phone || "",
-        faculty: userInfor.faculty?.id ? userInfor.faculty.id : "",
-        my_class: userInfor.my_class ? userInfor.my_class.id : "",
-        position: userInfor.position ? userInfor.position.id : "",
-        area: userInfor.area ? userInfor.area.id : "",
+  const [open, setOpen] = useState(false);
+
+  const onClose = () => setOpen(false);
+
+  const onOpen = () => setOpen(true);
+
+  function handleInput(event) {
+    const { name, value } = event.target;
+    const newState = { ...newAccount[name] };
+    newState.value = value;
+    setAccount({ ...newAccount, [name]: newState });
+  }
+
+  function handleGroupAddition(tag) {
+    const newState = [...newAccount.group];
+
+    if (!newState.includes(tag)) {
+      newState.push(tag);
+      setAccount({
+        ...newAccount,
+        group: newState,
       });
     }
-  }, []);
-  const SendButton = withStyles((theme) => ({
-    root: {
-      width: "100px",
-    },
-  }))(Button);
-  const useStyles = makeStyles((theme) => ({
-    formControl: {
-      minWidth: 120,
-      borderRadius: 10,
-    },
-    chips: {
-      display: "flex",
-      flexWrap: "wrap",
-    },
-    selectEmpty: {
-      marginTop: theme.spacing(2),
-    },
-    chip: {
-      margin: 2,
-    },
-    noLabel: {
-      marginTop: theme.spacing(3),
-    },
-    margin: {},
-  }));
-  const Input = withStyles((theme) => ({
-    input: {
-      width: 185,
-      borderRadius: 4,
-      position: "relative",
-      backgroundColor: theme.palette.background.paper,
-      border: "1px solid #ced4da",
-      fontSize: 16,
-      padding: "10px 26px 10px 12px",
-      "&:focus": {
-        borderRadius: 4,
-        borderColor: "#80bdff",
-      },
-      //transition: theme.transitions.create(["border-color", "box-shadow"]),
-    },
-  }))(InputBase);
-  const classes = useStyles();
+  }
 
-  const handleChange = (event) => {
-    if (localData.role === "student") {
-      setLocalData({ ...localData, position: "", area: "" });
-    } else setLocalData({ ...localData, faculty: "", my_class: "" });
-    const name = event.target.name;
-    const data = event.target.value;
-    setLocalData({ ...localData, [name]: data });
-  };
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: 48 * 4.5 + 8,
-        width: 250,
-      },
-    },
-  };
-  return (
-    <Box style={{ width: "100%" }}>
-      <Box marginLeft={"15%"} marginBottom={3}>
-        <Typography variant="h6">Thêm một tài khoản mới</Typography>
-      </Box>
-      <Box marginTop={3} marginLeft={"15%"}>
-        <TextField
-          id="userName"
-          name={"userName"}
-          value={localData.userName}
-          label="Tên Tài Khoản"
-          onChange={handleChange}
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          id="email"
-          value={localData.email}
-          name={"email"}
-          type="email"
-          label="Email"
-          variant="outlined"
-          onChange={handleChange}
-          size="small"
-          style={{ marginLeft: "42px" }}
-        />
-      </Box>
-      <Box marginLeft={"15%"} display="flex">
-        <FormControl className={classes.margin}>
-          <InputLabel id="demo-simple-select-label">Nhóm Chức năng</InputLabel>
-          <Select
-            labelId={"demo-customized-select-label"}
-            value={localData.group}
-            onChange={handleChange}
-            name={"group"}
-            displayEmpty
-            multiple
-            MenuProps={MenuProps}
-            renderValue={(selected) => selected.join(", ")}
-            className={classes.selectEmpty}
-            input={<Input />}
-          >
-            {permission.group.map((value, index) => {
-              return (
-                <MenuItem key={index} value={value.id}>
-                  <Checkbox checked={localData.group.indexOf(value.id) > -1} />
-                  <ListItemText primary={value.name} />
-                </MenuItem>
-              );
-            })}
-          </Select>
-          <FormHelperText>Lựa chọn nhóm chức năng</FormHelperText>
-        </FormControl>
-        <div
-          placeholder={"nhóm chức năng"}
-          style={{
-            width: "220px",
-            height: "50px",
-            border: "1px solid",
-            marginLeft: "7%",
-            overflowY: "scroll",
-            display: "block",
-            marginTop: "20px",
-          }}
-        >
-          {localData.group.map((value, index) => {
-            return (
-              <div key={index}>
-                {permission.group.find((ele) => ele.id === value).name}
-              </div>
-            );
-          })}
-        </div>
-      </Box>
-      <Box display="flex" marginLeft={"15%"}>
-        <FormControl className={classes.formControl}>
-          <InputLabel id="demo-mutiple-checkbox-label">Quyền</InputLabel>
-          <Select
-            name="permission"
-            labelId="demo-mutiple-checkbox-label"
-            id="demo-mutiple-checkbox"
-            multiple
-            value={localData.permission}
-            onChange={handleChange}
-            input={<Input />}
-            renderValue={(selected) => selected.join(", ")}
-            MenuProps={MenuProps}
-          >
-            {permission.permission.map((value, index) => (
-              <MenuItem key={index} value={value.id}>
-                <Checkbox
-                  checked={localData.permission.indexOf(value.id) > -1}
-                />
-                <ListItemText primary={value.name} />
-              </MenuItem>
-            ))}
-          </Select>
-          <FormHelperText>Lựa chọn quyền</FormHelperText>
-        </FormControl>
-        <div
-          style={{
-            width: "220px",
-            height: "50px",
-            border: "1px solid",
-            marginLeft: "7%",
-            overflowY: "scroll",
-            display: "block",
-          }}
-        >
-          {localData.permission.map((value, index) => {
-            return (
-              <div key={index}>
-                {permission.permission.find((ele) => ele.id === value).name}
-              </div>
-            );
-          })}
-        </div>
-      </Box>
+  function validateEditedinfo() {
+    let tempEditData = { ...newAccount };
 
-      <Box marginLeft={"15%"} marginTop={"3%"}>
-        <FormControl className={classes.margin}>
-          <InputLabel id="demo-customized-select-label">
-            Loại Tài Khoản
-          </InputLabel>
-          <Select
-            value={localData.role}
-            onChange={handleChange}
-            name={"role"}
-            displayEmpty
-            className={classes.selectEmpty}
-            input={<Input />}
-          >
-            <MenuItem value="none">None</MenuItem>
-            <MenuItem value="superAdmin">Super Admin</MenuItem>
-            <MenuItem value={"humanResources"}>Quản Lý Nhân Sự</MenuItem>
-            <MenuItem value={"accountant"}>Quản Lý Thu Chi</MenuItem>
-            <MenuItem value={"employee"}>Nhân Viên</MenuItem>
-            <MenuItem value={"student"}>Sinh Viên</MenuItem>
-          </Select>
-          <FormHelperText>Lựa chọn loại tài khoản</FormHelperText>
-        </FormControl>
-        <FormControl className={classes.margin} style={{ marginLeft: "40px" }}>
-          <InputLabel id="demo-customized-select-label">Giới tính </InputLabel>
-          <Select
-            value={localData.gender}
-            onChange={handleChange}
-            name={"gender"}
-            displayEmpty
-            className={classes.selectEmpty}
-            input={<Input />}
-          >
-            <MenuItem value="1">Nam</MenuItem>
-            <MenuItem value="0">Nữ</MenuItem>
-          </Select>
-          <FormHelperText>Lựa chọn giới tính</FormHelperText>
-        </FormControl>
-      </Box>
+    Object.keys(newAccount).forEach((value) => {
+      if (
+        newAccount[value].validateType &&
+        !validate[newAccount[value].validateType](newAccount[value].value)
+      ) {
+        tempEditData[value].isValid = false;
+        tempEditData[value].isHidden = false;
+      } else {
+        tempEditData[value].isValid = true;
+        tempEditData[value].isHidden = true;
+      }
+      setAccount(tempEditData);
+    });
+  }
 
-      <Box marginLeft={"15%"}>
-        <TextField
-          id="firstName"
-          name={"firstName"}
-          label="Tên"
-          value={localData.firstName}
-          variant="outlined"
-          onChange={handleChange}
-          size="small"
-          style={{ marginTop: "15px" }}
-        />
-        <TextField
-          id="lastName"
-          name={"lastName"}
-          type="lastName"
-          value={localData.lastName}
-          label="Họ "
-          variant="outlined"
-          onChange={handleChange}
-          size="small"
-          style={{ marginTop: "15px", marginLeft: "40px" }}
-        />
-      </Box>
-      <Box marginLeft={"15%"}>
-        <TextField
-          value={localData.identify_card}
-          id="identify_card"
-          name={"identify_card"}
-          label="CMND"
-          variant="outlined"
-          onChange={handleChange}
-          size="small"
-          style={{ marginTop: "15px" }}
-        />
-        <TextField
-          id="address"
-          value={localData.address}
-          name={"address"}
-          label="Địa chỉ liên lạc"
-          variant="outlined"
-          onChange={handleChange}
-          size="small"
-          style={{ marginTop: "15px", marginLeft: "40px" }}
-        />
-      </Box>
+  function handleGroupDelete(i) {
+    const tags = newAccount.group.slice(0);
+    tags.splice(i, 1);
+    setAccount({ ...newAccount, group: tags });
+  }
 
-      <Box marginLeft={"15%"}>
-        <DatePicker
-          className="add-account-birthday"
-          name="birthday"
-          placeholderText="Ngày Sinh"
-          selected={dumbBirthDay}
-          onChange={(value) => {
-            setDumbBirthDay(value);
-            setLocalData({
-              ...localData,
-              birthday: moment(value).format("YYYY-MM-DD"),
+  function handlePermissionAddition(tag) {
+    const newState = [...newAccount.permission];
+
+    if (!newState.includes(tag)) {
+      newState.push(tag);
+      setAccount({
+        ...newAccount,
+        permission: newState,
+      });
+    }
+  }
+
+  function handlePermissionDelete(i) {
+    const tags = newAccount.permission.slice(0);
+    tags.splice(i, 1);
+    setAccount({ ...newAccount, permission: tags });
+  }
+
+  function onSave() {
+    validateEditedinfo();
+
+    if (
+      !newAccount.firstName.isValid ||
+      !newAccount.lastName.isValid ||
+      !newAccount.address.isValid ||
+      !newAccount.email.isValid ||
+      newAccount.group.length === 0 ||
+      !newAccount.identify_card.isValid ||
+      !newAccount.phone.isValid ||
+      !newAccount.password.isValid ||
+      newAccount.password.value !== newAccount.confirm.value ||
+      !newAccount.confirm.isValid ||
+      !newAccount.username.isValid
+    ) {
+      return;
+    }
+
+    const data = getSendData(newAccount);
+    createAccount(data, (output) => {
+      if (output) {
+        switch (output.status) {
+          case APIALERTMESSAGE.STATUS_SUCCESS:
+            setNotification({
+              type: "type-success",
+              content: ALERTMESSAGE.CREATE_SUCCESSFULLY,
             });
-          }}
-        />
-        <TextField
-          id="phone"
-          name={"phone"}
-          label="Số điện thoại"
-          value={localData.phone}
-          variant="outlined"
-          onChange={handleChange}
-          size="small"
-          style={{ marginTop: "15px", marginLeft: "42px" }}
-        />
-      </Box>
 
-      <Box marginTop={3} marginLeft={"15%"}>
-        <FormControl className={classes.margin}>
-          <InputLabel id="demo-simple-select-label">Phòng Ban</InputLabel>
-          <Select
-            labelId={"demo-customized-select-label"}
-            value={localData.position}
-            onChange={handleChange}
-            disabled={localData.role === "student"}
-            name={"position"}
-            displayEmpty
-            MenuProps={MenuProps}
-            className={classes.selectEmpty}
-            input={<Input />}
-          >
-            {position.map((value, index) => {
-              return (
-                <MenuItem key={index} value={value.id}>
-                  {value.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-          <FormHelperText>
-            {localData.role === "student"
-              ? "Bạn không cần điền ô này"
-              : "Lựa chọn phòng ban"}
-          </FormHelperText>
-        </FormControl>
-        <FormControl className={classes.margin} style={{ marginLeft: "40px" }}>
-          <InputLabel id="demo-simple-select-label">Khu Vực</InputLabel>
-          <Select
-            labelId={"demo-customized-select-label"}
-            value={localData.area}
-            onChange={handleChange}
-            disabled={localData.role === "student"}
-            name={"area"}
-            displayEmpty
-            MenuProps={MenuProps}
-            className={classes.selectEmpty}
-            input={<Input />}
-          >
-            {area.map((value, index) => {
-              return (
-                <MenuItem key={index} value={value.id}>
-                  {value.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-          <FormHelperText>
-            {localData.role === "student"
-              ? "Bạn không cần điền ô này"
-              : "Lựa chọn khu vực làm"}
-          </FormHelperText>
-        </FormControl>
-      </Box>
-
-      <Box marginTop={3} marginLeft={"15%"}>
-        <FormControl className={classes.margin}>
-          <InputLabel id="demo-simple-select-label">Khoa</InputLabel>
-          <Select
-            labelId={"demo-customized-select-label"}
-            value={localData.faculty}
-            onChange={handleChange}
-            disabled={localData.role !== "student"}
-            name={"faculty"}
-            displayEmpty
-            MenuProps={MenuProps}
-            className={classes.selectEmpty}
-            input={<Input />}
-          >
-            {faculty.map((value, index) => {
-              return (
-                <MenuItem key={index} value={value.id}>
-                  {value.name}
-                </MenuItem>
-              );
-            })}
-          </Select>
-          <FormHelperText>
-            {localData.role !== "student"
-              ? "Bạn không cần điền ô này"
-              : "Lựa chọn khoa đang theo học"}
-          </FormHelperText>
-        </FormControl>
-        <FormControl className={classes.margin} style={{ marginLeft: "40px" }}>
-          <InputLabel id="demo-simple-select-label">Lớp Sinh Hoạt</InputLabel>
-          <Select
-            labelId={"demo-customized-select-label"}
-            value={localData.my_class}
-            onChange={handleChange}
-            disabled={localData.role !== "student"}
-            name={"my_class"}
-            displayEmpty
-            MenuProps={MenuProps}
-            className={classes.selectEmpty}
-            input={<Input />}
-          >
-            {class_in_university.map((value, index) => {
-              return <MenuItem value={value.id}>{value.name}</MenuItem>;
-            })}
-          </Select>
-          <FormHelperText>
-            {localData.role !== "student"
-              ? "Bạn không cần điền ô này"
-              : "Lựa chọn lớp sinh hoạt"}
-          </FormHelperText>
-        </FormControl>
-      </Box>
-      <Box marginTop={3} marginLeft={"15%"}>
-        <TextField
-          id="password"
-          name={"password"}
-          label="Mật khẩu"
-          onChange={handleChange}
-          variant="outlined"
-          size="small"
-          type="password"
-        />
-        <TextField
-          id="confirmPassword"
-          label="Xác Nhận Mật khẩu"
-          name={"confirmPassword"}
-          onChange={handleChange}
-          variant="outlined"
-          size="small"
-          type="password"
-          style={{ marginLeft: "40px" }}
-        />
-      </Box>
-      <Box textAlign="center" marginTop={3}>
-        <SendButton
-          variant="contained"
-          color="primary"
-          onClick={handleClick}
-          startIcon={<SendIcon>send</SendIcon>}
-        >
-          Gửi
-        </SendButton>
-      </Box>
-    </Box>
+            updateState();
+            setAccount(userInfor);
+            break;
+          default:
+            setNotification({
+              type: "type-error",
+              content: output.notification,
+            });
+            break;
+        }
+      } else {
+        setNotification({
+          type: "type-error",
+          content: ALERTMESSAGE.SYSTEM_ERROR,
+        });
+      }
+    });
+    hideModal();
+    onOpen();
+  }
+  return (
+    <div>
+      {permission && faculty && area && class_in_university && position && (
+        <Popup open={isOpen} closeOnDocumentClick onClose={() => hideModal()}>
+          <div className="col lg-modal style-lg-box bg-color-white text-align-ct">
+            <h2>Nhập thông tin cá nhân mới</h2>
+            <div className="col col-full">
+              <div className="col col-full pd-24 style-account-modal">
+                <div className="col col-full mt-8">
+                  <div className="col col-half mt-8 pr-4">
+                    <FormError
+                      isHidden={newAccount.firstName.isHidden}
+                      errorMessage={newAccount.firstName.errorMessage}
+                    />
+                  </div>
+                  <div className="col col-half mt-8 pl-4">
+                    <FormError
+                      isHidden={newAccount.lastName.isHidden}
+                      errorMessage={newAccount.lastName.errorMessage}
+                    />
+                  </div>
+                </div>
+                <div className="col col-full mt-8">
+                  <div className="col col-half pr-4">
+                    <InputField
+                      name="firstName"
+                      isValid={newAccount.firstName.isValid}
+                      value={newAccount.firstName.value}
+                      type={newAccount.firstName.type}
+                      placeholder={newAccount.firstName.title}
+                      onChange={handleInput}
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div className="col col-half pl-4">
+                    <InputField
+                      name="lastName"
+                      isValid={newAccount.lastName.isValid}
+                      value={newAccount.lastName.value}
+                      type={newAccount.lastName.type}
+                      placeholder={newAccount.lastName.title}
+                      onChange={handleInput}
+                      autocomplete="off"
+                    />
+                  </div>
+                </div>
+                <div className="col col-full mt-8">
+                  <FormError
+                    isHidden={newAccount.email.isHidden}
+                    errorMessage={newAccount.email.errorMessage}
+                  />
+                  <InputField
+                    name="email"
+                    isValid={newAccount.email.isValid}
+                    value={newAccount.email.value}
+                    type={newAccount.email.type}
+                    placeholder={newAccount.email.title}
+                    onChange={handleInput}
+                    autocomplete="off"
+                  />
+                </div>
+                <div className="col col-full mt-8">
+                  <FormError
+                    isHidden={newAccount.birthday.isHidden}
+                    errorMessage={newAccount.birthday.errorMessage}
+                  />
+                  <InputField
+                    name="birthday"
+                    isValid={newAccount.birthday.isValid}
+                    value={newAccount.birthday.value}
+                    type={newAccount.birthday.type}
+                    placeholder={newAccount.birthday.title}
+                    onChange={handleInput}
+                    autocomplete="off"
+                  />
+                </div>
+                <div className="col col-full mt-8">
+                  <div className="col col-half pr-4">
+                    <FormError
+                      isHidden={newAccount.phone.isHidden}
+                      errorMessage={newAccount.phone.errorMessage}
+                    />
+                  </div>
+                  <div className="col col-half pl-4">
+                    <FormError
+                      isHidden={newAccount.identify_card.isHidden}
+                      errorMessage={newAccount.identify_card.errorMessage}
+                    />
+                  </div>
+                </div>
+                <div className="col col-full ">
+                  <div className="col col-half  pr-4">
+                    <InputField
+                      name="phone"
+                      isValid={newAccount.phone.isValid}
+                      value={newAccount.phone.value}
+                      type={newAccount.phone.type}
+                      placeholder={newAccount.phone.title}
+                      onChange={handleInput}
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div className="col col-half pr-4">
+                    <InputField
+                      name="identify_card"
+                      isValid={newAccount.identify_card.isValid}
+                      value={newAccount.identify_card.value}
+                      type={newAccount.identify_card.type}
+                      placeholder={newAccount.identify_card.title}
+                      onChange={handleInput}
+                      autocomplete="off"
+                    />
+                  </div>
+                </div>
+                <div className="col col-full mt-8">
+                  <FormError
+                    isHidden={newAccount.address.isHidden}
+                    errorMessage={newAccount.address.errorMessage}
+                  />
+                  <InputField
+                    name="address"
+                    isValid={newAccount.address.isValid}
+                    value={newAccount.address.value}
+                    type={newAccount.address.type}
+                    placeholder={newAccount.address.title}
+                    onChange={handleInput}
+                    autocomplete="off"
+                  />
+                </div>
+                <div className="col col-full mt-8">
+                  <div className="col col-half pr-4">
+                    <select
+                      className="form-control"
+                      name="gender"
+                      value={newAccount.gender.value}
+                      onChange={handleInput}
+                    >
+                      <option value={true}>Nam</option>
+                      <option value={false}>Nữ</option>
+                    </select>
+                  </div>
+                  <div className="col col-half pl-4">
+                    <select
+                      className="form-control"
+                      name="my_class"
+                      value={newAccount.my_class.value}
+                      onChange={handleInput}
+                      disabled={
+                        newAccount.group.filter(
+                          (ele) => ele.name === "sinhvien_group"
+                        ).length === 0
+                      }
+                    >
+                      {class_in_university.map((value, index) => {
+                        return (
+                          <option key={index} value={value.id}>
+                            {value.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                </div>
+                <div className="col col-full mt-8">
+                  <select
+                    className="form-control"
+                    name="faculty"
+                    value={newAccount.faculty.value}
+                    onChange={handleInput}
+                    disabled={
+                      newAccount.group.filter(
+                        (ele) => ele.name === "sinhvien_group"
+                      ).length === 0
+                    }
+                  >
+                    {faculty.map((value, index) => {
+                      return (
+                        <option key={index} value={value.id}>
+                          {value.name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div className="col col-full mt-8">
+                  <div className="col col-half pr-4">
+                    <select
+                      className="form-control"
+                      name="position"
+                      value={newAccount.position.value}
+                      onChange={handleInput}
+                    >
+                      {position.map((value, index) => {
+                        return (
+                          <option key={index} value={value.id}>
+                            {value.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                  <div className="col col-half pl-4">
+                    <select
+                      className="form-control"
+                      name="area"
+                      value={newAccount.area.value}
+                      onChange={handleInput}
+                    >
+                      {area.map((value, index) => {
+                        return (
+                          <option key={index} value={value.id}>
+                            {value.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                </div>
+                <div className="col col-full mt-8">
+                  <FormError
+                    isHidden={newAccount.username.isHidden}
+                    errorMessage={newAccount.username.errorMessage}
+                  />
+                  <InputField
+                    name="username"
+                    isValid={newAccount.username.isValid}
+                    value={newAccount.username.value}
+                    type={newAccount.username.type}
+                    placeholder={newAccount.username.title}
+                    onChange={handleInput}
+                    autocomplete="off"
+                  />
+                </div>
+                <div className="col col-full mt-8">
+                  <div className="col col-half pr-4">
+                    <FormError
+                      isHidden={
+                        newAccount.password.isHidden ||
+                        newAccount.confirm.isHidden
+                      }
+                      errorMessage={newAccount.password.errorMessage}
+                    />
+                  </div>
+                  <div className="col col-half pl-4">
+                    <FormError
+                      isHidden={
+                        newAccount.password.value === newAccount.confirm.value
+                      }
+                      errorMessage={newAccount.confirm.errorMessage}
+                    />
+                  </div>
+                </div>
+                <div className="col col-full mt-8">
+                  <div className="col col-half pr-4">
+                    <InputField
+                      name="password"
+                      isValid={newAccount.password.isValid}
+                      value={newAccount.password.value}
+                      type={newAccount.password.type}
+                      placeholder={newAccount.password.title}
+                      onChange={handleInput}
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div className="col col-half pl-4">
+                    <InputField
+                      name="confirm"
+                      isValid={
+                        newAccount.confirm.isValid ||
+                        newAccount.password.value === newAccount.confirm.value
+                      }
+                      value={newAccount.confirm.value}
+                      type={newAccount.confirm.type}
+                      placeholder={newAccount.confirm.title}
+                      onChange={handleInput}
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div className="col col-full mt-8">
+                    <ReactTags
+                      name="group"
+                      tags={newAccount.group}
+                      suggestions={permission.group}
+                      onAddition={handleGroupAddition}
+                      onDelete={handleGroupDelete}
+                      placeholderText="Thêm group"
+                    />
+                  </div>
+                  <div className="col col-full mt-8">
+                    <ReactTags
+                      name="permission"
+                      tags={newAccount.permission}
+                      suggestions={permission.permission}
+                      onAddition={handlePermissionAddition}
+                      onDelete={handlePermissionDelete}
+                      placeholderText="Thêm quyền"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="col col-full mt-24">
+                <div className="col col-half">
+                  <Button
+                    type="normal-red"
+                    content="HỦY"
+                    isDisable={false}
+                    onClick={hideModal}
+                  />
+                </div>
+                <div className="col col-half">
+                  <Button
+                    type="normal-ubg"
+                    content="LƯU"
+                    isDisable={false}
+                    onClick={onSave}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </Popup>
+      )}
+      <div>
+        {notification && (
+          <Alertness
+            open={open}
+            onClose={onClose}
+            type={notification.type}
+            content={notification.content}
+          />
+        )}
+      </div>
+    </div>
   );
 }

@@ -3,13 +3,20 @@ import { useHistory } from "react-router-dom";
 import * as ROUTER from "../../utilities/constants/router";
 import avatar from "../../assets/images/user/employee.jpg";
 const EmployeeTag = (props) => {
-  const history = useHistory();
   const { slug, name, email, phone } = props;
+
+  const history = useHistory();
+
+  function gotoPage(path) {
+    window.scrollTo(0, 0);
+    history.push(path);
+  }
+
   return (
     <div
       className="col col-full style-lg-box bg-color-white style-employee-tag"
       onClick={() =>
-        history.push(
+        gotoPage(
           `${ROUTER.ROUTE_EMPLOYEES}${ROUTER.ROUTE_DETAILED_EMPLOYEES}/${slug}`
         )
       }

@@ -10,6 +10,7 @@ const initialState = {
 function dashboard(state = initialState, actions) {
   switch (actions.type) {
     case TypeActions.GET_NOTIFICATIONS_API:
+    case TypeActions.POST_NOTIFICATION:
       return {
         ...state,
         loading: true,
@@ -22,6 +23,8 @@ function dashboard(state = initialState, actions) {
         loading: false,
       };
     case TypeActions.GET_NOTIFICATIONS_API_FAIL:
+    case TypeActions.POST_NOTIFICATION_FAIL:
+    case TypeActions.POST_NOTIFICATION_SUCCEED:
       return {
         ...state,
         error: actions.payload,

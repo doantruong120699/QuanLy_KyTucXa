@@ -3,19 +3,22 @@ import store from "../store";
 
 const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
 
-export async function getNotifications(resolve = () => {}) {
+export async function getNotifications(params, resolve = () => {}) {
   store.dispatch({
     type: types.GET_NOTIFICATIONS_API,
   });
   try {
-    const response = await fetch(`${REACT_APP_BASE_API}notifications/`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    });
+    const response = await fetch(
+      `${REACT_APP_BASE_API}notifications/?${params}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
     const data_1 = await response.json();
     resolve(data_1);
     store.dispatch({
@@ -45,7 +48,8 @@ export async function createNotification(data, resolve = () => {}) {
       body: JSON.stringify(data),
     });
     const data_1 = await response.json();
-    resolve(data_1);
+    const isOk = response.ok;
+    resolve(data_1, isOk);
     store.dispatch({
       payload: data_1,
       type: types.CREATE_NOTIFICATION_API_SUCCEED,

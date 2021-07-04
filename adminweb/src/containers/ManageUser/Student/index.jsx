@@ -1,9 +1,9 @@
 import "react-tabs/style/react-tabs.css";
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import Room from "./Room";
 import MUIDataTable from "mui-datatables";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
 import ReactModal from "react-modal";
 import moment from "moment";
 import {
@@ -14,13 +14,22 @@ import {
 import { getRoom } from "../../../utilities/constants/DataRender/checkroom";
 import queryString from "query-string";
 import Pagination from "../../../components/common/Pagination";
+import Loader from "../../../components/common/Loader";
 import YesNoModal from "../../../components/YesNoModal";
+
 export default function Student() {
   const [dataArea, setDataArea] = useState();
+
   const [studentToDelete, setStudentToDelete] = useState([]);
+
   const [peopleInRoom, setPeopleInRoom] = useState();
+
   const [slugSelected, setSlugSelected] = useState();
+
   const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
+
+  const loader = useSelector((state) => state.humanResource.loading);
+
   const [pagination, setPagination] = useState({
     page: 1,
     page_size: 20,
@@ -103,7 +112,7 @@ export default function Student() {
   }, [isModalVisible]);
   const handleDeletePeople = () => {
     studentToDelete.map((index) => {
-      return deleteStudentInRoom(index.publicId, (output) => {
+      return deleteStudentInRoom(index.publicId, () => {
         getRoomDetails(slugSelected, (output) => {
           if (output) {
             setPeopleInRoom(convertDataForTable(output));
@@ -177,10 +186,8 @@ export default function Student() {
     pagination: false,
     onRowsDelete: (rowsDeleted, dataRows) => {
       const tempArr = [];
-      console.log("rowsDeleted", rowsDeleted);
       rowsDeleted.data.map((index) => {
         const temp = peopleInRoom[index.index];
-        console.log("temp", temp);
         return tempArr.push(temp);
       });
       setStudentToDelete(tempArr);
@@ -189,83 +196,83 @@ export default function Student() {
     customHeadRender: () => {
       return null;
     },
-    onRowClick: (params, rowMeta) => {},
   };
 
-  const handleClickAddPeopleWithParams = (params) => {
-    //console.log("AAAAAAAA", params);
-  };
-  console.log("Is delete", studentToDelete);
   return (
-    <div className="col col-full pl-48">
-      {dataArea &&
-        dataArea.map((area, index) => {
-          return (
-            <div
-              key={index}
-              className="col col-full style-lg-box bg-color-white mb-24"
-            >
-              <p className="bold-text">{area.name}</p>
-              {area.rooms.map((room, i) => {
-                return (
-                  <div key={i} className="col col-5 pd-8">
-                    <Room
-                      name={room.name}
-                      maximum={room.typeroom.number_max}
-                      numberNow={room.number_now}
-                      onClick={() => handleClickRoom(room.slug)}
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          );
-        })}
-      <ReactModal
-        isOpen={isModalVisible}
-        onRequestClose={hideModal}
-        style={customStyles}
-        ariaHideApp={false}
-      >
-        <div>
-          <MuiThemeProvider theme={getMuiTheme()}>
-            <MUIDataTable
-              title={"Thành viên trong phòng"}
-              data={peopleInRoom}
-              columns={columns}
-              options={options}
-            ></MUIDataTable>
-          </MuiThemeProvider>
-          <div
-            style={{
-              textAlign: "center",
-              marginTop: "20px",
-            }}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={(params) => handleClickAddPeopleWithParams}
-            >
-              Thêm người
-            </Button>
-          </div>
+    <div className="col col-full pl-48 pr-24">
+      {loader ? (
+        <div className="align-item-ct">
+          <Loader />
         </div>
-      </ReactModal>
-      <div className="col col-full">
-        <Pagination pagination={pagination} onPageChange={handlePageChange} />
-      </div>
-      <YesNoModal
-        isModalVisible={isYesNoModalVisible}
-        hideModal={() => setIsYesNoModalVisible(false)}
-        title={"Xoá người"}
-        message={"Bạn có chắc chắn muốn xoá những người này khỏi phòng không?"}
-        okText={"Xoá"}
-        cancelText={"Huỷ"}
-        onOk={handleDeletePeople}
-        onCancel={() => setIsYesNoModalVisible(false)}
-      />
-      ;
+      ) : (
+        <div>
+          {dataArea &&
+            dataArea.map((area, index) => {
+              return (
+                <div
+                  key={index}
+                  className="col col-full style-lg-box bg-color-white mb-24"
+                >
+                  <p className="bold-text">{area.name}</p>
+                  {area.rooms.map((room, i) => {
+                    return (
+                      <div key={i} className="col col-5 pd-8">
+                        <Room
+                          name={room.name}
+                          maximum={room.typeroom.number_max}
+                          numberNow={room.number_now}
+                          onClick={() => handleClickRoom(room.slug)}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          <ReactModal
+            isOpen={isModalVisible}
+            onRequestClose={hideModal}
+            style={customStyles}
+            ariaHideApp={false}
+          >
+            <div>
+              <MuiThemeProvider theme={getMuiTheme()}>
+                <MUIDataTable
+                  title={"Thành viên trong phòng"}
+                  data={peopleInRoom}
+                  columns={columns}
+                  options={options}
+                ></MUIDataTable>
+              </MuiThemeProvider>
+              <div
+                style={{
+                  textAlign: "center",
+                  marginTop: "20px",
+                }}
+              ></div>
+            </div>
+          </ReactModal>
+          <div className="col col-full">
+            <Pagination
+              pagination={pagination}
+              onPageChange={handlePageChange}
+            />
+          </div>
+          <YesNoModal
+            isModalVisible={isYesNoModalVisible}
+            hideModal={() => setIsYesNoModalVisible(false)}
+            title={"Xoá người"}
+            message={
+              "Bạn có chắc chắn muốn xoá những người này khỏi phòng không?"
+            }
+            okText={"Xoá"}
+            cancelText={"Huỷ"}
+            onOk={handleDeletePeople}
+            onCancel={() => setIsYesNoModalVisible(false)}
+          />
+          ;
+        </div>
+      )}
     </div>
   );
 }

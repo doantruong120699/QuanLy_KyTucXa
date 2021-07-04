@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "./styles.css";
 import * as ROUTER from "../../../utilities/constants/router";
-
 import Box from "@material-ui/core/Box";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
@@ -10,7 +9,10 @@ import moment from "moment";
 import ReactModal from "react-modal";
 import AddBudget from "../Budget/AddBudget";
 import { useHistory } from "react-router-dom";
-import { getContracts } from "../../../redux/actions/financial";
+import {
+  getContracts,
+  getListWaterElectricalBills,
+} from "../../../redux/actions/financial";
 
 export default function Budget() {
   let history = useHistory();
@@ -19,14 +21,25 @@ export default function Budget() {
   const [endDate, setEndDate] = useState(new Date());
   const [selectedOption, setSelectedOption] = useState("contract");
   const [dataContracts, setDataContracts] = useState([]);
+  const [dataBill, setDataBill] = useState([]);
 
   useEffect(() => {
     getContracts((output) => {
       if (output) {
-        console.log("output", output);
         setDataContracts(output.results);
       }
     });
+
+    getListWaterElectricalBills(
+      "",
+      `month=${moment(startDate).format("MM")}&year=${moment(startDate).format(
+        "YYYY"
+      )}`,
+      (output) => {
+        if (output) {
+        }
+      }
+    );
   }, []);
 
   const dataInBudget = [
@@ -130,7 +143,7 @@ export default function Budget() {
     },
     {
       name: "is_expired",
-      label: "Ngày kết thúc",
+      label: "Hết hạn",
       options: {
         filter: true,
         sort: true,
@@ -189,7 +202,7 @@ export default function Budget() {
     },
   ];
   const formatData = (data) => {
-    return data.map((value, index) => {
+    return data?.map((value, index) => {
       return {
         contractId: value.public_id,
         order: index + 1,
@@ -203,6 +216,7 @@ export default function Budget() {
       };
     });
   };
+
   const formatDataBill = (data) => {
     return data.map((index) => {
       return {
@@ -215,9 +229,10 @@ export default function Budget() {
       };
     });
   };
+  
   const getHyphenatedDate = (dateString) =>
     moment(dateString, "YYYY/MM/DD").format("YYYY/MM/DD");
-  const gridContractData = formatData(dataContracts).map((row) => {
+  const gridContractData = formatData(dataContracts)?.map((row) => {
     const updatedRow = {
       ...row,
       startDate: getHyphenatedDate(row.startDate),
@@ -242,7 +257,6 @@ export default function Budget() {
     return updatedRow;
   });
   const handleRowClick = (params, rowMeta) => {
-    console.log("params", params, "meta", rowMeta);
 
     history.push(
       `${ROUTER.ROUTE_MANAGE_FINANCIAL}${ROUTER.ROUTE_CONTRACT_DETAIL}/${
@@ -252,8 +266,8 @@ export default function Budget() {
   };
   const options = {
     filterType: "textField",
-    selectableRows: 'none',
-    onRowClick: handleRowClick,
+    selectableRows: "none",
+    onRowClick: selectedOption === "contract" ? handleRowClick : () => {},
   };
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -288,6 +302,8 @@ export default function Budget() {
         },
       },
     });
+
+  if(dataContracts){
   return (
     <div>
       {dataContracts && (
@@ -344,16 +360,21 @@ export default function Budget() {
           >
             <Box component="div" marginLeft={15}>
               <MuiThemeProvider theme={getMuiTheme()}>
-                <MUIDataTable
-                  title={selectedOption === "contract" ? "Hoá đơn" : "Hợp đồng"}
-                  data={
-                    selectedOption === "contract"
-                      ? gridContractData
-                      : gridBillData
-                  }
-                  columns={contractColumn}
-                  options={options}
-                />
+                {selectedOption === "contract" ? (
+                  <MUIDataTable
+                    title={"Hợp đồng"}
+                    data={gridContractData}
+                    columns={contractColumn}
+                    options={options}
+                  />
+                ) : (
+                  <MUIDataTable
+                    title={"Hoá đơn"}
+                    data={gridBillData}
+                    columns={billColumn}
+                    options={options}
+                  />
+                )}
               </MuiThemeProvider>
             </Box>
             <ReactModal
@@ -368,4 +389,5 @@ export default function Budget() {
       )}
     </div>
   );
+} else return (<div style={{fontSize:'30px',textAlign:'center',fontWeight:'700'}}>Không có dữ liệu hoặc bạn không có quyền để xem mục này</div>)
 }

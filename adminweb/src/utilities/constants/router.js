@@ -16,3 +16,5 @@ export const ROUTE_REGISTRATIONS = "/registrations";
 export const ROUTE_WATER_ELECTRICAL = "/water-electrical";
 export const ROUTE_CONTRACTS = "/contracts";
 export const ROUTE_CONTRACT_DETAIL = "/contract/detail";
+export const ROUTER_SUMMARY = "/summary";
+export const ROUTER_NOTIFICATION = "/notifications";
