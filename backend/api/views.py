@@ -131,23 +131,23 @@ def forgot_password_view(request):
                 data['message'] = 'The account is not activated. Contact management to resolve!'
                 return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)    
             
-            activate_url, time_expire = serializer.send_mail(request)  
-            print(activate_url)
-            print(time_expire)
-            subject = '[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY'
+            x = serializer.send_mail(request)  
+            # print(activate_url)
+            # print(time_expire)
+            # subject = '[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY'
             # message = f'Hi {user.username}, thank you for registering in geeksforgeeks.'
-            message = "Hello, \nThe link below to reset your password: " +  activate_url + "\nPassword reset link will expire in " + str(time_expire) + " minutes!"
-            email_from = settings.EMAIL_HOST_USER
-            recipient_list = ['doantruong120699@gmail.com']
-            send_mail( subject, message, email_from, recipient_list )
+            # message = "Hello, \nThe link below to reset your password: " +  activate_url + "\nPassword reset link will expire in " + str(time_expire) + " minutes!"
+            # email_from = settings.EMAIL_HOST_USER
+            # recipient_list = ['doantruong120699@gmail.com']
+            # send_mail( subject, message, email_from, recipient_list )
             
             
             # print(x)
-            # if x:
-            data['status'] = True
-            data['message'] = 'Send an activation link to your email successfully!'       
-            print(data['message'])         
-            return Response(data, status=status.HTTP_200_OK)
+            if x:
+                data['status'] = True
+                data['message'] = 'Send an activation link to your email successfully!'       
+                print(data['message'])         
+                return Response(data, status=status.HTTP_200_OK)
         
         print("Serializer Error: ")
         data['status'] = False
