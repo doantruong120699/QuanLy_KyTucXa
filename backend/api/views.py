@@ -132,12 +132,13 @@ def forgot_password_view(request):
                 return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)     
             if serializer.send_mail(request):
                 data['status'] = True
-                data['message'] = 'Send an activation link to your email successfully!'                
+                data['message'] = 'Send an activation link to your email successfully!'       
+                print(data['message'])         
                 return Response(data, status=status.HTTP_200_OK)
-        print("Serializer Error: ", serializer.errors.values())
-        data['status'] = False
+        print("Serializer Error: ")
+        # data['status'] = False
         # data['message'] = list(serializer.errors.values())[0][0]
-        return Response(data, status=status.HTTP_400_BAD_REQUEST)    
+        # return Response(data, status=status.HTTP_400_BAD_REQUEST)    
     # return Response(data, status=status.HTTP_400_BAD_REQUEST)
     # except Exception as e:
     #     print(e) 
