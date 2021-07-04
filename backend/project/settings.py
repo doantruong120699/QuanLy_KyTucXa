@@ -188,3 +188,4 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 # 
 # FRONTEND_SITE_URL_FORGOT_PASSWORD=os.getenv('FRONTEND_URL') + "/reset-password?access_token="
+FRONTEND_URL = os.getenv('FRONTEND_URL')
