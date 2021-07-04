@@ -131,14 +131,15 @@ def forgot_password_view(request):
                 data['message'] = 'The account is not activated. Contact management to resolve!'
                 return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)    
             
-            x = serializer.send_mail(request)  
-            print(x)
+            activate_url, time_expire = serializer.send_mail(request)  
+            print(activate_url)
+            print(time_expire)
             subject = '[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY'
             # message = f'Hi {user.username}, thank you for registering in geeksforgeeks.'
-            message = "Send OK"
+            message = "Hello, \nThe link below to reset your password: " +  activate_url + "\nPassword reset link will expire in " + str(time_expire) + " minutes!"
             email_from = settings.EMAIL_HOST_USER
             recipient_list = ['doantruong120699@gmail.com']
-            send_mail( subject, x, email_from, recipient_list )
+            send_mail( subject, message, email_from, recipient_list )
             
             
             # print(x)
