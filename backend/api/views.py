@@ -118,31 +118,31 @@ def update_user_profile_view(request):
 @api_view(['POST'])
 def forgot_password_view(request):
     data = {}
-    try:
-        if request.method == 'POST':
-            serializer = ForgotPasswordSerializer(data=request.data)
-            if serializer.is_valid():
-                if not serializer.is_email_exist():
-                    data['status'] = False
-                    data['message'] = 'Email does not exist!'
-                    return Response(data, status=status_http.HTTP_ME_451_EMAIL_DOES_NOT_EXIST) 
-                if not serializer.is_account_active():
-                    data['status'] = False
-                    data['message'] = 'The account is not activated. Contact management to resolve!'
-                    return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)     
-                if serializer.send_mail(request):
-                    data['status'] = True
-                    data['message'] = 'Send an activation link to your email successfully!'                
-                    return Response(data, status=status.HTTP_200_OK)
-            print("Serializer Error: ", serializer.errors)
-            data['status'] = False
-            # data['message'] = list(serializer.errors.values())[0][0]
-            return Response(data, status=status.HTTP_400_BAD_REQUEST)    
-        return Response(data, status=status.HTTP_400_BAD_REQUEST)
-    except Exception as e:
-        print(e) 
+    # try:
+    if request.method == 'POST':
+        serializer = ForgotPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            if not serializer.is_email_exist():
+                data['status'] = False
+                data['message'] = 'Email does not exist!'
+                return Response(data, status=status_http.HTTP_ME_451_EMAIL_DOES_NOT_EXIST) 
+            if not serializer.is_account_active():
+                data['status'] = False
+                data['message'] = 'The account is not activated. Contact management to resolve!'
+                return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)     
+            if serializer.send_mail(request):
+                data['status'] = True
+                data['message'] = 'Send an activation link to your email successfully!'                
+                return Response(data, status=status.HTTP_200_OK)
+        print("Serializer Error: ", serializer.errors.values())
         data['status'] = False
-        return Response(data, status=status.HTTP_400_BAD_REQUEST)
+        # data['message'] = list(serializer.errors.values())[0][0]
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)    
+    # return Response(data, status=status.HTTP_400_BAD_REQUEST)
+    # except Exception as e:
+    #     print(e) 
+    #     data['status'] = False
+    #     return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 def reset_password_view(request, uidb64, token):
