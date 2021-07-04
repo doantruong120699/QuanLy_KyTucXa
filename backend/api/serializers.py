@@ -162,7 +162,7 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
             subject = '[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY'
             # message = f'Hi {user.username}, thank you for registering in geeksforgeeks.'
             time_expire = settings.PASSWORD_RESET_TIMEOUT/60
-            message = render_to_string('api/forgot_password.html', {'activate_url': activate_url, 'time_expire':time_expire})  
+            # message = render_to_string('api/forgot_password.html', {'activate_url': activate_url, 'time_expire':time_expire})  
             # email_from = settings.EMAIL_HOST_USER
             # recipient_list = [self.validated_data['email']]
             # send_mail( subject, message, email_from, recipient_list )
@@ -176,7 +176,7 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
         except Exception as e:
             print("Exception send mail: ", e)
             pass
-        return False
+        return "", ""
 
 class ResetPasswordSerializer(serializers.ModelSerializer):
     # email = serializers.EmailField(
