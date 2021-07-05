@@ -157,7 +157,7 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
             # Create link active
             # link = reverse('reset_password', kwargs={'uidb64': email_body['uid'], 'token': email_body['token']})
             # activate_url = 'http://'+current_site.domain+link
-            activate_url = url_frontend  + '/?uid=' + email_body['uid'] + '&token=' +  email_body['token'] 
+            activate_url = url_frontend  + '/' + email_body['uid'] + '/' +  email_body['token'] 
             # Create body of email
             subject = '[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY'
             # message = f'Hi {user.username}, thank you for registering in geeksforgeeks.'
