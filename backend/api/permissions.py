@@ -1,5 +1,6 @@
 from rest_framework.permissions import BasePermission
 from django.conf import settings
+from django.db.models import Q
 
 
 # Custom permission for users in group 'sinhvien_group'.
@@ -30,6 +31,14 @@ class IsQuanLyTaiChinh(BasePermission):
     """
     def has_permission(self, request, view):
         return request.user and request.user.groups.filter(name=settings.GROUP_NAME['QUANLYTAICHINH']).exists()
+
+# Custom permission for users in group 'quanlytaichinh_group'.
+class IsQuanLyTaiChinhAndSinhVien(BasePermission):
+    """
+    Allows access only to "quanlytaichinh_group" group and "sinhvien_group" group
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.groups.filter(Q(name=settings.GROUP_NAME['QUANLYTAICHINH'])|Q(name=settings.GROUP_NAME['SINHVIEN'])).exists()
     
 # Custom permission for users in group 'admin_group'.
 class IsAdmin(BasePermission):
