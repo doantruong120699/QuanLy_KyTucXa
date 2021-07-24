@@ -169,7 +169,7 @@ class RoomViewSet(viewsets.ModelViewSet):
         
 class ContractViewSet(viewsets.ModelViewSet):
     serializer_class = ContractRegistationSerializer
-    permission_classes = [IsAuthenticated, IsSinhVien]
+    permission_classes = [IsAuthenticated, IsQuanLyTaiChinhAndSinhVien]
     lookup_field = 'public_id'
     
 
@@ -178,8 +178,8 @@ class ContractViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action == 'get_all_lesson':
-            return [IsAuthenticated(), IsSinhVien(),]
-        return [IsAuthenticated(), IsSinhVien(),]
+            return [IsAuthenticated(), IsQuanLyTaiChinhAndSinhVien(),]
+        return [IsAuthenticated(), IsQuanLyTaiChinhAndSinhVien(),]
 
     # ==== Get all contract of sinhvien ====
     def list(self, request, *args, **kwargs):
