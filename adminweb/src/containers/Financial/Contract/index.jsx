@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import "./styles.css";
 import * as ROUTER from "../../../utilities/constants/router";
@@ -7,20 +8,26 @@ import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
 import moment from "moment";
 import ReactModal from "react-modal";
-import AddBudget from "../Budget/AddBudget";
 import { useHistory } from "react-router-dom";
 import {
   getContracts,
   getListWaterElectricalBills,
 } from "../../../redux/actions/financial";
+import Loader from "../../../components/common/Loader";
 
 export default function Budget() {
   let history = useHistory();
 
+  const loader = useSelector((state) => state.financial.loading);
+
   const [startDate, setStartDate] = useState(new Date());
+
   const [endDate, setEndDate] = useState(new Date());
+
   const [selectedOption, setSelectedOption] = useState("contract");
+
   const [dataContracts, setDataContracts] = useState([]);
+
   const [dataBill, setDataBill] = useState([]);
 
   useEffect(() => {
@@ -229,7 +236,7 @@ export default function Budget() {
       };
     });
   };
-  
+
   const getHyphenatedDate = (dateString) =>
     moment(dateString, "YYYY/MM/DD").format("YYYY/MM/DD");
   const gridContractData = formatData(dataContracts)?.map((row) => {
@@ -257,7 +264,6 @@ export default function Budget() {
     return updatedRow;
   });
   const handleRowClick = (params, rowMeta) => {
-
     history.push(
       `${ROUTER.ROUTE_MANAGE_FINANCIAL}${ROUTER.ROUTE_CONTRACT_DETAIL}/${
         dataContracts[rowMeta.rowIndex].public_id
@@ -302,13 +308,14 @@ export default function Budget() {
         },
       },
     });
-
-  if(dataContracts){
   return (
     <div>
-      {dataContracts && (
+      {loader ? (
+        <div className="align-item-ct">
+          <Loader />
+        </div>
+      ) : (
         <div className="col col-full pl-48 ">
-          <div style={{ marginBottom: "20px" }}>Bảng thu chi của kí túc xá</div>
           <div className="budget-date-picker" style={{}}>
             <span style={{ fontSize: "16px" }}>Từ: </span>
             <DatePicker
@@ -358,7 +365,7 @@ export default function Budget() {
             className={"budget-table"}
             style={{ marginTop: "20px", position: "sticky" }}
           >
-            <Box component="div" marginLeft={15}>
+            <Box component="div" marginLeft={5}>
               <MuiThemeProvider theme={getMuiTheme()}>
                 {selectedOption === "contract" ? (
                   <MUIDataTable
@@ -381,13 +388,10 @@ export default function Budget() {
               isOpen={isModalVisible}
               onRequestClose={hideModal}
               style={customStyles}
-            >
-              <AddBudget />
-            </ReactModal>
+            ></ReactModal>
           </div>
         </div>
       )}
     </div>
   );
-} else return (<div style={{fontSize:'30px',textAlign:'center',fontWeight:'700'}}>Không có dữ liệu hoặc bạn không có quyền để xem mục này</div>)
 }

@@ -24,12 +24,12 @@ function App() {
         </Route>
         <Route path={ROUTER.ROUTE_LOGIN} component={Login} exact />
         <Route
-          path={ROUTER.ROUTE_FORGOT_PASSWORD}
+          path={ROUTER.ROUTE_RESET_PASSWORD}
           component={ForgotPassword}
           exact
         />
         <Route
-          path={ROUTER.ROUTE_RESET_PASSWORD}
+          path={`${ROUTER.ROUTE_FORGOT_PASSWORD}/:uuid/:token`}
           component={ResetPassword}
           exact
         />

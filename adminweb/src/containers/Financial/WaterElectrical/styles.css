@@ -35,3 +35,8 @@
   font-size: 16px;
   width: 150px;
 }
+.ag-header-cell-label {
+  /* Necessary to allow for text to grow vertically */
+  height: 100%;
+  font-size: 15px;
+}

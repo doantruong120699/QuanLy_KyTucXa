@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import InputField from "../components/common/InputField";
-import FormError from "../components/common/FormError";
-import Button from "../components/common/Button";
-import * as AlertMessage from "../utilities/constants/AlertMessage";
-import { sendEmail } from "../redux/actions/login";
-import validate from "../utilities/regex";
+import { useSelector } from "react-redux";
+import InputField from "../../components/common/InputField";
+import FormError from "../../components/common/FormError";
+import Button from "../../components/common/Button";
+import * as AlertMessage from "../../utilities/constants/AlertMessage";
+import { sendEmail } from "../../redux/actions/login";
+import validate from "../../utilities/regex";
+import Loader from "../../components/common/Loader";
 const ForgotPassword = () => {
   const [errorState, setError] = useState({
     email: {
@@ -14,6 +16,8 @@ const ForgotPassword = () => {
       errorMessage: "",
     },
   });
+
+  const loader = useSelector((state) => state.login.loading);
 
   const validEmailInput = (checkingValue) => {
     const isValidEmail = validate.email(checkingValue);
@@ -46,7 +50,6 @@ const ForgotPassword = () => {
     if (valid.isEmailInputValid) {
       const data = { email: errorState.email.value };
       sendEmail(data, (output) => {
-        console.log(output);
         if (output.status) {
           const newEmailState = { ...errorState.email };
           newEmailState.isInputValid = true;
@@ -84,31 +87,37 @@ const ForgotPassword = () => {
   };
   return (
     <div className="login-container">
-      <div className="form-login">
-        <h2 className="title-login">Quên mật khẩu</h2>
-        <h3 className="content-login">
-          Bạn hãy nhập vào Email dưới đây. Chúng tôi sẽ gửi cho bạn đường link
-          đổi mật khẩu mới.
-        </h3>
-        <div>
-          <FormError
-            isHidden={errorState.email.isHidden}
-            errorMessage={errorState.email.errorMessage}
-          />
-          <div className="mb-16 pl-48 pr-48">
-            <InputField
-              type="text"
-              isValid={errorState.email.isInputValid}
-              name="email"
-              placeholder="Địa chỉ Email"
-              autocomplete="off"
-              onChange={handleInput}
-              value={errorState.email.value}
-            />
-          </div>
-          <Button type="normal-blue" content="Xác nhận" onClick={submit} />
+      {loader ? (
+        <div className="align-item-ct">
+          <Loader />
         </div>
-      </div>
+      ) : (
+        <div className="form-login">
+          <h2 className="title-login">Quên mật khẩu</h2>
+          <h3 className="content-login">
+            Bạn hãy nhập vào Email dưới đây. Chúng tôi sẽ gửi cho bạn đường link
+            đổi mật khẩu mới.
+          </h3>
+          <div>
+            <FormError
+              isHidden={errorState.email.isHidden}
+              errorMessage={errorState.email.errorMessage}
+            />
+            <div className="mb-16 pl-48 pr-48">
+              <InputField
+                type="text"
+                isValid={errorState.email.isInputValid}
+                name="email"
+                placeholder="Địa chỉ Email"
+                autocomplete="off"
+                onChange={handleInput}
+                value={errorState.email.value}
+              />
+            </div>
+            <Button type="normal-blue" content="Xác nhận" onClick={submit} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
