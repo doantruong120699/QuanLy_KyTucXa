@@ -4,6 +4,7 @@ import { Button, createMuiTheme, Menu, MenuItem } from "@material-ui/core";
 import UpdateAccount from "../UpdateAccount/index";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { renderAccount } from "../../../utilities/constants/DataRender/account";
+import { isAllowed } from "../../../utilities/helper";
 
 export default function MoreButton(props) {
   const {
@@ -12,7 +13,8 @@ export default function MoreButton(props) {
     class_in_university,
     position,
     area,
-    updateState,
+    updateAccount,
+    rowUser,
   } = props;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -63,23 +65,26 @@ export default function MoreButton(props) {
           onClose={handleClose}
           MenuListProps={{ onMouseLeave: handleClose }}
         >
-          <MenuItem onClick={onOpenEditForm}>
+          <MenuItem
+            onClick={onOpenEditForm}
+            disabled={!isAllowed("admin_group", "change_user")}
+          >
             <div style={{ color: "#005CC8" }}>Chỉnh sửa</div>
           </MenuItem>
         </Menu>
       </ThemeProvider>
-      {props.rowUser && (
+      {rowUser && (
         <UpdateAccount
-          public_id={props.rowUser.public_id}
-          userInfor={renderAccount(props.rowUser)}
+          public_id={rowUser.public_id}
+          userInfor={renderAccount(rowUser)}
           hideModal={hideModal}
-          updateState={updateState}
           isOpen={isModalVisible}
           permission={permission}
           faculty={faculty}
           class_in_university={class_in_university}
           position={position}
           area={area}
+          updateAccount={updateAccount}
         />
       )}
     </div>

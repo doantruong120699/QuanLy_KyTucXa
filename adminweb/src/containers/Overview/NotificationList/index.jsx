@@ -2,15 +2,19 @@ import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { useSelector } from "react-redux";
 import Loader from "../../../components/common/Loader";
-import AddBoxIcon from "@material-ui/icons/AddBox";
-import Button from "@material-ui/core/Button";
+import Button from "../../../components/common/Button";
 import Box from "@material-ui/core/Box";
 import NotificationItem from "./NotificationItem";
-import { getNotifications } from "../../../redux/actions/overview";
+import {
+  deleteNotification,
+  getNotifications,
+} from "../../../redux/actions/overview";
 import Modal from "react-modal";
 import NotificationForm from "../NotificationForm";
 import queryString from "query-string";
 import Pagination from "../../../components/common/Pagination";
+import Alertness from "../../../components/common/Alertness";
+import * as ALERTMESSAGE from "../../../utilities/constants/AlertMessage";
 
 export default function NotificationList() {
   const [notifications, setNotifications] = useState([]);
@@ -28,6 +32,24 @@ export default function NotificationList() {
   const [filter, setFilter] = useState({
     page: 1,
   });
+
+  const [isUpdate, setUpdate] = useState(false);
+
+  const [openConfirm, setOpenConfirm] = useState({
+    isShow: false,
+    value: "",
+  });
+
+  const [notification, setNotification] = useState({
+    type: "",
+    content: "",
+  });
+
+  const onCloseConfirm = () =>
+    setOpenConfirm({ ...openConfirm, isShow: false });
+
+  const onOpenConfirm = (value) =>
+    setOpenConfirm({ ...openConfirm, isShow: true, value: value });
 
   const hideModal = () => {
     setIsModalVisible(false);
@@ -59,7 +81,7 @@ export default function NotificationList() {
         setNotifications(output.results);
       }
     });
-  }, [filter]);
+  }, [filter, isUpdate]);
 
   const handleSendNoti = () => {
     setIsModalVisible(true);
@@ -88,6 +110,23 @@ export default function NotificationList() {
     setFilter({ ...filter, page: newPage });
   }
 
+  function handleDelete(id) {
+    deleteNotification(id, (output) => {
+      if (output) {
+        setUpdate((prev) => !prev);
+        onCloseConfirm();
+        alert(output.notification);
+      }
+    });
+  }
+
+  function handleConfirm(value) {
+    setNotification({
+      type: "type-warning",
+      content: ALERTMESSAGE.REMOVAL_CONFIRM,
+    });
+    onOpenConfirm(value);
+  }
   return (
     <div>
       {loader ? (
@@ -97,24 +136,23 @@ export default function NotificationList() {
       ) : (
         <Box>
           <Button
-            startIcon={<AddBoxIcon />}
-            style={{
-              backgroundColor: "#005CC8",
-              width: "175px",
-              color: "white",
-              cursor: "pointer",
-            }}
+            type="normal-blue"
+            content="Thêm"
+            isDisable={false}
             onClick={handleSendNoti}
-          >
-            Thêm thông báo
-          </Button>
+          />
+
           <Box className={"notification-area"}>
             <div className="notification-list-box">
               {notifications && (
                 <div>
                   {notifications.map((value, index) => {
                     return (
-                      <NotificationItem key={index} notification={value} />
+                      <NotificationItem
+                        key={index}
+                        notification={value}
+                        handleConfirm={handleConfirm}
+                      />
                     );
                   })}
                 </div>
@@ -125,6 +163,15 @@ export default function NotificationList() {
             <Pagination
               pagination={pagination}
               onPageChange={handlePageChange}
+            />
+          </div>
+          <div>
+            <Alertness
+              open={openConfirm.isShow}
+              onClose={onCloseConfirm}
+              type={notification.type}
+              content={notification.content}
+              onClick={handleDelete}
             />
           </div>
           <Modal

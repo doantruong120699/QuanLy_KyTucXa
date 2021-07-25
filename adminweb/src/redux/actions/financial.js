@@ -33,13 +33,13 @@ export async function getFinancial(params, resolve = () => {}) {
   }
 }
 
-export async function getUnitPrice(slug, resolve = () => {}) {
+export async function getUnitPrice(resolve = () => {}) {
   store.dispatch({
     type: types.GET_WATER_ELECTRICAL_UNIT_PRICE_API,
   });
   try {
     const response = await fetch(
-      `${REACT_APP_BASE_API}water-electrical-unit-price/${slug}/`,
+      `${REACT_APP_BASE_API}water-electrical-unit-price/`,
       {
         method: "GET",
         headers: {
@@ -64,8 +64,7 @@ export async function getUnitPrice(slug, resolve = () => {}) {
 }
 
 export async function getListWaterElectricalIndexes(
-  area,
-  time,
+  params,
   resolve = () => {}
 ) {
   store.dispatch({
@@ -73,7 +72,7 @@ export async function getListWaterElectricalIndexes(
   });
   try {
     const response = await fetch(
-      `${REACT_APP_BASE_API}water-electricals/${area}/${time}/`,
+      `${REACT_APP_BASE_API}water-electricals-not-pagination/?${params}`,
       {
         method: "GET",
         headers: {
@@ -534,6 +533,203 @@ export async function getExpenseType(resolve = () => {}) {
     store.dispatch({
       payload: error,
       type: types.GET_EXPENSE_TYPE_API_FAIL,
+    });
+  }
+}
+
+export async function getUserBudget(resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_BUDGET_USER_API,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}list-user-recieve-paid/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_BUDGET_USER_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_BUDGET_USER_API_FAIL,
+    });
+  }
+}
+
+export async function createRevenue(data, resolve = () => {}) {
+  store.dispatch({
+    type: types.POST_REVENUE_USER_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}revenue/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.POST_REVENUE_USER_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.POST_REVENUE_USER_API_FAIL,
+    });
+  }
+}
+
+export async function createExpense(data, resolve = () => {}) {
+  store.dispatch({
+    type: types.POST_EXPENSE_USER_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}expense/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.POST_EXPENSE_USER_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.POST_EXPENSE_USER_API_FAIL,
+    });
+  }
+}
+
+export async function updateRevenue(data, params, resolve = () => {}) {
+  console.log(params);
+  store.dispatch({
+    type: types.UPDATE_REVENUE_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}revenue/${params}/`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.UPDATE_REVENUE_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.UPDATE_REVENUE_API_FAIL,
+    });
+  }
+}
+
+export async function updateExpense(data, params, resolve = () => {}) {
+  store.dispatch({
+    type: types.UPDATE_EXPENSE_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}expense/${params}/`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.UPDATE_EXPENSE_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.UPDATE_EXPENSE_API_FAIL,
+    });
+  }
+}
+
+export async function deleteExpense(params, resolve = () => {}) {
+  store.dispatch({
+    type: types.DELETE_EXPENSE_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}expense/${params}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.DELETE_EXPENSE_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.DELETE_EXPENSE_API_FAIL,
+    });
+  }
+}
+
+export async function deleteRevenue(params, resolve = () => {}) {
+  store.dispatch({
+    type: types.DELETE_REVENUE_API,
+  });
+  try {
+    const response = await fetch(`${REACT_APP_BASE_API}revenue/${params}/`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    });
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.DELETE_REVENUE_API_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.DELETE_REVENUE_API_FAIL,
     });
   }
 }
