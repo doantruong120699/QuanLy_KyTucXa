@@ -12,8 +12,13 @@ import { useHistory } from "react-router-dom";
 import {
   getContracts,
   getListWaterElectricalBills,
-  updateWaterElectricalIndex,
+  updateWaterElectricalBill,
 } from "../../../redux/actions/financial";
+import Select from "react-select";
+import { Button as MUIButton } from "@material-ui/core/";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { getRoomDetails } from "../../../redux/actions/humanResource";
 import Button from "../../../components/common/Button";
 
 export default function Budget() {
@@ -24,7 +29,8 @@ export default function Budget() {
   const [selectedOption, setSelectedOption] = useState("contract");
   const [dataContracts, setDataContracts] = useState([]);
   const [dataBill, setDataBill] = useState([]);
-
+  const [selectedPeoplePaid, setSelectedPeoplePaid] = useState();
+  const [selectedBillId, setSelectedBillId] = useState();
   useEffect(() => {
     getContracts((output) => {
       if (output) {
@@ -44,16 +50,43 @@ export default function Budget() {
       }
     );
   }, [startDate]);
+  const [peopleInRoom, setPeopleInRoom] = useState();
 
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.defaultValue);
   };
-  const handlePayFee = (data) => {
+  const convertDataForTable = (data) => {
+    return data.list_user.map((n) => ({
+      value: n.user_id,
+      label: n.first_name + n.last_name,
+    }));
+  };
+  const handleSelectPeople = (data) => {
     const slug = formatDataBill(dataBill).find(
       (index) => index.room_name === data
-    ).public_id;
-    const dataSend = { is_paid: true };
-    updateWaterElectricalIndex(slug, dataSend);
+    ).slug;
+    setSelectedBillId(
+      formatDataBill(dataBill).find((index) => index.room_name === data)
+        .public_id
+    );
+    getRoomDetails(slug, (output) => {
+      if (output) {
+        setPeopleInRoom(convertDataForTable(output));
+      }
+    });
+    setIsSelectStudentModalVisible(true);
+  };
+  const handlePayFee = () => {
+    const dataSend = {
+      is_paid: true,
+      time_paid: moment().format("YYYY-MM-DD hh:mm:ss"),
+      sinhvien_paid: selectedPeoplePaid,
+    };
+    updateWaterElectricalBill(selectedBillId, dataSend, (output) => {
+      console.log(output);
+    });
+    toast("Đóng tiền thành công!");
+    setTimeout(hideModal, 4000);
   };
   const contractColumn = [
     {
@@ -206,14 +239,15 @@ export default function Budget() {
       name: "button",
       options: {
         customBodyRender: (button, tableMetaData) => {
-          console.log("value", tableMetaData);
           return (
-            <Button
-              type="normal-red"
-              content="đóng"
-              isDisable={tableMetaData.rowData[5]}
-              onClick={() => handlePayFee(tableMetaData.rowData[0])}
-            />
+            <MUIButton
+              variant="contained"
+              color="primary"
+              disabled={tableMetaData.rowData[5]}
+              onClick={() => handleSelectPeople(tableMetaData.rowData[0])}
+            >
+              Đóng
+            </MUIButton>
           );
         },
       },
@@ -246,6 +280,7 @@ export default function Budget() {
         electrical_price: index.water_electrical.electrical_price,
         is_paid: index.is_paid,
         public_id: index.public_id,
+        slug: index.water_electrical.room.slug,
         total:
           index.water_electrical.water_price +
           index.water_electrical.electrical_price,
@@ -293,8 +328,11 @@ export default function Budget() {
   };
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isSelectStudentModalVisible, setIsSelectStudentModalVisible] =
+    useState(false);
   const hideModal = () => {
     setIsModalVisible(false);
+    setIsSelectStudentModalVisible(false);
   };
   const customStyles = {
     content: {
@@ -306,6 +344,7 @@ export default function Budget() {
       transform: "translate(-50%, -50%)",
     },
   };
+
   const getMuiTheme = () =>
     createMuiTheme({
       overrides: {
@@ -328,84 +367,104 @@ export default function Budget() {
   if (dataBill) {
     return (
       <div>
-        {
-          /*dataContracts &&*/ dataBill && (
-            <div className="col col-full pl-48 ">
-              <div style={{ marginBottom: "20px" }}>
-                Bảng thu chi của kí túc xá
-              </div>
-              <div className="budget-date-picker" style={{}}>
-                <span style={{ fontSize: "16px" }}>Tháng: </span>
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  selectsStart
-                  startDate={startDate}
-                  dateFormat="MM/yyyy"
-                  endDate={endDate}
-                  className={"budget-date-picker-calendar"}
-                  showMonthYearPicker
-                />
-              </div>
-              <span style={{ display: "flex" }}>
-                <div
-                  style={{
-                    fontSize: "16px",
-                    marginTop: "20px",
-                    width: "230px",
-                  }}
-                >
-                  <input
-                    type="radio"
-                    value="contract"
-                    checked={selectedOption === "contract"}
-                    onChange={handleOptionChange}
-                  />
-                  Hợp đồng
-                  <input
-                    type="radio"
-                    value="bill"
-                    checked={selectedOption === "bill"}
-                    onChange={handleOptionChange}
-                    style={{ marginLeft: "20px" }}
-                  />
-                  Hoá đơn
-                </div>
-              </span>
-              <div
-                className={"budget-table"}
-                style={{ marginTop: "20px", position: "sticky" }}
-              >
-                <Box component="div" marginLeft={8}>
-                  <MuiThemeProvider theme={getMuiTheme()}>
-                    {selectedOption === "contract" ? (
-                      <MUIDataTable
-                        title={"Hợp đồng"}
-                        data={gridContractData}
-                        columns={contractColumn}
-                        options={options}
-                      />
-                    ) : (
-                      <MUIDataTable
-                        title={"Hoá đơn"}
-                        data={gridBillData}
-                        columns={billColumn}
-                        options={options}
-                      />
-                    )}
-                  </MuiThemeProvider>
-                </Box>
-                <ReactModal
-                  isOpen={isModalVisible}
-                  onRequestClose={hideModal}
-                  style={customStyles}
-                >
-                  <AddBudget />
-                </ReactModal>
-              </div>
+        {dataContracts && dataBill && (
+          <div className="col col-full pl-48 ">
+            <div style={{ marginBottom: "20px" }}>
+              Bảng thu chi của kí túc xá
             </div>
-          )
-        }
+            <div className="budget-date-picker" style={{}}>
+              <span style={{ fontSize: "16px" }}>Tháng: </span>
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                selectsStart
+                startDate={startDate}
+                dateFormat="MM/yyyy"
+                endDate={endDate}
+                className={"budget-date-picker-calendar"}
+                showMonthYearPicker
+              />
+            </div>
+            <span style={{ display: "flex" }}>
+              <div
+                style={{
+                  fontSize: "16px",
+                  marginTop: "20px",
+                  width: "230px",
+                }}
+              >
+                <input
+                  type="radio"
+                  value="contract"
+                  checked={selectedOption === "contract"}
+                  onChange={handleOptionChange}
+                />
+                Hợp đồng
+                <input
+                  type="radio"
+                  value="bill"
+                  checked={selectedOption === "bill"}
+                  onChange={handleOptionChange}
+                  style={{ marginLeft: "20px" }}
+                />
+                Hoá đơn
+              </div>
+            </span>
+            <div
+              className={"budget-table"}
+              style={{ marginTop: "20px", position: "sticky" }}
+            >
+              <Box component="div" marginLeft={8}>
+                <MuiThemeProvider theme={getMuiTheme()}>
+                  {selectedOption === "contract" ? (
+                    <MUIDataTable
+                      title={"Hợp đồng"}
+                      data={gridContractData}
+                      columns={contractColumn}
+                      options={options}
+                    />
+                  ) : (
+                    <MUIDataTable
+                      title={"Hoá đơn"}
+                      data={gridBillData}
+                      columns={billColumn}
+                      options={options}
+                    />
+                  )}
+                </MuiThemeProvider>
+              </Box>
+              <ReactModal
+                isOpen={isModalVisible}
+                onRequestClose={hideModal}
+                style={customStyles}
+              >
+                <AddBudget />
+              </ReactModal>
+            </div>
+          </div>
+        )}
+        <ReactModal
+          isOpen={isSelectStudentModalVisible}
+          onRequestClose={hideModal}
+          style={customStyles}
+        >
+          <div>
+            <div className={"mb-20"}>Lựa chọn người đóng tiền</div>
+            <Select
+              className="people-select mb-20"
+              options={peopleInRoom}
+              onChange={(value) => setSelectedPeoplePaid(value.value)}
+            />
+            <MUIButton
+              variant="contained"
+              color="primary"
+              onClick={handlePayFee}
+            >
+              Xác nhận
+            </MUIButton>
+            <ToastContainer />
+          </div>
+        </ReactModal>
       </div>
     );
   } else
