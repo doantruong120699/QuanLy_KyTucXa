@@ -40,6 +40,13 @@ class IsQuanLyTaiChinhAndSinhVien(BasePermission):
     def has_permission(self, request, view):
         return request.user and request.user.groups.filter(Q(name=settings.GROUP_NAME['QUANLYTAICHINH'])|Q(name=settings.GROUP_NAME['SINHVIEN'])).exists()
     
+class IsQuanLyTaiChinhAndQuanLyNhanSu(BasePermission):
+    """
+    Allows access only to "quanlytaichinh_group" group and "quanlynhansu_group" group
+    """
+    def has_permission(self, request, view):
+        return request.user and request.user.groups.filter(Q(name=settings.GROUP_NAME['QUANLYTAICHINH'])|Q(name=settings.GROUP_NAME['QUANLYNHANSU'])).exists()
+    
 # Custom permission for users in group 'admin_group'.
 class IsAdmin(BasePermission):
     """
