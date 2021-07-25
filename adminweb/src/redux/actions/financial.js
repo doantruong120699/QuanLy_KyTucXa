@@ -165,7 +165,6 @@ export async function updateWaterElectricalIndex(
   store.dispatch({
     type: types.UPDATE_WATER_ELECTRICAL_INDEX_API,
   });
-  console.log("data", JSON.stringify(data));
   try {
     const response = await fetch(
       `${REACT_APP_BASE_API}water-electricals/${slug}/`,
@@ -294,6 +293,8 @@ export async function updateWaterElectricalBill(
   store.dispatch({
     type: types.UPDATE_WATER_ELECTRICAL_BILL_API,
   });
+  console.log("data", JSON.stringify(data));
+
   try {
     const response = await fetch(`${REACT_APP_BASE_API}bills/${slug}/`, {
       method: "PUT",
