@@ -15,7 +15,7 @@ from .serializers import *
 from django.http import JsonResponse
 from . import status_http
 from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
-
+from django.core.mail import send_mail
 
 # API Change Password
 @api_view(['PUT'])
@@ -117,32 +117,42 @@ def update_user_profile_view(request):
 
 @api_view(['POST'])
 def forgot_password_view(request):
-    if request.method == 'POST':
-        serializer = ForgotPasswordSerializer(data=request.data)
-        data = {}
-        if serializer.is_valid():
-            if not serializer.is_email_exist():
-                data['status'] = False
-                data['message'] = 'Email does not exist!'
-                return Response(data, status=status_http.HTTP_ME_451_EMAIL_DOES_NOT_EXIST) 
-            if not serializer.is_account_active():
-                data['status'] = False
-                data['message'] = 'The account is not activated. Contact management to resolve!'
-                return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)     
-            if serializer.send_mail(request):
-                data['status'] = True
-                data['message'] = 'Send an activation link to your email successfully!'                
-                return Response(data, status=status.HTTP_200_OK)
+    data = {}
+    try:
+        if request.method == 'POST':
+            serializer = ForgotPasswordSerializer(data=request.data)
+            if serializer.is_valid():
+                if not serializer.is_email_exist():
+                    data['status'] = False
+                    data['message'] = 'Email does not exist!'
+                    return Response(data, status=status_http.HTTP_ME_451_EMAIL_DOES_NOT_EXIST) 
+                if not serializer.is_account_active():
+                    data['status'] = False
+                    data['message'] = 'The account is not activated. Contact management to resolve!'
+                    return Response(data, status=status_http.HTTP_ME_452_ACCOUNT_IS_NOT_ACTIVATED)    
+                
+                x = serializer.send_mail(request)  
+                if x:
+                    data['status'] = True
+                    data['message'] = 'Send an activation link to your email successfully!' 
+                    return Response(data, status=status.HTTP_200_OK)
+            
+            print("Serializer Error: ")
+            data['status'] = False
+            data['message'] = list(serializer.errors.values())[0][0]
+            return Response(data, status=status.HTTP_400_BAD_REQUEST)    
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        print(e) 
         data['status'] = False
-        data['message'] = list(serializer.errors.values())[0][0]
-        return Response(data, status=status.HTTP_400_BAD_REQUEST)    
-    return Response(data, status=status.HTTP_400_BAD_REQUEST)
+        return Response(data, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 def reset_password_view(request, uidb64, token):
     check = check_link_forgot_password(request, uidb64, token).data
     if check['status'] == True: 
         data = {}
+        email = check['email']
         if request.method == 'GET':
             return Response(check, status=status.HTTP_200_OK)
         if request.method == 'POST':
@@ -152,12 +162,18 @@ def reset_password_view(request, uidb64, token):
                     data['status'] = False
                     data['message'] = 'Confirm password is incorrect!'
                     return Response(data, status=status_http.HTTP_ME_456_CONFIRM_PASSWORD_IS_INCORRECT)
-                serializer.reset_password()    
-                data['status'] = True
-                data['message'] = 'Reset Password successful!'
-                return Response(data, status=status.HTTP_200_OK)
+                
+                check_send_mail = serializer.reset_password(email) 
+                if check_send_mail: 
+                    data['status'] = True
+                    data['message'] = 'Reset Password successful!'
+                    return Response(data, status=status.HTTP_200_OK)
             data['status'] = False
-            data['message'] = list(serializer.errors.values())[0][0]
+            try:
+                data['message'] = list(serializer.errors.values())[0][0]
+            except Exception as ex_validate:
+                print("Exceptiopn validate: ", ex_validate)
+                data['message'] = 'Error!'
             return Response(data, status=status.HTTP_400_BAD_REQUEST)
     else:
         return Response(check, status=status.HTTP_400_BAD_REQUEST)
@@ -171,7 +187,8 @@ def check_link_forgot_password(request, uidb64, token):
             data['status'] = True
             data['email'] = user.email
             return Response(data, status=status.HTTP_200_OK) 
-    except:
+    except Exception as e:
+        print(e)
         pass
     data['status'] = False
     data['message'] = 'Link activate is expired!'

@@ -153,25 +153,34 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': forgot_password_token,
             } 
+            url_frontend = settings.FRONTEND_URL
             # Create link active
-            link = reverse('reset_password', kwargs={'uidb64': email_body['uid'], 'token': email_body['token']})
-            activate_url = 'http://'+current_site.domain+link
+            # link = reverse('reset_password', kwargs={'uidb64': email_body['uid'], 'token': email_body['token']})
+            # activate_url = 'http://'+current_site.domain+link
+            activate_url = url_frontend  + '/' + email_body['uid'] + '/' +  email_body['token'] 
             # Create body of email
-            message = render_to_string('api/forgot_password.html', {'activate_url': activate_url, 'time_expire':settings.PASSWORD_RESET_TIMEOUT/60})  
+            subject = '[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY'
+            # message = f'Hi {user.username}, thank you for registering in geeksforgeeks.'
+            time_expire = settings.PASSWORD_RESET_TIMEOUT/60
+            message = render_to_string('api/forgot_password.html', {'activate_url': activate_url, 'time_expire':time_expire})  
+            # email_from = settings.EMAIL_HOST_USER
+            # recipient_list = [self.validated_data['email']]
+            # send_mail( subject, message, email_from, recipient_list )
+            
             # Create object email  
             send = EmailMessage('[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY', message, from_email=settings.EMAIL_HOST_USER, to=[self.validated_data['email']])
             send.content_subtype = 'html'
             # Send email to user
             send.send()
-            return True
+            return activate_url, time_expire
         except Exception as e:
-            print(e)
+            print("Exception send mail: ", e)
             pass
-        return False
+        return "", ""
 
 class ResetPasswordSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
-        style={'input_type': 'password'}, write_only=True)
+    # email = serializers.EmailField(
+    #     style={'input_type': 'password'}, write_only=True)
     new_password = serializers.CharField(
         style={'input_type': 'password'}, write_only=True)
     confirm_password = serializers.CharField(
@@ -197,9 +206,9 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
             return False
         return True 
 
-    def reset_password(self):
+    def reset_password(self, email):
         try:
-            user = User.objects.get(email=self.validated_data['email'])
+            user = User.objects.get(email=email)
             new_password = self.validated_data['new_password']
             user.set_password(new_password)
             user.save()

@@ -176,7 +176,7 @@ SIMPLE_JWT = {
 }
 
 # 
-PASSWORD_RESET_TIMEOUT = 10
+PASSWORD_RESET_TIMEOUT = 15*60
 
 # email stuff
 EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
@@ -188,3 +188,4 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 # 
 # FRONTEND_SITE_URL_FORGOT_PASSWORD=os.getenv('FRONTEND_URL') + "/reset-password?access_token="
+FRONTEND_URL = os.getenv('FRONTEND_URL')

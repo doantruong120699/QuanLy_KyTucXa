@@ -101,7 +101,7 @@ class FinancalRoomInAreaViewSet(viewsets.ModelViewSet):
                                                               water_electrical__month=month)
             list_room_add_json = []
             for bill in all_bill:
-                list_room_add_json.append({'id': bill.water_electrical.room.pk, 'name': bill.water_electrical.room.name, 'isPaid' : bill.is_paid})
+                list_room_add_json.append({'id': bill.water_electrical.room.pk, 'name': bill.water_electrical.room.name, 'isPaid' : bill.is_paid, 'public_id_water_electrical':bill.water_electrical.public_id, 'public_id_bill':bill.public_id})
             
             serializer = FinancalRoomInAreaSerializer(area)
             data_room = serializer.data
@@ -118,6 +118,24 @@ class WaterElectricalViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
     lookup_field = 'public_id'
 
+    def check_month_year(self, _month, _year):
+        d = datetime.now()
+        month = _month
+        year = _year
+        if _month == None or not _month.isnumeric():
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        elif int(_month) > 12 or int(_month) < 1:
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        if _year == None or not _year.isnumeric():
+            year = d.year
+        return (month, year)
+    
     def check_permission(self, request):
         user = request.user
         user_group = [g.name for g in user.groups.all()]
@@ -223,6 +241,36 @@ class WaterElectricalViewSet(viewsets.ModelViewSet):
             pass
         return Response({'status': 'fail', 'notification' : 'Water Electrical not found!'}, status=status.HTTP_404_NOT_FOUND)
 
+    # get list all room 
+    @action(methods=["GET"], detail=False, url_path="get_list_water_electrical_not_pagination", url_name="get_list_water_electrical_not_pagination")
+    def get_list_water_electrical_not_pagination(self, request, *args, **kwargs):
+        try:
+            if self.check_permission(request):
+                
+                area = self.request.GET.get('area', None) 
+                month = self.request.GET.get('month',None)                    
+                year = self.request.GET.get('year',None)
+                month, year = self.check_month_year(month, year)
+                if area != None:
+                    area = Area.objects.filter(Q(name=area) | Q(slug=area)) 
+                else:
+                    area = Area.objects.all()
+                               
+                room_in_area = Room.objects.filter(area__in=area).order_by('-id')
+                _list = WaterElectrical.objects.filter(room__in=room_in_area, year=year, month=month)
+                serializer = WaterElectricalDetailSerializer(_list, many=True)
+                data = serializer.data
+                for index, value in enumerate(_list):
+                    # print(value.bill_water_electrical.all().first())
+                    data[index]['isPaid'] = value.bill_water_electrical.all().first().is_paid
+            
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
 class BillViewSet(viewsets.ModelViewSet):
     serializer_class = BillSerializer
     permission_classes = [IsAuthenticated, IsQuanLyTaiChinh]
@@ -326,12 +374,12 @@ class BillViewSet(viewsets.ModelViewSet):
             _list = Bill.objects.filter(water_electrical__room__in=room, 
                                                               water_electrical__year=year,
                                                               water_electrical__month=month)
-            _list = _list.filter(is_delete=False).first()
+            _list = _list.filter(is_delete=False).order_by('created_at')
             if _list:
-                serializer = BillDetailSerializer(_list)
+                serializer = BillDetailSerializer(_list, many=True)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
-                return Response({'status': 'fail', 'notification' : 'Bill not found!'}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'status': 'fail', 'notification' : 'Room not have bill!'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)

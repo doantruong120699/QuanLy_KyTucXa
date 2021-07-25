@@ -12,8 +12,9 @@ import { useHistory } from "react-router-dom";
 import {
   getContracts,
   getListWaterElectricalBills,
+  updateWaterElectricalIndex,
 } from "../../../redux/actions/financial";
-import Loader from "../../../components/common/Loader";
+import Button from "../../../components/common/Button";
 
 export default function Budget() {
   let history = useHistory();
@@ -44,48 +45,21 @@ export default function Budget() {
       )}`,
       (output) => {
         if (output) {
+          setDataBill(output.results);
         }
       }
     );
-  }, []);
+  }, [startDate]);
 
-  const dataInBudget = [
-    {
-      public_id: 4,
-      water_electrical: {
-        public_id: 1,
-        room: { name: "101", slug: "101-b", number_now: 0 },
-        month: 4,
-        year: 2021,
-        water_price: 89313,
-        electrical_price: 891564,
-      },
-    },
-    {
-      public_id: 2,
-      water_electrical: {
-        public_id: 2,
-        room: { name: "102", slug: "101-a", number_now: 0 },
-        month: 4,
-        year: 2021,
-        water_price: 89313,
-        electrical_price: 891564,
-      },
-    },
-    {
-      public_id: 3,
-      water_electrical: {
-        public_id: 3,
-        room: { name: "103", slug: "101-b", number_now: 0 },
-        month: 4,
-        year: 2021,
-        water_price: 89313,
-        electrical_price: 891564,
-      },
-    },
-  ];
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.defaultValue);
+  };
+  const handlePayFee = (data) => {
+    const slug = formatDataBill(dataBill).find(
+      (index) => index.room_name === data
+    ).public_id;
+    const dataSend = { is_paid: true };
+    updateWaterElectricalIndex(slug, dataSend);
   };
   const contractColumn = [
     {
@@ -207,6 +181,49 @@ export default function Budget() {
           }).format(value),
       },
     },
+    {
+      label: "Tổng tiền",
+      name: "total",
+      options: {
+        filter: true,
+        sort: true,
+        customBodyRender: (value) =>
+          new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(value),
+      },
+    },
+    {
+      label: "Tình trạng",
+      name: "is_paid",
+      options: {
+        customBodyRender: (value) => {
+          return (
+            <div style={{ color: `${value === false ? "red" : "green"}` }}>
+              {value === false ? "Chưa đóng tiền" : "Đã đóng tiền"}
+            </div>
+          );
+        },
+      },
+    },
+    {
+      label: "Đóng tiền",
+      name: "button",
+      options: {
+        customBodyRender: (button, tableMetaData) => {
+          console.log("value", tableMetaData);
+          return (
+            <Button
+              type="normal-red"
+              content="đóng"
+              isDisable={tableMetaData.rowData[5]}
+              onClick={() => handlePayFee(tableMetaData.rowData[0])}
+            />
+          );
+        },
+      },
+    },
   ];
   const formatData = (data) => {
     return data?.map((value, index) => {
@@ -233,6 +250,11 @@ export default function Budget() {
         date: `${index.water_electrical.month}/${index.water_electrical.year}`,
         water_price: index.water_electrical.water_price,
         electrical_price: index.water_electrical.electrical_price,
+        is_paid: index.is_paid,
+        public_id: index.public_id,
+        total:
+          index.water_electrical.water_price +
+          index.water_electrical.electrical_price,
       };
     });
   };
@@ -250,7 +272,7 @@ export default function Budget() {
     };
     return updatedRow;
   });
-  const gridBillData = dataInBudget.map((row) => {
+  const gridBillData = formatDataBill(dataBill).map((row) => {
     const updatedRow = {
       ...row,
       id: parseInt(row.id),
@@ -308,90 +330,93 @@ export default function Budget() {
         },
       },
     });
-  return (
-    <div>
-      {loader ? (
-        <div className="align-item-ct">
-          <Loader />
-        </div>
-      ) : (
-        <div className="col col-full pl-48 ">
-          <div className="budget-date-picker" style={{}}>
-            <span style={{ fontSize: "16px" }}>Từ: </span>
-            <DatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              selectsStart
-              startDate={startDate}
-              dateFormat="dd/MM/yyyy"
-              endDate={endDate}
-              className={"budget-date-picker-calendar"}
-            />
-            <span style={{ fontSize: "16px", marginLeft: "20px" }}>Đến: </span>
 
-            <DatePicker
-              selected={endDate}
-              onChange={(date) => setEndDate(date)}
-              selectsEnd
-              startDate={startDate}
-              dateFormat="dd/MM/yyyy"
-              endDate={endDate}
-              minDate={startDate}
-              className={"budget-date-picker-calendar"}
-            />
-          </div>
-          <span style={{ display: "flex" }}>
-            <div
-              style={{ fontSize: "16px", marginTop: "20px", width: "230px" }}
-            >
-              <input
-                type="radio"
-                value="contract"
-                checked={selectedOption === "contract"}
-                onChange={handleOptionChange}
-              />
-              Hợp đồng
-              <input
-                type="radio"
-                value="bill"
-                checked={selectedOption === "bill"}
-                onChange={handleOptionChange}
-                style={{ marginLeft: "20px" }}
-              />
-              Hoá đơn
+  if (dataBill) {
+    return (
+      <div>
+        {
+          /*dataContracts &&*/ dataBill && (
+            <div className="col col-full pl-48 ">
+              <div style={{ marginBottom: "20px" }}>
+                Bảng thu chi của kí túc xá
+              </div>
+              <div className="budget-date-picker" style={{}}>
+                <span style={{ fontSize: "16px" }}>Tháng: </span>
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date)}
+                  selectsStart
+                  startDate={startDate}
+                  dateFormat="MM/yyyy"
+                  endDate={endDate}
+                  className={"budget-date-picker-calendar"}
+                  showMonthYearPicker
+                />
+              </div>
+              <span style={{ display: "flex" }}>
+                <div
+                  style={{
+                    fontSize: "16px",
+                    marginTop: "20px",
+                    width: "230px",
+                  }}
+                >
+                  <input
+                    type="radio"
+                    value="contract"
+                    checked={selectedOption === "contract"}
+                    onChange={handleOptionChange}
+                  />
+                  Hợp đồng
+                  <input
+                    type="radio"
+                    value="bill"
+                    checked={selectedOption === "bill"}
+                    onChange={handleOptionChange}
+                    style={{ marginLeft: "20px" }}
+                  />
+                  Hoá đơn
+                </div>
+              </span>
+              <div
+                className={"budget-table"}
+                style={{ marginTop: "20px", position: "sticky" }}
+              >
+                <Box component="div" marginLeft={8}>
+                  <MuiThemeProvider theme={getMuiTheme()}>
+                    {selectedOption === "contract" ? (
+                      <MUIDataTable
+                        title={"Hợp đồng"}
+                        data={gridContractData}
+                        columns={contractColumn}
+                        options={options}
+                      />
+                    ) : (
+                      <MUIDataTable
+                        title={"Hoá đơn"}
+                        data={gridBillData}
+                        columns={billColumn}
+                        options={options}
+                      />
+                    )}
+                  </MuiThemeProvider>
+                </Box>
+                <ReactModal
+                  isOpen={isModalVisible}
+                  onRequestClose={hideModal}
+                  style={customStyles}
+                >
+                </ReactModal>
+              </div>
             </div>
-          </span>
-          <div
-            className={"budget-table"}
-            style={{ marginTop: "20px", position: "sticky" }}
-          >
-            <Box component="div" marginLeft={5}>
-              <MuiThemeProvider theme={getMuiTheme()}>
-                {selectedOption === "contract" ? (
-                  <MUIDataTable
-                    title={"Hợp đồng"}
-                    data={gridContractData}
-                    columns={contractColumn}
-                    options={options}
-                  />
-                ) : (
-                  <MUIDataTable
-                    title={"Hoá đơn"}
-                    data={gridBillData}
-                    columns={billColumn}
-                    options={options}
-                  />
-                )}
-              </MuiThemeProvider>
-            </Box>
-            <ReactModal
-              isOpen={isModalVisible}
-              onRequestClose={hideModal}
-              style={customStyles}
-            ></ReactModal>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+          )
+        }
+      </div>
+    );
+  } else
+    return (
+      <div style={{ fontSize: "30px", textAlign: "center", fontWeight: "700" }}>
+        Không có dữ liệu hoặc bạn không có quyền để xem mục này
+      </div>
+    );
 }
