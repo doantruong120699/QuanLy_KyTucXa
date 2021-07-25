@@ -11,7 +11,7 @@ from .views import *
 list_registration_room = ContractRegistationViewSet.as_view({
     'get': 'list',
 })
-list_contract_filter = ContractRegistationViewSet.as_view({
+list_contract_filter = ListContractViewSet.as_view({
     'get': 'list_contract_filter'
 })
 detail_registration_room = ContractRegistationViewSet.as_view({
