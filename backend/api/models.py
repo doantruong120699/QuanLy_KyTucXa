@@ -381,6 +381,7 @@ class TypeRevenue(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True) 
     slug = models.CharField(max_length=200, null=True, unique=True)  
+    image = models.ImageField(upload_to='revenue/',null=True, blank=True)
     
     def __str__(self):
         return self.name
