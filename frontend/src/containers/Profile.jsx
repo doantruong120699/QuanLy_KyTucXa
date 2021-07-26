@@ -60,9 +60,13 @@ const Profile = () => {
               ? output.profile.position.name
               : null,
             area: output.profile.area ? output.profile.area.name : null,
-            room: output.room,
-            grade: output.profile.my_class.name,
-            faculty: output.profile.faculty.name,
+            room: output.room.slug ? output.room.slug : null,
+            grade: output.profile.my_class
+              ? output.profile.my_class.name
+              : null,
+            faculty: output.profile.faculty
+              ? output.profile.faculty.name
+              : null,
           });
         }
       });

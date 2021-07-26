@@ -4,6 +4,7 @@ const initialState = {
   accountList: {},
   currentAccount: {},
   groupAndPermission: {},
+  rooms: {},
   error: {},
   loading: false,
 };
@@ -11,6 +12,7 @@ const initialState = {
 export default function reducer(state = initialState, actions) {
   switch (actions.type) {
     case types.GET_ACCOUNTS_API:
+    case types.GET_ROOMS_BY_AREA_API_SUCCEED:
     case types.GET_DETAILED_ACCOUNT_API:
     case types.GET_GROUP_AND_PERMISSION_API:
       return {
@@ -31,7 +33,14 @@ export default function reducer(state = initialState, actions) {
         groupAndPermission: actions.payload,
         loading: false,
       };
+    case types.GET_ROOMS_BY_AREA_API_SUCCEED:
+      return {
+        ...state,
+        rooms: actions.payload,
+        loading: false,
+      };
     case types.GET_ACCOUNTS_API_FAIL:
+    case types.GET_ROOMS_BY_AREA_API_FAIL:
     case types.GET_DETAILED_ACCOUNT_API_FAIL:
     case types.GET_GROUP_AND_PERMISSION_API_FAIL:
       return {

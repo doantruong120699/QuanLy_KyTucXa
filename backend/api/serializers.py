@@ -248,6 +248,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
+            'avatar',
             'birthday',
             'address',
             'identify_card',
@@ -264,6 +265,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
+            'avatar',
             'birthday',
             'address',
             'identify_card',
@@ -302,6 +304,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             try:
                 profile_data = self.validated_data['profile']
                 profile = Profile.objects.get(user=user)
+                profile.avatar=profile_data['avatar']
                 profile.birthday=profile_data['birthday']
                 # profile.gender=profile_data['gender']
                 profile.address=profile_data['address']

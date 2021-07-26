@@ -7,15 +7,11 @@ import InputField from "../../../components/common/InputField";
 import { getSendData } from "../../../utilities/constants/DataRender/account";
 import ReactTags from "react-tag-autocomplete";
 import validate from "../../../utilities/regex";
-import { createAccount } from "../../../redux/actions/account";
-import Alertness from "../../../components/common/Alertness";
-import * as ALERTMESSAGE from "../../../utilities/constants/AlertMessage";
-import * as APIALERTMESSAGE from "../../../utilities/constants/APIAlertMessage";
 
 export default function AddAccount(props) {
   var {
     userInfor,
-    updateState,
+    createAccount,
     permission,
     faculty,
     class_in_university,
@@ -26,14 +22,6 @@ export default function AddAccount(props) {
   } = props;
 
   const [newAccount, setAccount] = useState(userInfor);
-
-  const [notification, setNotification] = useState(null);
-
-  const [open, setOpen] = useState(false);
-
-  const onClose = () => setOpen(false);
-
-  const onOpen = () => setOpen(true);
 
   function handleInput(event) {
     const { name, value } = event.target;
@@ -116,34 +104,8 @@ export default function AddAccount(props) {
     }
 
     const data = getSendData(newAccount);
-    createAccount(data, (output) => {
-      if (output) {
-        switch (output.status) {
-          case APIALERTMESSAGE.STATUS_SUCCESS:
-            setNotification({
-              type: "type-success",
-              content: ALERTMESSAGE.CREATE_SUCCESSFULLY,
-            });
-
-            updateState();
-            setAccount(userInfor);
-            break;
-          default:
-            setNotification({
-              type: "type-error",
-              content: output.notification,
-            });
-            break;
-        }
-      } else {
-        setNotification({
-          type: "type-error",
-          content: ALERTMESSAGE.SYSTEM_ERROR,
-        });
-      }
-    });
-    hideModal();
-    onOpen();
+    createAccount(data);
+    setAccount(userInfor);
   }
   return (
     <div>
@@ -352,6 +314,11 @@ export default function AddAccount(props) {
                       name="area"
                       value={newAccount.area.value}
                       onChange={handleInput}
+                      disabled={
+                        newAccount.group.filter(
+                          (ele) => ele.name === "sinhvien_group"
+                        ).length > 0
+                      }
                     >
                       {area.map((value, index) => {
                         return (
@@ -467,16 +434,6 @@ export default function AddAccount(props) {
           </div>
         </Popup>
       )}
-      <div>
-        {notification && (
-          <Alertness
-            open={open}
-            onClose={onClose}
-            type={notification.type}
-            content={notification.content}
-          />
-        )}
-      </div>
     </div>
   );
 }

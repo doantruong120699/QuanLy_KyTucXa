@@ -35,7 +35,7 @@ export async function sendEmail(data, resolve = () => {}) {
     type: types.SEND_EMAIL_API,
   });
   try {
-    const response = await fetch(`${REACT_APP_BASE_API}auth/send-email/`, {
+    const response = await fetch(`${REACT_APP_BASE_API}auth/forgot-password/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -53,6 +53,65 @@ export async function sendEmail(data, resolve = () => {}) {
     store.dispatch({
       payload: error,
       type: types.SEND_EMAIL_API_FAIL,
+    });
+  }
+}
+
+export async function resetPass(data, uuid, token, resolve = () => {}) {
+  store.dispatch({
+    type: types.RESET_PASSWORD,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}auth/forgot-password/${uuid}/${token}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.RESET_PASSWORD_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.RESET_PASSWORD_FAIL,
+    });
+  }
+}
+
+export async function checkExpiration(uuid, token, resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_CHECK_EXPIRATION,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}auth/forgot-password/${uuid}/${token}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    const data_1 = await response.json();
+    resolve(data_1);
+    store.dispatch({
+      payload: data_1,
+      type: types.GET_CHECK_EXPIRATION_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_CHECK_EXPIRATION_FAIL,
     });
   }
 }

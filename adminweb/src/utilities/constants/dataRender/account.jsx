@@ -220,6 +220,11 @@ function getSendData(data) {
       address: data.address.value,
       identify_card: data.identify_card.value,
       gender: data.gender.value,
+      area:
+        data.group.filter((value) => "sinhvien_group" === value.name).length ===
+        0
+          ? parseInt(data.area.value, 10)
+          : "",
       phone: data.phone.value,
       faculty:
         data.group.filter((value) => "sinhvien_group" === value.name).length ===
@@ -253,6 +258,11 @@ function getUpdateData(data) {
       address: data.address.value,
       identify_card: data.identify_card.value,
       gender: data.gender.value,
+      area:
+        data.group.filter((value) => "sinhvien_group" === value.name).length ===
+        0
+          ? parseInt(data.area.value, 10)
+          : "",
       phone: data.phone.value,
       faculty:
         data.group.filter((value) => "sinhvien_group" === value.name).length ===
