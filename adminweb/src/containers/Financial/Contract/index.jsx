@@ -377,10 +377,7 @@ export default function Budget() {
               <DatePicker
                 selected={startDate}
                 onChange={(date) => setStartDate(date)}
-                selectsStart
-                startDate={startDate}
                 dateFormat="MM/yyyy"
-                endDate={endDate}
                 className={"budget-date-picker-calendar"}
                 showMonthYearPicker
               />
