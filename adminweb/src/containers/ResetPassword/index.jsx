@@ -2,14 +2,14 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useParams, useHistory } from "react-router-dom";
-import InputField from "../components/common/InputField";
-import FormError from "../components/common/FormError";
-import Button from "../components/common/Button";
-import * as AlertMessage from "../utilities/constants/AlertMessage";
-import * as ROUTER from "../utilities/constants/router";
-import validate from "../utilities/regex";
-import { checkExpiration, resetPass } from "../redux/actions/login";
-import Loader from "../components/common/Loader";
+import InputField from "../../components/common/InputField";
+import FormError from "../../components/common/FormError";
+import Button from "../../components/common/Button";
+import * as AlertMessage from "../../utilities/constants/AlertMessage";
+import * as ROUTER from "../../utilities/constants/router";
+import validate from "../../utilities/regex";
+import { checkExpiration, resetPass } from "../../redux/actions/login";
+import Loader from "../../components/common/Loader";
 
 const ResetPassword = () => {
   const { uuid, token } = useParams();
@@ -119,7 +119,7 @@ const ResetPassword = () => {
         <div>
           {!isExpired ? (
             <div className="col col-full text-align-ct">
-              <h1>Link đã hết hạn</h1>
+              <h1 className="text-is-white">Link đã hết hạn</h1>
             </div>
           ) : (
             <div className="form-login">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import "./styles.css";
 import * as ROUTER from "../../../utilities/constants/router";
@@ -7,7 +8,6 @@ import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import MUIDataTable from "mui-datatables";
 import moment from "moment";
 import ReactModal from "react-modal";
-import AddBudget from "../Budget/AddBudget";
 import { useHistory } from "react-router-dom";
 import {
   getContracts,
@@ -19,18 +19,27 @@ import { Button as MUIButton } from "@material-ui/core/";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getRoomDetails } from "../../../redux/actions/humanResource";
-import Button from "../../../components/common/Button";
+import { isAllowed } from "../../../utilities/helper";
+import Permissionless from "../../../components/common/Permissionless";
+import Loader from "../../../components/common/Loader";
 
 export default function Budget() {
   let history = useHistory();
 
+  const loader = useSelector((state) => state.financial.loading);
+
   const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+
+  const [endDate] = useState(new Date());
+
   const [selectedOption, setSelectedOption] = useState("contract");
+
   const [dataContracts, setDataContracts] = useState([]);
+
   const [dataBill, setDataBill] = useState([]);
   const [selectedPeoplePaid, setSelectedPeoplePaid] = useState();
   const [selectedBillId, setSelectedBillId] = useState();
+
   useEffect(() => {
     getContracts((output) => {
       if (output) {
@@ -364,110 +373,109 @@ export default function Budget() {
       },
     });
 
-  if (dataBill) {
-    return (
-      <div>
-        {dataContracts && dataBill && (
-          <div className="col col-full pl-48 ">
-            <div style={{ marginBottom: "20px" }}>
-              Bảng thu chi của kí túc xá
-            </div>
-            <div className="budget-date-picker" style={{}}>
-              <span style={{ fontSize: "16px" }}>Tháng: </span>
-              <DatePicker
-                selected={startDate}
-                onChange={(date) => setStartDate(date)}
-                dateFormat="MM/yyyy"
-                className={"budget-date-picker-calendar"}
-                showMonthYearPicker
-              />
-            </div>
-            <span style={{ display: "flex" }}>
-              <div
-                style={{
-                  fontSize: "16px",
-                  marginTop: "20px",
-                  width: "230px",
-                }}
-              >
-                <input
-                  type="radio"
-                  value="contract"
-                  checked={selectedOption === "contract"}
-                  onChange={handleOptionChange}
+  return (
+    <div>
+      {!isAllowed("quanlytaichinh_group", "view_contract") ? (
+        <div className="align-item-ct">
+          <Permissionless />
+        </div>
+      ) : loader ? (
+        <div className="align-item-ct">
+          <Loader />
+        </div>
+      ) : (
+        <div>
+          {dataContracts && dataBill && (
+            <div className="col col-full pl-48 ">
+              <div className="budget-date-picker" style={{}}>
+                <span style={{ fontSize: "16px" }}>Tháng: </span>
+                <DatePicker
+                  selected={startDate}
+                  onChange={(date) => setStartDate(date)}
+                  dateFormat="MM/yyyy"
+                  className={"budget-date-picker-calendar"}
+                  showMonthYearPicker
                 />
-                Hợp đồng
-                <input
-                  type="radio"
-                  value="bill"
-                  checked={selectedOption === "bill"}
-                  onChange={handleOptionChange}
-                  style={{ marginLeft: "20px" }}
-                />
-                Hoá đơn
               </div>
-            </span>
-            <div
-              className={"budget-table"}
-              style={{ marginTop: "20px", position: "sticky" }}
-            >
-              <Box component="div" marginLeft={8}>
-                <MuiThemeProvider theme={getMuiTheme()}>
-                  {selectedOption === "contract" ? (
-                    <MUIDataTable
-                      title={"Hợp đồng"}
-                      data={gridContractData}
-                      columns={contractColumn}
-                      options={options}
-                    />
-                  ) : (
-                    <MUIDataTable
-                      title={"Hoá đơn"}
-                      data={gridBillData}
-                      columns={billColumn}
-                      options={options}
-                    />
-                  )}
-                </MuiThemeProvider>
-              </Box>
-              <ReactModal
-                isOpen={isModalVisible}
-                onRequestClose={hideModal}
-                style={customStyles}
+              <span style={{ display: "flex" }}>
+                <div className="col-full pt-16">
+                  <label className="mr-8" htmlFor="contract">
+                    Hợp đồng
+                  </label>
+                  <input
+                    type="radio"
+                    id="contract"
+                    value="contract"
+                    onChange={handleOptionChange}
+                    checked={selectedOption === "contract"}
+                  />
+                  <label className="ml-16 mr-8" htmlFor="bill">
+                    Hóa đơn
+                  </label>
+                  <input
+                    type="radio"
+                    id="bill"
+                    value="bill"
+                    onChange={handleOptionChange}
+                    checked={selectedOption === "bill"}
+                  />
+                </div>
+              </span>
+              <div
+                className={"budget-table"}
+                style={{ marginTop: "20px", position: "sticky" }}
               >
-                <AddBudget />
-              </ReactModal>
+                <Box component="div" marginLeft={8}>
+                  <MuiThemeProvider theme={getMuiTheme()}>
+                    {selectedOption === "contract" ? (
+                      <MUIDataTable
+                        title={"Hợp đồng"}
+                        data={gridContractData}
+                        columns={contractColumn}
+                        options={options}
+                      />
+                    ) : (
+                      <MUIDataTable
+                        title={"Hoá đơn"}
+                        data={gridBillData}
+                        columns={billColumn}
+                        options={options}
+                      />
+                    )}
+                  </MuiThemeProvider>
+                </Box>
+                <ReactModal
+                  isOpen={isModalVisible}
+                  onRequestClose={hideModal}
+                  style={customStyles}
+                ></ReactModal>
+              </div>
             </div>
-          </div>
-        )}
-        <ReactModal
-          isOpen={isSelectStudentModalVisible}
-          onRequestClose={hideModal}
-          style={customStyles}
-        >
-          <div>
-            <div className={"mb-20"}>Lựa chọn người đóng tiền</div>
-            <Select
-              className="people-select mb-20"
-              options={peopleInRoom}
-              onChange={(value) => setSelectedPeoplePaid(value.value)}
-            />
-            <MUIButton
-              variant="contained"
-              color="primary"
-              onClick={handlePayFee}
-            >
-              Xác nhận
-            </MUIButton>
-            <ToastContainer />
-          </div>
-        </ReactModal>
-      </div>
-    );
-  } else
-    return (
-      <div style={{ fontSize: "30px", textAlign: "center", fontWeight: "700" }}>
-        Không có dữ liệu hoặc bạn không có quyền để xem mục này
-      </div>
-    );
+          )}
+          <ReactModal
+            isOpen={isSelectStudentModalVisible}
+            onRequestClose={hideModal}
+            style={customStyles}
+          >
+            <div>
+              <div className={"mb-20"}>Lựa chọn người đóng tiền</div>
+              <Select
+                className="people-select mb-20"
+                options={peopleInRoom}
+                onChange={(value) => setSelectedPeoplePaid(value.value)}
+              />
+              <MUIButton
+                variant="contained"
+                color="primary"
+                onClick={handlePayFee}
+              >
+                Xác nhận
+              </MUIButton>
+              <ToastContainer />
+            </div>
+          </ReactModal>
+        </div>
+      )}
+    </div>
+  );
 }

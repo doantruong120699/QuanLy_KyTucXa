@@ -146,11 +146,11 @@ export default function Overview() {
               timeout={1000}
               style={{ transformOrigin: "10 10 10" }}
             >
-              <Box style={{ transform: "scale(1)", marginLeft: "5%" }}>
+              <Box style={{ transform: "scale(1)" }}>
                 <Box
                   style={{
                     transform: "scale(1)",
-                    marginLeft: "13%",
+                    marginLeft: "10%",
                   }}
                 >
                   {data.map((n, index) => {

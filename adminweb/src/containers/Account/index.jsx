@@ -1,11 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import MUIDataTable from "mui-datatables";
 import Box from "@material-ui/core/Box";
+import { useSelector } from "react-redux";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import Button from "../../components/common/Button";
 import React, { useState, useEffect } from "react";
 import AddAccount from "./AddAccount";
 import MoreButton from "./MoreButton";
+import Alertness from "../../components/common/Alertness";
+import * as APIALERTMESSAGE from "../../utilities/constants/APIAlertMessage";
+import * as ALERTMESSAGE from "../../utilities/constants/AlertMessage";
+import Loader from "../../components/common/Loader";
+import Permissionless from "../../components/common/Permissionless";
+
 import {
   getAccounts,
   getGroupAndPermission,
@@ -13,17 +20,22 @@ import {
   getClass,
   getPosition,
   getArea,
+  createAccount,
+  updateAccount,
 } from "../../redux/actions/account";
 import moment from "moment";
 import YesNoModal from "../../components/YesNoModal";
 import "./styles.css";
 import { getEmptyAccount } from "../../utilities/constants/DataRender/account";
 import queryString from "querystring";
+import { isAllowed } from "../../utilities/helper";
 export default function Account() {
   const [data, setData] = useState({
     list: null,
     totals: null,
   });
+
+  const loader = useSelector((state) => state.account.loading);
 
   const [isUpdate, setUpdate] = useState();
 
@@ -42,6 +54,50 @@ export default function Account() {
   function updateState() {
     setUpdate((prev) => !prev);
   }
+
+  function addAccount(sendData) {
+    createAccount(sendData, (output) => {
+      if (output) {
+        switch (output.status) {
+          case APIALERTMESSAGE.STATUS_SUCCESS:
+            setNotification({
+              type: "type-success",
+              content: ALERTMESSAGE.CREATE_SUCCESSFULLY,
+            });
+
+            updateState();
+            break;
+          default:
+            setNotification({
+              type: "type-error",
+              content: output.notification,
+            });
+            break;
+        }
+      } else {
+        setNotification({
+          type: "type-error",
+          content: ALERTMESSAGE.SYSTEM_ERROR,
+        });
+      }
+      hideModal();
+      onOpen();
+    });
+  }
+  const [notification, setNotification] = useState({
+    type: "",
+    content: "",
+  });
+
+  const [open, setOpen] = useState(false);
+
+  const onClose = () => setOpen(false);
+
+  const onOpen = () => setOpen(true);
+
+  const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const getMuiTheme = () =>
     createMuiTheme({
@@ -158,6 +214,7 @@ export default function Account() {
             class_in_university={selection.class_in_university}
             position={selection.position}
             area={selection.area}
+            updateAccount={handleUpdateAccount}
           />
         ),
       },
@@ -184,6 +241,7 @@ export default function Account() {
     });
     return result;
   }
+
   useEffect(() => {
     const paramsString = queryString.stringify(filter);
 
@@ -196,6 +254,7 @@ export default function Account() {
 
   useEffect(() => {
     const option = { ...selection };
+
     getGroupAndPermission((output) => {
       if (output) {
         option.permission = output;
@@ -243,11 +302,11 @@ export default function Account() {
       //handleKeypress();git
     },
   };
-  const [isYesNoModalVisible, setIsYesNoModalVisible] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const hideModal = () => {
     setIsModalVisible(false);
   };
+
   const handleTableChange = (action, tableState) => {
     switch (action) {
       case "changeRowsPerPage":
@@ -262,6 +321,7 @@ export default function Account() {
         break;
     }
   };
+
   const handleTriggerAction = (tableState) => {
     let keyword = "";
     if (tableState.sesearchText !== "") {
@@ -274,57 +334,104 @@ export default function Account() {
     setIsModalVisible(true);
   };
 
+  function handleUpdateAccount(updatedData, public_id) {
+    updateAccount(public_id, updatedData, (output) => {
+      if (output) {
+        switch (output.status) {
+          case APIALERTMESSAGE.STATUS_SUCCESS:
+            setNotification({
+              type: "type-success",
+              content: ALERTMESSAGE.UPDATE_PROFILE_SUCCESSFULLY,
+            });
+
+            updateState();
+            break;
+          default:
+            setNotification({
+              type: "type-error",
+              content: output.notification,
+            });
+            break;
+        }
+      } else {
+        setNotification({
+          type: "type-error",
+          content: ALERTMESSAGE.SYSTEM_ERROR,
+        });
+      }
+      hideModal();
+      onOpen();
+    });
+  }
   return (
     <div className="pl-24 pr-24">
-      <div>
-        {data.list && (
-          <div className="account_page">
-            <Box marginBottom={5} className="account-header">
-              <YesNoModal
-                isModalVisible={isYesNoModalVisible}
-                hideModal={() => {}}
-                title={"Xác nhận"}
-                message={"Mời xác nhận"}
-                okText={"OK"}
-                cancelText={"Cancel"}
-                onCancel={() => {
-                  setIsYesNoModalVisible(false);
-                }}
+      {!isAllowed("admin_group", "view_user") ? (
+        <div className="align-item-ct">
+          <Permissionless />
+        </div>
+      ) : loader ? (
+        <div className="align-item-ct">
+          <Loader />
+        </div>
+      ) : (
+        <div>
+          {data.list && (
+            <div className="account_page">
+              <Box marginBottom={5} className="account-header">
+                <YesNoModal
+                  isModalVisible={isYesNoModalVisible}
+                  hideModal={() => {}}
+                  title={"Xác nhận"}
+                  message={"Mời xác nhận"}
+                  okText={"OK"}
+                  cancelText={"Cancel"}
+                  onCancel={() => {
+                    setIsYesNoModalVisible(false);
+                  }}
+                />
+                <div className="col col-full">
+                  <Button
+                    type="normal-blue"
+                    content="Tạo"
+                    onClick={handleAddAccount}
+                    isDisable={!isAllowed("admin_group", "add_user")}
+                  />
+                </div>
+              </Box>
+
+              <Box marginLeft={0}>
+                <MuiThemeProvider theme={getMuiTheme()}>
+                  <MUIDataTable
+                    title={"Danh sách tài khoản trong hệ thống"}
+                    data={convertDataForTable(data.list)}
+                    columns={columns}
+                    options={options}
+                  />
+                </MuiThemeProvider>
+              </Box>
+              <AddAccount
+                userInfor={getEmptyAccount()}
+                hideModal={hideModal}
+                isOpen={isModalVisible}
+                permission={selection.permission}
+                faculty={selection.faculty}
+                class_in_university={selection.class_in_university}
+                position={selection.position}
+                area={selection.area}
+                createAccount={addAccount}
               />
-              <div className="col col-full">
-                <Button
-                  type="normal-blue"
-                  content="Tạo"
-                  isDisable={false}
-                  onClick={handleAddAccount}
+              <div>
+                <Alertness
+                  open={open}
+                  onClose={onClose}
+                  type={notification.type}
+                  content={notification.content}
                 />
               </div>
-            </Box>
-
-            <Box marginLeft={0}>
-              <MuiThemeProvider theme={getMuiTheme()}>
-                <MUIDataTable
-                  title={"Danh sách tài khoản trong hệ thống"}
-                  data={convertDataForTable(data.list)}
-                  columns={columns}
-                  options={options}
-                />
-              </MuiThemeProvider>
-            </Box>
-            <AddAccount
-              userInfor={getEmptyAccount()}
-              hideModal={hideModal}
-              updateState={updateState}
-              isOpen={isModalVisible}
-              permission={selection.permission}
-              faculty={selection.faculty}
-              class_in_university={selection.class_in_university}
-              position={selection.position}
-              area={selection.area}
-            />
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

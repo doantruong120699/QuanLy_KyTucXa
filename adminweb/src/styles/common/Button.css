@@ -10,6 +10,12 @@
   text-transform: uppercase;
   color: #fff;
   letter-spacing: 1px;
+  min-width: 120px;
+}
+.style-small {
+  height: 30px;
+  font-size: 12px;
+  min-width: 80px;
 }
 .btn-custom:hover {
   border: 2px solid #d6d5f8;
@@ -32,6 +38,14 @@
   color: #000;
 }
 .btn-bg-green {
-  background-image: linear-gradient(90deg, #22767c  , #22767c);
+  background-image: linear-gradient(90deg, #22767c, #22767c);
   background-size: 200%;
+}
+.disable_button:disabled,
+.disable_button[disabled] {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  background-image: none;
+  cursor: not-allowed;
+  color: #666666;
 }
