@@ -55,7 +55,7 @@ class Area(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User,related_name = 'user_profile', on_delete=models.CASCADE, primary_key=True)
-    avatar = models.ImageField(upload_to='avatar_user/',null=True, blank=True)
+    # avatar = models.ImageField(upload_to='avatar_user/',null=True, blank=True)
     public_id = models.UUIDField(default=uuid.uuid4, editable=False)
     birthday = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=200, null=True, blank=True)
@@ -381,7 +381,7 @@ class TypeRevenue(models.Model):
     name = models.CharField(max_length=100, null=True, blank=True)
     description = models.TextField(null=True, blank=True) 
     slug = models.CharField(max_length=200, null=True, unique=True)  
-    image = models.ImageField(upload_to='revenue/',null=True, blank=True)
+    # image = models.ImageField(upload_to='revenue/',null=True, blank=True)
     
     def __str__(self):
         return self.name
