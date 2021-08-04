@@ -24,7 +24,7 @@ class Room extends Component {
       icon = 'ban';
     }
     return (
-      <View>
+      <View key={this.props.myRoom.name}>
         <TouchableOpacity onPress={this.props.onClick}>
           <View style={styles.item}>
             <FontAwesome5 style={styles.iconItem} name={icon} />

@@ -19,7 +19,6 @@ class ProfileNV extends Component {
   };
   render() {
     let data = this.props.dataProfile;
-    console.log(data)
     return (
       <View style={styleContainer.container}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
