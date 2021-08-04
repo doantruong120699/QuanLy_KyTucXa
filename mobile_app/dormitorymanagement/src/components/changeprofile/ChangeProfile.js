@@ -10,13 +10,13 @@ class ChangeProfile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
-      first_name: '',
-      last_name: '',
-      birthday: new Date(),
-      address: '',
-      identify_card: '',
-      phone: '',
+      username: this.props.dataUser.username,
+      first_name: this.props.dataUser.first_name,
+      last_name: this.props.dataUser.last_name,
+      birthday: new Date(this.props.dataUser.profile.birthday),
+      address: this.props.dataUser.profile.address,
+      identify_card: this.props.dataUser.profile.identify_card,
+      phone: this.props.dataUser.profile.phone,
     };
   };
   showToast = (msg) => {
@@ -89,6 +89,7 @@ class ChangeProfile extends Component {
                   <Text style={styles.title}>Tài khoản:</Text>
                   <TextInput
                     underlineColorAndroid="transparent"
+                    value={this.state.username}
                     onChangeText={this.changeTextUsername}
                     style={styles.inputText}
                   />
@@ -97,6 +98,7 @@ class ChangeProfile extends Component {
                   <Text style={styles.title}>Tên:</Text>
                   <TextInput
                     underlineColorAndroid="transparent"
+                    value={this.state.first_name}
                     onChangeText={this.changeTextFirstName}
                     style={styles.inputText}
                   />
@@ -105,6 +107,7 @@ class ChangeProfile extends Component {
                   <Text style={styles.title}>Họ:</Text>
                   <TextInput
                     underlineColorAndroid="transparent"
+                    value={this.state.last_name}
                     onChangeText={this.changeTextLastName}
                     style={styles.inputText}
                   />
@@ -113,6 +116,7 @@ class ChangeProfile extends Component {
                   <Text style={styles.title}>Ngày sinh:</Text>
                   <DatePicker
                     style={styles.datePicker}
+                    
                     date={this.state.birthday}
                     mode={"date"}
                     placeholder="select date"
@@ -126,6 +130,7 @@ class ChangeProfile extends Component {
                   <Text style={styles.title}>Địa chỉ:</Text>
                   <TextInput
                     underlineColorAndroid="transparent"
+                    value={this.state.address}
                     onChangeText={this.changeTextAddress}
                     style={styles.inputText}
                   />
@@ -134,6 +139,7 @@ class ChangeProfile extends Component {
                   <Text style={styles.title}>CMND:</Text>
                   <TextInput
                     underlineColorAndroid="transparent"
+                    value={this.state.identify_card}
                     onChangeText={this.changeTextIdentify}
                     style={styles.inputText}
                     keyboardType="numeric"
@@ -143,6 +149,7 @@ class ChangeProfile extends Component {
                   <Text style={styles.title}>Số điện thoại:</Text>
                   <TextInput
                     underlineColorAndroid="transparent"
+                    value={this.state.phone}
                     onChangeText={this.changeTextPhone}
                     style={styles.inputText}
                     keyboardType="numeric"
@@ -169,6 +176,7 @@ const mapDispatchToProps = {
 function mapStateToProps(state) {
   return {
     msg: state.changeprofile.msg,
+    dataUser: state.getprofile.payload
   }
 }
 
@@ -192,7 +200,8 @@ const styles = StyleSheet.create({
   formChangeInfo: {
     backgroundColor: 'white',
     height: 460,
-    width: 300,
+    width: '100%',
+    maxWidth: 330,
     borderRadius: 20,
     elevation: 7,
   },

@@ -25,6 +25,7 @@ const ShowAllRoom = (props) => {
   const [textSearch, setTextSearch] = useState('');
   const getRoom = useSelector((state) => state.getallroom);
   const dataArea = useSelector((state) => state.getarea.payload);
+  const [area, setArea] = useState('Tất cả');
   const [page, setPage] = useState({
     current_page: getRoom.payload.current_page,
     nextPage: getRoom.payload.next_page,
@@ -38,13 +39,13 @@ const ShowAllRoom = (props) => {
     setNewData(dataArea.map((t) => {
       const roomInThisArea = getRoom.payload.results.filter(index => index.area.name === t.name)
       return {
-        title: `Khu ${t.name}`,
+        title: `${t.name}`,
         data: [...roomInThisArea],
       }
     }))
   }, [page, textSearch])
   const minusNumberPage = async () => {
-    await getallroom(page.current_page - 1);
+    await getallroom(page.current_page - 1, area === 'Tất cả' ? '' : area);
     await getarea();
     setPage({
       ...page,
@@ -52,7 +53,7 @@ const ShowAllRoom = (props) => {
     });
   }
   const plusNumberPage = async () => {
-    await getallroom(page.current_page + 1);
+    await getallroom(page.current_page + 1, area === 'Tất cả' ? '' : area);
     await getarea();
     setPage({
       ...page,
@@ -65,6 +66,16 @@ const ShowAllRoom = (props) => {
       await getarea();
       await setTextSearch(value);
     }, 1000);
+  }
+  const getRoomOfKhu = async (title) => {
+    const khu = title.split(' ')[title.split(' ').length - 1];
+    await getallroom(1, khu === 'cả' ? '' : khu);
+    await getarea();
+    setPage({
+      ...page,
+      current_page: 1
+    })
+    setArea(khu === 'cả' ? 'Tất cả' : khu);
   }
   return newData != [] ? (
     <View style={styles.container}>
@@ -89,7 +100,11 @@ const ShowAllRoom = (props) => {
             keyExtrator={(item, index) => {item + index}}
             renderItem={renderItem}
             renderSectionHeader={({ section: { title } }) => (
-              <Text style={styles.header}>{title}</Text>
+              <TouchableOpacity onPress={() => getRoomOfKhu(title)}>
+                <Text style={styles.header}>
+                  {title}
+                </Text>
+              </TouchableOpacity>
             )}
           />
           <View style={stylePages.flexRow}>
