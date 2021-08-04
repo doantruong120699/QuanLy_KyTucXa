@@ -20,6 +20,7 @@ import shortuuid
 import re
 from django.contrib.contenttypes.models import ContentType
 quanlynhansu_group = 'quanlynhansu_group'
+quanlytaichinh_group = 'quanlytaichinh_group'
 
 
 class NotificationViewSet(viewsets.ModelViewSet):
@@ -292,30 +293,61 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
         return Response({'detail': 'Sinh Vien not Found!'}, status=status.HTTP_404_NOT_FOUND)
-
+     
+class ListContractViewSet(viewsets.ModelViewSet):
+    serializer_class = ContractRegistationSerializer
+    # permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+    lookup_field = 'public_id'
+    
+    def check_permission(self, request):
+        user = request.user
+        user_group = [g.name for g in user.groups.all()]
+        if quanlynhansu_group in user_group:
+            return True
+        elif quanlytaichinh_group in user_group:
+            action = self.action
+            if action == 'list_contract_filter' or action == 'retrieve':
+                return True
+        return False
+    
+    def retrieve(self, request, **kwargs):
+        try:
+            if (self.check_permission(request)):
+                request_regis = Contract.objects.get(public_id=kwargs['public_id'])
+                serializer = ContractRegistationSerializer(request_regis)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
+    
     # ==== List contract =======
     @action(methods=["GET"], detail=False, url_path="list_contract_filter", url_name="list_contract_filter")
     def list_contract_filter(self, request, *args, **kwargs):
         try:
-            list_contract_room = Contract.objects.all()
-            
-            is_expired = request.GET.get('is_expired', None)
-            if is_expired != None:
-                list_contract_room = list_contract_room.filter(is_expired=is_expired)
-                            
-            id_user = request.GET.get('id_user', None)
-            if id_user != None:
-                list_contract_room = list_contract_room.filter(profile__public_id=id_user)
-            room = request.GET.get('room', None)
-            if room != None:
-                list_contract_room = list_contract_room.filter(Q(room__name=id_user) | Q(room__slug=id_user))
-            
-            page = self.paginate_queryset(list_contract_room)
-            if page is not None:
+            if (self.check_permission(request)):
+                list_contract_room = Contract.objects.all()
+                
+                is_expired = request.GET.get('is_expired', None)
+                if is_expired != None:
+                    list_contract_room = list_contract_room.filter(is_expired=is_expired)
+                                
+                id_user = request.GET.get('id_user', None)
+                if id_user != None:
+                    list_contract_room = list_contract_room.filter(profile__public_id=id_user)
+                room = request.GET.get('room', None)
+                if room != None:
+                    list_contract_room = list_contract_room.filter(Q(room__name=id_user) | Q(room__slug=id_user))
+                
+                page = self.paginate_queryset(list_contract_room)
+                if page is not None:
+                    serializer = self.get_serializer(page, many=True)
+                    return self.get_paginated_response(serializer.data)
                 serializer = self.get_serializer(page, many=True)
                 return self.get_paginated_response(serializer.data)
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
             print(e)
         return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)

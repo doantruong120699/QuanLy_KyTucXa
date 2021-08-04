@@ -159,17 +159,24 @@ class ForgotPasswordSerializer(serializers.ModelSerializer):
             # activate_url = 'http://'+current_site.domain+link
             activate_url = url_frontend  + '/' + email_body['uid'] + '/' +  email_body['token'] 
             # Create body of email
-            message = render_to_string('api/forgot_password.html', {'activate_url': activate_url, 'time_expire':settings.PASSWORD_RESET_TIMEOUT/60})  
+            subject = '[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY'
+            # message = f'Hi {user.username}, thank you for registering in geeksforgeeks.'
+            time_expire = settings.PASSWORD_RESET_TIMEOUT/60
+            message = render_to_string('api/forgot_password.html', {'activate_url': activate_url, 'time_expire':time_expire})  
+            # email_from = settings.EMAIL_HOST_USER
+            # recipient_list = [self.validated_data['email']]
+            # send_mail( subject, message, email_from, recipient_list )
+            
             # Create object email  
             send = EmailMessage('[RESET YOUR PASSWORD] - DA NANG DORMITORY UNIVERSITY OF TECHNOLOGY', message, from_email=settings.EMAIL_HOST_USER, to=[self.validated_data['email']])
             send.content_subtype = 'html'
             # Send email to user
             send.send()
-            return True
+            return activate_url, time_expire
         except Exception as e:
             print("Exception send mail: ", e)
             pass
-        return False
+        return "", ""
 
 class ResetPasswordSerializer(serializers.ModelSerializer):
     # email = serializers.EmailField(
@@ -241,6 +248,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
+            'avatar',
             'birthday',
             'address',
             'identify_card',
@@ -257,6 +265,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
+            'avatar',
             'birthday',
             'address',
             'identify_card',
@@ -295,6 +304,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             try:
                 profile_data = self.validated_data['profile']
                 profile = Profile.objects.get(user=user)
+                profile.avatar=profile_data['avatar']
                 profile.birthday=profile_data['birthday']
                 # profile.gender=profile_data['gender']
                 profile.address=profile_data['address']

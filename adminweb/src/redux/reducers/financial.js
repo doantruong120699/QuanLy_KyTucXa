@@ -7,6 +7,7 @@ const initialState = {
   expenses: {},
   revenues: {},
   revenueTypes: [],
+  budgetUser: {},
   expenseTypes: [],
   statisticalBill: {},
   waterElectricalBills: {},
@@ -21,7 +22,14 @@ const initialState = {
 export default function reducer(state = initialState, actions) {
   switch (actions.type) {
     case types.GET_FINANCIAL_API:
+    case types.DELETE_EXPENSE_API:
+    case types.DELETE_REVENUE_API:
+    case types.UPDATE_REVENUE_API:
+    case types.UPDATE_EXPENSE_API:
+    case types.POST_EXPENSE_USER_API:
+    case types.POST_REVENUE_USER_API:
     case types.GET_REVENUE_TYPE_API:
+    case types.GET_BUDGET_USER_API:
     case types.GET_EXPENSE_TYPE_API:
     case types.GET_DETAILED_CONTRACT_API:
     case types.GET_REVENUES_API:
@@ -52,6 +60,12 @@ export default function reducer(state = initialState, actions) {
       return {
         ...state,
         expenses: actions.payload,
+        loading: false,
+      };
+    case types.GET_BUDGET_USER_API_SUCCEED:
+      return {
+        ...state,
+        budgetUser: actions.payload,
         loading: false,
       };
     case types.GET_WATER_ELECTRICAL_UNIT_PRICE_API_SUCCEED:
@@ -121,6 +135,19 @@ export default function reducer(state = initialState, actions) {
         loading: false,
       };
     case types.GET_FINANCIAL_API_FAIL:
+    case types.POST_EXPENSE_USER_API_FAIL:
+    case types.DELETE_EXPENSE_API_FAIL:
+    case types.DELETE_EXPENSE_API_SUCCEED:
+    case types.DELETE_REVENUE_API_FAIL:
+    case types.DELETE_NOTIFICATION_API_SUCCEED:
+    case types.UPDATE_REVENUE_API_SUCCEED:
+    case types.UPDATE_REVENUE_API_FAIL:
+    case types.UPDATE_EXPENSE_API_FAIL:
+    case types.UPDATE_EXPENSE_API_SUCCEED:
+    case types.POST_EXPENSE_USER_API_SUCCEED:
+    case types.POST_REVENUE_USER_API_FAIL:
+    case types.POST_REVENUE_USER_API_SUCCEED:
+    case types.GET_BUDGET_USER_API_FAIL:
     case types.GET_REVENUE_TYPE_API_FAIL:
     case types.GET_EXPENSE_TYPE_API_FAIL:
     case types.GET_CONTRACTS_API_FAIL:

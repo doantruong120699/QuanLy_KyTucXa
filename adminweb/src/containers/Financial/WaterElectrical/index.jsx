@@ -1,24 +1,66 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import CircularProgress from "@material-ui/core/CircularProgress";
 import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import Select from "react-select";
 import ReactModal from "react-modal";
-import queryString from "querystring";
 import ShowBill from "./ShowBill";
+import queryString from "querystring";
 import "./styles.css";
-import { getFinancial, getStatistical } from "../../../redux/actions/financial";
+import {
+  getListWaterElectricalIndexes,
+  getUnitPrice,
+} from "../../../redux/actions/financial";
 import { month as MONTH } from "../../../utilities/constants/titles";
+import { getArea, getRoombyArea } from "../../../redux/actions/account";
+import Button from "../../../components/common/Button";
+import Loader from "../../../components/common/Loader";
+import Permissionless from "../../../components/common/Permissionless";
+import AddIndex from "./AddIndex";
+import { isAllowed } from "../../../utilities/helper";
 
 export default function WaterElectrical() {
   const current = new Date();
 
-  const [time, setTime] = useState({
-    month: current.getMonth() + 1,
+  const loader = useSelector((state) => state.financial.loading);
+
+  const month = MONTH;
+
+  const [tableData, setTableData] = useState([]);
+
+  const [area, setArea] = useState();
+
+  const [isUpdate, setUpdate] = useState(false);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [addSelectionList, setAddSelectionList] = useState({
+    rooms: [],
+    prices: [],
+  });
+
+  const [roomSelected, setRoomSelected] = useState();
+
+  const [openAddForm, setOpenAddForm] = useState(false);
+
+  const hideModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCellClicked = (params) => {
+    setRoomSelected(params.data);
+    setIsModalVisible(true);
+  };
+
+  const onCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const [selection, setSelection] = useState({
+    area: "area-a",
     year: current.getFullYear(),
+    month: current.getMonth() + 1,
   });
 
   const year = [];
@@ -27,44 +69,72 @@ export default function WaterElectrical() {
     year.push({ value: i, label: i.toString() });
   }
 
-  const month = MONTH;
+  useEffect(() => {
+    let mounted = true;
+    const params = queryString.stringify(selection);
+    getListWaterElectricalIndexes(params, (output) => {
+      if (output) {
+        console.log(output);
+        if (mounted) {
+          const data = output.map((value) => {
+            return {
+              public_id: value.public_id,
+              name: value.created_by.first_name + value.created_by.last_name,
+              roomId: value.room.id,
+              created_at: value.created_at,
+              room: value.room.name,
+              old_index_water: value.old_index_water,
+              new_index_water: value.new_index_water,
+              old_index_electrical: value.old_index_electrical,
+              new_index_electrical: value.new_index_eclectrical,
+              water_electrical_unit_price:
+                value.water_electrical_unit_price.name,
+              water_electrical_unit_price_id:
+                value.water_electrical_unit_price.id,
+              water_price: value.water_price,
+              electrical_price: value.electrical_price,
+              isPaid: value.isPaid,
+            };
+          });
+          setTableData(data);
+        }
+      }
+    });
+    let data = {
+      prices: [],
+      rooms: [],
+    };
+    getRoombyArea(selection.area, (output) => {
+      if (output) {
+        data.rooms = output;
+      }
+    });
 
-  const [data, setData] = useState();
+    getUnitPrice((output) => {
+      if (output) {
+        if (mounted) {
+          data.prices = output.results;
+        }
+      }
+    });
 
-  const [tableData, setTableData] = useState();
-
-  const [areaSelected, setAreaSelected] = useState();
-
-  const [roomSelected, setRoomSelected] = useState();
-
-  const [isShowTable, setIsShowTable] = useState(false);
+    setAddSelectionList(data);
+    return () => (mounted = false);
+  }, [selection, isUpdate]);
 
   useEffect(() => {
-    const params = queryString.stringify(time);
-    getStatistical(params, (output) => {
-      if (output) {
-        setData(output);
-        setIsShowTable(false);
-      }
-    });
-  }, [time]);
+    let mounted = true;
 
-  const handleClickBox = (areaname, areaSlug) => {
-    const params = {
-      year: time.year,
-      month: time.month,
-      area: areaSlug,
-    };
-
-    getFinancial(queryString.stringify(params), (output) => {
+    getArea((output) => {
       if (output) {
-        setTableData(output);
+        if (mounted) {
+          setArea(output);
+        }
       }
     });
 
-    setAreaSelected(areaname);
-    setIsShowTable(true);
-  };
+    return () => (mounted = false);
+  }, []);
 
   const onGridReady = (params) => {
     let _gridApi = params.api;
@@ -73,59 +143,102 @@ export default function WaterElectrical() {
     });
   };
 
-  const handleTimeChange = (params, name) => {
-    setTime({ ...time, [name]: params.value });
+  const handleTimeChange = (e) => {
+    const { value, name } = e.target;
+    setSelection({ ...selection, [name]: value });
   };
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const columnDefs = [
     {
-      field: "name",
-      filter: "agTextColumnFilter",
+      headerName: "Phòng",
+      field: "room",
+      filter: "agNumberColumnFilter",
       cellStyle: {
-        fontSize: "20px",
+        with: "20px",
+        fontSize: "14px",
         textAlign: "center",
-      },
-      cellRenderer: (param) => {
-        return `<span style='color:blue'>${param.value}</span>`;
       },
     },
-
     {
-      field: "isPaid",
-      headerName: "Trạng thái",
+      headerName: "Số nước cũ",
+      field: "old_index_water",
       filter: "agTextColumnFilter",
       cellStyle: {
-        color: "#2f80fd",
+        fontSize: "14px",
         textAlign: "center",
       },
-
+    },
+    {
+      headerName: "Số nước mới",
+      field: "new_index_water",
+      filter: "agTextColumnFilter",
+      cellStyle: {
+        fontSize: "14px",
+        textAlign: "center",
+      },
+    },
+    {
+      headerName: "Số điện cũ",
+      field: "old_index_electrical",
+      filter: "agTextColumnFilter",
+      cellStyle: {
+        fontSize: "14px",
+        textAlign: "center",
+      },
+    },
+    {
+      headerName: "Số điện mới",
+      field: "new_index_electrical",
+      filter: "agTextColumnFilter",
+      cellStyle: {
+        fontSize: "14px",
+        textAlign: "center",
+      },
+    },
+    {
+      headerName: "Loại đơn giá",
+      field: "water_electrical_unit_price",
+      filter: "agTextColumnFilter",
+      cellStyle: {
+        fontSize: "14px",
+        textAlign: "center",
+      },
+    },
+    {
+      headerName: "Giá nước(VND)",
+      field: "water_price",
+      filter: "agTextColumnFilter",
+      cellStyle: {
+        fontSize: "14px",
+        textAlign: "center",
+      },
+    },
+    {
+      headerName: "Giá điện(VND)",
+      field: "electrical_price",
+      filter: "agTextColumnFilter",
+      cellStyle: {
+        fontSize: "14px",
+        textAlign: "center",
+      },
+    },
+    {
+      headerName: "Trạng thái",
+      field: "isPaid",
+      filter: "agTextColumnFilter",
+      cellStyle: {
+        fontSize: "14px",
+        textAlign: "center",
+      },
       cellRenderer: (param) => {
         const bgColor = param.value === true ? "green;" : "#EB5757";
-        return `<div style="color: ${bgColor};font-size:16px;text-align: center;">${
+        return `<div style="color: ${bgColor};font-size:14px;text-align: center;">${
           param.value === true ? "Đã đóng tiền" : "Chưa đóng tiền"
         }</div>`;
       },
     },
-    {
-      field: "id",
-      filter: "agNumberColumnFilter",
-      cellStyle: {
-        fontSize: "20px",
-        textAlign: "center",
-      },
-    },
   ];
-  const hideModal = () => {
-    setIsModalVisible(false);
-  };
-  const handleCellClicked = (params) => {
-    setRoomSelected(params.data);
-    setIsModalVisible(true);
-  };
-  const onCancel = () => {
-    setIsModalVisible(false);
-  };
+
   const rowClassRules = {
     odd: function (params) {
       return params.node.rowIndex % 2 === 0;
@@ -134,9 +247,10 @@ export default function WaterElectrical() {
       return params.node.rowIndex % 2 !== 0;
     },
   };
+
   const defaultColDef = {
     flex: 1,
-    minWidth: 150,
+    resizable: true,
     filter: true,
     sortable: true,
     floatingFilter: true,
@@ -153,220 +267,135 @@ export default function WaterElectrical() {
     },
   };
 
-  if (data !== undefined) {
-    return (
-      <div className="col col-full pl-48 pr-48">
-        {data && (
-          <Box paddingRight={15} style={{ width: "100%" }} display={"flex"}>
-            <div className="col col-half">
-              <div className="col col-two-third">
-                <div className="col col-half  pd-8">
-                  <Typography>Chọn tháng</Typography>
-                  <Select
-                    className="week-select col-full"
-                    options={month}
-                    value={month.find((index) => index.value === time.month)}
-                    onChange={(params) => handleTimeChange(params, "month")}
+  function handleAdd() {
+    setOpenAddForm(true);
+  }
+  return (
+    <div className="col col-full pl-48 pr-48">
+      {!isAllowed("quanlytaichinh_group", "view_waterelectrical") ? (
+        <div className="align-item-ct">
+          <Permissionless />
+        </div>
+      ) : loader ? (
+        <div className="align-item-ct">
+          <Loader />
+        </div>
+      ) : (
+        <div>
+          {area && (
+            <div>
+              <div className="col col-full">
+                <div className="col col-5 pt-24">
+                  <Button
+                    type="normal-blue"
+                    content="Thêm"
+                    isDisable={
+                      !isAllowed("quanlytaichinh_group", "add_revenue")
+                    }
+                    onClick={handleAdd}
                   />
                 </div>
-                <div className="col col-half pd-8">
+                <div className="col col-5  pd-8">
+                  <Typography>Chọn tháng</Typography>
+                  <select
+                    name="month"
+                    className="form-control"
+                    value={selection.month}
+                    onChange={(event) => handleTimeChange(event)}
+                  >
+                    {month.map((value, index) => {
+                      return (
+                        <option key={index} value={value.value}>
+                          {value.label}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div className="col col-5 pd-8">
                   <Typography>Chọn năm</Typography>
-                  <Select
-                    className="week-select col-full"
-                    options={year}
-                    value={year.find((index) => index.value === time.year)}
-                    onChange={(params) => handleTimeChange(params, "year")}
-                  />
+                  <select
+                    name="year"
+                    className="form-control"
+                    value={selection.year}
+                    onChange={(event) => handleTimeChange(event)}
+                  >
+                    {year.map((value, index) => {
+                      return (
+                        <option key={index} value={value.value}>
+                          {value.label}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+                <div className="col col-5 pd-8">
+                  <Typography>Chọn khu</Typography>
+                  <select
+                    name="area"
+                    className="form-control"
+                    value={selection.area}
+                    onChange={(event) => handleTimeChange(event)}
+                  >
+                    {area.map((value, index) => {
+                      return (
+                        <option key={index} value={value.slug}>
+                          {value.name}
+                        </option>
+                      );
+                    })}
+                  </select>
                 </div>
               </div>
               <div className="col col-full">
-                <Box>
-                  {data.map((n, index) => {
-                    return (
-                      <CircularProgressWithLabel
-                        key={index}
-                        name={n.name}
-                        value={10}
-                        paid={n.paid}
-                        total={n.total}
-                        percentage={
-                          n.total !== 0
-                            ? Number(((n.paid / n.total) * 100).toFixed(2))
-                            : 0
-                        }
-                        onClick={() => {
-                          handleClickBox(n.name, n.slug);
-                        }}
-                      />
-                    );
-                  })}
-                </Box>
+                <div className={"col col-full ag-theme-alpine grid"}>
+                  <AgGridReact
+                    animateRows
+                    enableColResize
+                    pagination={true}
+                    columnDefs={columnDefs}
+                    defaultColDef={defaultColDef}
+                    rowClassRules={rowClassRules}
+                    onCellClicked={handleCellClicked}
+                    getRowNodeId={(data) => data.name}
+                    onGridReady={onGridReady}
+                    rowData={tableData}
+                    paginationAutoPageSize={true}
+                  />
+                </div>
               </div>
+              <ReactModal
+                isOpen={isModalVisible}
+                onRequestClose={hideModal}
+                style={customStyles}
+                ariaHideApp={false}
+              >
+                <ShowBill
+                  selectedMonth={selection.month}
+                  selectedYear={selection.year}
+                  area={area.find((ele) => ele.slug === selection.area).name}
+                  rowSelected={roomSelected}
+                  onCancel={onCancel}
+                  isUpdate={() => setUpdate((prev) => !prev)}
+                />
+              </ReactModal>
+              <ReactModal
+                isOpen={openAddForm}
+                onRequestClose={() => setOpenAddForm(false)}
+                style={customStyles}
+                ariaHideApp={false}
+              >
+                <AddIndex
+                  units={addSelectionList.prices}
+                  rooms={addSelectionList.rooms}
+                  onCancel={() => setOpenAddForm(false)}
+                  isUpdate={() => setUpdate((prev) => !prev)}
+                />
+              </ReactModal>
             </div>
-            {tableData ? (
-              <div className="dataTable col col-half">
-                <div
-                  style={{
-                    margin: "20px 0 20px 0",
-                    fontSize: "20px",
-                  }}
-                >
-                  {areaSelected}
-                </div>
-
-                <div className={"ag-theme-alpine grid"}>
-                  {
-                    <AgGridReact
-                      animateRows
-                      enableColResize
-                      pagination={true}
-                      columnDefs={columnDefs}
-                      defaultColDef={defaultColDef}
-                      rowClassRules={rowClassRules}
-                      onCellClicked={handleCellClicked}
-                      getRowNodeId={(data) => data.name}
-                      onGridReady={onGridReady}
-                      rowData={tableData.room}
-                      paginationAutoPageSize={true}
-                    />
-                  }
-                </div>
-              </div>
-            ) : (
-              <div style={{fontWeight:'700',fontSize:'24px'}}> Chọn vào một khu để hiện ra thông tin chi tiết</div>
-            )}
-            <ReactModal
-              isOpen={isModalVisible}
-              onRequestClose={hideModal}
-              style={customStyles}
-            >
-              <ShowBill
-                selectedMonth={time.month}
-                selectedYear={time.year}
-                room={roomSelected}
-                area={areaSelected}
-                onCancel={onCancel}
-              />
-            </ReactModal>
-          </Box>
-        )}
-      </div>
-    );
-  } else {
-    return (
-      <div style={{ textAlign: "center", fontWeight: "700", fontSize: "24px" }}>
-        {" "}
-        Không có dữ liệu
-      </div>
-    );
-  }
-}
-
-function CircularProgressWithLabel(props) {
-  return (
-    <Box
-      id={1}
-      position="relative"
-      display="inline-flex"
-      paddingTop="20px"
-      style={{ cursor: "pointer", transformOrigin: "0 0 0" }}
-      onClick={props.onClick}
-    >
-      <Box
-        position="relative"
-        display="inline-flex"
-        boxShadow={2}
-        height={350}
-        width={200}
-        justifyContent="center"
-        marginRight={"20px"}
-        marginBottom={"20px"}
-        className="Box-component"
-      >
-        <Box
-          top={0}
-          left={0}
-          bottom={0}
-          right={0}
-          position="absolute"
-          display="flex"
-          justifyContent="center"
-        >
-          <Typography
-            variant="h3"
-            component="div"
-            color="textSecondary"
-            style={{ paddingTop: "20px" }}
-          >
-            {`${props.paid}/${props.total}`}
-          </Typography>
-        </Box>
-        <Box
-          top={0}
-          left={0}
-          bottom={0}
-          right={0}
-          position="absolute"
-          display="flex"
-          justifyContent="center"
-        >
-          <Typography
-            variant="h6"
-            component="div"
-            color="textSecondary"
-            style={{ paddingTop: "80px" }}
-          >
-            Còn thiếu {props.total - props.paid} phòng
-          </Typography>
-        </Box>
-        <CircularProgress
-          variant="determinate"
-          color={"primary"}
-          size={150}
-          style={{
-            color: "olivedrab",
-            marginTop: "130px",
-            position: "absolute",
-          }}
-          value={100}
-        />
-        <CircularProgress
-          variant="determinate"
-          color={"primary"}
-          size={150}
-          style={{ color: "maroon", marginTop: "130px" }}
-          value={props.percentage}
-        />
-
-        <Box
-          top={0}
-          left={0}
-          bottom={0}
-          right={0}
-          position="absolute"
-          display="flex"
-          justifyContent="center"
-        >
-          <Typography
-            variant="h5"
-            component="div"
-            color="textSecondary"
-            style={{
-              paddingTop: "190px",
-              paddingLeft: "20px",
-              fontSize: "18px",
-              paddingRight: "15px",
-            }}
-          >
-            {props.percentage}%
-          </Typography>
-        </Box>
-        <Box position="absolute" bottom={5}>
-          <Typography variant="h4" component="div" color="textSecondary">
-            {props.name}
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

@@ -134,7 +134,7 @@ const Login = () => {
       <div className="form-login">
         <h2 className="title-login">Đăng nhập</h2>
         <h3 className="content-login">Đăng nhập dưới tài khoản admin </h3>
-        <form>
+        <div className="mb-16 pl-48 pr-48">
           <FormError
             isHidden={errorState.accountTxt.isHidden}
             errorMessage={errorState.accountTxt.errorMessage}
@@ -166,7 +166,7 @@ const Login = () => {
             />
           </div>
           <div className="forgot-pass-link">
-            <Link to="/forgot-password">Quên mật khẩu?</Link>
+            <Link to={`${ROUTER.ROUTE_RESET_PASSWORD}`}>Quên mật khẩu?</Link>
           </div>
           <Button
             type="normal-green"
@@ -174,7 +174,7 @@ const Login = () => {
             isDisable={isDisable}
             onClick={login}
           />
-        </form>
+        </div>
       </div>
     </div>
   );

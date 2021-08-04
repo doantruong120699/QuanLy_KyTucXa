@@ -11,7 +11,10 @@ from .views import *
 list_registration_room = ContractRegistationViewSet.as_view({
     'get': 'list',
 })
-list_contract_filter = ContractRegistationViewSet.as_view({
+detail_contract_filter = ListContractViewSet.as_view({
+    'get': 'retrieve',
+})
+list_contract_filter = ListContractViewSet.as_view({
     'get': 'list_contract_filter'
 })
 detail_registration_room = ContractRegistationViewSet.as_view({
@@ -102,6 +105,7 @@ urlpatterns = [
     # ========== Delete User in room
     path('delete-user-room/<str:public_id>/', delete_user_in_room, name = 'delete_user_in_room'),
     # ========== Lisst contract filter
+    path('contract-detail/<str:public_id>/', detail_contract_filter, name = 'detail_contract_filter'),
     path('list-contract/', list_contract_filter, name = 'list_contract_filter'),
     # ========== Schedule ========
     path('schedules/', schedule, name = 'schedule'),

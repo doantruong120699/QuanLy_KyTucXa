@@ -15,7 +15,9 @@ import { getRoom } from "../../../utilities/constants/DataRender/checkroom";
 import queryString from "query-string";
 import Pagination from "../../../components/common/Pagination";
 import Loader from "../../../components/common/Loader";
+import Permissionless from "../../../components/common/Permissionless";
 import YesNoModal from "../../../components/YesNoModal";
+import { isAllowed } from "../../../utilities/helper";
 
 export default function Student() {
   const [dataArea, setDataArea] = useState();
@@ -200,7 +202,11 @@ export default function Student() {
 
   return (
     <div className="col col-full pl-48 pr-24">
-      {loader ? (
+      {!isAllowed("quanlynhansu_group", "view_room") ? (
+        <div className="align-item-ct">
+          <Permissionless />
+        </div>
+      ) : loader ? (
         <div className="align-item-ct">
           <Loader />
         </div>

@@ -17,6 +17,8 @@ import WaterElectrical from "./containers/Financial/WaterElectrical";
 import Student from "./containers/ManageUser/Student";
 import Employee from "./containers/ManageUser/Employee";
 import Registration from "./containers/ManageUser/Registration";
+import ForgotPassword from "./containers/ForgotPassword";
+import ResetPassword from "./containers/ResetPassword";
 function App() {
   return (
     <Router history={history()}>
@@ -25,6 +27,16 @@ function App() {
           <Redirect to={ROUTER.ROUTE_OVERVIEW} />
         </Route>
         <Route path={ROUTER.ROUTE_LOGIN} component={Login} exact />
+        <Route
+          path={ROUTER.ROUTE_RESET_PASSWORD}
+          component={ForgotPassword}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_FORGOT_PASSWORD}/:uuid/:token`}
+          component={ResetPassword}
+          exact
+        />
         <Route path={ROUTER.ROUTE_OVERVIEW} exact>
           <Redirect to={`${ROUTER.ROUTE_OVERVIEW}${ROUTER.ROUTER_SUMMARY}`} />
         </Route>

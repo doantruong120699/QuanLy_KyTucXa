@@ -7,3 +7,4 @@ export const REGISTER_SUCCESSFULLY = "Save successful!";
 export const ACCEPT_SUCCESSFULLY = "Accept Successful";
 export const DENY_SUCCESSFULLY = "Deny Successful";
 export const STATUS_SUCCESS = "successful";
+export const STATUS_FAIL = "fail";
