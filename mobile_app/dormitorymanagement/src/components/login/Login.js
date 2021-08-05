@@ -17,13 +17,12 @@ class Login extends Component {
       isShow: true,
     };
   };
-  // async componentDidMount() {
-  //   let token = await getData('token');
-  //   console.log(token)
-  //   if(token) {
-  //     this.props.navigation.navigate('HomePage')
-  //   }
-  // }
+  async componentDidMount() {
+    let token = await getData('token');
+    if(token) {
+      this.props.navigation.navigate('HomePage')
+    }
+  }
   changeTextUsername = (text) => {
     this.setState({ username: text });
   };
@@ -44,8 +43,8 @@ class Login extends Component {
       this.showToast('Chưa nhập tài khoản hoặc mật khẩu');
       return;
     }
-    // let data = { "username": this.state.username, "password": this.state.password };
-    let data = { "username": "doantruong@gmail.com", "password": "123QWE!@#" };
+    let data = { "username": this.state.username, "password": this.state.password };
+    // let data = { "username": "tmquang1199@gmail.com", "password": "quang1999" };
     await this.props.login(data);
     let token = await getData('token');
     let role = await getData('role');

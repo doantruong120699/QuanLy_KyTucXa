@@ -38,7 +38,6 @@ const Schedule = (props) => {
     setTimeout(() => {
       for (let i = 0; i < 7; i++) {
         dayCalendar = dayRender.toISOString().split('T')[0];
-        console.log(dayCalendar)
         dataCalendar[dayCalendar] = [];
         for (let i = 0; i < initData.length; i++) {
           if (initData[i].shift.date == dayCalendar) {

@@ -18,6 +18,7 @@ class ProfileInListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
+            'avatar',
             'gender',
             'phone',
             'public_id',

@@ -25,7 +25,6 @@ export const getallroom = (page, textSearch) => async (dispatch) => {
       payload: result.data,
       msg: 'Success'
     });
-    console.log("A")
   }
   catch (e) {
     dispatch({

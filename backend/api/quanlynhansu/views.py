@@ -302,14 +302,25 @@ class ListContractViewSet(viewsets.ModelViewSet):
     def check_permission(self, request):
         user = request.user
         user_group = [g.name for g in user.groups.all()]
-        print(self.action)
         if quanlynhansu_group in user_group:
             return True
         elif quanlytaichinh_group in user_group:
             action = self.action
-            if action == 'list_contract_filter':
+            if action == 'list_contract_filter' or action == 'retrieve':
                 return True
         return False
+    
+    def retrieve(self, request, **kwargs):
+        try:
+            if (self.check_permission(request)):
+                request_regis = Contract.objects.get(public_id=kwargs['public_id'])
+                serializer = ContractRegistationSerializer(request_regis)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
     
     # ==== List contract =======
     @action(methods=["GET"], detail=False, url_path="list_contract_filter", url_name="list_contract_filter")
