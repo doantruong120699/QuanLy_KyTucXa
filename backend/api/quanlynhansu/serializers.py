@@ -295,7 +295,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
                 email=validated_data['email'],
                 is_active=validated_data['is_active']
             )
-            user.set_password(password=validated_data['password'])
+            user.set_password(validated_data['password'])
             user.save()
             data_profile = validated_data['profile']
             profile = Profile.objects.create(
@@ -608,7 +608,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
                 last_name=validated_data['last_name'],
                 email=validated_data['email'],
             )
-            user.set_password(password=validated_data['password'])
+            user.set_password(validated_data['password'])
             user.save()
             data_profile = validated_data['profile']
             profile = Profile.objects.create(
