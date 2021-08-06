@@ -46,7 +46,6 @@ const ForgotPassword = () => {
     if (valid.isEmailInputValid) {
       const data = { email: errorState.email.value };
       sendEmail(data, (output) => {
-        console.log(output);
         if (output.status) {
           const newEmailState = { ...errorState.email };
           newEmailState.isInputValid = true;
