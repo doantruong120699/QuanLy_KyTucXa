@@ -310,19 +310,22 @@ export default function Budget() {
     };
     return updatedRow;
   });
-  const gridBillData = formatDataBill(dataBill).map((row) => {
-    const updatedRow = {
-      ...row,
-      id: parseInt(row.id),
-      description: `${row.description}`,
-      number: row.number,
-      createdDate: getHyphenatedDate(row.createdDate),
-      createdDateNumber: moment(row.createdDate, "MM/DD/YYYY")
-        .toDate()
-        .getTime(),
-    };
-    return updatedRow;
-  });
+  const gridBillData = dataBill
+    ? formatDataBill(dataBill).map((row) => {
+        const updatedRow = {
+          ...row,
+          id: parseInt(row.id),
+          description: `${row.description}`,
+          number: row.number,
+          createdDate: getHyphenatedDate(row.createdDate),
+          createdDateNumber: moment(row.createdDate, "MM/DD/YYYY")
+            .toDate()
+            .getTime(),
+        };
+        return updatedRow;
+      })
+    : null;
+
   const handleRowClick = (params, rowMeta) => {
     history.push(
       `${ROUTER.ROUTE_MANAGE_FINANCIAL}${ROUTER.ROUTE_CONTRACT_DETAIL}/${
