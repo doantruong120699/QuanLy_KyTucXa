@@ -71,6 +71,7 @@ const MySchedule = () => {
   function handleWeekChange(newWeek, newDate) {
     setSchedule({
       ...myScheduleState,
+      week: newWeek,
       date: newDate,
     });
     setFilter({ ...filter, week: newWeek });

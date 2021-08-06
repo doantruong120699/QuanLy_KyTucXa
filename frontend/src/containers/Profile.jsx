@@ -53,14 +53,14 @@ const Profile = () => {
     const GetProfileUser = () => {
       GetProfile((output) => {
         if (output) {
+          console.log(output);
           setProfile({
             profile: getHandledEmployeeDataRender(output),
             username: output.username,
             position: output.profile.position
               ? output.profile.position.name
               : null,
-            area: output.profile.area ? output.profile.area.name : null,
-            room: output.room.slug ? output.room.slug : null,
+            room: output.room.name ? output.room : null,
             grade: output.profile.my_class
               ? output.profile.my_class.name
               : null,
@@ -178,7 +178,6 @@ const Profile = () => {
                   <div className="col col-half pt-48 pl-20">
                     <RoomInfo
                       room={profileState.room}
-                      area={profileState.area}
                     />
                   </div>
                 </div>

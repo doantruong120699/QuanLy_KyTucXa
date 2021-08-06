@@ -27,6 +27,7 @@ export function getTaskList(data) {
       endDate: endDate,
     });
   });
+
   return result;
 }
 
@@ -49,6 +50,26 @@ export const colorData = [
   },
   {
     id: 5,
+    color: blue,
+  },
+  {
+    id: 6,
+    color: amber,
+  },
+  {
+    id: 7,
+    color: pink,
+  },
+  {
+    id: 8,
+    color: purple,
+  },
+  {
+    id: 9,
+    color: deepOrange,
+  },
+  {
+    id: 10,
     color: blue,
   },
 ];

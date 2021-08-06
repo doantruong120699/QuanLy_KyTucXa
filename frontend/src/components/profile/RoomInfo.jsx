@@ -22,7 +22,7 @@ const RoomInfo = (props) => {
   const onOpen = () => setOpen(true);
 
   const viewRoom = (room) => {
-    if (!room||!room.slug) {
+    if (!room || !room.slug) {
       setNotification({
         type: "type-error",
         content: ALERTMESSAGE.UNSIGNED_ROOM,
@@ -37,11 +37,11 @@ const RoomInfo = (props) => {
       <span className="style-notiTitle">Thông tin phòng</span>
       <div className="col col-full">
         <span className="pl-16">Tên phòng: </span>
-        <span>{room ? room.name : null}</span>
+        <span>{room.name ? room.name : null}</span>
       </div>
       <div className="col col-full">
         <span className="pl-16">Khu: </span>
-        <span>{area}</span>
+        <span>{room.area}</span>
       </div>
       <div className="col col-half style-detail-btn">
         <Button
