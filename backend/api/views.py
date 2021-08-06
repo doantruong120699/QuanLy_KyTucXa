@@ -63,6 +63,7 @@ def get_profile_view(request):
                 if contract:
                     data['room']['name'] = contract.room.name
                     data['room']['slug'] = contract.room.slug
+                    data['room']['area'] = contract.room.area.name
             except Exception as e:
                 print(e)
                 pass
