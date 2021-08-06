@@ -39,6 +39,7 @@ class ChangePassword extends Component {
     }
     else {
       this.showToast('Đổi mật khẩu thành công');
+      this.goBack();
     }
   };
   goBack = () => {

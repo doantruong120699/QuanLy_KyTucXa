@@ -32,7 +32,7 @@ class DrawerContent extends Component {
     }
     return { display: 'none' };
   }
-  async component() {
+  async componentDidMount() {
     let getPermission = await getData('permission');
     if (getPermission) {
       this.setState({
