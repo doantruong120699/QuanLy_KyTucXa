@@ -738,3 +738,41 @@ class UserRecievePaidViewSet(viewsets.ModelViewSet):
         return JsonResponse(queryset, safe=False, status=status.HTTP_200_OK)
 
 
+class TotalRevenueExpense(viewsets.ModelViewSet):
+    def check_month_year(self, _month, _year):
+        d = datetime.now()
+        month = _month
+        year = _year
+        if _month == None or not _month.isnumeric():
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        elif int(_month) > 12 or int(_month) < 1:
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        if _year == None or not _year.isnumeric():
+            year = d.year
+        return (month, year)
+    
+    def list(self, request, *args, **kwargs):
+        month = self.request.GET.get('month',None)                    
+        year = self.request.GET.get('year',None)
+        month, year = self.check_month_year(month, year)
+        data = {}
+        queryset_revenue = Revenue.objects.filter(time_recieve__month = month, time_recieve__year = year)
+        total_revenue = 0
+        for i in queryset_revenue:
+            total_revenue = total_revenue + i.amount
+        data['revenue'] = total_revenue
+        
+        queryset_expense = Expense.objects.filter(time_paid__month = month, time_paid__year = year)
+        total_expense = 0
+        for i in queryset_expense:
+            total_expense = total_expense + i.price
+        data['expense'] = total_expense
+        
+        return JsonResponse(data, safe=False, status=status.HTTP_200_OK)
+

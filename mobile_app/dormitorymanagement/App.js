@@ -1,9 +1,10 @@
 import React, { Component, useState, useEffect } from 'react';
+import {LogBox} from 'react-native'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider } from 'react-redux';
 import { store } from './src/redux/store';
-import { getData } from './src/utils/asyncStorage';
+import { getData, storeData } from './src/utils/asyncStorage';
 import 'react-native-gesture-handler';
 import { 
   Login, 
@@ -20,6 +21,7 @@ import {
 
 const Stack = createStackNavigator();
 const App = () => {
+  LogBox.ignoreLogs(['VirtualizedLists','Warning']);
   return (
     <Provider store={store}>
       <NavigationContainer>

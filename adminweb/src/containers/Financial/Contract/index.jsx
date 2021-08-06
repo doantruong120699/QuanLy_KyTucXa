@@ -32,6 +32,9 @@ export default function Budget() {
 
   const [endDate] = useState(new Date());
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isSelectStudentModalVisible, setIsSelectStudentModalVisible] =
+    useState(false);
   const [selectedOption, setSelectedOption] = useState("contract");
 
   const [dataContracts, setDataContracts] = useState([]);
@@ -58,7 +61,7 @@ export default function Budget() {
         }
       }
     );
-  }, [startDate]);
+  }, [startDate, isSelectStudentModalVisible]);
   const [peopleInRoom, setPeopleInRoom] = useState();
 
   const handleOptionChange = (event) => {
@@ -96,6 +99,7 @@ export default function Budget() {
     });
     toast("Đóng tiền thành công!");
     setTimeout(hideModal, 4000);
+    setIsSelectStudentModalVisible(false);
   };
   const contractColumn = [
     {
@@ -338,10 +342,6 @@ export default function Budget() {
     selectableRows: "none",
     onRowClick: selectedOption === "contract" ? handleRowClick : () => {},
   };
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isSelectStudentModalVisible, setIsSelectStudentModalVisible] =
-    useState(false);
   const hideModal = () => {
     setIsModalVisible(false);
     setIsSelectStudentModalVisible(false);
@@ -395,11 +395,8 @@ export default function Budget() {
                 <DatePicker
                   selected={startDate}
                   onChange={(date) => setStartDate(date)}
-                  selectsStart
-                  startDate={startDate}
                   dateFormat="MM/yyyy"
-                  endDate={endDate}
-                  className="form-control"
+                  className={"budget-date-picker-calendar"}
                   showMonthYearPicker
                 />
               </div>

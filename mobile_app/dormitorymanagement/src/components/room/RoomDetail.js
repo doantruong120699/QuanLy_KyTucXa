@@ -7,6 +7,7 @@ import { Picker } from '@react-native-picker/picker';
 import moment from 'moment';
 import { registrationroom, getpaymentmethod } from '../../redux/actions/index';
 import { styleBtnComeBack, styleImgBg, styleContainer } from '../../styles/index';
+import { getData } from '../../utils/asyncStorage';
 
 class RoomDetail extends Component {
   constructor(props) {
@@ -16,10 +17,13 @@ class RoomDetail extends Component {
       dateStart: new Date(),
       dateEnd: new Date(),
       payment: 1,
+      roleUser: ''
     }
   };
-  componentDidMount() {
+  async componentDidMount() {
     this.props.getpaymentmethod();
+    const role = await getData('role');
+    this.setState({ roleUser: role});
   }
   showToast = (msg) => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
@@ -170,7 +174,7 @@ class RoomDetail extends Component {
               <Text style={styles.title}>Tình Trạng Phòng:</Text>
               <Text style={styles.info}>{status}</Text>
             </View>
-            <View style={styles.viewButton}>
+            <View style={[styles.viewButton, {display: this.state.roleUser === 'nhanvien_group' ? 'none' : 'flex'}]}>
               <TouchableOpacity style={[styles.button, styles.buttonOpen]} onPress={this.handleAssignRoom}>
                 <Text 
                   style={styles.textButton} 

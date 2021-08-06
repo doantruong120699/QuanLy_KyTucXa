@@ -93,6 +93,11 @@ revenue_detail = RevenueViewSet.as_view({
 user_list = UserRecievePaidViewSet.as_view({
     'get': 'list',
 })
+
+# ========= revenue
+total_revenue = TotalRevenueExpense.as_view({
+    'get': 'list',
+})
 urlpatterns = [ 
     # ========== room
     path('financal-room-area/', financal_room_in_area_list, name = 'financal_room_in_area_list'),
@@ -121,4 +126,6 @@ urlpatterns = [
     path('revenue/<str:public_id>/', revenue_detail, name = 'revenue_detail'),
     # ========= user lisst
     path('list-user-recieve-paid/', user_list),
+    # 
+    path('total-revenue-expense/', total_revenue),
 ]
