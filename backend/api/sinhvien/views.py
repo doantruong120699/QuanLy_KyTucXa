@@ -62,11 +62,14 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             data['username'] = queryset.user.username
             data['first_name'] = queryset.user.first_name
             data['last_name'] = queryset.user.last_name
-            # data['room'] = {}
+            data['room'] = {}
+            data['room']['name'] = ""
+            data['room']['area'] = ""
+            data['room']['slug'] = ""
             try:
                 contract = Contract.objects.filter(profile=queryset, is_expired=False, is_delete = False).first()
                 if contract:
-                    data['room'] = {}
+                    # data['room'] = {}
                     data['room']['name'] = contract.room.name
                     data['room']['area'] = contract.room.area.name
                     data['room']['slug'] = contract.room.slug
