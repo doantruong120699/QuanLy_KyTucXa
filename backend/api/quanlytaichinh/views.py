@@ -261,9 +261,9 @@ class WaterElectricalViewSet(viewsets.ModelViewSet):
                 serializer = WaterElectricalDetailSerializer(_list, many=True)
                 data = serializer.data
                 for index, value in enumerate(_list):
-                    # print(value.bill_water_electrical.all().first())
-                    data[index]['isPaid'] = value.bill_water_electrical.all().first().is_paid
-            
+                    if value.bill_water_electrical.all():
+                        data[index]['isPaid'] = value.bill_water_electrical.all().first().is_paid
+                
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
