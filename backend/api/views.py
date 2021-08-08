@@ -57,6 +57,9 @@ def get_profile_view(request):
         data['last_name'] = user.last_name
         data['id'] = user.id
         data['room'] = {}
+        data['room']['name'] = ""
+        data['room']['area'] = ""
+        data['room']['slug'] = ""
         if  user.groups.filter(name='sinhvien_group').exists():
             try:
                 contract = Contract.objects.filter(profile=queryset, is_expired=False, is_delete=False).first()
