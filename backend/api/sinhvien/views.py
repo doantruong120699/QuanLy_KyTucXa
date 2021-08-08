@@ -62,11 +62,13 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             data['username'] = queryset.user.username
             data['first_name'] = queryset.user.first_name
             data['last_name'] = queryset.user.last_name
-            data['room'] = {}
+            # data['room'] = {}
             try:
                 contract = Contract.objects.filter(profile=queryset, is_expired=False, is_delete = False).first()
                 if contract:
+                    data['room'] = {}
                     data['room']['name'] = contract.room.name
+                    data['room']['area'] = contract.room.area.name
                     data['room']['slug'] = contract.room.slug
             except Exception as ee:
                 print(ee)
@@ -78,7 +80,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 print(e)
                 pass
-            data['profile'] = profile\
+            data['profile'] = profile
             #
             return Response(data, status=status.HTTP_200_OK) 
 
