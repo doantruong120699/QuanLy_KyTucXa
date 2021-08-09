@@ -10,7 +10,7 @@ const InfoContainer = (props) => {
         <p className="style-titleInfo">{title}</p>
         {increasedPercent !== null && (
           <p className="style-increasedPercent">
-            Thêm mới tháng này: {increasedPercent}
+            Thêm tháng này: {increasedPercent}
           </p>
         )}
       </div>

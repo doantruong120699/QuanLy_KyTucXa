@@ -8,7 +8,7 @@ import * as ALERTMESSAGE from "../../utilities/constants/AlertMessage";
 const RoomInfo = (props) => {
   const history = useHistory();
 
-  const { room, area } = props;
+  const { room } = props;
 
   const [open, setOpen] = useState(false);
 
@@ -37,11 +37,11 @@ const RoomInfo = (props) => {
       <span className="style-notiTitle">Thông tin phòng</span>
       <div className="col col-full">
         <span className="pl-16">Tên phòng: </span>
-        <span>{room.name ? room.name : null}</span>
+        <span>{room ? room.name : null}</span>
       </div>
       <div className="col col-full">
         <span className="pl-16">Khu: </span>
-        <span>{room.area}</span>
+        <span>{room ? room.area : null}</span>
       </div>
       <div className="col col-half style-detail-btn">
         <Button

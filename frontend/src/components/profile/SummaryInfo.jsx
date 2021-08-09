@@ -92,7 +92,7 @@ const SummaryInfo = (props) => {
       <div className="col col-full justify-content-sb ml-8">
         <div>
           <span className="text-is-purple-gradient style-profile-name">
-            {dataRender.firstName.value} {dataRender.lastName.value}
+            {dataRender.firstName?.value} {dataRender.lastName?.value}
           </span>
         </div>
         <i
@@ -103,27 +103,27 @@ const SummaryInfo = (props) => {
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-heart"></i>
-        <span>{dataRender.gender.field[dataRender.gender.value]}</span>
+        <span>{dataRender?.gender?.field[dataRender.gender.value]}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-marker"></i>
-        <span>{dataRender.address.value}</span>
+        <span>{dataRender.address?.value}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-envelope"></i>
-        <span>{dataRender.email.value}</span>
+        <span>{dataRender.email?.value}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-bold"></i>
-        <span>{moment(dataRender.birthday.value).format("DD/MM/YYYY")}</span>
+        <span>{moment(dataRender.birthday?.value).format("DD/MM/YYYY")}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-smartphone"></i>
-        <span>{dataRender.phone.value}</span>
+        <span>{dataRender.phone?.value}</span>
       </div>
       <div className="col col-full mt-8">
         <i className="fi-rr-fingerprint"></i>
-        <span>{dataRender.identification.value}</span>
+        <span>{dataRender.identification?.value}</span>
       </div>
       <div className="col col-third style-profile-changepass-btn">
         <Button

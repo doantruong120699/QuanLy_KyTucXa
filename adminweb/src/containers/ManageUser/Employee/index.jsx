@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getEmployees } from "../redux/actions/employeePage";
-import { actFetchTitleNavigation } from "../redux/actions/dashboard";
-import * as Titlelist from "../utilities/constants/titles";
-import EmployeeTag from "../components/employeePage/EmployeeTag";
-import Pagination from "../components/common/Pagination";
-import PostFilterForm from "../components/common/PostFilterForm";
-import Loader from "../components/common/Loader";
-
+import { useSelector } from "react-redux";
+import { getEmployees } from "../../../redux/actions/humanResource";
+import EmployeeTag from "./EmployeeTag";
+import Pagination from "../../../components/common/Pagination";
+import PostFilterForm from "../../../components/common/PostFilterForm";
+import Loader from "../../../components/common/Loader";
 import queryString from "query-string";
+import { isAllowed } from "../../../utilities/helper";
+import Permissionless from "../../../components/common/Permissionless";
 
 const EmployeePage = () => {
   const [employeeListState, setEmployeeList] = useState();
 
-  const dispatch = useDispatch();
-
-  const loader = useSelector((state) => state.employeePage.loading);
+  const loader = useSelector((state) => state.humanResource.loading);
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -41,8 +38,6 @@ const EmployeePage = () => {
 
     const paramsString = queryString.stringify(filter);
 
-    dispatch(actFetchTitleNavigation(Titlelist.NAVIGATION_TITLE[3].title));
-
     getEmployees(paramsString, (output) => {
       if (output) {
         const pagination = {
@@ -62,11 +57,12 @@ const EmployeePage = () => {
   }, [filter]);
   return (
     <div>
-      <div
-        className="col col-full style-background-container"
-        style={{ height: "107vh" }}
-      >
-        {loader ? (
+      <div className="col col-full pd-16" style={{ height: "107vh" }}>
+        {!isAllowed("quanlynhansu_group", "") ? (
+          <div className="align-item-ct">
+            <Permissionless />
+          </div>
+        ) : loader ? (
           <div className="align-item-ct">
             <Loader />
           </div>
