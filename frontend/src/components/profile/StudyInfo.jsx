@@ -10,11 +10,11 @@ const StudyInfo = (props) => {
       </div>
       <div className="col col-full">
         <span className="pl-16">Lớp: </span>
-        <span>{grade}</span>
+        <span>{grade?.name}</span>
       </div>
       <div className="col col-full">
         <span className="pl-16">Ngành: </span>
-        <span>{faculty}</span>
+        <span>{faculty?.name}</span>
       </div>
     </div>
   );

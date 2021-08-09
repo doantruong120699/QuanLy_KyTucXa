@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { getStudents } from "../redux/actions/studentPage";
-import { actFetchTitleNavigation } from "../redux/actions/dashboard";
-import * as Titlelist from "../utilities/constants/titles";
-import * as ROUTER from "../utilities/constants/router";
-import Pagination from "../components/common/Pagination";
-import PostFilterForm from "../components/common/PostFilterForm";
-import Loader from "../components/common/Loader";
+import { useSelector } from "react-redux";
+import { getStudents } from "../../../redux/actions/humanResource";
+import * as ROUTER from "../../../utilities/constants/router";
+import Pagination from "../../../components/common/Pagination";
+import PostFilterForm from "../../../components/common/PostFilterForm";
+import Loader from "../../../components/common/Loader";
 import queryString from "query-string";
+import Permissionless from "../../../components/common/Permissionless";
+import { isAllowed } from "../../../utilities/helper";
 
 const StudentPage = () => {
-  const dispatch = useDispatch();
 
   const history = useHistory();
 
-  const loader = useSelector((state) => state.studentPage.loading);
+  const loader = useSelector((state) => state.humanResource.loading);
 
   const [studentListState, setStudentList] = useState();
 
@@ -46,7 +45,6 @@ const StudentPage = () => {
   useEffect(() => {
     const paramsString = queryString.stringify(filter);
 
-    dispatch(actFetchTitleNavigation(Titlelist.NAVIGATION_TITLE[2].title));
 
     getStudents(paramsString, (output) => {
       if (output) {
@@ -64,8 +62,12 @@ const StudentPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
   return (
-    <div className="style-background-container" style={{ height: "130vh" }}>
-      {loader ? (
+    <div className="pd-16" >
+      {!isAllowed("quanlynhansu_group","") ? (
+        <div className="align-item-ct">
+          <Permissionless />
+        </div>
+      ) :loader ? (
         <div className="align-item-ct">
           <Loader />
         </div>
@@ -116,19 +118,19 @@ const StudentPage = () => {
                           #{index + 1}
                         </td>
                         <td className="col col-6 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
-                          {student.last_name}
+                          {student?.last_name}
                         </td>
                         <td className="col col-6 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
-                          {student.first_name}
+                          {student?.first_name}
                         </td>
                         <td className="col col-10 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
-                          {student.profile?.gender ? "Nam" : "Nữ"}
+                          {student?.profile?.gender ? "Nam" : "Nữ"}
                         </td>
                         <td className="col col-4 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
-                          {student.profile?.faculty?.name}
+                          {student?.profile?.faculty?.name}
                         </td>
                         <td className="col col-6 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
-                          {student.profile?.my_class?.name}
+                          {student?.profile?.my_class?.name}
                         </td>
                         <td className="col col-15 text-align-ct bold-text text-20 pl-4 pr-4 pt-16 pb-16">
                           <i
@@ -136,7 +138,7 @@ const StudentPage = () => {
                             style={{ cursor: "pointer" }}
                             onClick={() =>
                               gotoPage(
-                                `${ROUTER.ROUTE_STUDENTS}${ROUTER.ROUTE_DETAILED_STUDENTS}/${student.profile?.public_id}`
+                                `${ROUTER.ROUTE_MANAGE_USER}${ROUTER.ROUTE_DETAILED_STUDENT}/${student.profile?.public_id}`
                               )
                             }
                           />
