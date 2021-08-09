@@ -187,16 +187,16 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             if regis_request.is_accepted != None:
                 return Response({'detail': 'This Request accepted!'}, status=status.HTTP_200_OK)
             else:
-                regis_request.is_accepted = True
-                regis_request.is_expired = False
-                regis_request.save()
-                regis_request.room.number_now = regis_request.room.number_now + 1
-                regis_request.room.save()
-
-                return Response({'detail': 'Accept Successful'}, status=status.HTTP_200_OK)
+                if (regis_request.room.number_now < regis_request.room.type_room.number_max):
+                    regis_request.is_accepted = True
+                    regis_request.is_expired = False
+                    regis_request.save()
+                    regis_request.room.number_now = regis_request.room.number_now + 1
+                    regis_request.room.save()
+                    return Response({'detail': 'Accept Successful'}, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            return Response({'detail': 'Accept Fail'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': 'Accept Fail'}, status=status.HTTP_404_NOT_FOUND)
 
     # ==== Accept List Request ====
     @action(methods=["POST"], detail=False, url_path="accept_list_request", url_name="accept_list_request")
