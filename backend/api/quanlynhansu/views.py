@@ -187,7 +187,7 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             if regis_request.is_accepted != None:
                 return Response({'detail': 'This Request accepted!'}, status=status.HTTP_200_OK)
             else:
-                if (regis_request.room.number_now < regis_request.room.type_room.number_max):
+                if (regis_request.room.number_now < regis_request.room.typeroom.number_max):
                     regis_request.is_accepted = True
                     regis_request.is_expired = False
                     regis_request.save()
