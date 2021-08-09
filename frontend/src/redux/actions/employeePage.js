@@ -32,6 +32,7 @@ export async function getEmployees(params, resolve = () => {}) {
     });
   }
 }
+
 export async function getDetailedEmployee(slug, resolve = () => {}) {
   store.dispatch({
     type: types.GET_DETAILED_EMPLOYEE_API,

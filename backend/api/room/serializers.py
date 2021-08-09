@@ -7,6 +7,7 @@ from api.models import *
 from api.serializers import AreaSerializer
 from datetime import date
 from datetime import datetime
+from django.db.models import Q
 
 class StringListField(serializers.ListField): # get from http://www.django-rest-framework.org/api-guide/fields/#listfield
     child = serializers.CharField()
@@ -194,6 +195,10 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         """
         if 'room' not in data:
             raise serializers.ValidationError({'room':'This Field is required'})
+        else:
+            room = data['room']
+            if room.number_now == room.typeroom.number_max:
+                raise serializers.ValidationError({'room':'Room is full!'})
             # return False
         if 'start_at' not in data:
             raise serializers.ValidationError({'start_at':'This Field is required'})
@@ -213,7 +218,7 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
             # return False
         
         current_user = self._current_user()
-        check_contract = Contract.objects.filter(profile=current_user.user_profile, is_accepted=None)
+        check_contract = Contract.objects.filter(profile=current_user.user_profile).filter(Q(is_expired=None) | Q(is_expired=False))
         if len(check_contract) != 0:
             raise serializers.ValidationError({'registered':'You signed up for another room!'})
             # return False
