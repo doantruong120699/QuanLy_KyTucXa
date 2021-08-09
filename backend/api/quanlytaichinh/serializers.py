@@ -101,20 +101,20 @@ class WaterElectricalSerializer(serializers.ModelSerializer):
             model = WaterElectrical.objects.create(
                 public_id=shortuuid.uuid(),
                 room=room,
-                new_index_eclectrical=validated_data['new_index_eclectrical'],
-                new_index_water=validated_data['new_index_water'],
-                month = validated_data['month'],
+                new_index_eclectrical= int(validated_data['new_index_eclectrical']),
+                new_index_water=int(validated_data['new_index_water']),
+                month = int(validated_data['month']),
                 water_electrical_unit_price=water_electrical_unit_price,
                 created_by=current_user
             )
             d = datetime.now()
             if 'year' in validated_data:
-                year = validated_data['year']
+                year = int(validated_data['year'])
             else:
                 year = d.year
             model.year = year
             # Old index this month = new index pre month
-            month = validated_data['month']
+            month = int(validated_data['month'])
             if month == 1:
                 water_electrical_pre_month = WaterElectrical.objects.filter(room=room, year=year-1,month=12)
             else:
@@ -135,7 +135,7 @@ class WaterElectricalSerializer(serializers.ModelSerializer):
             bill.save()
             return True
         except Exception as e:
-            print(e)
+            print("WaterElectricalSerializer: ", e)
             pass
         return False
 
@@ -146,12 +146,12 @@ class WaterElectricalSerializer(serializers.ModelSerializer):
             room = Room.objects.get(pk=validated_data['room'])
 
             instance.room = room
-            instance.new_index_eclectrical = validated_data.get('new_index_eclectrical', instance.new_index_eclectrical)
-            instance.new_index_water = validated_data.get('new_index_water', instance.new_index_water)
-            instance.month = validated_data.get('month', instance.month)
+            instance.new_index_eclectrical = int(validated_data.get('new_index_eclectrical', instance.new_index_eclectrical))
+            instance.new_index_water = int(validated_data.get('new_index_water', instance.new_index_water))
+            instance.month = int(validated_data.get('month', instance.month))
             if 'year' in validated_data:
-                year = validated_data['year']
-                instance.year = validated_data.get('year', instance.year)
+                year = int(validated_data['year'])
+                instance.year = int(validated_data.get('year', instance.year))
             instance.water_electrical_unit_price = water_electrical_unit_price
             instance.updated_by = current_user
 

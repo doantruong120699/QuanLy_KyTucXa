@@ -450,12 +450,15 @@ class UsedRoomInAreaViewSet(viewsets.ModelViewSet):
             data = list(list_area.values())
             for index, value in enumerate(list_area):
                 room = Room.objects.filter(area=value)
+                total = 0
                 count_full = 0
                 for i in room:
                     number_max = i.typeroom.number_max
-                    if number_max == i.number_now :
-                        count_full = count_full + 1
-                data[index]['total'] = room.count()
+                    total = total + number_max
+                    count_full = count_full + i.number_now
+                    # if number_max == i.number_now :
+                    #     count_full = count_full + 1
+                data[index]['total'] = total
                 data[index]['full'] = count_full
             return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
