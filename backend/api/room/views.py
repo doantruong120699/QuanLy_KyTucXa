@@ -139,6 +139,16 @@ class RoomViewSet(viewsets.ModelViewSet):
         try:
             area = kwargs['slug']
             queryset = Room.objects.filter(area__slug = area)
+            keyword = self.request.GET.get('keyword')
+            if keyword and len(keyword) > 0:
+                words = re.split(r"[-;,.\s]\s*", keyword)
+                query = Q()
+                for word in words:
+                    query |= Q(name__icontains=word)
+                    if word.isnumeric():
+                        query |= Q(number_now=int(word))
+                queryset=queryset.filter(query).distinct()
+
             page = self.paginate_queryset(queryset)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
