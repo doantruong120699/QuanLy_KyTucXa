@@ -8,6 +8,7 @@ from api.serializers import AreaSerializer
 from datetime import date
 from datetime import datetime
 from django.db.models import Q
+from django.conf import settings
 
 class StringListField(serializers.ListField): # get from http://www.django-rest-framework.org/api-guide/fields/#listfield
     child = serializers.CharField()
@@ -24,6 +25,11 @@ class TypeRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = TypeRoom
         fields = ['id', 'name', 'price', 'number_max', 'slug'] 
+        
+class SchoolYearSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SchoolYear
+        fields = ['id', 'year_start', 'year_end'] 
 
 class PaymentMethodSerializer(serializers.ModelSerializer):
     class Meta:
@@ -130,8 +136,8 @@ class ContractSerializer(serializers.ModelSerializer):
             'public_id',
             'room', 
             'profile', 
-            'start_at', 
-            'end_at', 
+            # 'start_at', 
+            # 'end_at', 
             'payment_method', 
             'is_expired',
         ] 
@@ -149,8 +155,8 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         fields = [
             'public_id',
             'room', 
-            'start_at', 
-            'end_at', 
+            # 'start_at', 
+            # 'end_at', 
             'payment_method', 
             'is_expired',
         ] 
@@ -167,21 +173,25 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
             current_user = self._current_user()
             room = Room.objects.get(pk=validated_data['room'])
             payment_method = PaymentMethod.objects.get(pk=validated_data['payment_method'])
+            school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
             model = Contract.objects.create(
                 room=room,
                 profile=current_user.user_profile,
-                start_at=validated_data['start_at'],
-                end_at=validated_data['end_at'],
+                created_by=current_user,
+                # start_at=validated_data['start_at'],
+                # end_at=validated_data['end_at'],
                 payment_method=payment_method,
+                semester=validated_data['semester'],
+                school_year=school_year,
             )
             
-            start_at=validated_data['start_at']
-            end_at=validated_data['end_at']
-            start_at = datetime.fromisoformat(start_at)
-            end_at = datetime.fromisoformat(end_at)
-            
-            time_rentail = int((end_at - start_at).days)
-            model.price = (time_rentail/30)*room.typeroom.price
+            # start_at=validated_data['start_at']
+            # end_at=validated_data['end_at']
+            # start_at = datetime.fromisoformat(start_at)
+            # end_at = datetime.fromisoformat(end_at)
+            semester = str(validated_data['semester'])
+            month = settings.NUMBER_MONTH[semester]
+            model.price = month*room.typeroom.price
             model.created_by = current_user
             model.save()
             return True
@@ -200,21 +210,22 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
             if room.number_now == room.typeroom.number_max:
                 raise serializers.ValidationError({'room':'Room is full!'})
             # return False
-        if 'start_at' not in data:
-            raise serializers.ValidationError({'start_at':'This Field is required'})
-            # return False
-        if 'end_at' not in data:
-            raise serializers.ValidationError({'end_at':'This Field is required'})
-            # return False
+        # if 'start_at' not in data:
+        #     raise serializers.ValidationError({'start_at':'This Field is required'})
+        #     # return False
+        # if 'end_at' not in data:
+        #     raise serializers.ValidationError({'end_at':'This Field is required'})
+        #     # return False
+        
         if 'payment_method' not in data:
             raise serializers.ValidationError({'payment_method':'This Field is required'})
             # return False
 
-        start_at=data['start_at']
-        end_at=data['end_at']
+        # start_at=data['start_at']
+        # end_at=data['end_at']
             
-        if start_at >= end_at:
-            raise serializers.ValidationError({'end_at':'Time end must be after time start!'})
+        # if start_at >= end_at:
+        #     raise serializers.ValidationError({'end_at':'Time end must be after time start!'})
             # return False
         
         current_user = self._current_user()

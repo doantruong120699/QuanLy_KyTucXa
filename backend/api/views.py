@@ -15,6 +15,7 @@ from .serializers import *
 from django.http import JsonResponse
 from . import status_http
 from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
+from rest_framework.decorators import api_view, permission_classes, action
 from django.core.mail import send_mail
 
 # API Change Password
@@ -243,3 +244,24 @@ class AreaViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         area = list(Area.objects.values().order_by('id'))
         return JsonResponse(area, safe=False, status=status.HTTP_200_OK)
+    
+    def retrieve(self, request, **kwargs):
+        try:
+            area = Area.objects.get(slug=kwargs['slug'])
+            serializer = AreaSerializer(area)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(methods=["GET"], detail=False, url_path="get_image_area", url_name="get_all_get_image_arearoom")
+    def get_image_area(self, request, *args, **kwargs):
+        area = Area.objects.all()
+        serializer = AreaSerializer(area, many=True)
+        data = serializer.data
+        for i in data:
+            i.pop('slug')
+            i.pop('name')
+        return Response(data, status=status.HTTP_200_OK)
+            
+        

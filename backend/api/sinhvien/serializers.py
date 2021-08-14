@@ -72,8 +72,8 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         fields = [
             'public_id',
             'room', 
-            'start_at', 
-            'end_at', 
+            # 'start_at', 
+            # 'end_at', 
             'payment_method', 
             'created_at',
             # 'profile',

@@ -46,6 +46,7 @@ class Position(models.Model):
 class Area(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
     slug = models.CharField(max_length=200, null=True, unique=True)  
+    image = models.ImageField(null=True, blank=True, upload_to='area_image/')
 
     class Meta:
         ordering = ('id',)
@@ -132,6 +133,20 @@ class PaymentMethod(models.Model):
     def __str__(self):
         return self.name
 
+class SchoolYear(models.Model):
+    YEAR_CHOICES = []
+    for r in range((datetime.datetime.now().year-5), 2030):
+        YEAR_CHOICES.append((r,r))
+    year_start = models.IntegerField(_('year start'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
+    year_end = models.IntegerField(_('year end'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
+    
+    class Meta:
+        ordering = ('year_start',)
+
+    def __str__(self):
+        return str(self.year_start) + ' - ' + str(self.year_end)
+
+
 class Contract(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, editable=False)
     room = models.ForeignKey(Room, related_name = 'contract_room', on_delete=models.SET_NULL, blank=True, null=True)
@@ -140,8 +155,8 @@ class Contract(models.Model):
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     created_by = models.ForeignKey(User, related_name = 'contract_created_by', on_delete=models.CASCADE, blank=True, null=True)
     updated_by = models.ForeignKey(User, related_name = 'contract_updated_by', on_delete=models.CASCADE, blank=True, null=True)
-    start_at = models.DateField(null=True, blank=True)
-    end_at = models.DateField(null=True, blank=True)
+    # start_at = models.DateField(null=True, blank=True)
+    # end_at = models.DateField(null=True, blank=True)
     payment_method = models.ForeignKey(PaymentMethod, related_name = 'contract_payment_method', on_delete=models.SET_NULL, blank=True, null=True)
     
     is_accepted = models.BooleanField(null=True, blank=True)
@@ -157,6 +172,7 @@ class Contract(models.Model):
         ('3', _('Summer Semester')),
     )
     semester = models.CharField(choices=SEMESTER, max_length=20, null=True, blank=True)
+    school_year = models.ForeignKey(SchoolYear, related_name = 'contract_school_year', on_delete=models.SET_NULL, blank=True, null=True)
 
     class Meta:
         ordering = ('created_at',)

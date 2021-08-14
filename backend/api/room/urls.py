@@ -71,6 +71,10 @@ payment_method = PaymentMethodViewSet.as_view({
     'get': 'list', # Get lists
 })
 
+school_year = SchoolYearViewSet.as_view({
+    'get': 'list', # Get lists
+})
+
 urlpatterns = [
     # ========== room
     path('rooms/get-all/', room_get_all, name = 'room_get_all'),
@@ -87,4 +91,6 @@ urlpatterns = [
     path('contracts/<uuid:public_id>/', contract_detail, name = 'contract_detail'),
     # =========== Payment Method
     path('payment-method/', payment_method),
+    # ==========
+    path('school-year/', school_year),
 ]
