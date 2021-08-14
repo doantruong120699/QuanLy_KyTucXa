@@ -189,3 +189,16 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 # 
 # FRONTEND_SITE_URL_FORGOT_PASSWORD=os.getenv('FRONTEND_URL') + "/reset-password?access_token="
 FRONTEND_URL = os.getenv('FRONTEND_URL')
+
+
+# =========================
+
+SEMESTER1 = 5
+SEMESTER2 = 4
+SUMMER_SEMESTER = 3
+
+NUMBER_MONTH = {
+    "1" : SEMESTER1,
+    "2" : SEMESTER2,
+    "3" : SUMMER_SEMESTER
+}

@@ -104,12 +104,15 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         fields = [
             'public_id',
             'room', 
-            'start_at', 
-            'end_at', 
+            # 'start_at', 
+            # 'end_at', 
             'payment_method', 
             'created_at',
             'profile',
             'is_expired',
+            # 
+            'semester',
+            'school_year',
         ] 
 
 class ListRequestSerializer(serializers.Serializer):

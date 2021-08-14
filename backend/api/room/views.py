@@ -38,6 +38,16 @@ class TypeRoomViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Type Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
+class SchoolYearViewSet(viewsets.ModelViewSet):
+    serializer_class = SchoolYearSerializer
+
+    def get_queryset(self):
+        return SchoolYear.objects.all().order_by('id')
+
+    def list(self, request, *args, **kwargs):
+        school_year = list(SchoolYear.objects.values().order_by('id'))
+        return JsonResponse(school_year, safe=False, status=status.HTTP_200_OK)
+    
 class PaymentMethodViewSet(viewsets.ModelViewSet):
     queryset =  PaymentMethod.objects.all()
     serializer_class = PaymentMethodSerializer

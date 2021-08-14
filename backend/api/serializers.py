@@ -238,7 +238,7 @@ class PositionSerializer(serializers.ModelSerializer):
 class AreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
-        fields = [ "id", "name", "slug"]
+        fields = [ "id", "name", "slug", "image"]
 
 class ProfileSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)

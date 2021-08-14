@@ -28,6 +28,12 @@ position_list = PositionViewSet.as_view({
 area_list = AreaViewSet.as_view({
     'get': 'list', # Get lists
 })
+area_detail = AreaViewSet.as_view({
+    'get' : 'retrieve'
+})
+image_area = AreaViewSet.as_view({
+    'get' : 'get_image_area'
+})
 
 urlpatterns = [
     url(r'^auth/login/$', MyTokenObtainPairView.as_view()),
@@ -43,6 +49,8 @@ urlpatterns = [
     path('class/', class_list),
     path('position/', position_list),
     path('area/', area_list),
+    path('area/<slug:slug>/', area_detail),
+    path('area-image/', image_area),
     
     path('', include('api.sinhvien.urls')), 
     path('', include('api.nhanvien.urls')), 
