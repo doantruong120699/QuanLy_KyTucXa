@@ -103,6 +103,8 @@ class Room(models.Model):
     number_now = models.PositiveIntegerField(default=0)  
     typeroom = models.ForeignKey(TypeRoom, related_name = 'type_room', on_delete=models.SET_NULL, blank=True, null=True)
     area = models.ForeignKey(Area, related_name = 'area_room', on_delete=models.SET_NULL, blank=True, null=True)
+    gender = models.BooleanField(default=True)
+    
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
@@ -148,7 +150,13 @@ class Contract(models.Model):
     price = models.FloatField(default=0)
     is_paid = models.BooleanField(null=True)
     is_delete = models.BooleanField(default=False, null=True, blank=True)
-
+    #
+    SEMESTER = Choices(
+        ('1', _('Semester 1')),
+        ('2', _('Semester 2')),
+        ('3', _('Summer Semester')),
+    )
+    semester = models.CharField(choices=SEMESTER, max_length=20, null=True, blank=True)
 
     class Meta:
         ordering = ('created_at',)
