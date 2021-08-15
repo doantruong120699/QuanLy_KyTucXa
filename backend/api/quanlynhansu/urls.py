@@ -88,6 +88,19 @@ profile_detail = UserProfileViewSet.as_view({
 count_profile = UserProfileViewSet.as_view({
     'get': 'count_profile',
 })
+# ============================================
+start_register = StageRegistrationViewset.as_view({
+    'get': 'list',
+    'post': 'post'
+})
+# detail - update - delete
+start_register_detail = StageRegistrationViewset.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    # 'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
 urlpatterns = [ 
     # ========== notification
     path('notifications/', notification_list, name = 'notification_list'),
@@ -119,4 +132,7 @@ urlpatterns = [
     path('admin/account/', profile_list, name = 'profile_list'),
     path('admin/account/<str:public_id>/', profile_detail, name = 'profile_detail'),
     path('admin/count-profile/', count_profile, name = 'count_profile'),
+    # ========= Start stage registration
+    path('start-registration/', start_register, name = 'start_register'),
+    path('start-registration/<int:id>/', start_register_detail, name = 'start_register_detail')
 ]

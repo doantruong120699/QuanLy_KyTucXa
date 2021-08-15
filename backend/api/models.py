@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.crypto import get_random_string
 import shortuuid
 import datetime
+# from datetime import datetime
 
 def unique_slugify(instance, slug):
     model = instance.__class__
@@ -81,6 +82,55 @@ class Profile(models.Model):
 
 # =====================================
 
+class SchoolYear(models.Model):
+    YEAR_CHOICES = []
+    for r in range((datetime.datetime.now().year-5), 2030):
+        YEAR_CHOICES.append((r,r))
+    year_start = models.IntegerField(_('year start'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
+    year_end = models.IntegerField(_('year end'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
+    
+    previous_year = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True)
+    class Meta:
+        ordering = ('year_start',)
+
+    def __str__(self):
+        return str(self.year_start) + ' - ' + str(self.year_end)
+
+class Stage(models.Model):
+    name = models.CharField(max_length=200, null=True, blank= True)
+    # 
+    stage1_started_at = models.DateField(null=True, blank= True)
+    stage1_ended_at = models.DateField(null=True, blank= True)
+    # 
+    stage2_started_at = models.DateField(null=True, blank= True)
+    stage2_ended_at = models.DateField(null=True, blank= True)
+    # 
+    stage3_started_at = models.DateField(null=True, blank= True)
+    stage3_ended_at = models.DateField(null=True, blank= True)  
+    
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_by = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name="created_by_stage", on_delete=models.CASCADE, blank=True, null=True)
+    updated_by = models.ForeignKey(User, related_name="updated_by_stage", on_delete=models.CASCADE, blank=True, null=True)
+
+    SEMESTER = Choices(
+        ('1', _('Semester 1')),
+        ('2', _('Semester 2')),
+        ('3', _('Summer Semester')),
+    )
+    semester = models.CharField(choices=SEMESTER, max_length=20, null=True, blank=True)
+    school_year = models.ForeignKey(SchoolYear, related_name = 'stage_school_year', on_delete=models.SET_NULL, blank=True, null=True)
+
+    
+    class Meta:
+        ordering = ('created_at',)
+
+    def __str__(self):
+        return "Stage 1: " + (self.stage1_started_at.strftime('%m/%d/%Y')) + " - " + (self.stage1_ended_at.strftime('%m/%d/%Y'))\
+            + " ----- Stage 2: " +  (self.stage2_started_at.strftime('%m/%d/%Y')) + " - " + (self.stage2_ended_at.strftime('%m/%d/%Y'))\
+            + " ----- Stage 3: " +  (self.stage3_started_at.strftime('%m/%d/%Y')) + " - " + (self.stage3_ended_at.strftime('%m/%d/%Y'))\
+            + " (Semester: " + str(self.semester) + "/" + str(self.school_year) + ")"
+
 class TypeRoom(models.Model):
     name = models.CharField(max_length=200, null=True, blank=True)
     price = models.PositiveIntegerField(default=0)  
@@ -110,7 +160,9 @@ class Room(models.Model):
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     status = models.CharField(choices=STATUS, max_length=10, null=True, blank=True)
-
+    # 
+    is_cover_room = models.BooleanField(default=False)
+ 
     class Meta:
         ordering = ('name',)
 
@@ -132,20 +184,6 @@ class PaymentMethod(models.Model):
 
     def __str__(self):
         return self.name
-
-class SchoolYear(models.Model):
-    YEAR_CHOICES = []
-    for r in range((datetime.datetime.now().year-5), 2030):
-        YEAR_CHOICES.append((r,r))
-    year_start = models.IntegerField(_('year start'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
-    year_end = models.IntegerField(_('year end'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
-    
-    class Meta:
-        ordering = ('year_start',)
-
-    def __str__(self):
-        return str(self.year_start) + ' - ' + str(self.year_end)
-
 
 class Contract(models.Model):
     public_id = models.UUIDField(default=uuid.uuid4, editable=False)
@@ -173,6 +211,9 @@ class Contract(models.Model):
     )
     semester = models.CharField(choices=SEMESTER, max_length=20, null=True, blank=True)
     school_year = models.ForeignKey(SchoolYear, related_name = 'contract_school_year', on_delete=models.SET_NULL, blank=True, null=True)
+    # 
+    number_registration = models.IntegerField(default=1)
+    is_cover_room = models.BooleanField(default=False)
 
     class Meta:
         ordering = ('created_at',)
