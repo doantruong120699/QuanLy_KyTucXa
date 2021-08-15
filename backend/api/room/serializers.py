@@ -9,6 +9,7 @@ from datetime import date
 from datetime import datetime
 from django.db.models import Q
 from django.conf import settings
+from .utils import *
 
 class StringListField(serializers.ListField): # get from http://www.django-rest-framework.org/api-guide/fields/#listfield
     child = serializers.CharField()
@@ -138,6 +139,8 @@ class ContractSerializer(serializers.ModelSerializer):
             'profile', 
             # 'start_at', 
             # 'end_at', 
+            'semester',
+            'school_year',
             'payment_method', 
             'is_expired',
         ] 
@@ -157,9 +160,17 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
             'room', 
             # 'start_at', 
             # 'end_at', 
+            'semester',
+            'school_year',
             'payment_method', 
-            'is_expired',
+            'is_cover_room'
         ] 
+        extra_kwargs = {
+            'room': {'required': True},
+            'payment_method': {'required': True},
+            'semester': {'required': True},
+            'school_year': {'required': True},
+        }
 
     # Get current user login
     def _current_user(self):
@@ -203,34 +214,96 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         """
         Check that start is before finish.
         """
-        if 'room' not in data:
-            raise serializers.ValidationError({'room':'This Field is required'})
-        else:
-            room = data['room']
-            if room.number_now == room.typeroom.number_max:
-                raise serializers.ValidationError({'room':'Room is full!'})
-            # return False
-        # if 'start_at' not in data:
-        #     raise serializers.ValidationError({'start_at':'This Field is required'})
-        #     # return False
-        # if 'end_at' not in data:
-        #     raise serializers.ValidationError({'end_at':'This Field is required'})
-        #     # return False
+        stage = getStageNow(semester=data['semester'], school_year=data['school_year'])
         
-        if 'payment_method' not in data:
-            raise serializers.ValidationError({'payment_method':'This Field is required'})
-            # return False
-
-        # start_at=data['start_at']
-        # end_at=data['end_at']
-            
-        # if start_at >= end_at:
-        #     raise serializers.ValidationError({'end_at':'Time end must be after time start!'})
-            # return False
+        room = data['room']
+        if room.number_now == room.typeroom.number_max:
+            raise serializers.ValidationError({'room':'Room is full!'})
         
         current_user = self._current_user()
-        check_contract = Contract.objects.filter(profile=current_user.user_profile).filter(Q(is_expired=None) | Q(is_expired=False))
+        check_contract = Contract.objects.filter(profile=current_user.user_profile).filter(Q(is_expired=None) | Q(is_expired=False), is_cover_room=False)
         if len(check_contract) != 0:
-            raise serializers.ValidationError({'registered':'You signed up for another room!'})
+            raise serializers.ValidationError({'registered':'Bạn đã đăng ký phòng!'})
             # return False
         return data
+    
+class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contract
+        fields = [
+            'public_id',
+            'room', 
+            # 'start_at', 
+            # 'end_at', 
+            'semester',
+            'school_year',
+            'payment_method', 
+            'number_registration',
+            'is_cover_room'
+        ] 
+        extra_kwargs = {
+            'room': {'required': True},
+            'payment_method': {'required': True},
+            'semester': {'required': True},
+            'school_year': {'required': True}
+        }
+
+    # Get current user login
+    def _current_user(self):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
+        return False
+
+    def create(self, validated_data):
+        try:
+            current_user = self._current_user()
+            room = Room.objects.get(pk=validated_data['room'])
+            payment_method = PaymentMethod.objects.get(pk=validated_data['payment_method'])
+            school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
+            model = Contract.objects.create(
+                room=room,
+                profile=current_user.user_profile,
+                created_by=current_user,
+                payment_method=payment_method,
+                semester=validated_data['semester'],
+                school_year=school_year,
+                # number_registration=validated_data['number_registration'],
+                is_cover_room=True
+            )
+            model.number_registration = model.type_room.number_max - model.number_now
+            model.save()
+            semester = str(validated_data['semester'])
+            month = settings.NUMBER_MONTH[semester]
+            model.price = month*model.number_registration*room.typeroom.price
+            model.created_by = current_user
+            model.save()
+            return True
+        except Exception as e:
+            return serializers.ValidationError("Error")
+        return serializers.ValidationError("Server error")
+
+    def validate(self, data):
+        """
+        Check that start is before finish.
+        """
+        stage = getStageNow(semester=data['semester'], school_year=data['school_year'])
+        
+        room = data['room']
+        if room.number_now == room.typeroom.number_max:
+            raise serializers.ValidationError({'room':'Room is full!'})
+        
+        current_user = self._current_user()
+        check_contract = Contract.objects.filter(profile=current_user.user_profile).filter(Q(is_expired=None) | Q(is_expired=False), is_cover_room=True)
+        if len(check_contract) != 0:
+            raise serializers.ValidationError({'registered':'Bạn đã đăng ký bao phòng này!'})
+            # return False
+        return data
+    
+    
+    
+    
+    
+    
+    
+    
