@@ -159,7 +159,6 @@ class RoomViewSet(viewsets.ModelViewSet):
         else:
             return (-1, None)            
     
-    
     def getPermission(self, room):
         (stage, objects) = self.getStage()
         if stage != -1:
@@ -206,6 +205,12 @@ class RoomViewSet(viewsets.ModelViewSet):
         else:
             return 'not_registration_time'
 
+    def getPenddingRegistration(self, room):
+        obj_room = Room.objects.get(pk=room)
+        # print(obj_room)
+        list_contract = Contract.objects.filter(room=obj_room, is_accepted=None, is_delete=False)
+        return list_contract.count()
+
     @action(methods=["GET"], detail=False, url_path="get_list_room_in_area", url_name="get_list_room_in_area")
     def get_list_room_in_area(self, request, *args, **kwargs):
         try:
@@ -228,6 +233,7 @@ class RoomViewSet(viewsets.ModelViewSet):
             data = serializer.data
             for index, room in enumerate(data):
                 data[index]['permission'] = self.getPermission(room['id'])
+                data[index]['pendding'] = self.getPenddingRegistration(room['id'])
             return self.get_paginated_response(data)
 
         except Exception as e:
