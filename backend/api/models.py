@@ -311,12 +311,39 @@ class WaterElectricalUnitPrice(models.Model):
     def __str__(self):
         return self.name
 
+class TypeService(models.Model):
+    name = models.CharField(max_length=200, null=True, blank=True)
+    
+    def __str__(self):
+        return self.name
+    
+class Bill(models.Model):
+    public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
+    # water_electrical = models.ForeignKey(WaterElectrical, related_name = 'bill_water_electrical', on_delete=models.SET_NULL, blank=True, null=True)
+
+    payment_method = models.ForeignKey(PaymentMethod, related_name = 'bill_payment_method', on_delete=models.SET_NULL, blank=True, null=True)
+    is_paid = models.BooleanField(default=False)
+
+    sinhvien_paid = models.ForeignKey(Profile, related_name = 'bill_sinhvien_paid', on_delete=models.CASCADE, blank=True, null=True)
+    time_paid = models.DateTimeField(null=True, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
+    created_by = models.ForeignKey(User, related_name = 'bill_created_by', on_delete=models.CASCADE, blank=True, null=True)
+    updated_by = models.ForeignKey(User, related_name = 'bill_updated_by', on_delete=models.CASCADE, blank=True, null=True)
+
+    is_delete = models.BooleanField(default=False, null=True, blank=True)
+    type_service = models.ForeignKey(TypeService, related_name = 'type_service_bill', on_delete=models.SET_NULL, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.is_paid) 
+
 class WaterElectrical(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
     room = models.ForeignKey(Room, related_name = 'water_electrical_room', on_delete=models.SET_NULL, blank=True, null=True)
     # 
     new_index_eclectrical = models.PositiveIntegerField(default=0, null=True, blank=True)
-    old_index_electrical = models.PositiveIntegerField(default=0, null=True, blank=True)
+    old_index_eclectrical = models.PositiveIntegerField(default=0, null=True, blank=True)
     # 
     new_index_water = models.PositiveIntegerField(default=0, null=True, blank=True)
     old_index_water = models.PositiveIntegerField(default=0, null=True, blank=True)
@@ -335,8 +362,6 @@ class WaterElectrical(models.Model):
     month = models.IntegerField(_('month'), choices=MONTH_CHOICES, default=datetime.datetime.now().isocalendar()[1] + 1)
     year = models.IntegerField(_('year'), choices=YEAR_CHOICES, default=datetime.datetime.now().year)
     # 
-    # water_unit_price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
-    # electrical_unit_price = models.DecimalField(decimal_places=2, max_digits=20, default=0.00)
     water_electrical_unit_price = models.ForeignKey(WaterElectricalUnitPrice, related_name = 'water_electrical_unit_price', on_delete=models.SET_NULL, blank=True, null=True)
     # 
     water_price = models.PositiveIntegerField(default=0, null=True, blank=True)
@@ -346,7 +371,9 @@ class WaterElectrical(models.Model):
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     created_by = models.ForeignKey(User, related_name = 'water_electrical_created_by', on_delete=models.CASCADE, blank=True, null=True)
     updated_by = models.ForeignKey(User, related_name = 'water_electrical_updated_by', on_delete=models.CASCADE, blank=True, null=True)
-
+    # 
+    bill = models.ForeignKey(Bill, related_name = 'water_electrical_bill', on_delete=models.SET_NULL, blank=True, null=True)
+    
     def save(self, *args, **kwargs):
         # Electrical Price:
         electrical = (self.new_index_eclectrical - self.old_index_electrical)
@@ -385,27 +412,7 @@ class WaterElectrical(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.room.name + ' - (' + str(self.month) + '/' + str(self.year) + ') - ' + str(self.water_price)  + ' - ' + str(self.electrical_price) 
-
-class Bill(models.Model):
-    public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
-    water_electrical = models.ForeignKey(WaterElectrical, related_name = 'bill_water_electrical', on_delete=models.SET_NULL, blank=True, null=True)
-
-    payment_method = models.ForeignKey(PaymentMethod, related_name = 'bill_payment_method', on_delete=models.SET_NULL, blank=True, null=True)
-    is_paid = models.BooleanField(default=False)
-
-    sinhvien_paid = models.ForeignKey(Profile, related_name = 'bill_sinhvien_paid', on_delete=models.CASCADE, blank=True, null=True)
-    time_paid = models.DateTimeField(null=True, blank=True)
-
-    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
-    created_by = models.ForeignKey(User, related_name = 'bill_created_by', on_delete=models.CASCADE, blank=True, null=True)
-    updated_by = models.ForeignKey(User, related_name = 'bill_updated_by', on_delete=models.CASCADE, blank=True, null=True)
-
-    is_delete = models.BooleanField(default=False, null=True, blank=True)
-
-    def __str__(self):
-        return self.water_electrical.room.name + ' - ' + str(self.is_paid)
+        return self.room.name + ' - (' + str(self.month) + '/' + str(self.year) + ') - ' + str(self.water_price)  + ' - ' + str(self.electrical_price)  + ' ---- ' + str(self.bill.is_paid)
 
 class Service(models.Model):
     public_id = models.CharField(max_length=100, null=True, blank=True, default=shortuuid.uuid(), unique=True)
