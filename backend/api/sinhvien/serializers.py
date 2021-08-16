@@ -79,3 +79,133 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
             # 'profile',
             'is_expired',
         ] 
+# =======================================================================
+
+class RoomInListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Room
+        fields = [
+            'name', 
+            'slug',
+            'number_now',
+        ]
+
+class FacultyBillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Faculty
+        fields = ["name"]
+
+class ClassBillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Class
+        fields = ["name"]
+
+
+class ProfileInListBillSerializer(serializers.ModelSerializer):
+    faculty = FacultyBillSerializer(required=False)
+    my_class = ClassBillSerializer(required=False)
+    user = UserSerializer(required=False)
+    class Meta:
+        model = Profile
+        fields = [
+            'user',
+            'gender',
+            'phone',
+            'public_id',
+            'faculty',
+            'my_class'
+        ]
+   
+
+class BillListSerializer(serializers.ModelSerializer):
+    sinhvien_paid = ProfileInListBillSerializer(required=False)
+    class Meta:
+        model = Bill
+        fields = [
+            'public_id', 
+            # 'water_electrical',
+            'payment_method',
+            'is_paid',
+            'time_paid',
+            'sinhvien_paid',
+            'created_at',
+        ]
+        
+class BillSerializer(serializers.ModelSerializer):
+    # water_electrical = WaterElectricalInListSerializer(required=False)
+    created_by = UserSerializer(required=False)
+    updated_by = UserSerializer(required=False)
+    sinhvien_paid = ProfileInListBillSerializer(required=False)
+    class Meta:
+        model = Bill
+        fields = [
+            'public_id', 
+            # 'water_electrical',
+            'payment_method',
+            'is_paid',
+            'time_paid',
+            'sinhvien_paid',
+            'created_at',
+            'last_update',
+            'created_by',
+            'updated_by',
+        ]
+
+class WaterElectricalUnitPriceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WaterElectricalUnitPrice
+        fields = [
+            'id', 
+            'name',
+            'water_unit_price_level1',
+            'water_unit_price_level2',
+            'water_unit_price_level3',
+            'water_unit_price_level4',
+            'electrical_unit_price_level1',
+            'electrical_unit_price_level2',
+            'electrical_unit_price_level3',
+            'electrical_unit_price_level4',
+            'electrical_unit_price_level5',
+            'electrical_unit_price_level6',
+            'created_at',
+            'last_update',
+        ] 
+
+
+class WaterElectricalInListSerializer(serializers.ModelSerializer):
+    room = RoomInListSerializer()
+    bill = BillListSerializer()
+    class Meta:
+        model = WaterElectrical
+        fields = [
+            'public_id',
+            'room',
+            'month',
+            'year',
+            'new_index_eclectrical',
+            'new_index_water',
+            'water_price',
+            'electrical_price',
+            'bill',
+        ]
+
+class WaterElectricalDetailSerializer(serializers.ModelSerializer):
+    room = RoomInListSerializer()
+    bill = BillSerializer()
+    water_electrical_unit_price = WaterElectricalUnitPriceSerializer()
+    class Meta:
+        model = WaterElectrical
+        fields = [
+            'public_id',
+            'room',
+            'month',
+            'year',
+            'old_index_eclectrical',
+            'new_index_eclectrical',
+            'old_index_water',
+            'new_index_water',
+            'water_price',
+            'electrical_price',
+            'bill',
+            'water_electrical_unit_price'
+        ]
