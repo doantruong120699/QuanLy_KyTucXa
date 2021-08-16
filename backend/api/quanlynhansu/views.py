@@ -161,13 +161,20 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            list_registration_room = Contract.objects.filter(is_accepted = None)
-            page = self.paginate_queryset(list_registration_room)
-            if page is not None:
-                serializer = self.get_serializer(page, many=True)
-                return self.get_paginated_response(serializer.data)
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            room = request.GET.get('room', None)
+            if room != None:
+                obj_room = Room.objects.get(slug=room)
+                _list = Contract.objects.filter(room=obj_room).exclude(is_expired=True)
+                serializer = ContractRegistationSerializer(_list, many=True)
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response({}, status=status.HTTP_200_OK)
+                
+            # page = self.paginate_queryset(list_registration_room)
+            # if page is not None:
+            #     serializer = self.get_serializer(page, many=True)
+            #     return self.get_paginated_response(serializer.data)
+            # serializer = self.get_serializer(page, many=True)
+            # return self.get_paginated_response(serializer.data)
         except Exception as e:
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
