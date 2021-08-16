@@ -110,9 +110,12 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
             'created_at',
             'profile',
             'is_expired',
+            'is_accepted',
             # 
             'semester',
             'school_year',
+            'is_cover_room',
+            'number_registration',
         ] 
 
 class ListRequestSerializer(serializers.Serializer):
