@@ -93,6 +93,10 @@ all_in_contract_detail = ContractCoverRoomRegistationViewSet.as_view({
     # 'patch': 'partial_update',
     # 'delete': 'destroy'
 })
+# =======================
+check_stage = CheckStageViewSet.as_view({
+    'get': 'list'
+})
 
 urlpatterns = [
     # ========== room
@@ -116,4 +120,6 @@ urlpatterns = [
     path('all-in-contracts/', all_in_contract_list, name='all_in_contract_list'),
     # path('all-in-contracts/get-all/', contract_get_all, name = 'contract_get_all'),
     path('all-in-contracts/<uuid:public_id>/', all_in_contract_detail, name = 'all_in_contract_detail'),
+    # ========================
+    path('get-stage/', check_stage, name='check_stage'),
 ]
