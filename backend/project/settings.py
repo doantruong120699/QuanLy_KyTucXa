@@ -202,3 +202,6 @@ NUMBER_MONTH = {
     "2" : SEMESTER2,
     "3" : SUMMER_SEMESTER
 }
+
+# =========================
+BACKEND_URL = 'http://dutdormitory.tk'

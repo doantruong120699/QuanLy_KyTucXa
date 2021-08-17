@@ -47,6 +47,8 @@ class SchoolYearViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         school_year = list(SchoolYear.objects.values().order_by('id'))
+        for index, value in enumerate(school_year):
+            school_year[index]['label'] = str(school_year[index]['year_start'])+'-'+str(school_year[index]['year_end'])
         return JsonResponse(school_year, safe=False, status=status.HTTP_200_OK)
     
 class PaymentMethodViewSet(viewsets.ModelViewSet):
@@ -372,4 +374,31 @@ class ContractCoverRoomRegistationViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
 
+def getStage():
+    today = date.today()
+    stage1 = Stage.objects.filter(stage1_started_at__lte = today, stage1_ended_at__gte = today)
+    stage2 = Stage.objects.filter(stage2_started_at__lte = today, stage2_ended_at__gte = today)
+    stage3 = Stage.objects.filter(stage3_started_at__lte = today, stage3_ended_at__gte = today)
+    if len(stage1) > 0:
+        return (1, stage1)
+    elif len(stage2) > 0:
+        return (2, stage2)
+    elif len(stage3) > 0:
+        return (3, stage3)
+    else:
+        return (-1, None)      
+    
+class CheckStageViewSet(viewsets.ModelViewSet):
+    
+    def list(self, request, *args, **kwargs):
+        (stage, obj) = getStage()
+        data = {
+            'stage_is_open' : True,
+            'stage' : stage
+        }
+        if stage == -1:
+            data['stage_is_open'] = False
+        return JsonResponse(data, safe=False, status=status.HTTP_200_OK)
+        
+      
 
