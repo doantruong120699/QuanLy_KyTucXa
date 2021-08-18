@@ -9,18 +9,22 @@ import {
   AcceptRegistrationRoom,
   DenyRegistrationRoom,
   GetListRegistrationRoom,
+  getStageStatus,
+  getSchoolYear,
 } from "../../../redux/actions/humanResource";
 import moment from "moment";
 import * as APIAlertMessage from "../../../utilities/constants/APIAlertMessage";
 import * as AlertMessage from "../../../utilities/constants/AlertMessage";
 import Alertness from "../../../components/common/Alertness";
 import Popup from "reactjs-popup";
+import OpenRegistration from "./OpenRegistration/index";
 
 const Registration = () => {
   const [registrationData, setRegistration] = useState([]);
-
+  const [school_year, setSchoolYear] = useState([]);
   const [openAlert, setOpenAlert] = useState(false);
-
+  const [openRegistration, setOpenRegistration] = useState(false);
+  const [stageStatus, setStageStatus] = useState(false);
   const [action, setAction] = useState();
 
   const [notification, setNotification] = useState({
@@ -31,7 +35,8 @@ const Registration = () => {
   const loader = useSelector((state) => state.humanResource.loading);
 
   const onCloseAlert = () => setOpenAlert(false);
-
+  const onCloseRegistrationPopup = () => setOpenRegistration(false);
+  const onOpenRegistrationTime = () => setOpenRegistration(true);
   const onOpenAlert = () => setOpenAlert(true);
 
   const [openSubmission, setOpenSubmission] = useState(false);
@@ -55,6 +60,12 @@ const Registration = () => {
         });
         setRegistration(data);
       }
+    });
+    getStageStatus((output) => {
+      setStageStatus(output.stage_is_open);
+    });
+    getSchoolYear((output) => {
+      setSchoolYear(output);
     });
   }, [openAlert]);
 
@@ -267,7 +278,7 @@ const Registration = () => {
         },
       },
     });
-
+  console.log("Stage status", stageStatus);
   return (
     <div className="col col-full">
       {loader ? (
@@ -278,6 +289,14 @@ const Registration = () => {
         <div>
           {registrationData && (
             <div className="col col-full pt-16" style={{ zIndex: "1" }}>
+              <div style={{ margin: "0 0 10px 7%" }}>
+                <StyledButton
+                  type="normal-blue"
+                  content="Tạo"
+                  isDisable={!stageStatus}
+                  onClick={onOpenRegistrationTime}
+                />
+              </div>
               <MuiThemeProvider theme={getMuiTheme()}>
                 <MUIDataTable
                   className="mg-auto"
@@ -331,6 +350,13 @@ const Registration = () => {
                 </div>
               </div>
             </Popup>
+          </div>
+          <div>
+            <OpenRegistration
+              open={openRegistration}
+              onClose={onCloseRegistrationPopup}
+              school_year={school_year}
+            />
           </div>
         </div>
       )}
