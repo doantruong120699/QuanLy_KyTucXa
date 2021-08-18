@@ -66,7 +66,7 @@ class WaterElectricalSerializer(serializers.ModelSerializer):
             'room',
             # 
             'new_index_eclectrical',
-            'old_index_electrical',
+            'old_index_eclectrical',
             # 
             'new_index_water',
             'old_index_water',
@@ -121,10 +121,10 @@ class WaterElectricalSerializer(serializers.ModelSerializer):
                 water_electrical_pre_month = WaterElectrical.objects.filter(room=room, year=year,month=month-1)
             if len(water_electrical_pre_month) == 0:
                 model.old_index_water = 0
-                model.old_index_electrical = 0
+                model.old_index_eclectrical = 0
             else:
                 model.old_index_water = water_electrical_pre_month.new_index_water
-                model.old_index_electrical = water_electrical_pre_month.new_index_eclectrical
+                model.old_index_eclectrical = water_electrical_pre_month.new_index_eclectrical
             model.save()
             type_service = TypeService.objects.filter(name="Điện Nước").first()
             bill = Bill.objects.create(
@@ -228,7 +228,7 @@ class WaterElectricalDetailSerializer(serializers.ModelSerializer):
             'room',
             # 
             'new_index_eclectrical',
-            'old_index_electrical',
+            'old_index_eclectrical',
             # 
             'new_index_water',
             'old_index_water',

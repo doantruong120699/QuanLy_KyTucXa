@@ -249,7 +249,9 @@ class AreaViewSet(viewsets.ModelViewSet):
         try:
             area = Area.objects.get(slug=kwargs['slug'])
             serializer = AreaSerializer(area)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            data = serializer.data
+            data['image'] = settings.BACKEND_URL + data['image']
+            return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
             return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
