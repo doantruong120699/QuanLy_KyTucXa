@@ -376,7 +376,7 @@ class WaterElectrical(models.Model):
     
     def save(self, *args, **kwargs):
         # Electrical Price:
-        electrical = (self.new_index_eclectrical - self.old_index_electrical)
+        electrical = (self.new_index_eclectrical - self.old_index_eclectrical)
         if electrical <= 50:
             self.electrical_price = electrical*self.water_electrical_unit_price.electrical_unit_price_level1
 
