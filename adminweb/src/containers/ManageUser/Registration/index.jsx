@@ -293,7 +293,7 @@ const Registration = () => {
                 <StyledButton
                   type="normal-blue"
                   content="Tạo"
-                  isDisable={!stageStatus}
+                  isDisable={stageStatus}
                   onClick={onOpenRegistrationTime}
                 />
               </div>
