@@ -158,7 +158,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.custom_pagination.CustomPagination',
     'PAGE_SIZE': 10,    
     # 
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser'
+    )
 }
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_WHITELIST = [
