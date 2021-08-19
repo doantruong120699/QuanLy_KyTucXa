@@ -333,7 +333,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'avatar',
+            # 'avatar',
             'birthday',
             'address',
             'identify_card',
@@ -372,7 +372,7 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
             try:
                 profile_data = self.validated_data['profile']
                 profile = Profile.objects.get(user=user)
-                profile.avatar=profile_data['avatar']
+                # profile.avatar=profile_data['avatar']
                 profile.birthday=profile_data['birthday']
                 # profile.gender=profile_data['gender']
                 profile.address=profile_data['address']
@@ -390,3 +390,21 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         except:
             pass
         return user 
+
+# class AvatarUpdateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Profile
+#         fields = [
+#             'avatar'
+#         ]
+
+class AvatarUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ["avatar"]
+
+    def save(self, *args, **kwargs):
+        if self.instance.avatar:
+            self.instance.avatar.delete()
+        return super().save(*args, **kwargs)
+    
