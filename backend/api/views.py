@@ -130,6 +130,15 @@ class UserAvatarUpload(APIView):
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        try:
+            data = {}
+            data['avatar'] = settings.BACKEND_URL + request.user.user_profile.avatar.url
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({"avatar": ""}, status=status.HTTP_400_BAD_REQUEST)
+    
     def put(self, request, format=None):
         serializer = AvatarUpdateSerializer(data=request.data, instance=request.user.user_profile)
         if serializer.is_valid():
