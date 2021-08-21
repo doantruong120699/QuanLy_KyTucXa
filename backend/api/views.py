@@ -101,6 +101,7 @@ def get_profile_view(request):
             print(e)
             pass
         data['profile'] = profile
+        data['profile']['avatar'] = settings.BACKEND_URL + data['profile']['avatar']
         #
         return Response(data, status=status.HTTP_200_OK)            
     return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)  
