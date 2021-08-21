@@ -84,6 +84,8 @@ class SinhVienViewSet(viewsets.ModelViewSet):
                 print(e)
                 pass
             data['profile'] = profile
+            if data['profile']['avatar']:
+                data['profile']['avatar'] = settings.BACKEND_URL + data['profile']['avatar']
             #
             return Response(data, status=status.HTTP_200_OK) 
 
