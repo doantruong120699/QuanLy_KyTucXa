@@ -19,6 +19,7 @@ from .serializers import *
 from api.serializers import *
 from api import status_http
 from api.permissions import *
+from datetime import  datetime
 sinhvien_group = 'sinhvien_group'
 nhanvien_group = 'nhanvien_group'
 
@@ -201,8 +202,7 @@ class BillViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         try:
             (check, room) = self.check_user_in_room(request.user)
-            print(check, room)
-            if check == True:             
+            if check == True:       
                 list_water_electrical = WaterElectrical.objects.filter(room=room)   
                 is_paid = request.GET.get('is_paid', None)
                 if is_paid != None:
