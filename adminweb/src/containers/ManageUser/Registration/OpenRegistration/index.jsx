@@ -5,6 +5,8 @@ import moment from "moment";
 import { openRegistrationTime } from "../../../../redux/actions/humanResource";
 import Button from "../../../../components/common/Button";
 import { ToastContainer, toast } from "react-toastify";
+import ReactModal from "react-modal";
+import "react-toastify/dist/ReactToastify.css";
 
 const OpenRegistration = ({ open, onClose, school_year }) => {
   const [data, setData] = useState({
@@ -32,6 +34,37 @@ const OpenRegistration = ({ open, onClose, school_year }) => {
       label: "Học kì hè",
     },
   ];
+  const [openAlert, setOpenAlert] = useState(false);
+
+  const onCloseAlert = () => setOpenAlert(false);
+
+  const onOpenAlert = () => setOpenAlert(true);
+  const customStyles = {
+    content: {
+      top: "50%",
+      left: "49%",
+      right: "auto",
+      bottom: "auto%",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      marginLeft: "20px",
+      borderRadius: "8px",
+    },
+    overlay: { zIndex: 1000 },
+  };
+  const customStyles1 = {
+    content: {
+      top: "50%",
+      left: "49%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+      marginLeft: "20px",
+      borderRadius: "8px",
+    },
+    overlay: { zIndex: 1000 },
+  };
   const isValidatedAll = () => {
     if (
       checkValid("stage1_started_at") &&
@@ -167,8 +200,8 @@ const OpenRegistration = ({ open, onClose, school_year }) => {
     }
     return true;
   }
-  const onClick = () => {
-    console.log("data", data);
+  function confirmOpenRegistration() {
+    console.log("BBB");
     const temp_name = `Đăng ký phòng ${
       semester.find((index) => index.id == data.semester)?.label
     } năm học ${
@@ -185,20 +218,29 @@ const OpenRegistration = ({ open, onClose, school_year }) => {
       school_year: data.school_year,
       name: temp_name,
     };
-    console.log("dataSend", dataSend);
     openRegistrationTime(dataSend, (output) => {
       if (output.status === "success") {
         toast("Mở giai đoạn đăng kí thành công!");
-        setTimeout(onClose, 4000);
+        onClose();
       } else {
         toast(output.notification);
       }
     });
+    onCloseAlert();
+  }
+  const onClick = () => {
+    onOpenAlert();
   };
+
   return (
     <div>
-      <Popup open={open} closeOnDocumentClick onClose={() => onClose()}>
-        <div className="col modal style-lg-box bg-color-white text-align-ct">
+      <ReactModal
+        isOpen={open}
+        onRequestClose={onClose}
+        style={customStyles1}
+        ariaHideApp={false}
+      >
+        <div className="col modal  bg-color-white text-align-ct">
           <div>
             <div>Năm học</div>
             <select
@@ -252,7 +294,6 @@ const OpenRegistration = ({ open, onClose, school_year }) => {
               </div>
             </div>
           </div>
-
           <div style={{ display: "flex", margin: "20px 0 20px 35px" }}>
             <div style={{ marginTop: "10px" }}>Giai đoạn 2</div>
             <div style={{ marginLeft: "20px" }}>
@@ -280,7 +321,6 @@ const OpenRegistration = ({ open, onClose, school_year }) => {
               </div>
             </div>
           </div>
-
           <div style={{ display: "flex", margin: "20px 0 20px 35px" }}>
             <div style={{ marginTop: "10px" }}>Giai đoạn 3</div>
             <div style={{ marginLeft: "20px" }}>
@@ -326,9 +366,44 @@ const OpenRegistration = ({ open, onClose, school_year }) => {
               />
             </div>
           }
-          <ToastContainer />
         </div>
-      </Popup>
+      </ReactModal>
+      <ReactModal
+        isOpen={openAlert}
+        onRequestClose={onCloseAlert}
+        style={customStyles}
+        ariaHideApp={false}
+      >
+        <div className="col modal  bg-color-white text-align-ct">
+          <div className="col col-full pd-8">
+            <div className="style-alertness-icon icon-warning text-20 pd-8 text-is-orange inline-block mr-16">
+              <i className="fi-rr-info"></i>
+            </div>
+            <div className="inline-block text-20 bold-text">
+              Khoan, dừng khoảng chừng là 2s!
+            </div>
+          </div>
+          <div className="col col-full mb-16 text-is-grey">
+            <span>
+              {
+                "Hãy nhớ rằng khi bấm nút xác nhận, mọi dữ liệu của các kì đăng kí trước đó đều sẽ bị xoá. Bạn có chắc chắn?"
+              }
+            </span>
+          </div>
+          <div className={`col col-half`}>
+            <Button type="normal-red" content="Đóng" onClick={onCloseAlert} />
+          </div>
+
+          <div className="col col-half">
+            <Button
+              type="normal-blue"
+              content="Có"
+              onClick={confirmOpenRegistration}
+            />
+          </div>
+        </div>
+      </ReactModal>
+      <ToastContainer />
     </div>
   );
 };

@@ -24,9 +24,8 @@ const Registration = () => {
   const [school_year, setSchoolYear] = useState([]);
   const [openAlert, setOpenAlert] = useState(false);
   const [openRegistration, setOpenRegistration] = useState(false);
-  const [stageStatus, setStageStatus] = useState(false);
+  const [stageStatus, setStageStatus] = useState();
   const [action, setAction] = useState();
-
   const [notification, setNotification] = useState({
     type: "",
     content: "",
@@ -35,7 +34,9 @@ const Registration = () => {
   const loader = useSelector((state) => state.humanResource.loading);
 
   const onCloseAlert = () => setOpenAlert(false);
-  const onCloseRegistrationPopup = () => setOpenRegistration(false);
+  const onCloseRegistrationPopup = () => {
+    setOpenRegistration(false);
+  };
   const onOpenRegistrationTime = () => setOpenRegistration(true);
   const onOpenAlert = () => setOpenAlert(true);
 
@@ -62,12 +63,20 @@ const Registration = () => {
       }
     });
     getStageStatus((output) => {
-      setStageStatus(output.stage_is_open);
+      setStageStatus(output);
     });
     getSchoolYear((output) => {
       setSchoolYear(output);
     });
-  }, [openAlert]);
+  }, [openAlert, openRegistration]);
+  // useEffect(() => {
+  //   getStageStatus((output) => {
+  //     setStageStatus(output.stage_is_open);
+  //   });
+  //   getSchoolYear((output) => {
+  //     setSchoolYear(output);
+  //   });
+  // }, [openRegistration]);
 
   const columnsNoti = [
     {
@@ -289,13 +298,28 @@ const Registration = () => {
         <div>
           {registrationData && (
             <div className="col col-full pt-16" style={{ zIndex: "1" }}>
-              <div style={{ margin: "0 0 10px 7%" }}>
+              <div
+                style={{
+                  margin: "0 0 10px 7%",
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
+              >
                 <StyledButton
                   type="normal-blue"
                   content="Tạo"
-                  isDisable={stageStatus}
+                  isDisable={stageStatus?.stage_is_open}
                   onClick={onOpenRegistrationTime}
                 />
+                {stageStatus?.stage_is_open && (
+                  <label
+                    style={{
+                      margin: "1% 10% 0 0",
+                      fontSize: "24px",
+                      color: "red",
+                    }}
+                  >{`Đang ở trong giai đoạn ${stageStatus.stage}`}</label>
+                )}
               </div>
               <MuiThemeProvider theme={getMuiTheme()}>
                 <MUIDataTable
