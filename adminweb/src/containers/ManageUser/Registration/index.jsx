@@ -83,7 +83,7 @@ const Registration = () => {
       name: "order",
       label: "Thứ tự",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -91,7 +91,7 @@ const Registration = () => {
       name: "request",
       label: "Email người gửi",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -115,7 +115,7 @@ const Registration = () => {
       name: "address",
       label: "Địa chỉ",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -123,7 +123,7 @@ const Registration = () => {
       name: "createdDate",
       label: "Ngày gửi yêu cầu",
       options: {
-        filter: true,
+        filter: false,
         sort: true,
       },
     },
@@ -131,6 +131,8 @@ const Registration = () => {
       name: "",
       label: "",
       options: {
+        filter: false,
+
         customBodyRender: () => {
           return (
             <Button variant="contained" color="primary">
@@ -144,6 +146,8 @@ const Registration = () => {
       name: "ACTION",
       label: "Accept",
       options: {
+        filter: false,
+
         customBodyRender: (value, tableMetaData) => {
           return (
             <Button
@@ -166,6 +170,7 @@ const Registration = () => {
       name: "ACTION",
       label: "",
       options: {
+        filter: false,
         customBodyRender: (value, tableMetaData) => {
           return (
             <Button
@@ -260,8 +265,7 @@ const Registration = () => {
   };
 
   const options = {
-    filterType: "textField",
-
+    filterType: "select",
     pagination: false,
     selectableRows: "none",
     customHeadRender: () => {
@@ -278,6 +282,11 @@ const Registration = () => {
           },
           paper: {
             width: "1200px",
+          },
+        },
+        MUIDataTableFilter: {
+          root: {
+            width: "300px",
           },
         },
         MUIDataTableBodyCell: {
