@@ -271,8 +271,9 @@ class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
                 # number_registration=validated_data['number_registration'],
                 is_cover_room=True
             )
-            model.number_registration = model.typeroom.number_max - model.number_now
+            model.number_registration = model.room.typeroom.number_max - model.room.number_now
             model.save()
+            print("Model: ", model)
             semester = str(validated_data['semester'])
             month = settings.NUMBER_MONTH[semester]
             model.price = month*model.number_registration*room.typeroom.price
