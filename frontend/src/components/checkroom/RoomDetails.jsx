@@ -5,6 +5,8 @@ import {
   getRoomDetails,
   registerRoom,
   getPaymentMethods,
+  getSchoolYear,
+  payAllRoom,
 } from "../../redux/actions/checkroom";
 
 import Button from "../common/Button";
@@ -13,9 +15,9 @@ import { getAuth } from "../../utilities/helper";
 import roomImg from "../../assets/images/room/bedroom.jpg";
 import * as ROUTER from "../../utilities/constants/router";
 import * as ALERTMESSAGE from "../../utilities/constants/AlertMessage";
-import * as APIALERTMESSAGE from "../../utilities/constants/APIAlertMessage";
 import Alertness from "../common/Alertness";
 import Loader from "../common/Loader";
+import RoomPayAll from "./RoomPayAll";
 
 const RoomDetails = () => {
   const { roomID } = useParams();
@@ -26,11 +28,42 @@ const RoomDetails = () => {
 
   const [roomState, setRoom] = useState();
 
-  const [modal, setModal] = useState(false);
+  const [modalRegistration, setModalRegisstration] = useState(false);
 
-  const setOpenModal = () => setModal(true);
+  const [modalPayAll, setModalPayAll] = useState(false);
+  //const [modal, setModal] = useState(false);
 
-  const setCloseModal = () => setModal(false);
+  const setRegistration = (value) => {
+    const permission = getAuth().permission;
+    if (!permission.includes(value)) {
+      setNotification({
+        type: "type-error",
+        content: "Bây giờ không phải là thời gian đăng kí!",
+      });
+      onOpen();
+      return;
+    }
+
+    setModalRegisstration(true);
+  };
+
+  const setPayAll = (value) => {
+    const permission = getAuth().permission;
+    if (!permission.includes(value)) {
+      setNotification({
+        type: "type-error",
+        content: "Bây giờ không phải là thời gian đăng kí!",
+      });
+      onOpen();
+      return;
+    }
+
+    setModalPayAll(true);
+  };
+
+  const setCloseModalRegistration = () => setModalRegisstration(false);
+
+  const setCloseModalPayAll = () => setModalPayAll(false);
 
   const [open, setOpen] = useState(false);
 
@@ -71,23 +104,34 @@ const RoomDetails = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const [schoolYear, setSchoolYear] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const GetSchoolYear = () =>
+      getSchoolYear((output) => {
+        if (mounted) {
+          setSchoolYear(output);
+        }
+      });
+
+    GetSchoolYear();
+
+    return () => (mounted = false);
+  }, []);
+
   const registerUserRoom = (data) => {
     registerRoom(data, (output) => {
       if (output) {
-        switch (output.notification) {
-          case APIALERTMESSAGE.INVALID_TIME:
+        switch (output.status) {
+          case "fail":
             setNotification({
               type: "type-error",
-              content: ALERTMESSAGE.INVALID_TIME,
+              content: output.notification,
             });
             break;
-          case APIALERTMESSAGE.UNAUTHORIZED_ROOM:
-            setNotification({
-              type: "type-error",
-              content: ALERTMESSAGE.UNAUTHORIZED_ROOM,
-            });
-            break;
-          case APIALERTMESSAGE.REGISTER_SUCCESSFULLY:
+          case "successful":
             setNotification({
               type: "type-success",
               content: ALERTMESSAGE.REGISTER_SUCCESSFULLY,
@@ -109,6 +153,40 @@ const RoomDetails = () => {
       onOpen();
     });
   };
+
+  const payAllUserRoom = (data) => {
+    payAllRoom(data, (output) => {
+      if (output) {
+        switch (output.status) {
+          case "fail":
+            setNotification({
+              type: "type-error",
+              content: output.notification,
+            });
+            break;
+          case "successful":
+            setNotification({
+              type: "type-success",
+              content: ALERTMESSAGE.REGISTER_SUCCESSFULLY,
+            });
+            break;
+          default:
+            setNotification({
+              type: "type-error",
+              content: ALERTMESSAGE.SYSTEM_ERROR,
+            });
+            break;
+        }
+      } else {
+        setNotification({
+          type: "type-error",
+          content: ALERTMESSAGE.SYSTEM_ERROR,
+        });
+      }
+      onOpen();
+    });
+  };
+
   return (
     <div className="style-background-container" style={{ height: "85vh" }}>
       {loader ? (
@@ -175,21 +253,48 @@ const RoomDetails = () => {
                 })}
               </div>
               {!isEmployee && (
-                <div className=" col style-room-registration">
-                  <Button
-                    type="normal-blue"
-                    content="Đăng ký"
-                    onClick={setOpenModal}
-                  />
+                <div>
+                  <div className="col style-room-registration">
+                    <Button
+                      type="normal-blue"
+                      content="Đăng ký"
+                      onClick={() => setRegistration("registration_stage_3")}
+                    />
+                  </div>
+                  <div className="col style-room-full-registration">
+                    <Button
+                      type="normal-blue"
+                      content="Bao phòng"
+                      onClick={() => setPayAll("registration_stage_2")}
+                    />
+                  </div>
+                  <div className="col style-room-adjourn">
+                    <Button
+                      type="normal-blue"
+                      content="Gia Hạn"
+                      onClick={() => setRegistration("registration_stage_1")}
+                    />
+                  </div>
                 </div>
               )}
               <RoomRegistration
-                open={modal}
-                onClose={setCloseModal}
+                open={modalRegistration}
+                onClose={setCloseModalRegistration}
                 name={roomState.name}
                 id={roomState.id}
                 registerRoom={registerUserRoom}
                 payment={payment}
+                schoolYear={schoolYear}
+              />
+              <RoomPayAll
+                open={modalPayAll}
+                onClose={setCloseModalPayAll}
+                name={roomState.name}
+                id={roomState.id}
+                registerRoom={payAllUserRoom}
+                payment={payment}
+                rooms={roomState.typeroom.number_max - roomState.number_now}
+                schoolYear={schoolYear}
               />
               <div>
                 <Alertness

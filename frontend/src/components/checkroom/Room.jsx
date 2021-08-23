@@ -1,5 +1,5 @@
 const Room = (props) => {
-  const { name, maximum, numberNow, getDetails } = props;
+  const { name, maximum, pendding, numberNow, getDetails } = props;
 
   var listStudentIcons = [];
 
@@ -8,11 +8,13 @@ const Room = (props) => {
     let textIcon = "";
     if (i < numberNow) {
       styleStudent = "#fd5353";
-    } else if (i >= numberNow && i < maximum) {
+    } else if (i < pendding + numberNow) {
+      styleStudent = "#ffaa2b";
+    } else if (i < maximum) {
       styleStudent = "#09bd3d";
     } else {
-      styleStudent = "#ffaa2b";
-      textIcon = "text-is-orange";
+      styleStudent = "#f7cb73";
+      textIcon = "text-is-light-yellow";
     }
     listStudentIcons.push(
       <div key={i} className="col col-4">

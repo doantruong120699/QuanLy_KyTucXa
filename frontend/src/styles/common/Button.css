@@ -31,3 +31,11 @@
   background-color: #fff;
   color: #000;
 }
+.disable_button:disabled,
+.disable_button[disabled] {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  background-image: none;
+  cursor: not-allowed;
+  color: #666666;
+}

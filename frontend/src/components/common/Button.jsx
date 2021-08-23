@@ -7,7 +7,8 @@ const Button = (props) => {
     `${type === "normal-blue" ? "btn-bg-blue" : ""}`,
     `${type === "normal-yellow" ? "btn-bg-yellow" : ""}`,
     `${type === "normal-red" ? "btn-bg-red" : ""}`,
-    `${type === "normal-ubg" ? "btn-ubg" : ""}`
+    `${type === "normal-ubg" ? "btn-ubg" : ""}`,
+    `${isDisable ? "disable_button" : " "}`
   );
   return (
     <button className={btnStyle} onClick={onClick} disabled={isDisable}>
