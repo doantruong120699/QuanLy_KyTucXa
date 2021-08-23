@@ -43,13 +43,13 @@ class RoomListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ['id', 'name', 'slug', 'number_now', 'typeroom', 'area', 'status', 'created_at', 'last_update'] 
+        fields = ['id', 'name', 'slug', 'gender', 'number_now', 'typeroom', 'area', 'status', 'created_at', 'last_update'] 
 
 class RoomListByAreaSerializer(serializers.ModelSerializer):
     typeroom = TypeRoomSerializer(required=False)
     class Meta:
         model = Room
-        fields = ['id', 'name', 'slug', 'number_now', 'typeroom', 'status', 'created_at', 'last_update'] 
+        fields = ['id', 'name', 'gender', 'slug', 'number_now', 'typeroom', 'status', 'created_at', 'last_update'] 
 
 class RoomSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(required=False)
@@ -68,7 +68,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ['id', 'name', 'slug', 'number_now', 'typeroom', 'area', 'status', 'created_at', 'last_update', 'created_by'] 
+        fields = ['id', 'name', 'slug', 'gender', 'number_now', 'typeroom', 'area', 'status', 'created_at', 'last_update', 'created_by'] 
 
     # Get current user login
     def _current_user(self):
