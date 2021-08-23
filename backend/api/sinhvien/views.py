@@ -101,7 +101,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
     def dashboard(self, request, *args, **kwargs):
         try:
             data = {}
-            dt = datetime.datetime.today()
+            dt = datetime.today()
             #  ====== Student ======
             sinhvien_queryset = User.objects.filter(groups__name=sinhvien_group)
             sinhvien_pre_month = sinhvien_queryset.filter(date_joined__month=dt.month-1)
