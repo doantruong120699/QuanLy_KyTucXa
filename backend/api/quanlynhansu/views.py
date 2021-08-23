@@ -200,7 +200,7 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
                     regis_request.is_expired = False
                     regis_request.save()
                     if regis_request.is_cover_room == True:
-                        regis_request.room.number_now = regis_request.room.type_room.number_max
+                        regis_request.room.number_now = regis_request.room.typeroom.number_max
                     else:
                         regis_request.room.number_now = regis_request.room.number_now + 1
                     regis_request.room.save()
