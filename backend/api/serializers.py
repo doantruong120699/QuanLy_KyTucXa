@@ -17,6 +17,8 @@ from django.urls import reverse
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from .utils import account_activation_token
 from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
+from datetime import date
+# from .room.utils import *
 
 # Authentication ==================================
 
@@ -30,6 +32,21 @@ class GroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = ('name', 'permissions', )    
+
+def getStage():
+    today = date.today()
+    stage1 = Stage.objects.filter(stage1_started_at__lte = today, stage1_ended_at__gte = today)
+    stage2 = Stage.objects.filter(stage2_started_at__lte = today, stage2_ended_at__gte = today)
+    stage3 = Stage.objects.filter(stage3_started_at__lte = today, stage3_ended_at__gte = today)
+    if len(stage1) > 0:
+        return (1, stage1)
+    elif len(stage2) > 0:
+        return (2, stage2)
+    elif len(stage3) > 0:
+        return (3, stage3)
+    else:
+        return (-1, None)            
+    
 
 # API Login -> Create token
 class MySimpleJWTSerializer(TokenObtainPairSerializer):
@@ -46,9 +63,61 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
         for g in user_obj.groups.all():
             gr.append(g.name)
         token['group'] = gr
+        
         per = []
         for p in user_obj.user_permissions.all():
             per.append(p.codename)
+            
+        if 'sinhvien_group' in gr:
+            (stage, objects) = getStage()
+            print((stage, objects))
+            if stage != -1:
+                obj = objects.first()
+                # ==================
+                semester = obj.semester
+                school_year = obj.school_year
+                
+                # pre_school_year = school_year
+                pre_semester = 0
+                
+                if semester == '1':
+                    pre_semester = '3'
+                    # pre_school_year = SchoolYear.objects.filter(year_end=school_year.year_start).first()
+                    school_year = school_year.previous_year
+                elif semester == '2':
+                    pre_semester = '1'
+                elif semester == '3':
+                    pre_semester = '2'
+                    
+                pre_contract = Contract.objects.filter(
+                    semester=pre_semester, 
+                    school_year=school_year,
+                    profile=user.user_profile,
+                    is_accepted=True,
+                    is_delete=False,
+                )
+                now_contract = Contract.objects.filter(
+                    semester=obj.semester, 
+                    school_year=obj.school_year,
+                    profile=user.user_profile,
+                    # is_accepted=True,
+                    # is_delete=False,
+                )
+                print(school_year)
+                if stage == 1 and len(pre_contract) > 0:
+                    per.append('registration_stage_1')
+                
+                elif stage == 2 and len(now_contract) > 0:
+                    per.append('registration_stage_2')
+                
+                elif stage == 3:
+                    per.append('registration_stage_3')
+                
+                else:
+                    per.append('not_registration_time')                           
+            else:
+                per.append('not_registration_time')
+        # print(per)
         token['permission'] = per
         profile = Profile.objects.get(user=user_obj)
         profile.token = token
@@ -238,7 +307,7 @@ class PositionSerializer(serializers.ModelSerializer):
 class AreaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Area
-        fields = [ "id", "name", "slug"]
+        fields = [ "id", "name", "slug", "image"]
 
 class ProfileSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
@@ -265,7 +334,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'avatar',
+            # 'avatar',
             'birthday',
             'address',
             'identify_card',
@@ -322,3 +391,21 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         except:
             pass
         return user 
+
+# class AvatarUpdateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Profile
+#         fields = [
+#             'avatar'
+#         ]
+
+class AvatarUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ["avatar"]
+
+    def save(self, *args, **kwargs):
+        if self.instance.avatar:
+            self.instance.avatar.delete()
+        return super().save(*args, **kwargs)
+    

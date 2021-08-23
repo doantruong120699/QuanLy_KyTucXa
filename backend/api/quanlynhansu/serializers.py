@@ -104,12 +104,18 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         fields = [
             'public_id',
             'room', 
-            'start_at', 
-            'end_at', 
+            # 'start_at', 
+            # 'end_at', 
             'payment_method', 
             'created_at',
             'profile',
             'is_expired',
+            'is_accepted',
+            # 
+            'semester',
+            'school_year',
+            'is_cover_room',
+            'number_registration',
         ] 
 
 class ListRequestSerializer(serializers.Serializer):
@@ -679,3 +685,105 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError({'email': 'Email is exist.'}) 
         return data   
 
+# =======================================================
+
+class StageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stage
+        fields = ["id", "name", "stage1_started_at", "stage1_ended_at", "stage2_started_at", "stage2_ended_at", "stage3_started_at", "stage3_ended_at", "semester", "school_year"]
+        extra_kwargs = {
+            'name': {'required': True},
+            'stage1_started_at': {'required': True},
+            'stage1_ended_at': {'required': True},
+            'stage2_started_at': {'required': True},
+            'stage2_ended_at': {'required': True},
+            'stage3_started_at': {'required': True},
+            'stage3_ended_at': {'required': True},
+            'semester': {'required': True},
+            'school_year': {'required': True},
+        }
+        
+    # Get current user login
+    def _current_user(self):
+        request = self.context.get('request', None)
+        if request:
+            return request.user
+        return False
+
+    def create(self, validated_data):
+        try:            
+            user = self._current_user()
+            # school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
+            model = Stage.objects.create(
+                name=validated_data['name'],
+                stage1_started_at=validated_data['stage1_started_at'],
+                stage1_ended_at=validated_data['stage1_ended_at'],
+                stage2_started_at=validated_data['stage2_started_at'],
+                stage2_ended_at=validated_data['stage2_ended_at'],
+                stage3_started_at=validated_data['stage3_started_at'],
+                stage3_ended_at=validated_data['stage3_ended_at'],
+                semester=validated_data['semester'],
+                school_year=validated_data['school_year'],
+                created_by=user,
+            )
+            return True
+        except Exception as e:
+            print(e)
+            return serializers.ValidationError("Error")
+        return serializers.ValidationError("Server error")
+    
+    def update(self, instance, validated_data):
+        try:
+            user = self._current_user()
+            instance.name = validated_data.get('name', instance.name)
+            
+            instance.stage1_started_at = validated_data.get('stage1_started_at', instance.stage1_started_at)
+            instance.stage1_ended_at = validated_data.get('stage1_ended_at', instance.stage1_ended_at)
+            
+            instance.stage2_started_at = validated_data.get('stage2_started_at', instance.stage2_started_at)
+            instance.stage2_ended_at = validated_data.get('stage2_ended_at', instance.stage2_ended_at)
+            
+            instance.stage3_started_at = validated_data.get('stage3_started_at', instance.stage3_started_at)
+            instance.stage3_ended_at = validated_data.get('stage3_ended_at', instance.stage3_ended_at)
+            
+            instance.semester = validated_data.get('semester', instance.semester)
+            instance.school_year = validated_data.get('school_year', instance.school_year)
+            
+            instance.updated_by = user
+            instance.save()
+            return True
+        except Exception as e:
+            print("Error update: ", e)
+            return serializers.ValidationError("Error")
+        return serializers.ValidationError("Server error")
+    
+    def validate(self, data):
+        """
+        validate data
+        """        
+    
+        stage1_started_at = data['stage1_started_at']
+        stage1_ended_at = data['stage1_ended_at']
+        
+        stage2_started_at = data['stage2_started_at']
+        stage2_ended_at = data['stage2_ended_at']
+        
+        stage3_started_at = data['stage3_started_at']
+        stage3_ended_at = data['stage3_ended_at']
+        
+        if stage1_ended_at <= stage1_started_at:
+            raise serializers.ValidationError({'stage1_ended_at' : "Thời gian kết thúc giai đoạn 1 phải sau thời gian bắt đầu."})  
+        
+        if stage2_started_at <= stage1_ended_at:
+            raise serializers.ValidationError({'stage2_started_at' : "Giai đoan 2 phải bắt đầu sau giai đoạn 1"})  
+        
+        if stage2_ended_at <= stage2_started_at:
+            raise serializers.ValidationError({'stage2_ended_at' : "Thời gian kết thúc giai đoạn 2 phải sau thời gian bắt đầu."})  
+        
+        if stage3_started_at <= stage2_ended_at:
+            raise serializers.ValidationError({'stage2_started_at' : "Giai đoan 3 phải bắt đầu sau giai đoạn 2"})  
+        
+        if stage3_ended_at <= stage3_started_at:
+            raise serializers.ValidationError({'stage3_ended_at' : "Thời gian kết thúc giai đoạn 3 phải sau thời gian bắt đầu."})    
+           
+        return data

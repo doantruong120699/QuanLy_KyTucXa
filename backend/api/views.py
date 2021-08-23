@@ -15,7 +15,12 @@ from .serializers import *
 from django.http import JsonResponse
 from . import status_http
 from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
+from rest_framework.decorators import api_view, permission_classes, action
 from django.core.mail import send_mail
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework import parsers
+from rest_framework.views import APIView
+
 
 # API Change Password
 @api_view(['PUT'])
@@ -96,6 +101,8 @@ def get_profile_view(request):
             print(e)
             pass
         data['profile'] = profile
+        if data['profile']['avatar']:
+            data['profile']['avatar'] = settings.BACKEND_URL + data['profile']['avatar']
         #
         return Response(data, status=status.HTTP_200_OK)            
     return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)  
@@ -119,6 +126,30 @@ def update_user_profile_view(request):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+class UserAvatarUpload(APIView):
+    # parser_classes = (parsers.MultiPartParser)
+    parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            data = {}
+            data['avatar'] = settings.BACKEND_URL + request.user.user_profile.avatar.url
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({"avatar": ""}, status=status.HTTP_400_BAD_REQUEST)
+    
+    def put(self, request, format=None):
+        serializer = AvatarUpdateSerializer(data=request.data, instance=request.user.user_profile)
+        if serializer.is_valid():
+            serializer.save()
+            data = serializer.data
+            data['avatar'] = settings.BACKEND_URL + data['avatar']
+            return Response(data, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def forgot_password_view(request):
@@ -243,3 +274,26 @@ class AreaViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         area = list(Area.objects.values().order_by('id'))
         return JsonResponse(area, safe=False, status=status.HTTP_200_OK)
+    
+    def retrieve(self, request, **kwargs):
+        try:
+            area = Area.objects.get(slug=kwargs['slug'])
+            serializer = AreaSerializer(area)
+            data = serializer.data
+            data['image'] = settings.BACKEND_URL + data['image']
+            return Response(data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Area Not Found'}, status=status.HTTP_404_NOT_FOUND)
+    
+    @action(methods=["GET"], detail=False, url_path="get_image_area", url_name="get_all_get_image_arearoom")
+    def get_image_area(self, request, *args, **kwargs):
+        area = Area.objects.all()
+        serializer = AreaSerializer(area, many=True)
+        data = serializer.data
+        for i in data:
+            i.pop('slug')
+            i.pop('name')
+        return Response(data, status=status.HTTP_200_OK)
+            
+        

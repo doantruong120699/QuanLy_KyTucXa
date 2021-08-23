@@ -33,6 +33,7 @@ class ProfileNhanVienSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
+            'avatar',
             'birthday',
             'address',
             'identify_card',

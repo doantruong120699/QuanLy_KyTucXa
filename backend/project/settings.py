@@ -158,7 +158,11 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'api.custom_pagination.CustomPagination',
     'PAGE_SIZE': 10,    
     # 
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema'
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    # 'DEFAULT_PARSER_CLASSES': (
+    #     'rest_framework.parsers.FormParser',
+    #     'rest_framework.parsers.MultiPartParser'
+    # )
 }
 CORS_ORIGIN_ALLOW_ALL = True
 # CORS_ORIGIN_WHITELIST = [
@@ -189,3 +193,19 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 # 
 # FRONTEND_SITE_URL_FORGOT_PASSWORD=os.getenv('FRONTEND_URL') + "/reset-password?access_token="
 FRONTEND_URL = os.getenv('FRONTEND_URL')
+
+
+# =========================
+
+SEMESTER1 = 5
+SEMESTER2 = 4
+SUMMER_SEMESTER = 3
+
+NUMBER_MONTH = {
+    "1" : SEMESTER1,
+    "2" : SEMESTER2,
+    "3" : SUMMER_SEMESTER
+}
+
+# =========================
+BACKEND_URL = 'http://dutdormitory.tk'

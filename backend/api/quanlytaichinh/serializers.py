@@ -66,7 +66,7 @@ class WaterElectricalSerializer(serializers.ModelSerializer):
             'room',
             # 
             'new_index_eclectrical',
-            'old_index_electrical',
+            'old_index_eclectrical',
             # 
             'new_index_water',
             'old_index_water',
@@ -121,18 +121,21 @@ class WaterElectricalSerializer(serializers.ModelSerializer):
                 water_electrical_pre_month = WaterElectrical.objects.filter(room=room, year=year,month=month-1)
             if len(water_electrical_pre_month) == 0:
                 model.old_index_water = 0
-                model.old_index_electrical = 0
+                model.old_index_eclectrical = 0
             else:
                 model.old_index_water = water_electrical_pre_month.new_index_water
-                model.old_index_electrical = water_electrical_pre_month.new_index_eclectrical
+                model.old_index_eclectrical = water_electrical_pre_month.new_index_eclectrical
             model.save()
-
+            type_service = TypeService.objects.filter(name="Điện Nước").first()
             bill = Bill.objects.create(
                 public_id=shortuuid.uuid(),
-                water_electrical=model,
+                # water_electrical=model,
                 created_by=current_user,
+                type_service=type_service
             )
-            bill.save()
+            # bill.save()
+            model.bill = bill
+            model.save()
             return True
         except Exception as e:
             print("WaterElectricalSerializer: ", e)
@@ -225,7 +228,7 @@ class WaterElectricalDetailSerializer(serializers.ModelSerializer):
             'room',
             # 
             'new_index_eclectrical',
-            'old_index_electrical',
+            'old_index_eclectrical',
             # 
             'new_index_water',
             'old_index_water',
@@ -309,7 +312,7 @@ class ProfileStaffListBillSerializer(serializers.ModelSerializer):
         ]
 
 class BillSerializer(serializers.ModelSerializer):
-    water_electrical = WaterElectricalInListSerializer(required=False)
+    # water_electrical = WaterElectricalInListSerializer(required=False)
     created_by = UserSerializer(required=False)
     updated_by = UserSerializer(required=False)
     sinhvien_paid = ProfileInListBillSerializer(required=False)
@@ -317,7 +320,7 @@ class BillSerializer(serializers.ModelSerializer):
         model = Bill
         fields = [
             'public_id', 
-            'water_electrical',
+            # 'water_electrical',
             'payment_method',
             'is_paid',
             'time_paid',
@@ -329,7 +332,7 @@ class BillSerializer(serializers.ModelSerializer):
         ]
 
 class BillUpdateSerializer(serializers.ModelSerializer):
-    water_electrical = WaterElectricalInListSerializer(required=False)
+    # water_electrical = WaterElectricalInListSerializer(required=False)
     created_by = UserSerializer(required=False)
     updated_by = UserSerializer(required=False)
     # sinhvien_paid = UserSerializer(required=False)
@@ -337,7 +340,7 @@ class BillUpdateSerializer(serializers.ModelSerializer):
         model = Bill
         fields = [
             'public_id', 
-            'water_electrical',
+            # 'water_electrical',
             'payment_method',
             'is_paid',
             'time_paid',
@@ -381,7 +384,7 @@ class BillUpdateSerializer(serializers.ModelSerializer):
         return data
 
 class BillDetailSerializer(serializers.ModelSerializer):
-    water_electrical = WaterElectricalDetailSerializer()
+    # water_electrical = WaterElectricalDetailSerializer()
     payment_method = PaymentMethodSerializer()
     created_by = UserSerializer()
     updated_by = UserSerializer()
@@ -390,7 +393,7 @@ class BillDetailSerializer(serializers.ModelSerializer):
         model = Bill
         fields = [
             'public_id', 
-            'water_electrical',
+            # 'water_electrical',
             'payment_method',
             'is_paid',
             'sinhvien_paid',

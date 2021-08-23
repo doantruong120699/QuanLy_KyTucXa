@@ -161,6 +161,14 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
+            # room = request.GET.get('room', None)
+            # if room != None:
+            #     obj_room = Room.objects.get(slug=room)
+            #     _list = Contract.objects.filter(room=obj_room).exclude(is_expired=True)
+            #     serializer = ContractRegistationSerializer(_list, many=True)
+            #     return Response(serializer.data, status=status.HTTP_200_OK)
+            # return Response({}, status=status.HTTP_200_OK)
+            
             list_registration_room = Contract.objects.filter(is_accepted = None)
             page = self.paginate_queryset(list_registration_room)
             if page is not None:
@@ -187,16 +195,19 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
             if regis_request.is_accepted != None:
                 return Response({'detail': 'This Request accepted!'}, status=status.HTTP_200_OK)
             else:
-                regis_request.is_accepted = True
-                regis_request.is_expired = False
-                regis_request.save()
-                regis_request.room.number_now = regis_request.room.number_now + 1
-                regis_request.room.save()
-
-                return Response({'detail': 'Accept Successful'}, status=status.HTTP_200_OK)
+                if (regis_request.room.number_now < regis_request.room.typeroom.number_max):
+                    regis_request.is_accepted = True
+                    regis_request.is_expired = False
+                    regis_request.save()
+                    if regis_request.is_cover_room == True:
+                        regis_request.room.number_now = regis_request.room.typeroom.number_max
+                    else:
+                        regis_request.room.number_now = regis_request.room.number_now + 1
+                    regis_request.room.save()
+                    return Response({'detail': 'Accept Successful'}, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
-            return Response({'detail': 'Accept Fail'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'detail': 'Accept Fail'}, status=status.HTTP_404_NOT_FOUND)
 
     # ==== Accept List Request ====
     @action(methods=["POST"], detail=False, url_path="accept_list_request", url_name="accept_list_request")
@@ -689,4 +700,80 @@ class UserProfileViewSet(viewsets.ModelViewSet):
    
 # =====================================================
 
+class StageRegistrationViewset(viewsets.ModelViewSet):
+    serializer_class = StageSerializer
+    permission_classes = [IsAuthenticated, IsQuanLyNhanSu]
+    lookup_field = 'public_id'
+
+    def get_queryset(self):
+        return Stage.objects.all().order_by('created_at')
+    
+    def list(self, request, **kwargs):
+        try:
+            _list = Stage.objects.all().order_by('created_at')
+            page = self.paginate_queryset(_list)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, **kwargs):
+        pass
+        # try:
+        #     request_regis = Contract.objects.get(public_id=kwargs['public_id'])
+        #     serializer = ContractRegistationSerializer(request_regis)
+        #     return Response(serializer.data, status=status.HTTP_200_OK)
+        # except Exception as e:
+        #     print(e)
+        #     return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            serializer = StageSerializer(data=request.data, context={'request': request})
+            if serializer.is_valid():
+                stage = Stage.objects.filter(semester = serializer.validated_data['semester'], school_year= serializer.validated_data['school_year'])
+                if len(stage) > 0:
+                    return Response({'status': 'fail', 'notification' : "Đã mở đăng ký ở học kỳ này!"}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    serializer.save()
+                    # Reset data rooms
+                    all_room = Room.objects.all()
+                    for room in all_room:
+                        room.number_now = 0
+                        room.is_cover_room = False
+                        room.save()
+                    return Response({'status': 'success'}, status=status.HTTP_200_OK) 
+            else:
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Bad request!'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, id, *args, **kwargs):
+        try:
+            stage = Stage.objects.get(pk=id)
+            serializer = StageSerializer(data=request.data, context={'request': request}, instance=stage)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'status': 'success'}, status=status.HTTP_200_OK) 
+            else:
+                return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+        return Response({'status': 'fail', 'notification' : 'Stage not Found!'}, status=status.HTTP_404_NOT_FOUND)
+
+    def destroy(self, request, id):
+        try:
+            queryset = Stage.objects.get(id=id)
+            queryset.delete()
+            return Response({'status': 'successful', 'notification' : 'Delete successful!'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            pass
+        return Response({'status': 'fail', 'notification' : 'Stage not found!'}, status=status.HTTP_404_NOT_FOUND)
 

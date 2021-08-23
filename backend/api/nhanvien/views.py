@@ -72,6 +72,9 @@ class NhanVienViewSet(viewsets.ModelViewSet):
             except:
                 pass
             data['profile'] = profile
+            if data['profile']['avatar']:
+                data['profile']['avatar'] = settings.BACKEND_URL + data['profile']['avatar']
+            
             #
             return Response(data, status=status.HTTP_200_OK) 
 
@@ -87,8 +90,13 @@ class NhanVienViewSet(viewsets.ModelViewSet):
         try:
             queryset = User.objects.filter(groups__name=nhanvien_group).order_by('pk')
             serializer = NhanVienListSerializer(queryset, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK) 
-        except:
+            data = serializer.data
+            for index, value in  enumerate(data):
+                if data[index]['profile']['avatar']:
+                    data[index]['profile']['avatar'] = settings.BACKEND_URL + data[index]['profile']['avatar']
+            return Response(data, status=status.HTTP_200_OK) 
+        except Exception as e:
+            print(e)
             return Response({'detail':'Bad Request'}, status=status.HTTP_400_BAD_REQUEST) 
 
 class ShiftViewSet(viewsets.ModelViewSet):

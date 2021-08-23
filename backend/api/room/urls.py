@@ -71,6 +71,33 @@ payment_method = PaymentMethodViewSet.as_view({
     'get': 'list', # Get lists
 })
 
+school_year = SchoolYearViewSet.as_view({
+    'get': 'list', # Get lists
+})
+
+# ===== Contract =======
+
+# list - create
+all_in_contract_list = ContractCoverRoomRegistationViewSet.as_view({
+    'get': 'list',
+    'post': 'post'
+})
+# get all contract
+# all_in_contract_get_all = ContractCoverRoomRegistationViewSet.as_view({
+#     'get': 'get_all_contract'
+# })
+# detail - update - delete
+all_in_contract_detail = ContractCoverRoomRegistationViewSet.as_view({
+    'get': 'retrieve',
+    # 'put': 'update',
+    # 'patch': 'partial_update',
+    # 'delete': 'destroy'
+})
+# =======================
+check_stage = CheckStageViewSet.as_view({
+    'get': 'list'
+})
+
 urlpatterns = [
     # ========== room
     path('rooms/get-all/', room_get_all, name = 'room_get_all'),
@@ -87,4 +114,12 @@ urlpatterns = [
     path('contracts/<uuid:public_id>/', contract_detail, name = 'contract_detail'),
     # =========== Payment Method
     path('payment-method/', payment_method),
+    # ==========
+    path('school-year/', school_year),
+    # =========== Cover Room Register
+    path('all-in-contracts/', all_in_contract_list, name='all_in_contract_list'),
+    # path('all-in-contracts/get-all/', contract_get_all, name = 'contract_get_all'),
+    path('all-in-contracts/<uuid:public_id>/', all_in_contract_detail, name = 'all_in_contract_detail'),
+    # ========================
+    path('get-stage/', check_stage, name='check_stage'),
 ]

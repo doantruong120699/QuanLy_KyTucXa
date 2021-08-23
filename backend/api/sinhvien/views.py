@@ -19,6 +19,7 @@ from .serializers import *
 from api.serializers import *
 from api import status_http
 from api.permissions import *
+from datetime import  datetime
 sinhvien_group = 'sinhvien_group'
 nhanvien_group = 'nhanvien_group'
 
@@ -84,6 +85,8 @@ class SinhVienViewSet(viewsets.ModelViewSet):
                 print(e)
                 pass
             data['profile'] = profile
+            if data['profile']['avatar']:
+                data['profile']['avatar'] = settings.BACKEND_URL + data['profile']['avatar']
             #
             return Response(data, status=status.HTTP_200_OK) 
 
@@ -98,7 +101,7 @@ class SinhVienViewSet(viewsets.ModelViewSet):
     def dashboard(self, request, *args, **kwargs):
         try:
             data = {}
-            dt = datetime.datetime.today()
+            dt = datetime.today()
             #  ====== Student ======
             sinhvien_queryset = User.objects.filter(groups__name=sinhvien_group)
             sinhvien_pre_month = sinhvien_queryset.filter(date_joined__month=dt.month-1)
@@ -160,4 +163,76 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(e)
             return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
+            
+class BillViewSet(viewsets.ModelViewSet):
+    serializer_class = WaterElectricalInListSerializer
+    permission_classes = [IsAuthenticated, IsSinhVien]
+    lookup_field = 'public_id'
+    
+    def check_user_in_room(self, user):
+        contracts = Contract.objects.filter(
+            profile__user=user, 
+            is_delete=False, 
+            is_expired=False, 
+            is_accepted=True,
+        )
+        if len(contracts) == 0:
+            return (False, 0)
+        else:
+            return (True, contracts.first().room)
+    
+    def check_month_year(self, _month, _year):
+        d = datetime.now()
+        month = _month
+        year = _year
+        if _month == None or not _month.isnumeric():
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        elif int(_month) > 12 or int(_month) < 1:
+            if d.month == 1:
+                month = 12
+            else:
+                month = d.month - 1
+        if _year == None or not _year.isnumeric():
+            year = d.year
+        return (month, year)
+    
+    def list(self, request, *args, **kwargs):
+        try:
+            (check, room) = self.check_user_in_room(request.user)
+            if check == True:       
+                list_water_electrical = WaterElectrical.objects.filter(room=room)   
+                is_paid = request.GET.get('is_paid', None)
+                if is_paid != None and len(is_paid) != 0:
+                    list_water_electrical = list_water_electrical.filter(bill__is_paid=is_paid)    
+                month = request.GET.get('month', None)
+                year = request.GET.get('year', None)
+                if month != None and len(month) != 0:
+                    (month, year) = self.check_month_year(month, year)
+                    list_water_electrical = list_water_electrical.filter(month=month, year=year)
+                
+                page = self.paginate_queryset(list_water_electrical)
+                if page is not None:
+                    serializer = self.get_serializer(page, many=True)
+                    return self.get_paginated_response(serializer.data)
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+            else:
+                return Response({'status': 'fail', 'notification':'Sinh viên chưa đăng ký phòng.'}, status=status.HTTP_400_BAD_REQUEST)        
+        except Exception as e:
+            print(e)
+        return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def retrieve(self, request, **kwargs):
+        try:
+            request_regis = WaterElectrical.objects.get(public_id=kwargs['public_id'])
+            serializer = WaterElectricalDetailSerializer(request_regis)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response({'detail': 'Request Not Found'}, status=status.HTTP_404_NOT_FOUND)
         
+        
+
