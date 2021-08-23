@@ -10,9 +10,10 @@
 }
 .style-roomOfArea {
   cursor: pointer;
-  background-color: #ffaa2b;
+  background-color: #f7cb73;
   color: #fff;
 }
+.map-box:hover,
 .style-roomOfArea:hover {
   box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
 }
@@ -21,6 +22,14 @@
   border-radius: 5px;
   padding: 5px;
   text-align: center;
+}
+.style-room-bed {
+  margin: 5px;
+  border-radius: 5px;
+  padding: 5px;
+  text-align: center;
+  height: 30px;
+  width: 50px;
 }
 .style-separation-border:not(:last-child) {
   border-right: 2px solid #5b617c;
@@ -32,4 +41,32 @@
   position: absolute;
   right: 48px;
   bottom: 48px;
+}
+
+.style-room-full-registration {
+  position: absolute;
+  right: 204px;
+  bottom: 48px;
+}
+.style-room-adjourn {
+  position: absolute;
+  right: 384px;
+  bottom: 48px;
+}
+
+.map-box {
+  background-color: #fff;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  height: 30px;
+  width: 50px;
+  font-size: 20px;
+  padding-top: 4px;
+}
+.area-map-box {
+  box-shadow: rgb(71 71 71 / 20%) 0px 0px 15px;
+  border-radius: 20px;
+  padding: 16px;
+  width: 950px;
 }

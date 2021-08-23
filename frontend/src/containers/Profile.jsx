@@ -2,7 +2,9 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  actFetchAvatarUserNavigation,
   actFetchUserNavigation,
+  changeAvatar,
   profile as GetProfile,
   updateProfile,
 } from "../redux/actions/profile";
@@ -61,6 +63,7 @@ const Profile = () => {
             grade: output.profile?.my_class,
             faculty: output.profile?.faculty,
             area: output.profile?.area?.name,
+            avatarUrl: output.profile?.avatar,
           });
         }
       });
@@ -137,6 +140,27 @@ const Profile = () => {
     });
   };
 
+  function onSaveAvatar(file) {
+    if (file) {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      changeAvatar(formData, (output) => {
+        if (output) {
+          console.log(output);
+          dispatch(
+            actFetchAvatarUserNavigation({
+              avatar: output.avatar,
+            })
+          );
+          setProfile({
+            ...profileState,
+            avatarUrl: output.avatar,
+          });
+        }
+      });
+    }
+  }
+
   return (
     <div className="style-background-container" style={{ height: "85vh" }}>
       {loader ? (
@@ -149,7 +173,10 @@ const Profile = () => {
             <div>
               <div className="col col-full">
                 <div className="col col-third justify-content-ct">
-                  <Avatar />
+                  <Avatar
+                    changeAvatar={onSaveAvatar}
+                    avatarUrl={profileState.avatarUrl}
+                  />
                 </div>
                 <div className="col col-two-third">
                   <SummaryInfo

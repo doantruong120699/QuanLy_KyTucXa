@@ -205,6 +205,7 @@ const Dashboard = () => {
     const GetDashboard = () =>
       getDashboard((output) => {
         if (output) {
+          console.log(output);
           if (mounted) {
             window.scrollTo(0, 0);
             setDashboard(output);
@@ -230,25 +231,25 @@ const Dashboard = () => {
               <div className="col col-full">
                 <div className="col col-half">
                   <InfoContainer
-                    number={dashboard.student.total}
+                    number={dashboard?.student?.total}
                     title={"Tổng số sinh viên"}
                     iconStyle={"fi-sr-graduation-cap"}
                     color={"#c71cca"}
-                    increasedPercent={dashboard.student.cur_month}
+                    increasedPercent={dashboard?.student?.cur_month}
                   />
                 </div>
                 <div className="col col-half">
                   <InfoContainer
-                    number={dashboard.staff.total}
+                    number={dashboard?.staff?.total}
                     title={"Tổng số nhân viên"}
                     iconStyle={"fi-sr-users"}
                     color={"#0a3dbd"}
-                    increasedPercent={dashboard.staff.cur_month}
+                    increasedPercent={dashboard?.staff?.cur_month}
                   />
                 </div>
                 <div className="col col-half">
                   <InfoContainer
-                    number={dashboard.room.total}
+                    number={dashboard?.room?.total}
                     title={"Tổng số phòng"}
                     iconStyle={"fi-sr-school"}
                     color={"#2bc155"}
@@ -257,7 +258,7 @@ const Dashboard = () => {
                 </div>
                 <div className="col col-half">
                   <InfoContainer
-                    number={dashboard.room_available}
+                    number={dashboard?.room_available}
                     title={"Phòng trống"}
                     iconStyle={"fi-sr-checkbox"}
                     color={"#ff6275"}
@@ -292,10 +293,10 @@ const Dashboard = () => {
                     return (
                       <Notification
                         key={index}
-                        time={data.last_update}
-                        poster={`${data.created_by.first_name} ${data.created_by.last_name}`}
-                        title={data.title}
-                        content={data.content}
+                        time={data?.last_update}
+                        poster={`${data?.created_by.first_name} ${data?.created_by?.last_name}`}
+                        title={data?.title}
+                        content={data?.content}
                       />
                     );
                   })}

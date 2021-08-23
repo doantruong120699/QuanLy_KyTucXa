@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import * as ROUTER from "../../utilities/constants/router";
 import avatar from "../../assets/images/user/employee.jpg";
 const EmployeeTag = (props) => {
-  const { slug, name, email, phone } = props;
+  const { avatarUrl, slug, name, email, phone } = props;
 
   const history = useHistory();
 
@@ -22,8 +22,11 @@ const EmployeeTag = (props) => {
       }
     >
       <div className="col col-full justify-content-ct style-avatar-container">
-        <div className="col col-half mg-16">
-          <img className="style-img" src={avatar} alt="" />
+        <div className="col col-half mg-16 employee-container">
+          <img
+            src={avatarUrl ? avatarUrl :  avatar}
+            alt=""
+          />
         </div>
       </div>
       <div className="col col-full justify-content-ct pd-8">

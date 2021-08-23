@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import Button from "../common/Button";
 import Popup from "reactjs-popup";
 import InputField from "../common/InputField";
-const RoomRegistration = (props) => {
-  const { open, onClose, name, id, registerRoom, payment, schoolYear } = props;
+const RoomPayAll = (props) => {
+  const { open, onClose, name, id, registerRoom, payment, schoolYear, rooms } =
+    props;
 
   const [resgistrationState, setRegistration] = useState({
     room: id,
@@ -38,6 +39,17 @@ const RoomRegistration = (props) => {
                   type="input"
                   isValid={true}
                   value={name}
+                  disabled={true}
+                />
+              </div>
+            </div>
+            <div className="col col-full pd-8">
+              <div className="col col-full pb-8">Số phòng bao</div>
+              <div className="col col-full">
+                <InputField
+                  type="input"
+                  isValid={true}
+                  value={rooms}
                   disabled={true}
                 />
               </div>
@@ -108,4 +120,4 @@ const RoomRegistration = (props) => {
     </Popup>
   );
 };
-export default RoomRegistration;
+export default RoomPayAll;

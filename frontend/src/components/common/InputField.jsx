@@ -9,6 +9,8 @@ const InputField = (props) => {
     placeholder,
     onBlur,
     onChange,
+    min,
+    max,
     autocomplete,
     disabled,
   } = props;
@@ -28,6 +30,8 @@ const InputField = (props) => {
       autoComplete={autocomplete}
       className={inputStyle}
       onBlur={onBlur}
+      min={min}
+      max={max}
       onChange={onChange}
       disabled={disabled}
     />
