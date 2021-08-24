@@ -203,6 +203,11 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
                         regis_request.room.number_now = regis_request.room.typeroom.number_max
                     else:
                         regis_request.room.number_now = regis_request.room.number_now + 1
+                    
+                    if regis_request.room.number_now == regis_request.room.typeroom.number_max:
+                        regis_request.room.status = 'F'
+                    elif regis_request.room.number_now < regis_request.room.typeroom.number_max:
+                        regis_request.room.status = 'A'
                     regis_request.room.save()
                     return Response({'detail': 'Accept Successful'}, status=status.HTTP_200_OK)
         except Exception as e:
