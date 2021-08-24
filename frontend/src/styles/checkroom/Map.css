@@ -1,0 +1,136 @@
+.background-map {
+  background-color: #ecf0fa;
+}
+.check-room-position {
+  position: relative;
+}
+
+.room {
+  position: relative;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+.room-item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  padding: 10px;
+  position: relative;
+  text-align: center;
+  font-weight: 700;
+  color: #8b8e92;
+}
+
+.room-ktx {
+  width: 200px;
+  height: 150px;
+  margin-left: 60px;
+}
+
+.room-bao-ve {
+  width: 100px;
+  height: 100px;
+  margin-left: 20px;
+}
+
+.room-ql-ktx {
+  width: 150px;
+  height: 150px;
+  margin-left: 20px;
+}
+
+.room-nha-4 {
+  width: 400px;
+  height: 150px;
+  margin-left: 50px;
+}
+.room-nha-4::after {
+  content: '';
+  position: absolute;
+  background-color: #fff;
+  top: 147px;
+  width: 25px;
+  height: 56px;
+  border-left: 3px solid #8b8e92;
+  border-right: 3px solid #8b8e92;
+}
+
+.icon-room {
+  display: block;
+}
+.room-cong {
+  position: absolute;
+  bottom: -120px;
+  left: 0;
+  width: 50px;
+  height: 100px;
+}
+
+.room-cong::after {
+  content: '';
+  color: #8b8e92;
+  position: absolute;
+  background-color: #fff;
+  font-weight: 700;
+  top: 30px;
+  left: 47px;
+  width: 1000px;
+  height: 25px;
+  border-top: 3px solid #8b8e92;
+  border-bottom: 3px solid #8b8e92;
+}
+
+.border-room {
+  border: 3px solid #8b8e92;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.cong {
+  transform: rotate(-270deg);
+}
+
+.room-canteen {
+  position: absolute;
+  top: -95px;
+  left: 82px;
+  width: 140px;
+  height: 80px;
+}
+
+.room-ktx-lao {
+  width: 200px;
+  height: 150px;
+  margin-left: 80px;
+}
+.room-nha-5 {
+  width: 400px;
+  height: 150px;
+  margin-left: 315px;
+}
+.room-nha-5:hover {
+  cursor: pointer;
+  background-color: #eeeeee;
+}
+.room-nha-4:hover {
+  cursor: pointer;
+  background-color: #eeeeee;
+}
+.room-nha-5::after {
+  content: '';
+  position: absolute;
+  background-color: #fff;
+  top: -122px;
+  width: 25px;
+  height: 119px;
+  border-left: 3px solid #8b8e92;
+  border-right: 3px solid #8b8e92;
+}
+
+.room-2 {
+  margin-top: 200px;
+}

@@ -6,6 +6,7 @@ import changePass from "./changePass";
 import checkroom from "./checkroom";
 import employeePage from "./employeePage";
 import studentPage from "./studentPage";
+import service from "./service";
 
 export default combineReducers({
   login,
@@ -15,4 +16,5 @@ export default combineReducers({
   checkroom,
   employeePage,
   studentPage,
+  service,
 });

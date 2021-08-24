@@ -9,6 +9,7 @@
 @import './styles/dashboard/Notification.css';
 @import './styles/dashboard/Dashboard.css';
 @import './styles/checkroom/Checkroom.css';
+@import './styles/checkroom/Map.css';
 @import './styles/login/Login.css';
 @import './styles/common/HomePage.css';
 @import './styles/common/Box.css';

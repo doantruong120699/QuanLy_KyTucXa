@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { useSelector } from "react-redux";
 import * as ROUTER from "../../utilities/constants/router";
 import * as ROLE from "../../utilities/constants/roles";
+import { getAvatar } from "../../redux/actions/profile";
 
 const User = () => {
   const [isShown, setIsShown] = useState(false);
@@ -12,6 +13,16 @@ const User = () => {
   const user = useSelector((state) => state.profile.user);
 
   const logoutWrapper = useRef(null);
+
+  useEffect(() => {
+    getAvatar((output) => {
+      if (output) {
+        return;
+      }
+    });
+  }, []);
+
+  const avatarUrl = useSelector((state) => state.profile.avatarUrl);
 
   const useClickOutside = (ref) => {
     useEffect(() => {
@@ -40,7 +51,9 @@ const User = () => {
   return (
     <div ref={logoutWrapper} className="style-userContainer">
       <div className="style-userInfor" onClick={() => setIsShown(!isShown)}>
-        <div className="style-avatarContainer"></div>
+        <div className="style-avatarContainer">
+          <img src={avatarUrl.avatar} alt="" />
+        </div>
         <div className="infor-box">
           <span className="style-nameUser">
             {user.first_name} {user.last_name}
