@@ -228,7 +228,7 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         
         room = data['room']
         if room.number_now == room.typeroom.number_max:
-            raise serializers.ValidationError({'room':'Room is full!'})
+            raise serializers.ValidationError({'room':'Phòng đã đầy!'})
         
         current_user = self._current_user()
         check_contract = Contract.objects.filter(profile=current_user.user_profile).filter(Q(is_expired=None) | Q(is_expired=False), is_cover_room=False)
@@ -303,7 +303,7 @@ class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
         
         room = data['room']
         if room.number_now == room.typeroom.number_max:
-            raise serializers.ValidationError({'room':'Room is full!'})
+            raise serializers.ValidationError({'room':'Phòng đã đầy!!'})
         
         check_room = Contract.objects.filter(profile=current_user.user_profile, semester=data['semester'], school_year=data['school_year'], is_cover_room=False).exclude(room=room)
         print(check_room)
