@@ -97,7 +97,7 @@ class RoomViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, **kwargs):
         try:
             room = Room.objects.get(slug=kwargs['slug'])
-            _sv = Profile.objects.filter(contract_profile__room=room, contract_profile__is_expired=False)
+            _sv = Profile.objects.filter(contract_profile__room=room, contract_profile__is_expired=False, contract_profile__is_cover_room=False)
             list_sv = list(_sv.values())
             for i in range(len(list_sv)):
                 list_sv[i].pop('token', None)
