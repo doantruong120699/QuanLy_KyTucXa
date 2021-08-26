@@ -17,7 +17,6 @@ import DetailedEmployee from "./components/employeePage/DetailedEmployee";
 import Services from "./containers/Services";
 import Checkroom from "./components/checkroom/Checkroom";
 import WaterElectric from "./components/services/WaterElectric";
-import DetailedBill from "./components/services/DetailedBill";
 function App() {
   return (
     <Router history={history()}>
@@ -94,11 +93,6 @@ function App() {
         <Route
           path={`${ROUTER.ROUTE_SERVICES}${ROUTER.ROUTE_WATER_ELECTRIC}`}
           component={withAuth(WaterElectric)}
-          exact
-        />
-        <Route
-          path={`${ROUTER.ROUTE_SERVICES}${ROUTER.ROUTE_WATER_ELECTRIC}/:public_id`}
-          component={withAuth(DetailedBill)}
           exact
         />
       </Switch>
