@@ -83,6 +83,7 @@ const EmployeePage = () => {
                 return (
                   <div key={index} className="col col-5 pd-8">
                     <EmployeeTag
+                      avatarUrl={employee.profile.avatar}
                       slug={employee.profile?.public_id}
                       name={employee.first_name + " " + employee.last_name}
                       email={employee.email}

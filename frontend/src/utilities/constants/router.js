@@ -10,3 +10,4 @@ export const ROUTE_SERVICES = "/services";
 export const ROUTE_SCHEDULE = "/mySchedule";
 export const ROUTE_DETAILED_STUDENTS = "/detailedStudent";
 export const ROUTE_DETAILED_EMPLOYEES = "/detailedEmployee";
+export const ROUTE_WATER_ELECTRIC = "/waterElectric";

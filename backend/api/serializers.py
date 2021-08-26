@@ -97,12 +97,13 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
                     is_delete=False,
                 )
                 now_contract = Contract.objects.filter(
-                    semester=semester, 
-                    school_year=school_year,
+                    semester=obj.semester, 
+                    school_year=obj.school_year,
                     profile=user.user_profile,
                     # is_accepted=True,
                     # is_delete=False,
                 )
+                print(school_year)
                 if stage == 1 and len(pre_contract) > 0:
                     per.append('registration_stage_1')
                 
@@ -116,7 +117,7 @@ class MySimpleJWTSerializer(TokenObtainPairSerializer):
                     per.append('not_registration_time')                           
             else:
                 per.append('not_registration_time')
-        print(per)
+        # print(per)
         token['permission'] = per
         profile = Profile.objects.get(user=user_obj)
         profile.token = token
@@ -333,7 +334,7 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'avatar',
+            # 'avatar',
             'birthday',
             'address',
             'identify_card',
@@ -390,3 +391,21 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
         except:
             pass
         return user 
+
+# class AvatarUpdateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Profile
+#         fields = [
+#             'avatar'
+#         ]
+
+class AvatarUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ["avatar"]
+
+    def save(self, *args, **kwargs):
+        if self.instance.avatar:
+            self.instance.avatar.delete()
+        return super().save(*args, **kwargs)
+    

@@ -20,45 +20,45 @@ const Dashboard = (props) => {
       <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
         <AppBar style={styles.appbar} navigation={navigation} />
         <View style={styles.container_child}>
-        <View style={[styles.students, styles.itemDashboard]}>
-          <Text style={styles.numbers}>{data.student.total}</Text>
-          <View style={styles.bottom}>
-            <View style={styles.left}>
-              <Text style={styles.total}>Total Students</Text>
-              <Text style={styles.total}>+{data.student.cur_month}</Text>
+          <View style={[styles.students, styles.itemDashboard]}>
+            <Text style={styles.numbers}>{data.student.total}</Text>
+            <View style={styles.bottom}>
+              <View style={styles.left}>
+                <Text style={styles.total}>Total Students</Text>
+                <Text style={styles.total}>+{data.student.cur_month}</Text>
+              </View>
+              <FontAwesome5 style={styles.icon} name="graduation-cap" />
             </View>
-            <FontAwesome5 style={styles.icon} name="graduation-cap" />
+          </View>
+          <View style={[styles.teachers, styles.itemDashboard]}>
+            <Text style={styles.numbers}>{data.staff.total}</Text>
+            <View style={styles.bottom}>
+              <View style={styles.left}>
+                <Text style={styles.total}>Total Staffs</Text>
+                <Text style={styles.total}>+{data.staff.cur_month}</Text>
+              </View>
+              <FontAwesome5 style={styles.icon} name="user-friends" />
+            </View>
+          </View>
+          <View style={[styles.rooms, styles.itemDashboard]}>
+            <Text style={styles.numbers}>{data.room.total}</Text>
+            <View style={styles.bottom}>
+              <View style={styles.left}>
+                <Text style={styles.total}>Total Rooms</Text>
+              </View>
+              <FontAwesome5 style={styles.icon} name="hotel" />
+            </View>
+          </View>
+          <View style={[styles.rooms_available, styles.itemDashboard]}>
+            <Text style={styles.numbers}>{data.room_available}</Text>
+            <View style={styles.bottom}>
+              <View style={styles.left}>
+                <Text style={styles.total}>Rooms Available</Text>
+              </View>
+              <FontAwesome5 style={styles.icon} name="hotel" />
+            </View>
           </View>
         </View>
-        <View style={[styles.teachers, styles.itemDashboard]}>
-          <Text style={styles.numbers}>{data.staff.total}</Text>
-          <View style={styles.bottom}>
-            <View style={styles.left}>
-              <Text style={styles.total}>Total Teachers</Text>
-              <Text style={styles.total}>+{data.staff.cur_month}</Text>
-            </View>
-            <FontAwesome5 style={styles.icon} name="user-friends" />
-          </View>
-        </View>
-        <View style={[styles.rooms, styles.itemDashboard]}>
-          <Text style={styles.numbers}>{data.room.total}</Text>
-          <View style={styles.bottom}>
-            <View style={styles.left}>
-              <Text style={styles.total}>Total Rooms</Text>
-            </View>
-            <FontAwesome5 style={styles.icon} name="hotel" />
-          </View>
-        </View>
-        <View style={[styles.rooms_available, styles.itemDashboard]}>
-          <Text style={styles.numbers}>{data.room_available}</Text>
-          <View style={styles.bottom}>
-            <View style={styles.left}>
-              <Text style={styles.total}>Rooms Available</Text>
-            </View>
-            <FontAwesome5 style={styles.icon} name="hotel" />
-          </View>
-        </View>
-      </View>
       </ImageBackground>
     </View>
   ) : <View></View>;

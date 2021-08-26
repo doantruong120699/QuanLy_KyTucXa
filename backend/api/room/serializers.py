@@ -23,9 +23,19 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'username', 'email'] 
 
 class TypeRoomSerializer(serializers.ModelSerializer):
+    name_gender = serializers.ReadOnlyField(source="get_gender_display")
+
     class Meta:
         model = TypeRoom
-        fields = ['id', 'name', 'price', 'number_max', 'slug'] 
+        fields = [
+            'id', 
+            'name', 
+            'price', 
+            'number_max', 
+            'slug',
+            'gender',
+            'name_gender'
+        ] 
         
 class SchoolYearSerializer(serializers.ModelSerializer):
     class Meta:
@@ -128,6 +138,20 @@ class RoomSerializer(serializers.ModelSerializer):
     #             pass
     #     return instance
 
+def getStage():
+    today = date.today()
+    stage1 = Stage.objects.filter(stage1_started_at__lte = today, stage1_ended_at__gte = today)
+    stage2 = Stage.objects.filter(stage2_started_at__lte = today, stage2_ended_at__gte = today)
+    stage3 = Stage.objects.filter(stage3_started_at__lte = today, stage3_ended_at__gte = today)
+    if len(stage1) > 0:
+        return (1, stage1)
+    elif len(stage2) > 0:
+        return (2, stage2)
+    elif len(stage3) > 0:
+        return (3, stage3)
+    else:
+        return (-1, None)      
+
 class ContractSerializer(serializers.ModelSerializer):
     room = RoomListSerializer()
     payment_method = PaymentMethodSerializer()
@@ -181,10 +205,14 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         try:
+            (stage, obj) = getStage()
             current_user = self._current_user()
             room = Room.objects.get(pk=validated_data['room'])
             payment_method = PaymentMethod.objects.get(pk=validated_data['payment_method'])
-            school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
+            if stage != -1:
+                school_year = SchoolYear.objects.get(pk=obj.first().school_year.pk)
+            else:
+                school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
             model = Contract.objects.create(
                 room=room,
                 profile=current_user.user_profile,
@@ -218,7 +246,7 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         
         room = data['room']
         if room.number_now == room.typeroom.number_max:
-            raise serializers.ValidationError({'room':'Room is full!'})
+            raise serializers.ValidationError({'room':'Phòng đã đầy!'})
         
         current_user = self._current_user()
         check_contract = Contract.objects.filter(profile=current_user.user_profile).filter(Q(is_expired=None) | Q(is_expired=False), is_cover_room=False)
@@ -258,9 +286,13 @@ class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             current_user = self._current_user()
+            (stage, obj) = getStage()
             room = Room.objects.get(pk=validated_data['room'])
             payment_method = PaymentMethod.objects.get(pk=validated_data['payment_method'])
-            school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
+            if stage != -1:
+                school_year = SchoolYear.objects.get(pk=obj.first().school_year.pk)
+            else:
+                school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
             model = Contract.objects.create(
                 room=room,
                 profile=current_user.user_profile,
@@ -271,8 +303,9 @@ class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
                 # number_registration=validated_data['number_registration'],
                 is_cover_room=True
             )
-            model.number_registration = model.type_room.number_max - model.number_now
+            model.number_registration = model.room.typeroom.number_max - model.room.number_now
             model.save()
+            print("Model: ", model)
             semester = str(validated_data['semester'])
             month = settings.NUMBER_MONTH[semester]
             model.price = month*model.number_registration*room.typeroom.price
@@ -287,13 +320,18 @@ class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
         """
         Check that start is before finish.
         """
+        current_user = self._current_user()
         stage = getStageNow(semester=data['semester'], school_year=data['school_year'])
         
         room = data['room']
         if room.number_now == room.typeroom.number_max:
-            raise serializers.ValidationError({'room':'Room is full!'})
+            raise serializers.ValidationError({'room':'Phòng đã đầy!!'})
         
-        current_user = self._current_user()
+        check_room = Contract.objects.filter(profile=current_user.user_profile, semester=data['semester'], school_year=data['school_year'], is_cover_room=False).exclude(room=room)
+        print(check_room)
+        if len(check_room) > 0:
+            raise serializers.ValidationError({'registered':'Bạn không được đăng ký bao phòng này!'})
+        
         check_contract = Contract.objects.filter(profile=current_user.user_profile).filter(Q(is_expired=None) | Q(is_expired=False), is_cover_room=True)
         if len(check_contract) != 0:
             raise serializers.ValidationError({'registered':'Bạn đã đăng ký bao phòng này!'})

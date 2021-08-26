@@ -15,6 +15,7 @@ class StringListField(serializers.ListField): # get from http://www.django-rest-
 class ProfileInListSerializer(serializers.ModelSerializer):
     faculty = FacultySerializer(required=False)
     my_class = ClassSerializer(required=False)
+    
     class Meta:
         model = Profile
         fields = [
@@ -40,6 +41,7 @@ class ProfileSinhVienSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
+            'avatar',
             'birthday',
             'address',
             'identify_card',
@@ -51,6 +53,7 @@ class ProfileSinhVienSerializer(serializers.ModelSerializer):
             # 'position',
             # 'area',
         ]
+        
 class SinhVienListSerializer(serializers.ModelSerializer):
     profile = ProfileInListSerializer(source='user_profile')
     class Meta:
@@ -109,6 +112,7 @@ class ProfileInListBillSerializer(serializers.ModelSerializer):
         model = Profile
         fields = [
             'user',
+            'avatar',
             'gender',
             'phone',
             'public_id',

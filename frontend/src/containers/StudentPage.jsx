@@ -56,7 +56,6 @@ const StudentPage = () => {
           totals: output.totals,
         };
         window.scrollTo(0, 0);
-        console.log(output);
         setStudentList(output.results);
         setPagination(pagination);
       }

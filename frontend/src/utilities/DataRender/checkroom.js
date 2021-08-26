@@ -17,6 +17,7 @@ export const getRoom = (origin) => {
           last_update: room.last_update,
           name: room.name,
           number_now: room.number_now,
+          pendding: room.pendding,
           slug: room.slug,
           status: room.status,
           typeroom: room.typeroom,

@@ -19,7 +19,7 @@ class ProfileSV extends Component {
     this.props.navigation.navigate("ChangePassword");
   };
   detailRoom = async () => {
-    await this.props.getdetailroom(this.props.dataProfile.room.name);
+    await this.props.getdetailroom(this.props.dataProfile.room.slug);
     this.props.navigation.navigate('ShowRoomOfSV');
   }
   render() {
@@ -35,6 +35,10 @@ class ProfileSV extends Component {
           </View>
           <View style={styles.container_child}>
             <View style={styles.formProfile}>
+              <View style={styles.viewInfo}>
+                <Text style={styles.title}>Họ tên:</Text>
+                <Text style={styles.info}>{data.last_name + ' ' + data.first_name}</Text>
+              </View>
               <View style={styles.viewInfo}>
                 <Text style={styles.title}>Email:</Text>
                 <Text style={styles.info}>{data.email}</Text>
@@ -69,8 +73,8 @@ class ProfileSV extends Component {
               </View>
               <View style={styles.viewInfo}>
                 <Text style={styles.title}>Phòng của bạn:</Text>
-                <Text style={styles.info}>{data.room.name ? data.room.name : 'Bạn chưa đăng ký phòng'}</Text>
-                <TouchableOpacity style={[styles.btnDetailRoom, {display: data.room.name ? 'flex' : 'none'}]} onPress={this.detailRoom}>
+                <Text style={styles.info}>{data.room?.name ? data.room.name : 'Bạn chưa có phòng'}</Text>
+                <TouchableOpacity style={data.room?.name ? styles.btnDetailRoom : {display: 'none'}} onPress={this.detailRoom}>
                   <Text style={styles.textDetailRoom}>Xem chi tiết</Text>
                 </TouchableOpacity>
               </View>
@@ -114,8 +118,9 @@ const styles = StyleSheet.create({
   },
   formProfile: {
     backgroundColor: 'white',
-    height: 400,
     width: 300,
+    paddingTop: 10,
+    paddingBottom: 10,
     borderRadius: 20,
     elevation: 7,
   },
@@ -123,6 +128,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginTop: 10,
     marginLeft: 30,
+    marginRight: 30,
     flexDirection: 'row',
   },
   title: {
@@ -131,6 +137,7 @@ const styles = StyleSheet.create({
   },
   info: {
     marginLeft: 5,
+    width: '75%'
   },
   viewButton: {
     flexDirection: 'row',
@@ -153,7 +160,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   btnDetailRoom: {
-    marginLeft: 30,
+    position: 'absolute',
+    right: 5,
     borderColor: 'blue',
     borderWidth: 1,
     padding:5,

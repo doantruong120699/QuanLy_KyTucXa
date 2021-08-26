@@ -44,6 +44,7 @@ urlpatterns = [
     path('account/get-user-profile/', get_profile_view),
     path('account/update-user-profile/', update_user_profile_view),
     path('account/change-password/', change_password_view),
+    path("account/change-avatar/", UserAvatarUpload.as_view(), name="rest_user_avatar_upload"),
     # Static data
     path('faculty/', faculty_list),
     path('class/', class_list),

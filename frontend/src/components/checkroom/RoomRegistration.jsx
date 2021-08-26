@@ -1,15 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../common/Button";
 import Popup from "reactjs-popup";
 import InputField from "../common/InputField";
-import moment from "moment";
 const RoomRegistration = (props) => {
-  const { open, onClose, name, id, registerRoom, payment } = props;
+  const { open, onClose, name, id, registerRoom, payment, schoolYear } = props;
 
   const [resgistrationState, setRegistration] = useState({
     room: id,
-    start_at: moment(new Date()).format("YYYY-MM-DD"),
-    end_at: moment(new Date()).format("YYYY-MM-DD"),
+    semester: "1",
+    school_year: "1",
     payment_method: "1",
   });
 
@@ -22,9 +21,10 @@ const RoomRegistration = (props) => {
     registerRoom(resgistrationState);
     onClose();
   };
+
   return (
     <Popup open={open} closeOnDocumentClick onClose={onClose}>
-      {payment && (
+      {payment && schoolYear && (
         <div className="col modal style-lg-box bg-color-white">
           <div className="col col-full text-align-ct">
             <h2>Đăng kí phòng</h2>
@@ -43,27 +43,35 @@ const RoomRegistration = (props) => {
               </div>
             </div>
             <div className="col col-full pd-8">
-              <div className="col col-full pb-8">Ngày bắt đầu</div>
+              <div className="col col-full pb-8">Thời gian</div>
               <div className="col col-full">
-                <InputField
-                  name="start_at"
-                  type="date"
-                  value={resgistrationState.start_at}
-                  isValid={true}
+                <select
+                  name="semester"
+                  className="form-control"
                   onChange={handleChange}
-                />
+                >
+                  <option value="1">Học kỳ I</option>
+                  <option value="2">Học kỳ II</option>
+                  <option value="3">Học kỳ hè</option>
+                </select>
               </div>
             </div>
             <div className="col col-full pd-8">
-              <div className="col col-full pb-8">Ngày kết thúc</div>
+              <div className="col col-full pb-8">Năm học</div>
               <div className="col col-full">
-                <InputField
-                  name="end_at"
-                  type="date"
-                  value={resgistrationState.end_at}
-                  isValid={true}
+                <select
+                  name="school_year"
+                  className="form-control"
                   onChange={handleChange}
-                />
+                >
+                  {schoolYear.map((value, index) => {
+                    return (
+                      <option key={index} value={value.id}>
+                        {value.label}
+                      </option>
+                    );
+                  })}
+                </select>
               </div>
             </div>
             <div className="col col-full pd-8">
