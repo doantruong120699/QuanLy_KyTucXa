@@ -10,12 +10,6 @@ import { stylePages, styleImgBg, styleContainer } from '../../styles/index';
 class Notification extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: this.props.listNotification,
-      page: this.props.listNotification.current_page,
-      nextPage: this.props.listNotification.next_page,
-      totals: this.props.listNotification.totals,
-    }
   }
   renderItem = ({ item }) => {
     return (
@@ -28,13 +22,14 @@ class Notification extends Component {
     await this.setState({ listNotification: this.props.listNotification.results, nextPage: this.props.listNotification.next_page, totals: this.props.listNotification.totals });
   }
   minusNumberPage = async () => {
-    await this.fetchApi(this.state.page - 1);
+    await this.fetchApi(this.props.listNotification.current_page - 1);
   }
   plusNumberPage = async () => {
-    await this.fetchApi(this.state.page + 1);
+    await this.fetchApi(this.props.listNotification.current_page + 1);
   }
+  
   render() {
-    let totalPages = Math.ceil(this.state.totals / 20);
+    let totalPages = Math.ceil(this.props.listNotification.totals / 20);
     return (
       <View style={[styleContainer.container, styles.container]}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
@@ -42,7 +37,7 @@ class Notification extends Component {
           <View style={styles.container_child}>
             <FlatList
               style={styles.flatlist}
-              data={this.state.data.results}
+              data={this.props.listNotification.results}
               renderItem={this.renderItem}
               keyExtractor={(item, index) => index + 1}
             />
@@ -50,13 +45,13 @@ class Notification extends Component {
               <TouchableOpacity 
                 style={[stylePages.btnOperation, stylePages.viewPage]} 
                 onPress={this.minusNumberPage}
-                disabled={this.state.page <= 1}
+                disabled={this.props.listNotification.current_page <= 1}
               >
                 <Text style={stylePages.textOpe}>-</Text>
               </TouchableOpacity>
               <TextInput
                 underlineColorAndroid="transparent"
-                value={this.state.page.toString()}
+                value={this.props.listNotification.current_page.toString()}
                 style={[stylePages.inputPage, stylePages.viewPage]}
                 placeholderTextColor="#808080"
                 keyboardType="numeric"
@@ -65,7 +60,7 @@ class Notification extends Component {
               <TouchableOpacity 
                 style={[stylePages.btnOperation, stylePages.viewPage]} 
                 onPress={this.plusNumberPage}
-                disabled={this.state.page >= totalPages}
+                disabled={this.props.listNotification.current_page >= totalPages}
               >
                 <Text style={stylePages.textOpe}>+</Text>
               </TouchableOpacity>
