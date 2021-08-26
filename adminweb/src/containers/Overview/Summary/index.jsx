@@ -144,7 +144,7 @@ export default function Overview() {
             <Grow
               in={true}
               timeout={1000}
-              style={{ transformOrigin: "10 10 10" }}
+              style={{ transformOrigin: "10 10 10", textAlign: "center" }}
             >
               <Box style={{ transform: "scale(1)" }}>
                 <Box
