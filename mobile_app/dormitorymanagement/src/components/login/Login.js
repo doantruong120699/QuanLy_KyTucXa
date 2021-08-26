@@ -2,7 +2,7 @@ import React, { Component, useState } from 'react';
 import { ImageBackground, StyleSheet, View, Text, TouchableOpacity, ToastAndroid } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { login, dashboard } from '../../redux/actions/index';
+import { login, dashboard, getprofile } from '../../redux/actions/index';
 import { storeData, getData } from '../../utils/asyncStorage';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { styleImgBg, styleInput, styleContainer } from '../../styles/index';
@@ -56,6 +56,7 @@ class Login extends Component {
       if (role === "sinhvien_group" || role === "nhanvien_group") {
         this.showToast('Đăng nhập thành công');
         this.props.navigation.navigate("HomePage");
+        this.props.getprofile();
       }
       else {
         storeData('token', '');
@@ -128,6 +129,7 @@ class Login extends Component {
 
 const mapDispatchToProps = {
   login,
+  getprofile,
   dashboard
 };
 function mapStateToProps(state) {

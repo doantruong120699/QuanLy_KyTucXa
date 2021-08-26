@@ -2,10 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, StyleSheet, ImageBackground, Text, TouchableOpacity, ToastAndroid, Modal, Pressable} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import DatePicker from 'react-native-date-picker';
 import { Picker } from '@react-native-picker/picker';
-import moment from 'moment';
-import { registrationroom, getpaymentmethod } from '../../redux/actions/index';
+import { registrationroom, getpaymentmethod, getschoolyear } from '../../redux/actions/index';
 import { styleBtnComeBack, styleImgBg, styleContainer } from '../../styles/index';
 import { getData } from '../../utils/asyncStorage';
 
@@ -14,16 +12,27 @@ class RoomDetail extends Component {
     super(props);
     this.state = {
       modalVisible: false,
-      dateStart: new Date(),
-      dateEnd: new Date(),
       payment: 1,
-      roleUser: ''
+      semester: '1',
+      schoolYear: 1,
+      stageRegistrationRoom: '',
+      roleUser: '',
+      myRoom: '',
     }
   };
   async componentDidMount() {
     this.props.getpaymentmethod();
+    this.props.getschoolyear();
     const role = await getData('role');
-    this.setState({ roleUser: role});
+    const myRoom = await getData('myRoom');
+    this.setState({ roleUser: role, myRoom: myRoom });
+    const permission = JSON.parse(await getData('permission'));
+    for (let i = 0; i < permission.length; i++) {
+      if (permission[i] === 'not_registration_time' || permission[i] === 'registration_stage_1' || permission[i] === 'registration_stage_2' || permission[i] === 'registration_stage_3') {
+        this.setState({ stageRegistrationRoom: permission[i] });
+        break;
+      }
+    }
   }
   showToast = (msg) => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
@@ -46,24 +55,20 @@ class RoomDetail extends Component {
   registrationRoom = async () => {
     const data = {
       "room": this.props.route.params.item.id,
-      "start_at": moment(this.state.dateStart).format('YYYY-MM-DD'),
-      "end_at": moment(this.state.dateEnd).format('YYYY-MM-DD'),
-      "payment_method": this.state.payment, 
+      "payment_method": this.state.payment,
+      "semester": this.state.semester,
+      "school_year": this.state.schoolYear
     }
-    if (this.state.dateEnd > this.state.dateStart) {
-      await this.props.registrationroom(data);
-      if (this.props.msg != 'Success') {
-        this.showToast(this.props.msg);
-      } else {
-        this.showToast('Đăng ký phòng thành công');
-      }
-      this.closeDetail();
-    }
-    else {
-      this.showToast("Ngày kết thúc phải sau ngày bắt đầu");
-    }
+    await this.props.registrationroom(data, this.state.stageRegistrationRoom);
+    this.showToast(this.props.msg);
+    this.closeDetail();
   }
   render() {
+    const renderSchoolYear = () => {
+      return this.props.schoolYear.map(item => (
+        <Picker.Item label={item.label} value={item.id} />
+      ))
+    }
     const renderPayment = () => {
       let listPayment = [];
       this.props.paymentMethod.forEach(item => {
@@ -74,7 +79,7 @@ class RoomDetail extends Component {
     const item = this.props.route.params.item;
     let status;
     let disable = true;
-    if (item.status == 'A') {
+    if (item.status == 'A' && this.state.stageRegistrationRoom !== 'not_registration_time') {
       status = 'Có thể đăng kí';
       disable = false;
     }
@@ -82,111 +87,137 @@ class RoomDetail extends Component {
       status = 'Đã đủ người'
     }
     else {
-      status = 'Phòng này hiện không thể đăng kí';
+      status = 'Hiện không thể đăng kí';
     }
     return (
       <View style={styleContainer.container}>
         <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>
-        <View style={styles.centeredView}>
-          <Modal
-            animationType="slide"
-            transparent={true}
-            visible={this.state.modalVisible}
-            onRequestClose={this.closeDetail}
-          >
-            <View style={[styles.centeredView, styles.opacity]}>
-              <View style={styles.modalView}>
-                <View style={styles.rowItem}>
-                  <Text style={styles.titleModal}>Ngày bắt đầu: </Text>
-                  <DatePicker
-                    style={styles.datePicker}
-                    date={this.state.dateStart}
-                    format="YYYY-MM-DD"
-                    onDateChange={date => this.setState({ dateStart: date })}
-                    mode={'date'}
-                  />
+          <View style={styles.centeredView}>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={this.state.modalVisible}
+              onRequestClose={this.closeDetail}
+            >
+              <View style={[styles.centeredView, styles.opacity]}>
+                <View style={styles.modalView}>
+                  <View style={styles.rowItem}>
+                    <Text style={styles.titleModal}>Học kỳ: </Text>
+                    <Picker 
+                      style={styles.pickerPayment}
+                      onValueChange={(itemValue, itemIndex) =>
+                        this.setState({ semester: itemValue })
+                      }
+                    >
+                      <Picker.Item label="1" value="1" />
+                      <Picker.Item label="2" value="2" />
+                      <Picker.Item label="Hè" value="3" />
+                    </Picker>
+                  </View>
+                  <View style={styles.rowItem}>
+                    <Text style={styles.titleModal}>Năm học: </Text>
+                    <Picker 
+                      style={styles.pickerPayment}
+                      onValueChange={(itemValue, itemIndex) =>
+                        this.setState({ schoolYear: itemValue })
+                      }
+                    >
+                      {renderSchoolYear()}
+                    </Picker>
+                  </View>
+                  {this.state.stageRegistrationRoom === 'registration_stage_2' && (
+                    <View style={styles.rowItem}>
+                      <Text style={styles.titleModal}>Số giường trống: </Text>
+                      <Text style={{paddingTop: 15, paddingLeft: 15}}>{item.typeroom.number_max - item.number_now}</Text>
+                    </View>
+                  )}  
+                  <View style={styles.rowItem}>
+                    <Text style={styles.titleModal}>Thanh toán: </Text>
+                    <Picker 
+                      style={styles.pickerPayment}
+                      onValueChange={(itemValue, itemIndex) =>
+                        this.setState({ payment: itemValue })
+                      }
+                    >
+                      {renderPayment()}
+                    </Picker>
+                  </View>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose, styles.buttonRegistration]}
+                    onPress={this.registrationRoom}
+                  >
+                    <Text style={styles.textStyle}>{this.state.stageRegistrationRoom === 'registration_stage_2' ? 'Bao phòng' : 'Đăng ký'}</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => this.setModalVisible(!this.state.modalVisible)}
+                  >
+                    <Text style={styles.textStyle}>Đóng</Text>
+                  </Pressable>
                 </View>
-                <View style={styles.rowItem}>
-                  <Text style={styles.titleModal}>Ngày kết thúc: </Text>
-                  <DatePicker
-                    style={styles.datePicker}
-                    date={this.state.dateEnd}
-                    format="YYYY-MM-DD"
-                    onDateChange={date => this.setState({ dateEnd: date })}
-                    mode={'date'}
-                  />
-                </View>
-                <View style={styles.rowItem}>
-                  <Text style={styles.titleModal}>Thanh toán: </Text>
-                  <Picker 
-                    style={styles.pickerPayment}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.setState({ payment: itemValue })
-                    }>
-                    {renderPayment()}
-                  </Picker>
-                </View>
-                <Pressable
-                  style={[styles.button, styles.buttonClose, styles.buttonRegistration]}
-                  onPress={this.registrationRoom}
-                >
-                  <Text style={styles.textStyle}>Đăng kí</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={() => this.setModalVisible(!this.state.modalVisible)}
-                >
-                  <Text style={styles.textStyle}>Đóng</Text>
-                </Pressable>
               </View>
-            </View>
-          </Modal>
-        </View>  
-        <View style={styleBtnComeBack.comeBack}>
-          <TouchableOpacity style={styleBtnComeBack.buttonComback} onPress={this.goBack}>
-            <FontAwesome5 style={styleBtnComeBack.iconUndo} name="long-arrow-alt-left" />
-          </TouchableOpacity>
-          <Text style={styles.text}>ROOM DETAIL</Text>
-        </View>
-        <View style={styles.container_child}>
-          <View style={styles.formProfile}>
-            <View style={styles.viewInfo}>
-              <Text style={styles.title}>Tên Phòng:</Text>
-              <Text style={styles.info}>{item.name}</Text>
-            </View>
-            <View style={styles.viewInfo}>
-              <Text style={styles.title}>Loại Phòng:</Text>
-              <Text style={styles.info}>{item.typeroom.name}</Text>
-            </View>
-            <View style={styles.viewInfo}>
-              <Text style={styles.title}>Giá Phòng:</Text>
-              <Text style={styles.info}>{`${item.typeroom.price}/Tháng`}</Text>
-            </View>
-            <View style={styles.viewInfo}>
-              <Text style={styles.title}>Số Người Trong Phòng:</Text>
-              <Text style={styles.info}>{item.number_now}</Text>
-            </View>
-            {/* <View style={styles.viewInfo}>
-              <Text style={styles.title}>Thành Viên:</Text>
-              <Text style={styles.info}>Nguyễn Văn A, Hoàng Văn B, Đinh Văn C, Tôn Hữu D, Võ Văn E</Text>
-            </View> */}
-            <View style={styles.viewInfo}>
-              <Text style={styles.title}>Tình Trạng Phòng:</Text>
-              <Text style={styles.info}>{status}</Text>
-            </View>
-            <View style={[styles.viewButton, {display: this.state.roleUser === 'nhanvien_group' ? 'none' : 'flex'}]}>
-              <TouchableOpacity style={[styles.button, styles.buttonOpen]} onPress={this.handleAssignRoom}>
-                <Text 
-                  style={styles.textButton} 
-                  onPress={() => this.setModalVisible(!this.state.modalVisible)}
-                  disabled={disable}
-                >
-                  Đăng Kí Phòng Này
-                </Text>
-              </TouchableOpacity>
+            </Modal>
+          </View>  
+          <View style={styleBtnComeBack.comeBack}>
+            <TouchableOpacity style={styleBtnComeBack.buttonComback} onPress={this.goBack}>
+              <FontAwesome5 style={styleBtnComeBack.iconUndo} name="long-arrow-alt-left" />
+            </TouchableOpacity>
+            <Text style={styles.text}>ROOM DETAIL</Text>
+          </View>
+          <View style={styles.container_child}>
+            <View style={styles.formProfile}>
+              <View style={styles.viewInfo}>
+                <Text style={styles.title}>Tên Phòng:</Text>
+                <Text style={styles.info}>{item.name}</Text>
+              </View>
+              <View style={styles.viewInfo}>
+                <Text style={styles.title}>Đối tượng:</Text>
+                <Text style={styles.info}>{item.typeroom.name_gender}</Text>
+              </View>
+              <View style={styles.viewInfo}>
+                <Text style={styles.title}>Khu vực:</Text>
+                <Text style={styles.info}>{item.area.name}</Text>
+              </View>
+              <View style={styles.viewInfo}>
+                <Text style={styles.title}>Loại Phòng:</Text>
+                <Text style={styles.info}>{item.typeroom.name}</Text>
+              </View>
+              <View style={styles.viewInfo}>
+                <Text style={styles.title}>Giá Phòng:</Text>
+                <Text style={styles.info}>{`${item.typeroom.price}/Tháng`}</Text>
+              </View>
+              <View style={styles.viewInfo}>
+                <Text style={styles.title}>Số Người Trong Phòng:</Text>
+                <Text style={styles.info}>{item.number_now}</Text>
+              </View>
+              {/* <View style={styles.viewInfo}>
+                <Text style={styles.title}>Danh sách:</Text>
+                <Text style={styles.info}>Nguyễn Văn A, Hoàng Văn B, Đinh Văn C, Tôn Hữu D, Võ Văn E</Text>
+              </View> */}
+              <View style={styles.viewInfo}>
+                <Text style={styles.title}>Tình Trạng Phòng:</Text>
+                <Text style={styles.info}>{status}</Text>
+              </View>
+              {
+                (this.state.roleUser !== 'nhanvien_group' && this.state.stageRegistrationRoom !== 'not_registration_time' && (item.number_max > item.number_now)) && (
+                  (this.state.stageRegistrationRoom !== 'registration_stage_2' || (this.state.stageRegistrationRoom === 'registration_stage_2' && this.state.myRoom === item.name)) && (
+                    <View style={styles.viewButton}>
+                      <TouchableOpacity style={[styles.button, styles.buttonOpen]} onPress={this.handleAssignRoom}>
+                        <Text 
+                          style={styles.textButton} 
+                          onPress={() => this.setModalVisible(!this.state.modalVisible)}
+                          disabled={disable}
+                        >
+                          {this.state.stageRegistrationRoom === 'registration_stage_2' ? 'Bao phòng' : 'Đăng ký'}  
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  )
+                  
+                )
+              }
             </View>
           </View>
-        </View>
         </ImageBackground>
       </View>
     )
@@ -196,12 +227,14 @@ class RoomDetail extends Component {
 const mapDispatchToProps = {
   registrationroom,
   getpaymentmethod,
+  getschoolyear
 };
 
 function mapStateToProps(state) {
   return {
     msg: state.registrationroom.msg,
     paymentMethod: state.getpaymentmethod.payload,
+    schoolYear: state.getschoolyear.payload
   }
 };
 
@@ -231,13 +264,15 @@ const styles = StyleSheet.create({
   },
   formProfile: {
     backgroundColor: 'white',
-    height: 300,
     width: '80%',
+    paddingTop: 20,
+    paddingBottom: 20,
     borderRadius: 20,
     elevation: 7,
   },
   viewInfo: {
-    marginTop: 10,
+    marginTop: 5,
+    marginBottom: 5,
     marginLeft: 20,
     flexDirection: 'row',
   },
@@ -279,12 +314,16 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   titleModal: {
+    paddingTop: 15,
     fontWeight: 'bold',
-    width: 60,
+    width: 100,
     alignItems: 'center',
+    justifyContent: 'center'
   },
   pickerPayment: {
     flex: 1,
+    borderWidth: 1,
+    borderColor: 'gray'
   },
   rowItem: {
     flexDirection: 'row',

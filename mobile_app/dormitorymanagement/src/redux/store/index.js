@@ -16,7 +16,9 @@ import {
   forgotpassword,
   getpaymentmethod,
   getdetailroom,
-  createnotification
+  createnotification,
+  getschoolyear,
+  getwaterelectric
 } from '../reducer/index';
 import thunkMiddleware from 'redux-thunk';
 
@@ -37,7 +39,9 @@ const AppReduces = combineReducers({
   forgotpassword,
   getpaymentmethod,
   getdetailroom,
-  createnotification
+  createnotification,
+  getschoolyear,
+  getwaterelectric
 });
 
 const rootReducer = (state, action) => {

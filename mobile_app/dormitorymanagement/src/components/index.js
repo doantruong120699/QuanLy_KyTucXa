@@ -15,6 +15,7 @@ import Notification from './notification/Notification';
 import Schedule from './staff/Schedule';
 import ShowRoomOfSV from './student/ShowRoomOfSV';
 import CreateNotification from './createnotification/CreateNotification';
+import ListWaterElectric from './service/ListWaterElectric';
 
 export {
   Login,
@@ -33,5 +34,6 @@ export {
   RoomDetail,
   Schedule,
   ShowRoomOfSV,
-  CreateNotification
+  CreateNotification,
+  ListWaterElectric
 };
