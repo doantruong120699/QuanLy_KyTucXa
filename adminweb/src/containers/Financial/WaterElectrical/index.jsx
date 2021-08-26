@@ -58,7 +58,7 @@ export default function WaterElectrical() {
   };
 
   const [selection, setSelection] = useState({
-    area: "area-a",
+    area: "area-5",
     year: current.getFullYear(),
     month: current.getMonth() + 1,
   });
@@ -373,7 +373,7 @@ export default function WaterElectrical() {
                 <ShowBill
                   selectedMonth={selection.month}
                   selectedYear={selection.year}
-                  area={area.find((ele) => ele.slug === selection.area).name}
+                  area={area.find((ele) => ele.slug === selection.area)?.name}
                   rowSelected={roomSelected}
                   onCancel={onCancel}
                   isUpdate={() => setUpdate((prev) => !prev)}
