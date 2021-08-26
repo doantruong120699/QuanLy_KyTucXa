@@ -1,27 +1,32 @@
+import classNames from "classnames";
+
 const Room = (props) => {
-  const { name, maximum, pendding, numberNow, getDetails } = props;
+  const { name, maximum, pendding, numberNow, getDetails, typeRoom } = props;
+
+  const bgStyle = classNames(
+    `${typeRoom === "1" ? "bg-color-blue" : ""}`,
+    `${typeRoom === "2" ? "bg-color-pink " : ""}`,
+    `${typeRoom === "3" ? "bg-color-pale-yellow" : ""}`
+  );
 
   var listStudentIcons = [];
 
   for (var i = 0; i < 8; i++) {
-    let styleStudent;
     let textIcon = "";
+    let bedStyle = "";
     if (i < numberNow) {
-      styleStudent = "#fd5353";
+      bedStyle = classNames("bg-color-red");
     } else if (i < pendding + numberNow) {
-      styleStudent = "#ffaa2b";
+      bedStyle = classNames("bg-color-yellow");
     } else if (i < maximum) {
-      styleStudent = "#09bd3d";
+      bedStyle = classNames("bg-color-green");
     } else {
-      styleStudent = "#f7cb73";
-      textIcon = "text-is-light-yellow";
+      textIcon = "transparency";
+      bedStyle = bgStyle;
     }
     listStudentIcons.push(
       <div key={i} className="col col-4">
-        <div
-          className="style-student"
-          style={{ backgroundColor: `${styleStudent}` }}
-        >
+        <div className={`style-student ${bedStyle}`}>
           <i className={`fi-sr-user ${textIcon}`} />
         </div>
       </div>
@@ -30,7 +35,7 @@ const Room = (props) => {
 
   return (
     <div
-      className="col col-full style-roomOfArea style-sm-box"
+      className={`col col-full style-sm-box style-roomOfArea ${bgStyle}`}
       onClick={getDetails}
     >
       <div className="col col-full justify-content-sb text-20 pd-8">

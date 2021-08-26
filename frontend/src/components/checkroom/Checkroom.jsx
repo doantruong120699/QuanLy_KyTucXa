@@ -2,11 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import {
-  getImgUrl,
-  getRooms as GetRooms,
-  getSchoolYear,
-} from "../../redux/actions/checkroom";
+import { getImgUrl, getRooms as GetRooms } from "../../redux/actions/checkroom";
 import Room from "./Room";
 import Pagination from "../common/Pagination";
 import Loader from "../common/Loader";
@@ -66,7 +62,6 @@ const Checkroom = () => {
     const GetAllRooms = () => {
       GetRooms(area.area, params, (output) => {
         if (output) {
-          console.log(output);
           const pagination = {
             page: output.current_page,
             page_size: output.page_size,
@@ -135,6 +130,7 @@ const Checkroom = () => {
                             maximum={room.typeroom.number_max}
                             numberNow={room.number_now}
                             pendding={room.pendding}
+                            typeRoom={room.typeroom.gender}
                             getDetails={() =>
                               gotoPage(
                                 `${ROUTER.ROUTE_CHECKROOM}/detail/${room.slug}`

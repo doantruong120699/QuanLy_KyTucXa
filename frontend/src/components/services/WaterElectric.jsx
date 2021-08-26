@@ -3,10 +3,8 @@ import queryString from "query-string";
 import { useSelector } from "react-redux";
 import { getListBill } from "../../redux/actions/service";
 import Pagination from "../common/Pagination";
-import * as ROUTER from "../../utilities/constants/router";
 import { month } from "../../utilities/constants/titles";
 import Loader from "../common/Loader";
-import DetailedBill from "./DetailedBill";
 
 const WaterElectric = () => {
   const [listBill, setListBill] = useState(null);
@@ -17,28 +15,13 @@ const WaterElectric = () => {
     totals: 1,
   });
 
-  const [currentBill, setCurrentBill] = useState(null);
-
-  const [open, setOpen] = useState(false);
-
-  const onOpen = (bill, room, month) => {
-    setCurrentBill({
-      bill: bill,
-      room: room,
-      month: month,
-    });
-    setOpen(true);
-  };
-
-  const onClose = () => setOpen(false);
-
   const loader = useSelector((state) => state.service.loading);
 
   const currentDate = new Date();
 
   const [filter, setFilter] = useState({
     page: 1,
-    //is_paid: "",
+    is_paid: "",
     month: 0,
     year: currentDate.getFullYear(),
   });
@@ -91,6 +74,7 @@ const WaterElectric = () => {
                 name="is_paid"
                 className="form-control"
                 onChange={handleChange}
+                value={filter.is_paid}
               >
                 <option defaultChecked value="">
                   Tất cả
@@ -195,19 +179,7 @@ const WaterElectric = () => {
                             {bill?.bill?.sinhvien_paid?.first_name}{" "}
                             {bill?.bill?.sinhvien_paid?.last_name}
                           </td>
-                          <td className="col col-10 text-align-ct bold-text text-20 pl-4 pr-4 pt-16 pb-16">
-                            <i
-                              className="fi-rr-search-alt icon-white-active"
-                              style={{ cursor: "pointer" }}
-                              onClick={() =>
-                                onOpen(
-                                  bill?.bill,
-                                  bill?.room?.name,
-                                  bill?.month
-                                )
-                              }
-                            />
-                          </td>
+                          <td className="col col-10 text-align-ct bold-text text-20 pl-4 pr-4 pt-16 pb-16"></td>
                         </tr>
                       );
                     })}
@@ -219,15 +191,6 @@ const WaterElectric = () => {
                   pagination={pagination}
                   onPageChange={handlePageChange}
                 />
-              </div>
-              <div className="col col-full">
-                {currentBill && (
-                  <DetailedBill
-                    open={open}
-                    onClose={onClose}
-                    bill={currentBill}
-                  />
-                )}
               </div>
             </div>
           )}
