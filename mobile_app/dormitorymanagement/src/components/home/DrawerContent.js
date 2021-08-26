@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, ToastAndroid } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { Drawer, Title } from 'react-native-paper';
-import { allstaff, allstudent, mainmenu, getallroom, getarea, getnotification, getcalendar } from '../../redux/actions/index';
+import { allstaff, allstudent, mainmenu, getallroom, getarea, getnotification, getcalendar, getwaterelectric } from '../../redux/actions/index';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import { getData } from '../../utils/asyncStorage';
@@ -25,7 +25,7 @@ class DrawerContent extends Component {
   };
   displayCreateNotification = () => {
     if (this.state.permission) {
-      if (JSON.parse(this.state.permission).findIndex(item => item="add_notification") !== -1) {
+      if (this.state.permission.indexOf("add_notification") !== -1) {
         return { display: 'flex' };
       }
       return { display: 'none' };
@@ -203,6 +203,28 @@ class DrawerContent extends Component {
                   this.props.mainmenu('CreateNotification');  
                 }}
               />
+              <DrawerItem
+                style={[this.getStyle('ListWaterElectric'), this.displayCreateNotification()]}
+                icon={({ color, size }) => (
+                  <FontAwesome5
+                    color={color}
+                    size={size}
+                    name={'power-off'}
+                    style={styles.iconMenu}
+                  />
+                )}
+                label="Điện nước"
+                onPress={async () => {
+                  await this.props.getwaterelectric(1);
+                  if (this.props.msgWaterElectric != "Success") {
+                    this.showToast(this.props.msgWaterElectric);
+                  }
+                  else {
+                    this.props.navigation.navigate("ListWaterElectric");
+                    this.props.mainmenu('ListWaterElectric');
+                  }  
+                }}
+              />
             </Drawer.Section>
           </View>
         </DrawerContentScrollView>
@@ -224,6 +246,7 @@ const mapDispatchToProps = {
   getarea,
   getnotification,
   getcalendar,
+  getwaterelectric
 }
 function mapStateToProps(state) {
   return {
@@ -234,7 +257,8 @@ function mapStateToProps(state) {
     msgNotification: state.getnotification.msg,
     msgRoom: state.getallroom.msg,
     msgCalendar: state.getcalendar.msg,
-    permission: state.login.permission
+    permission: state.login.permission,
+    msgWaterElectric: state.getwaterelectric.msg
   }
 };
 export default connect(mapStateToProps, mapDispatchToProps)(DrawerContent);

@@ -20,7 +20,6 @@ class AppBar extends Component {
     ToastAndroid.show(msg, ToastAndroid.LONG);
   };
   alert = async () => {
-    const name = await getData('name');
     const group = await getData('role');
     let role = '';
     if (group === 'sinhvien_group') {
@@ -30,7 +29,7 @@ class AppBar extends Component {
       role = 'Nhân viên';
     }
     Alert.alert(
-      name,
+      this.props.data.last_name + ' ' + this.props.data.first_name,
       role,
       [
         {
@@ -94,6 +93,7 @@ const mapDispatchToProps = {
 function mapStateToProps(state) {
   return {
     msg: state.getprofile.msg,
+    data: state.getprofile.payload
   };
 };
 export default connect(mapStateToProps, mapDispatchToProps)(AppBar);

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import { ShowAllRoom, Dashboard, AllStudent, AllStaff, Notification, Schedule, CreateNotification } from '../index';
+import { ShowAllRoom, Dashboard, AllStudent, AllStaff, Notification, Schedule, CreateNotification, ListWaterElectric } from '../index';
 import { connect } from 'react-redux';
 import 'react-native-gesture-handler';
 import DrawerContent from './DrawerContent';
@@ -17,6 +17,7 @@ class HomePage extends Component {
         <Drawer.Screen name="AllStaff" component={AllStaff} />
         <Drawer.Screen name="Schedule" component={Schedule} />
         <Drawer.Screen name="CreateNotification" component={CreateNotification} />
+        <Drawer.Screen name="ListWaterElectric" component={ListWaterElectric} />
       </Drawer.Navigator>
     )
   }

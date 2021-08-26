@@ -3,6 +3,7 @@ import { getData } from '../../utils/asyncStorage';
 import axios from 'axios';
 import { apiUrl } from '../../api/api';
 import _ from 'lodash';
+import { getprofile } from './getprofile';
 
 const { CHANGE_PROFILE_URL } = apiUrl;
 const { CHANGE_PROFILE_SUCCESS, CHANGE_PROFILE_FAIL } = actionType;
@@ -18,6 +19,7 @@ export const changeprofile = (data) => async (dispatch) => {
       type: CHANGE_PROFILE_SUCCESS,
       msg: "Success",
     });
+    dispatch(getprofile());
   }
   catch (error) {
     const msg = _.get(error.response, 'data.msg') || "Cant't connect network";

@@ -8,6 +8,8 @@ import { styleImgBg } from '../../styles/index';
 
 const CreateNotification = (props) => {
   const { navigation, createnotification } = props;
+  const create = useSelector((state) => state.createnotification);
+  const [isSave, setSave] = useState(false);
   const [data, setData] = useState({
     title: '',
     content: '',
@@ -17,7 +19,7 @@ const CreateNotification = (props) => {
     ToastAndroid.show(msg, ToastAndroid.LONG);
   };
   const dataEmpty = () => {
-    if (data.title || data.content) {
+    if (!data.title || !data.content) {
       return false;
     }
     return true;
@@ -34,8 +36,15 @@ const CreateNotification = (props) => {
         "is_display": data.is_display
       };
       await createnotification(dataCreate);
+      setSave(true);
     }  
-  }
+  };
+  useEffect(() => {
+    if (isSave) {
+      showToast(create.msg !== 'Success' ? create.msg : 'Tạo thông báo thành công');
+    }
+    setSave(false);
+  }, [isSave]);
   const changeTitle = (value) => {
     setData({
       ...data,
@@ -48,7 +57,6 @@ const CreateNotification = (props) => {
       content: value,
     })
   }
-  const msg = useSelector((state) => state.createnotification.msg);
   return (
     <View style={styles.container}>
       <ImageBackground source={require('../../assets/background.jpg')} style={styleImgBg.imageBackground}>

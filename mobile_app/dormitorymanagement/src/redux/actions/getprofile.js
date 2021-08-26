@@ -1,5 +1,5 @@
 import { actionType } from '../actionType';
-import { getData } from '../../utils/asyncStorage';
+import { getData, storeData } from '../../utils/asyncStorage';
 import axios from 'axios';
 import { apiUrl } from '../../api/api';
 import _ from 'lodash';
@@ -14,6 +14,8 @@ export const getprofile = () => async (dispatch) => {
       headers: { 'Authorization': 'Bearer ' + token }
     }
     result = await axios.get(PROFILE_URL, config);
+    storeData('name', result.data.last_name + ' ' + result.data.first_name);
+    storeData('myRoom', result.data.room?.name);
     dispatch({
       type: GET_PROFILE_SUCCESS,
       payload: result.data,
