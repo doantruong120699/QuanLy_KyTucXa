@@ -5,7 +5,7 @@ import Dashboard from "./containers/Dashboard";
 import Login from "./containers/Login";
 import ForgotPassword from "./containers/ForgotPassword";
 import ResetPassword from "./containers/ResetPassword";
-import Checkroom from "./containers/Checkroom";
+import Map from "./containers/Map";
 import EmployeePage from "./containers/EmployeePage";
 import * as ROUTER from "./utilities/constants/router";
 import Profile from "./containers/Profile";
@@ -15,6 +15,9 @@ import DetailedStudent from "./components/studentPage/DetailedStudent";
 import MySchedule from "./components/profile/MySchedule";
 import DetailedEmployee from "./components/employeePage/DetailedEmployee";
 import Services from "./containers/Services";
+import Checkroom from "./components/checkroom/Checkroom";
+import WaterElectric from "./components/services/WaterElectric";
+import DetailedBill from "./components/services/DetailedBill";
 function App() {
   return (
     <Router history={history()}>
@@ -39,7 +42,12 @@ function App() {
           exact
         />
         <Route
-          path={ROUTER.ROUTE_CHECKROOM}
+          path={`${ROUTER.ROUTE_CHECKROOM}`}
+          component={withAuth(Map)}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_CHECKROOM}/:area`}
           component={withAuth(Checkroom)}
           exact
         />
@@ -81,6 +89,16 @@ function App() {
         <Route
           path={ROUTER.ROUTE_SERVICES}
           component={withAuth(Services)}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_SERVICES}${ROUTER.ROUTE_WATER_ELECTRIC}`}
+          component={withAuth(WaterElectric)}
+          exact
+        />
+        <Route
+          path={`${ROUTER.ROUTE_SERVICES}${ROUTER.ROUTE_WATER_ELECTRIC}/:public_id`}
+          component={withAuth(DetailedBill)}
           exact
         />
       </Switch>

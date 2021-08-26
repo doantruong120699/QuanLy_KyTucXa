@@ -3,6 +3,65 @@ import store from "../store";
 
 const REACT_APP_BASE_API = process.env.REACT_APP_BASE_URL;
 
+export async function getAvatar(resolve = () => {}) {
+  store.dispatch({
+    type: types.GET_AVATAR,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}account/change-avatar/`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+    const data = await response.json();
+    resolve(data);
+    store.dispatch({
+      payload: data,
+      type: types.GET_AVATAR_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.GET_AVATAR_FAIL,
+    });
+  }
+}
+
+export async function changeAvatar(file, resolve = () => {}) {
+  store.dispatch({
+    type: types.UPDATE_AVATAR,
+  });
+  try {
+    const response = await fetch(
+      `${REACT_APP_BASE_API}account/change-avatar/`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${JSON.parse(localStorage.getItem("token"))}`,
+        },
+        body: file,
+      }
+    );
+    const data = await response.json();
+    resolve(data);
+    store.dispatch({
+      payload: data,
+      type: types.UPDATE_AVATAR_SUCCEED,
+    });
+  } catch (error) {
+    store.dispatch({
+      payload: error,
+      type: types.UPDATE_AVATAR_FAIL,
+    });
+  }
+}
+
 export async function profile(resolve = () => {}) {
   store.dispatch({
     type: types.GET_PROFILE_API,
@@ -32,6 +91,7 @@ export async function profile(resolve = () => {}) {
     });
   }
 }
+
 export async function faculty(resolve = () => {}) {
   store.dispatch({
     type: types.GET_FACULTIES_API,
@@ -149,6 +209,13 @@ export async function updateProfile(profile, resolve = () => {}) {
 export const actFetchUserNavigation = (user) => {
   return {
     type: types.FETCH_NAV_USER,
+    user,
+  };
+};
+
+export const actFetchAvatarUserNavigation = (user) => {
+  return {
+    type: types.FETCH_NAV_USER_AVATAR,
     user,
   };
 };

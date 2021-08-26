@@ -23,9 +23,19 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'username', 'email'] 
 
 class TypeRoomSerializer(serializers.ModelSerializer):
+    name_gender = serializers.ReadOnlyField(source="get_gender_display")
+
     class Meta:
         model = TypeRoom
-        fields = ['id', 'name', 'price', 'number_max', 'slug'] 
+        fields = [
+            'id', 
+            'name', 
+            'price', 
+            'number_max', 
+            'slug',
+            'gender',
+            'name_gender'
+        ] 
         
 class SchoolYearSerializer(serializers.ModelSerializer):
     class Meta:
@@ -218,7 +228,7 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         
         room = data['room']
         if room.number_now == room.typeroom.number_max:
-            raise serializers.ValidationError({'room':'Room is full!'})
+            raise serializers.ValidationError({'room':'Phòng đã đầy!'})
         
         current_user = self._current_user()
         check_contract = Contract.objects.filter(profile=current_user.user_profile).filter(Q(is_expired=None) | Q(is_expired=False), is_cover_room=False)
@@ -271,8 +281,9 @@ class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
                 # number_registration=validated_data['number_registration'],
                 is_cover_room=True
             )
-            model.number_registration = model.type_room.number_max - model.number_now
+            model.number_registration = model.room.typeroom.number_max - model.room.number_now
             model.save()
+            print("Model: ", model)
             semester = str(validated_data['semester'])
             month = settings.NUMBER_MONTH[semester]
             model.price = month*model.number_registration*room.typeroom.price
@@ -287,13 +298,18 @@ class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
         """
         Check that start is before finish.
         """
+        current_user = self._current_user()
         stage = getStageNow(semester=data['semester'], school_year=data['school_year'])
         
         room = data['room']
         if room.number_now == room.typeroom.number_max:
-            raise serializers.ValidationError({'room':'Room is full!'})
+            raise serializers.ValidationError({'room':'Phòng đã đầy!!'})
         
-        current_user = self._current_user()
+        check_room = Contract.objects.filter(profile=current_user.user_profile, semester=data['semester'], school_year=data['school_year'], is_cover_room=False).exclude(room=room)
+        print(check_room)
+        if len(check_room) > 0:
+            raise serializers.ValidationError({'registered':'Bạn không được đăng ký bao phòng này!'})
+        
         check_contract = Contract.objects.filter(profile=current_user.user_profile).filter(Q(is_expired=None) | Q(is_expired=False), is_cover_room=True)
         if len(check_contract) != 0:
             raise serializers.ValidationError({'registered':'Bạn đã đăng ký bao phòng này!'})

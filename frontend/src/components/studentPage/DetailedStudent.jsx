@@ -16,6 +16,7 @@ const DetailStudent = () => {
   useEffect(() => {
     getDetailedStudent(studentID, (output) => {
       if (output) {
+        console.log(output);
         setStudent(output);
       }
     });
@@ -33,7 +34,14 @@ const DetailStudent = () => {
             <div>
               <div className="col col-third justify-content-ct">
                 <div className="col style-profile-avatar mt-16">
-                  <img src={avatar} alt="avatar" />
+                  <img
+                    src={
+                      studentState.profile.avatar
+                        ? studentState.profile.avatar
+                        : avatar
+                    }
+                    alt="avatar"
+                  />
                 </div>
               </div>
               <div className="col col-two-third style-lg-box bg-color-white">
@@ -42,29 +50,29 @@ const DetailStudent = () => {
                     <h2 className="pt-8 pb-8">Thông tin sinh viên</h2>
                     <div className="col col-full">
                       <span className="text-is-purple-gradient style-profile-name">
-                        {studentState.first_name} {studentState.last_name}
+                        {studentState?.first_name} {studentState?.last_name}
                       </span>
                     </div>
                     <div className="col col-full mt-8">
                       <i className="fi-rr-heart pr-16"></i>
                       <span>
-                        {studentState.profile.gender === true ? "Nam" : "Nữ"}
+                        {studentState?.profile?.gender === true ? "Nam" : "Nữ"}
                       </span>
                     </div>
                     <div className="col col-full mt-8">
                       <i className="fi-rr-marker pr-16"></i>
-                      <span>{studentState.profile.address}</span>
+                      <span>{studentState?.profile?.address}</span>
                     </div>
                     <div className="col col-full mt-8">
                       <i className="fi-rr-envelope pr-16"></i>
-                      <span>{studentState.email}</span>
+                      <span>{studentState?.email}</span>
                     </div>
                     <div className="col col-full mt-8">
                       <i className="fi-rr-bold pr-16"></i>
                       <span>
-                        {moment(new Date(studentState.profile.birthday)).format(
-                          "DD-MM-YYYY"
-                        )}
+                        {moment(
+                          new Date(studentState?.profile?.birthday)
+                        ).format("DD-MM-YYYY")}
                       </span>
                     </div>
                   </div>
@@ -74,15 +82,15 @@ const DetailStudent = () => {
                 <h2 className="">Thông tin công việc</h2>
                 <div className="col col-full pt-8">
                   <span className="text-is-bold">Mã số sinh viên: </span>
-                  <span>{studentState.username}</span>
+                  <span>{studentState?.username}</span>
                 </div>
                 <div className="col col-full pt-8">
                   <span className="text-is-bold">Lớp: </span>
-                  <span>{studentState.profile.my_class.name}</span>
+                  <span>{studentState?.profile?.my_class?.name}</span>
                 </div>
                 <div className="col col-full pt-8">
                   <span className="text-is-bold">Khoa: </span>
-                  <span>{studentState.profile.faculty.name}</span>
+                  <span>{studentState?.profile?.faculty?.name}</span>
                 </div>
               </div>
             </div>

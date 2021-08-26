@@ -136,6 +136,12 @@ class TypeRoom(models.Model):
     price = models.PositiveIntegerField(default=0)  
     number_max = models.PositiveIntegerField(default=8) 
     slug = models.CharField(max_length=200, null=True, unique=True)  
+    GENDER = Choices(
+        ('1', _('Phòng nam')),
+        ('2', _('Phòng nữ')),
+        ('3', _('Phòng sinh hoạt chung')),
+    )
+    gender = models.CharField(choices=GENDER, max_length=20, null=True, blank=True)
 
     class Meta:
         ordering = ('id',)
@@ -154,12 +160,11 @@ class Room(models.Model):
     number_now = models.PositiveIntegerField(default=0)  
     typeroom = models.ForeignKey(TypeRoom, related_name = 'type_room', on_delete=models.SET_NULL, blank=True, null=True)
     area = models.ForeignKey(Area, related_name = 'area_room', on_delete=models.SET_NULL, blank=True, null=True)
-    gender = models.BooleanField(default=True)
     
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     last_update = models.DateTimeField(auto_now=True, null=True, blank=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    status = models.CharField(choices=STATUS, max_length=10, null=True, blank=True)
+    status = models.CharField(choices=STATUS, max_length=10, null=True, blank=True, default="1")
     # 
     is_cover_room = models.BooleanField(default=False)
  

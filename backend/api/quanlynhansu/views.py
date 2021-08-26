@@ -161,20 +161,21 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         try:
-            room = request.GET.get('room', None)
-            if room != None:
-                obj_room = Room.objects.get(slug=room)
-                _list = Contract.objects.filter(room=obj_room).exclude(is_expired=True)
-                serializer = ContractRegistationSerializer(_list, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response({}, status=status.HTTP_200_OK)
-                
-            # page = self.paginate_queryset(list_registration_room)
-            # if page is not None:
-            #     serializer = self.get_serializer(page, many=True)
-            #     return self.get_paginated_response(serializer.data)
-            # serializer = self.get_serializer(page, many=True)
-            # return self.get_paginated_response(serializer.data)
+            # room = request.GET.get('room', None)
+            # if room != None:
+            #     obj_room = Room.objects.get(slug=room)
+            #     _list = Contract.objects.filter(room=obj_room).exclude(is_expired=True)
+            #     serializer = ContractRegistationSerializer(_list, many=True)
+            #     return Response(serializer.data, status=status.HTTP_200_OK)
+            # return Response({}, status=status.HTTP_200_OK)
+            
+            list_registration_room = Contract.objects.filter(is_accepted = None)
+            page = self.paginate_queryset(list_registration_room)
+            if page is not None:
+                serializer = self.get_serializer(page, many=True)
+                return self.get_paginated_response(serializer.data)
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
         except Exception as e:
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
@@ -198,7 +199,15 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
                     regis_request.is_accepted = True
                     regis_request.is_expired = False
                     regis_request.save()
-                    regis_request.room.number_now = regis_request.room.number_now + 1
+                    if regis_request.is_cover_room == True:
+                        regis_request.room.number_now = regis_request.room.typeroom.number_max
+                    else:
+                        regis_request.room.number_now = regis_request.room.number_now + 1
+                    
+                    if regis_request.room.number_now == regis_request.room.typeroom.number_max:
+                        regis_request.room.status = 'F'
+                    elif regis_request.room.number_now < regis_request.room.typeroom.number_max:
+                        regis_request.room.status = 'A'
                     regis_request.room.save()
                     return Response({'detail': 'Accept Successful'}, status=status.HTTP_200_OK)
         except Exception as e:
