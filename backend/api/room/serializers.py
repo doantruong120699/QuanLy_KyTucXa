@@ -138,6 +138,20 @@ class RoomSerializer(serializers.ModelSerializer):
     #             pass
     #     return instance
 
+def getStage():
+    today = date.today()
+    stage1 = Stage.objects.filter(stage1_started_at__lte = today, stage1_ended_at__gte = today)
+    stage2 = Stage.objects.filter(stage2_started_at__lte = today, stage2_ended_at__gte = today)
+    stage3 = Stage.objects.filter(stage3_started_at__lte = today, stage3_ended_at__gte = today)
+    if len(stage1) > 0:
+        return (1, stage1)
+    elif len(stage2) > 0:
+        return (2, stage2)
+    elif len(stage3) > 0:
+        return (3, stage3)
+    else:
+        return (-1, None)      
+
 class ContractSerializer(serializers.ModelSerializer):
     room = RoomListSerializer()
     payment_method = PaymentMethodSerializer()
@@ -191,10 +205,14 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         try:
+            (stage, obj) = getStage()
             current_user = self._current_user()
             room = Room.objects.get(pk=validated_data['room'])
             payment_method = PaymentMethod.objects.get(pk=validated_data['payment_method'])
-            school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
+            if stage != -1:
+                school_year = SchoolYear.objects.get(pk=obj.first().school_year.pk)
+            else:
+                school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
             model = Contract.objects.create(
                 room=room,
                 profile=current_user.user_profile,
@@ -268,9 +286,13 @@ class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             current_user = self._current_user()
+            (stage, obj) = getStage()
             room = Room.objects.get(pk=validated_data['room'])
             payment_method = PaymentMethod.objects.get(pk=validated_data['payment_method'])
-            school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
+            if stage != -1:
+                school_year = SchoolYear.objects.get(pk=obj.first().school_year.pk)
+            else:
+                school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
             model = Contract.objects.create(
                 room=room,
                 profile=current_user.user_profile,
