@@ -149,7 +149,7 @@ class RoomViewSet(viewsets.ModelViewSet):
     def get_list_user_in_room(self, request, *args, **kwargs):
 
         room = Room.objects.get(slug=kwargs['slug'])
-        _sv = Profile.objects.filter(contract_profile__room=room)
+        _sv = Profile.objects.filter(contract_profile__room=room, contract_profile__is_expired = False)
         list_sv = list(_sv.values())
         for i in range(len(list_sv)):
             list_sv[i].pop('token', None)
