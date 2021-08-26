@@ -745,6 +745,8 @@ class StageRegistrationViewset(viewsets.ModelViewSet):
                 if len(stage) > 0:
                     return Response({'status': 'fail', 'notification' : "Đã mở đăng ký ở học kỳ này!"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
+                    list_contract = Contract.objects.filter(is_expired=False)
+                    
                     serializer.save()
                     # Reset data rooms
                     all_room = Room.objects.all()
@@ -752,6 +754,9 @@ class StageRegistrationViewset(viewsets.ModelViewSet):
                         room.number_now = 0
                         room.is_cover_room = False
                         room.save()
+                    for contract in list_contract:
+                        contract.is_expired = True
+                        contract.save()
                     return Response({'status': 'success'}, status=status.HTTP_200_OK) 
             else:
                 return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
