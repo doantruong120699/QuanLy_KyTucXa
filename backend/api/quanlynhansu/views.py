@@ -355,7 +355,7 @@ class ListContractViewSet(viewsets.ModelViewSet):
                 room = request.GET.get('room', None)
                 if room != None:
                     list_contract_room = list_contract_room.filter(Q(room__name=id_user) | Q(room__slug=id_user))
-                
+                print(list_contract_room)
                 page = self.paginate_queryset(list_contract_room)
                 if page is not None:
                     serializer = self.get_serializer(page, many=True)
