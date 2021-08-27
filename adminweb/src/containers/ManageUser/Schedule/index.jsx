@@ -204,7 +204,10 @@ const Employee = () => {
         <div>
           {initData && employeeOption && (
             <div>
-              <div className="col col-two-third" style={{ marginBottom: "2%" }}>
+              <div
+                className="col col-full"
+                style={{ margin: "0 0 2% 0", paddingLeft: "3%" }}
+              >
                 <div className="col col-third">
                   <Typography>Lựa chọn tuần</Typography>
                   <Select
@@ -223,6 +226,23 @@ const Employee = () => {
                     onChange={(params) => handleTimeChange(params, "year")}
                   />
                 </div>
+                <div
+                  className="col col-two-third"
+                  style={{ width: "fit-content", margin: "3% 0 0 10%" }}
+                >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSaveSchedule}
+                    startIcon={<SaveIcon></SaveIcon>}
+                    disabled={
+                      !isAllowed("quanlynhansu_group", "add_dailyschedule") ||
+                      disable
+                    }
+                  >
+                    Lưu lịch làm
+                  </Button>
+                </div>
               </div>
               <div className="col col-full">
                 <h1 id="title">Bảng phân công công việc</h1>
@@ -237,20 +257,6 @@ const Employee = () => {
                   </thead>
                   {renderTableData()}
                 </table>
-              </div>
-              <div className="float-right col-6 mt-48 mr-24">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSaveSchedule}
-                  startIcon={<SaveIcon></SaveIcon>}
-                  disabled={
-                    !isAllowed("quanlynhansu_group", "add_dailyschedule") ||
-                    disable
-                  }
-                >
-                  Lưu lịch làm
-                </Button>
               </div>
             </div>
           )}
