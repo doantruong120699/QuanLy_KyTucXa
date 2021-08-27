@@ -205,7 +205,6 @@ const Dashboard = () => {
     const GetDashboard = () =>
       getDashboard((output) => {
         if (output) {
-          console.log(output);
           if (mounted) {
             window.scrollTo(0, 0);
             setDashboard(output);

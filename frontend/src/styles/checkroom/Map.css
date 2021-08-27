@@ -112,11 +112,9 @@
   height: 150px;
   margin-left: 315px;
 }
-.room-nha-5:hover {
-  cursor: pointer;
-  background-color: #eeeeee;
-}
-.room-nha-4:hover {
+.room-nha-5:hover,
+.room-nha-4:hover,
+.room-ktx-lao:hover {
   cursor: pointer;
   background-color: #eeeeee;
 }
