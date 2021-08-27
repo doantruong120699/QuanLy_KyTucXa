@@ -312,7 +312,7 @@ class ProfileStaffListBillSerializer(serializers.ModelSerializer):
         ]
 
 class BillSerializer(serializers.ModelSerializer):
-    # water_electrical = WaterElectricalInListSerializer(required=False)
+    # water_electrical = WaterElectricalInListSerializer()
     created_by = UserSerializer(required=False)
     updated_by = UserSerializer(required=False)
     sinhvien_paid = ProfileInListBillSerializer(required=False)

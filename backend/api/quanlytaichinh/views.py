@@ -315,14 +315,14 @@ class BillViewSet(viewsets.ModelViewSet):
                                                               water_electrical_bill__year=year,
                                                               water_electrical_bill__month=month)
             _list = _list.filter(is_delete=False)
-            print(_list)
+            
             page = self.paginate_queryset(_list)
-            if page is not None:
-                serializer = self.get_serializer(page, many=True)
-                return self.get_paginated_response(serializer.data)
-
             serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+            data = serializer.data
+            for index, value in enumerate(data):
+                x = WaterElectrical.objects.filter(bill__public_id=data[index]['public_id']).first()
+                data[index]['water_electrical'] = WaterElectricalInListSerializer(x).data
+            return self.get_paginated_response(data)
         except Exception as e:
             print(e)
             return Response({'detail': 'Bad request'}, status=status.HTTP_400_BAD_REQUEST)
