@@ -99,6 +99,7 @@ class RoomSerializer(serializers.ModelSerializer):
 class ContractRegistationSerializer(serializers.ModelSerializer):
     profile = ProfileSinhVienSerializer()
     room = RoomSerializer()
+    semester = serializers.ReadOnlyField(source="get_semester_display")
     class Meta:
         model = Contract
         fields = [

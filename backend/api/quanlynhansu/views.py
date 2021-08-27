@@ -331,7 +331,10 @@ class ListContractViewSet(viewsets.ModelViewSet):
             if (self.check_permission(request)):
                 request_regis = Contract.objects.get(public_id=kwargs['public_id'])
                 serializer = ContractRegistationSerializer(request_regis)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                data = serializer.data
+                schoolyear = SchoolYear.objects.get(pk=data['school_year'])
+                data['school_year'] = str(schoolyear.year_start) + "-" + str(schoolyear.year_end)
+                return Response(data, status=status.HTTP_200_OK)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
@@ -355,12 +358,16 @@ class ListContractViewSet(viewsets.ModelViewSet):
                 room = request.GET.get('room', None)
                 if room != None:
                     list_contract_room = list_contract_room.filter(Q(room__name=id_user) | Q(room__slug=id_user))
-                print(list_contract_room)
+                    
                 page = self.paginate_queryset(list_contract_room)
-                if page is not None:
-                    serializer = self.get_serializer(page, many=True)
-                    return self.get_paginated_response(serializer.data)
+                
                 serializer = self.get_serializer(page, many=True)
+                data = serializer.data
+                for index, value in enumerate(data):
+                    schoolyear = SchoolYear.objects.get(pk=data[index]['school_year'])
+                    data[index]['school_year'] = str(schoolyear.year_start) + "-" + str(schoolyear.year_end)
+                    # if data[index]['school_year']
+                                        
                 return self.get_paginated_response(serializer.data)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)

@@ -209,6 +209,7 @@ class BillViewSet(viewsets.ModelViewSet):
                     list_water_electrical = list_water_electrical.filter(bill__is_paid=is_paid)    
                 month = request.GET.get('month', None)
                 year = request.GET.get('year', None)
+                print(month)
                 if month != None and len(month) != 0:
                     (month, year) = self.check_month_year(month, year)
                     list_water_electrical = list_water_electrical.filter(month=month, year=year)
