@@ -29,10 +29,6 @@ export default function Budget() {
   const loader = useSelector((state) => state.financial.loading);
 
   const [startDate, setStartDate] = useState(new Date());
-
-  const [endDate] = useState(new Date());
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [isSelectStudentModalVisible, setIsSelectStudentModalVisible] =
     useState(false);
   const [selectedOption, setSelectedOption] = useState("contract");
@@ -49,7 +45,10 @@ export default function Budget() {
         setDataContracts(output.results);
       }
     });
+  }, []);
+  useEffect(() => {
     if (isSelectStudentModalVisible === false) {
+      console.log("Dang update lai bill");
       getListWaterElectricalBills(
         "",
         `month=${moment(startDate).format("MM")}&year=${moment(
@@ -62,9 +61,8 @@ export default function Budget() {
         }
       );
     }
-  }, [startDate, isSelectStudentModalVisible]);
+  }, [isSelectStudentModalVisible, startDate]);
   const [peopleInRoom, setPeopleInRoom] = useState();
-
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.defaultValue);
   };
@@ -73,6 +71,10 @@ export default function Budget() {
       value: n.user_id,
       label: n.first_name + n.last_name,
     }));
+  };
+  const hideModal = () => {
+    console.log("AAAAAAAAA");
+    setIsSelectStudentModalVisible(false);
   };
   const handleSelectPeople = (data) => {
     const slug = formatDataBill(dataBill).find(
@@ -97,11 +99,10 @@ export default function Budget() {
     };
     updateWaterElectricalBill(selectedBillId, dataSend, (output) => {
       if (output.status === "successful") {
-        alert("Thanh toán thành công!");
-      } else alert(output.notification);
+        toast("Đóng tiền thành công");
+      } else toast(output.notification);
     });
-    setTimeout(hideModal, 4000);
-    setIsSelectStudentModalVisible(false);
+    setTimeout(hideModal, 2000);
   };
   const contractColumn = [
     {
@@ -344,10 +345,7 @@ export default function Budget() {
     selectableRows: "none",
     onRowClick: selectedOption === "contract" ? handleRowClick : () => {},
   };
-  const hideModal = () => {
-    setIsModalVisible(false);
-    setIsSelectStudentModalVisible(false);
-  };
+
   const customStyles = {
     content: {
       top: "50%",
@@ -383,10 +381,6 @@ export default function Budget() {
       {!isAllowed("quanlytaichinh_group", "view_contract") ? (
         <div className="align-item-ct">
           <Permissionless />
-        </div>
-      ) : loader ? (
-        <div className="align-item-ct">
-          <Loader />
         </div>
       ) : (
         <div>
@@ -479,9 +473,9 @@ export default function Budget() {
               >
                 Xác nhận
               </MUIButton>
-              <ToastContainer />
             </div>
           </ReactModal>
+          <ToastContainer />
         </div>
       )}
     </div>
