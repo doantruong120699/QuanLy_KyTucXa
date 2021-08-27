@@ -228,7 +228,7 @@ const Employee = () => {
                 </div>
                 <div
                   className="col col-two-third"
-                  style={{ width: "fit-content", margin: "4% 0 0 10%" }}
+                  style={{ width: "fit-content", margin: "3% 0 0 4%" }}
                 >
                   <Button
                     variant="contained"
