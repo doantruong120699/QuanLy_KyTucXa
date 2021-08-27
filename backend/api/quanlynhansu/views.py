@@ -346,12 +346,12 @@ class ListContractViewSet(viewsets.ModelViewSet):
     def list_contract_filter(self, request, *args, **kwargs):
         try:
             if (self.check_permission(request)):
-                list_contract_room = Contract.objects.all()
+                list_contract_room = Contract.objects.filter(is_expired=False)
                 
                 is_expired = request.GET.get('is_expired', None)
-                if is_expired != None:
-                    list_contract_room = list_contract_room.filter(is_expired=is_expired)
-                                
+                # if is_expired != None:
+                #     list_contract_room = list_contract_room.filter(is_expired=is_expired)
+                  
                 id_user = request.GET.get('id_user', None)
                 if id_user != None:
                     list_contract_room = list_contract_room.filter(profile__public_id=id_user)
