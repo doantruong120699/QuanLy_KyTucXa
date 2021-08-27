@@ -346,7 +346,7 @@ class ListContractViewSet(viewsets.ModelViewSet):
     def list_contract_filter(self, request, *args, **kwargs):
         try:
             if (self.check_permission(request)):
-                list_contract_room = Contract.objects.filter(is_expired=False)
+                list_contract_room = Contract.objects.filter(is_expired=False, is_delete=False)
                 
                 is_expired = request.GET.get('is_expired', None)
                 # if is_expired != None:
