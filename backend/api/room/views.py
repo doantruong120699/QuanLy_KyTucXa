@@ -39,6 +39,21 @@ class TypeRoomViewSet(viewsets.ModelViewSet):
             print(e)
             return Response({'detail': 'Type Not Found'}, status=status.HTTP_404_NOT_FOUND)
 
+def getStage():
+    today = date.today()
+    stage1 = Stage.objects.filter(stage1_started_at__lte = today, stage1_ended_at__gte = today)
+    stage2 = Stage.objects.filter(stage2_started_at__lte = today, stage2_ended_at__gte = today)
+    stage3 = Stage.objects.filter(stage3_started_at__lte = today, stage3_ended_at__gte = today)
+    if len(stage1) > 0:
+        return (1, stage1)
+    elif len(stage2) > 0:
+        return (2, stage2)
+    elif len(stage3) > 0:
+        return (3, stage3)
+    else:
+        return (-1, None)      
+    
+
 class SchoolYearViewSet(viewsets.ModelViewSet):
     serializer_class = SchoolYearSerializer
 
@@ -46,7 +61,11 @@ class SchoolYearViewSet(viewsets.ModelViewSet):
         return SchoolYear.objects.all().order_by('id')
 
     def list(self, request, *args, **kwargs):
-        school_year = list(SchoolYear.objects.values().order_by('id'))
+        (stage, obj) = getStage()
+        school_year = SchoolYear.objects.all().order_by('id')
+        if stage != -1:
+            school_year = school_year.filter(pk=obj.first().school_year.pk)
+        school_year = list(school_year.values())
         for index, value in enumerate(school_year):
             school_year[index]['label'] = str(school_year[index]['year_start'])+'-'+str(school_year[index]['year_end'])
         return JsonResponse(school_year, safe=False, status=status.HTTP_200_OK)
@@ -78,7 +97,7 @@ class RoomViewSet(viewsets.ModelViewSet):
     def retrieve(self, request, **kwargs):
         try:
             room = Room.objects.get(slug=kwargs['slug'])
-            _sv = Profile.objects.filter(contract_profile__room=room, contract_profile__is_expired=False)
+            _sv = Profile.objects.filter(contract_profile__room=room, contract_profile__is_expired=False, contract_profile__is_cover_room=False)
             list_sv = list(_sv.values())
             for i in range(len(list_sv)):
                 list_sv[i].pop('token', None)
@@ -130,7 +149,7 @@ class RoomViewSet(viewsets.ModelViewSet):
     def get_list_user_in_room(self, request, *args, **kwargs):
 
         room = Room.objects.get(slug=kwargs['slug'])
-        _sv = Profile.objects.filter(contract_profile__room=room)
+        _sv = Profile.objects.filter(contract_profile__room=room, contract_profile__is_expired = False)
         list_sv = list(_sv.values())
         for i in range(len(list_sv)):
             list_sv[i].pop('token', None)
@@ -374,20 +393,6 @@ class ContractCoverRoomRegistationViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
 
-def getStage():
-    today = date.today()
-    stage1 = Stage.objects.filter(stage1_started_at__lte = today, stage1_ended_at__gte = today)
-    stage2 = Stage.objects.filter(stage2_started_at__lte = today, stage2_ended_at__gte = today)
-    stage3 = Stage.objects.filter(stage3_started_at__lte = today, stage3_ended_at__gte = today)
-    if len(stage1) > 0:
-        return (1, stage1)
-    elif len(stage2) > 0:
-        return (2, stage2)
-    elif len(stage3) > 0:
-        return (3, stage3)
-    else:
-        return (-1, None)      
-    
 class CheckStageViewSet(viewsets.ModelViewSet):
     
     def list(self, request, *args, **kwargs):

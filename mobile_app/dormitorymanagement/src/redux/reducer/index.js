@@ -15,6 +15,8 @@ import { forgotpassword } from './forgotpassword';
 import { getpaymentmethod } from './getpaymentmethod';
 import { getdetailroom } from './getdetailroom';
 import { createnotification } from './createnotification';
+import { getschoolyear } from './getschoolyear';
+import { getwaterelectric } from './getwaterelectric';
 
 export {
   login,
@@ -33,5 +35,7 @@ export {
   forgotpassword,
   getpaymentmethod,
   getdetailroom,
-  createnotification
+  createnotification,
+  getschoolyear,
+  getwaterelectric
 };

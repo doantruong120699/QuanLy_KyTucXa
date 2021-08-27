@@ -23,9 +23,19 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name', 'username', 'email'] 
 
 class TypeRoomSerializer(serializers.ModelSerializer):
+    name_gender = serializers.ReadOnlyField(source="get_gender_display")
+
     class Meta:
         model = TypeRoom
-        fields = ['id', 'name', 'price', 'number_max', 'slug'] 
+        fields = [
+            'id', 
+            'name', 
+            'price', 
+            'number_max', 
+            'slug',
+            'gender',
+            'name_gender'
+        ] 
         
 class SchoolYearSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,13 +53,13 @@ class RoomListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ['id', 'name', 'slug', 'gender', 'number_now', 'typeroom', 'area', 'status', 'created_at', 'last_update'] 
+        fields = ['id', 'name', 'slug', 'number_now', 'typeroom', 'area', 'status', 'created_at', 'last_update'] 
 
 class RoomListByAreaSerializer(serializers.ModelSerializer):
     typeroom = TypeRoomSerializer(required=False)
     class Meta:
         model = Room
-        fields = ['id', 'name', 'gender', 'slug', 'number_now', 'typeroom', 'status', 'created_at', 'last_update'] 
+        fields = ['id', 'name', 'slug', 'number_now', 'typeroom', 'status', 'created_at', 'last_update'] 
 
 class RoomSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(required=False)
@@ -68,7 +78,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Room
-        fields = ['id', 'name', 'slug', 'gender', 'number_now', 'typeroom', 'area', 'status', 'created_at', 'last_update', 'created_by'] 
+        fields = ['id', 'name', 'slug', 'number_now', 'typeroom', 'area', 'status', 'created_at', 'last_update', 'created_by'] 
 
     # Get current user login
     def _current_user(self):
@@ -128,6 +138,20 @@ class RoomSerializer(serializers.ModelSerializer):
     #             pass
     #     return instance
 
+def getStage():
+    today = date.today()
+    stage1 = Stage.objects.filter(stage1_started_at__lte = today, stage1_ended_at__gte = today)
+    stage2 = Stage.objects.filter(stage2_started_at__lte = today, stage2_ended_at__gte = today)
+    stage3 = Stage.objects.filter(stage3_started_at__lte = today, stage3_ended_at__gte = today)
+    if len(stage1) > 0:
+        return (1, stage1)
+    elif len(stage2) > 0:
+        return (2, stage2)
+    elif len(stage3) > 0:
+        return (3, stage3)
+    else:
+        return (-1, None)      
+
 class ContractSerializer(serializers.ModelSerializer):
     room = RoomListSerializer()
     payment_method = PaymentMethodSerializer()
@@ -181,10 +205,14 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         try:
+            (stage, obj) = getStage()
             current_user = self._current_user()
             room = Room.objects.get(pk=validated_data['room'])
             payment_method = PaymentMethod.objects.get(pk=validated_data['payment_method'])
-            school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
+            if stage != -1:
+                school_year = SchoolYear.objects.get(pk=obj.first().school_year.pk)
+            else:
+                school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
             model = Contract.objects.create(
                 room=room,
                 profile=current_user.user_profile,
@@ -218,7 +246,7 @@ class ContractRegistationSerializer(serializers.ModelSerializer):
         
         room = data['room']
         if room.number_now == room.typeroom.number_max:
-            raise serializers.ValidationError({'room':'Room is full!'})
+            raise serializers.ValidationError({'room':'Phòng đã đầy!'})
         
         current_user = self._current_user()
         check_contract = Contract.objects.filter(profile=current_user.user_profile).filter(Q(is_expired=None) | Q(is_expired=False), is_cover_room=False)
@@ -258,9 +286,13 @@ class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         try:
             current_user = self._current_user()
+            (stage, obj) = getStage()
             room = Room.objects.get(pk=validated_data['room'])
             payment_method = PaymentMethod.objects.get(pk=validated_data['payment_method'])
-            school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
+            if stage != -1:
+                school_year = SchoolYear.objects.get(pk=obj.first().school_year.pk)
+            else:
+                school_year = SchoolYear.objects.get(pk=validated_data['school_year'])
             model = Contract.objects.create(
                 room=room,
                 profile=current_user.user_profile,
@@ -293,7 +325,7 @@ class ContractCoverRoomRegistationSerializer(serializers.ModelSerializer):
         
         room = data['room']
         if room.number_now == room.typeroom.number_max:
-            raise serializers.ValidationError({'room':'Room is full!'})
+            raise serializers.ValidationError({'room':'Phòng đã đầy!!'})
         
         check_room = Contract.objects.filter(profile=current_user.user_profile, semester=data['semester'], school_year=data['school_year'], is_cover_room=False).exclude(room=room)
         print(check_room)

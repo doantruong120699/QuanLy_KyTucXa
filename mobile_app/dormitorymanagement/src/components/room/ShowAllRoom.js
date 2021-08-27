@@ -43,9 +43,9 @@ const ShowAllRoom = (props) => {
         data: [...roomInThisArea],
       }
     }))
-  }, [page, textSearch])
+  }, [page, textSearch, getRoom])
   const minusNumberPage = async () => {
-    await getallroom(page.current_page - 1, area === 'Tất cả' ? '' : area);
+    await getallroom(page.current_page - 1, '', area === 'Tất cả' ? '' : 'area-' + area);
     await getarea();
     setPage({
       ...page,
@@ -53,7 +53,7 @@ const ShowAllRoom = (props) => {
     });
   }
   const plusNumberPage = async () => {
-    await getallroom(page.current_page + 1, area === 'Tất cả' ? '' : area);
+    await getallroom(page.current_page + 1, '', area === 'Tất cả' ? '' : 'area-' + area);
     await getarea();
     setPage({
       ...page,
@@ -69,7 +69,7 @@ const ShowAllRoom = (props) => {
   }
   const getRoomOfKhu = async (title) => {
     const khu = title.split(' ')[title.split(' ').length - 1];
-    await getallroom(1, khu === 'cả' ? '' : khu);
+    await getallroom(1, '', khu === 'cả' ? '' : 'area-' + khu);
     await getarea();
     setPage({
       ...page,
@@ -92,6 +92,20 @@ const ShowAllRoom = (props) => {
             placeholderTextColor="#808080"
           >
           </TextInput>
+        </View>
+        <View style={styles.sectionColor}>
+          <View  style={styles.sectionColorItem}>
+            <View style={styles.male}></View>
+            <Text>Nam</Text>
+          </View>
+          <View style={styles.sectionColorItem}>
+            <View style={styles.female}></View>
+            <Text>Nữ</Text>
+          </View>
+          <View  style={styles.sectionColorItem}>
+            <View style={styles.shared}></View>
+            <Text>Sinh hoạt chung</Text>
+          </View>
         </View>
         <View style={styles.container_child}>
           <SectionList
@@ -157,6 +171,41 @@ const styles = StyleSheet.create({
   },
   appBar: {
     flex: 1,
+  },
+  sectionColor: {
+    height: 40,
+    width: '90%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sectionColorItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  male: {
+    width: 25,
+    height: 25,
+    marginRight: 5,
+    borderRadius: 5,
+    backgroundColor: 'rgb(55, 198, 247)',
+  },
+  female: {
+    width: 25,
+    height: 25,
+    marginRight: 5,
+    marginLeft: 10,
+    borderRadius: 5,
+    backgroundColor: 'rgb(247, 117, 244)',
+  },
+  shared: {
+    width: 25,
+    height: 25,
+    marginRight: 5,
+    marginLeft: 10,
+    borderRadius: 5,
+    backgroundColor: 'rgb(247, 203, 115)',
   },
   container_child: {
     flex: 9,

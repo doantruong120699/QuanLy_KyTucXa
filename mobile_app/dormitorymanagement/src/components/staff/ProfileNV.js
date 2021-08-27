@@ -31,6 +31,10 @@ class ProfileNV extends Component {
           <View style={styles.container_child}>
             <View style={styles.formProfile}>
               <View style={styles.viewInfo}>
+                <Text style={styles.title}>Họ tên:</Text>
+                <Text style={styles.info}>{data.last_name + ' ' + data.first_name}</Text>
+              </View>
+              <View style={styles.viewInfo}>
                 <Text style={styles.title}>Email:</Text>
                 <Text style={styles.info}>{data.email}</Text>
               </View>
@@ -98,19 +102,25 @@ const styles = StyleSheet.create({
   },
   formProfile: {
     backgroundColor: 'white',
-    height: 400,
     width: 300,
+    paddingTop: 10,
+    paddingBottom: 10,
     borderRadius: 20,
     elevation: 7,
   },
   viewInfo: {
     marginTop: 10,
     marginLeft: 30,
+    marginRight: 30,
     flexDirection: 'row',
   },
   title: {
     fontWeight: 'bold',
     width: '25%',
+  },
+  info: {
+    marginLeft: 5,
+    width: '75%'
   },
   viewButton: {
     flexDirection: 'row',

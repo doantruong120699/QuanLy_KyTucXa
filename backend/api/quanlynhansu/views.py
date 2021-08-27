@@ -203,6 +203,11 @@ class ContractRegistationViewSet(viewsets.ModelViewSet):
                         regis_request.room.number_now = regis_request.room.typeroom.number_max
                     else:
                         regis_request.room.number_now = regis_request.room.number_now + 1
+                    
+                    if regis_request.room.number_now == regis_request.room.typeroom.number_max:
+                        regis_request.room.status = 'F'
+                    elif regis_request.room.number_now < regis_request.room.typeroom.number_max:
+                        regis_request.room.status = 'A'
                     regis_request.room.save()
                     return Response({'detail': 'Accept Successful'}, status=status.HTTP_200_OK)
         except Exception as e:
@@ -326,7 +331,10 @@ class ListContractViewSet(viewsets.ModelViewSet):
             if (self.check_permission(request)):
                 request_regis = Contract.objects.get(public_id=kwargs['public_id'])
                 serializer = ContractRegistationSerializer(request_regis)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                data = serializer.data
+                schoolyear = SchoolYear.objects.get(pk=data['school_year'])
+                data['school_year'] = str(schoolyear.year_start) + "-" + str(schoolyear.year_end)
+                return Response(data, status=status.HTTP_200_OK)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
         except Exception as e:
@@ -338,24 +346,28 @@ class ListContractViewSet(viewsets.ModelViewSet):
     def list_contract_filter(self, request, *args, **kwargs):
         try:
             if (self.check_permission(request)):
-                list_contract_room = Contract.objects.all()
+                list_contract_room = Contract.objects.filter(is_expired=False, is_delete=False)
                 
                 is_expired = request.GET.get('is_expired', None)
-                if is_expired != None:
-                    list_contract_room = list_contract_room.filter(is_expired=is_expired)
-                                
+                # if is_expired != None:
+                #     list_contract_room = list_contract_room.filter(is_expired=is_expired)
+                  
                 id_user = request.GET.get('id_user', None)
                 if id_user != None:
                     list_contract_room = list_contract_room.filter(profile__public_id=id_user)
                 room = request.GET.get('room', None)
                 if room != None:
                     list_contract_room = list_contract_room.filter(Q(room__name=id_user) | Q(room__slug=id_user))
-                
+                    
                 page = self.paginate_queryset(list_contract_room)
-                if page is not None:
-                    serializer = self.get_serializer(page, many=True)
-                    return self.get_paginated_response(serializer.data)
+                
                 serializer = self.get_serializer(page, many=True)
+                data = serializer.data
+                for index, value in enumerate(data):
+                    schoolyear = SchoolYear.objects.get(pk=data[index]['school_year'])
+                    data[index]['school_year'] = str(schoolyear.year_start) + "-" + str(schoolyear.year_end)
+                    # if data[index]['school_year']
+                                        
                 return self.get_paginated_response(serializer.data)
             else:
                 return Response({'status': 'fail', 'notification' : "You do not have permission to perform this action."}, status=status.HTTP_403_FORBIDDEN)
@@ -740,6 +752,8 @@ class StageRegistrationViewset(viewsets.ModelViewSet):
                 if len(stage) > 0:
                     return Response({'status': 'fail', 'notification' : "Đã mở đăng ký ở học kỳ này!"}, status=status.HTTP_400_BAD_REQUEST)
                 else:
+                    list_contract = Contract.objects.filter(is_expired=False)
+                    
                     serializer.save()
                     # Reset data rooms
                     all_room = Room.objects.all()
@@ -747,6 +761,9 @@ class StageRegistrationViewset(viewsets.ModelViewSet):
                         room.number_now = 0
                         room.is_cover_room = False
                         room.save()
+                    for contract in list_contract:
+                        contract.is_expired = True
+                        contract.save()
                     return Response({'status': 'success'}, status=status.HTTP_200_OK) 
             else:
                 return Response({'status': 'fail', 'notification' : list(serializer.errors.values())[0][0]}, status=status.HTTP_400_BAD_REQUEST)
