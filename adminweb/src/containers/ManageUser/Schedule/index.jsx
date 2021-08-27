@@ -204,7 +204,10 @@ const Employee = () => {
         <div>
           {initData && employeeOption && (
             <div>
-              <div className="col col-two-third" style={{ marginBottom: "2%" }}>
+              <div
+                className="col col-two-third"
+                style={{ margin: "0 0 2% 0", paddingLeft: "3%" }}
+              >
                 <div className="col col-third">
                   <Typography>Lựa chọn tuần</Typography>
                   <Select
@@ -238,7 +241,10 @@ const Employee = () => {
                   {renderTableData()}
                 </table>
               </div>
-              <div className="float-right col-6 mt-48 mr-24">
+              <div
+                className="float-right col-6 mt-48 mr-24"
+                style={{ marginRight: "5%" }}
+              >
                 <Button
                   variant="contained"
                   color="primary"
