@@ -96,12 +96,12 @@ class FinancalRoomInAreaViewSet(viewsets.ModelViewSet):
                 Q(slug=area)).first()
             # Number now in room >=0        
             room_in_area = Room.objects.filter(area=area).order_by('-id')
-            all_bill = Bill.objects.filter(water_electrical__room__in=room_in_area, 
-                                                              water_electrical__year=year,
-                                                              water_electrical__month=month)
+            all_bill = Bill.objects.filter(water_electrical_bill__room__in=room_in_area, 
+                                                              water_electrical_bill__year=year,
+                                                              water_electrical_bill__month=month)
             list_room_add_json = []
             for bill in all_bill:
-                list_room_add_json.append({'id': bill.water_electrical.room.pk, 'name': bill.water_electrical.room.name, 'isPaid' : bill.is_paid, 'public_id_water_electrical':bill.water_electrical.public_id, 'public_id_bill':bill.public_id})
+                list_room_add_json.append({'id': bill.water_electrical_bill.room.pk, 'name': bill.water_electrical_bill.room.name, 'isPaid' : bill.is_paid, 'public_id_water_electrical':bill.water_electrical_bill.public_id, 'public_id_bill':bill.public_id})
             
             serializer = FinancalRoomInAreaSerializer(area)
             data_room = serializer.data
@@ -257,12 +257,14 @@ class WaterElectricalViewSet(viewsets.ModelViewSet):
                     area = Area.objects.all()
                                
                 room_in_area = Room.objects.filter(area__in=area).order_by('-id')
+                print(room_in_area)
                 _list = WaterElectrical.objects.filter(room__in=room_in_area, year=year, month=month)
+                print(_list)
                 serializer = WaterElectricalDetailSerializer(_list, many=True)
                 data = serializer.data
                 for index, value in enumerate(_list):
-                    if value.bill_water_electrical.all():
-                        data[index]['isPaid'] = value.bill_water_electrical.all().first().is_paid
+                    if value.bill:
+                        data[index]['isPaid'] = value.bill.is_paid
                 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
@@ -309,10 +311,11 @@ class BillViewSet(viewsets.ModelViewSet):
                 area = Area.objects.all()
             
             room_in_area = Room.objects.filter(area__in=area).order_by('-id')
-            _list = Bill.objects.filter(water_electrical__room__in=room_in_area, 
-                                                              water_electrical__year=year,
-                                                              water_electrical__month=month)
+            _list = Bill.objects.filter(water_electrical_bill__room__in=room_in_area, 
+                                                              water_electrical_bill__year=year,
+                                                              water_electrical_bill__month=month)
             _list = _list.filter(is_delete=False)
+            print(_list)
             page = self.paginate_queryset(_list)
             if page is not None:
                 serializer = self.get_serializer(page, many=True)
@@ -371,9 +374,9 @@ class BillViewSet(viewsets.ModelViewSet):
             
             room = Room.objects.filter(Q(slug=room)) 
             # room_in_area = Room.objects.filter(area__in=area).order_by('-id')
-            _list = Bill.objects.filter(water_electrical__room__in=room, 
-                                                              water_electrical__year=year,
-                                                              water_electrical__month=month)
+            _list = Bill.objects.filter(water_electrical_bill__room__in=room, 
+                                                              water_electrical_bill__year=year,
+                                                              water_electrical_bill__month=month)
             _list = _list.filter(is_delete=False).order_by('created_at')
             if _list:
                 serializer = BillDetailSerializer(_list, many=True)
@@ -417,9 +420,9 @@ class PaidBillInAreaViewSet(viewsets.ModelViewSet):
             data = list(list_area.values())
             for index, value in enumerate(list_area):
                 room = Room.objects.filter(area=value)
-                all_bill = Bill.objects.filter(water_electrical__room__in=room, 
-                                                water_electrical__year=year,
-                                                water_electrical__month=month)
+                all_bill = Bill.objects.filter(water_electrical_bill__room__in=room, 
+                                                water_electrical_bill__year=year,
+                                                water_electrical_bill__month=month)
                 data[index]['total'] = all_bill.count()
                 data[index]['paid'] = all_bill.filter(is_paid=True).count()
             return Response(data, status=status.HTTP_200_OK)
