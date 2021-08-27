@@ -51,7 +51,10 @@ const Map = () => {
           >
             <p>Nhà 5</p>
           </div>
-          <div className="room-ktx-lao border-room room-item">
+          <div
+            className="room-ktx-lao border-room room-item"
+            onClick={() => viewArea("area-3")}
+          >
             <p>KTX Sinh Viên Lào</p>
           </div>
         </div>

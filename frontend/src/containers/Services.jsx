@@ -5,6 +5,7 @@ import { actFetchTitleNavigation } from "../redux/actions/dashboard";
 import * as TitleList from "../utilities/constants/titles";
 import * as ROUTER from "../utilities/constants/router";
 import ServiceTag from "../components/services/ServiceTag";
+import { getAuth } from "../utilities/helper";
 
 const Services = () => {
   const dispatch = useDispatch();
@@ -12,11 +13,14 @@ const Services = () => {
   const history = useHistory();
 
   function goToPage(path) {
-    history.push(path);
+    if (getAuth().group[0] === "sinhvien_group") {
+      history.push(path);
+    }
   }
 
   useEffect(() => {
     dispatch(actFetchTitleNavigation(TitleList.NAVIGATION_TITLE[4].title));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

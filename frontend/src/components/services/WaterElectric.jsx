@@ -49,6 +49,7 @@ const WaterElectric = () => {
     const params = queryString.stringify(filter);
 
     getListBill(params, (output) => {
+      console.log(output);
       const pagination = {
         page: output.current_page,
         page_size: output.page_size,
@@ -125,6 +126,9 @@ const WaterElectric = () => {
                       <th className="col col-15 bold-text pl-4 pr-4 pt-16 pb-16">
                         Phòng
                       </th>
+                      <th className="col col-10 bold-text pl-4 pr-4 pt-16 pb-16">
+                        Tháng
+                      </th>
                       <th className="col col-6 bold-text pl-4 pr-4 pt-16 pb-16">
                         Chỉ số điện mới
                       </th>
@@ -143,9 +147,6 @@ const WaterElectric = () => {
                       <th className="col col-10 bold-text pl-4 pr-4 pt-16 pb-16">
                         Người thanh toán
                       </th>
-                      <th className="col col-10 bold-text pl-4 pr-4 pt-16 pb-16">
-                        Chi tiết
-                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -157,6 +158,9 @@ const WaterElectric = () => {
                         >
                           <td className="col col-15 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
                             {bill?.room?.name}
+                          </td>
+                          <td className="col col-10 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
+                            {bill?.month}
                           </td>
                           <td className="col col-6 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
                             {bill?.new_index_eclectrical}
@@ -176,10 +180,9 @@ const WaterElectric = () => {
                               : "Chưa thanh toán"}
                           </td>
                           <td className="col col-10 text-align-ct bold-text text-14 pl-4 pr-4 pt-16 pb-16">
-                            {bill?.bill?.sinhvien_paid?.first_name}{" "}
-                            {bill?.bill?.sinhvien_paid?.last_name}
+                            {bill?.bill?.sinhvien_paid?.user?.first_name}{" "}
+                            {bill?.bill?.sinhvien_paid?.user?.last_name}
                           </td>
-                          <td className="col col-10 text-align-ct bold-text text-20 pl-4 pr-4 pt-16 pb-16"></td>
                         </tr>
                       );
                     })}
