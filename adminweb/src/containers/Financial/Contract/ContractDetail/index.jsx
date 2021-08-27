@@ -116,12 +116,12 @@ export default function ContractDetail() {
                       <th>{data.profile.phone}</th>
                     </tr>
                     <tr>
-                      <th>Ngày Kí Hợp Đồng</th>
-                      <th>{moment(data.start_at).format("DD/MM/YYYY")}</th>
+                      <th>Năm học</th>
+                      <th>{data.school_year}</th>
                     </tr>
                     <tr>
-                      <th>Ngày Hết Hạn Hợp Đồng</th>
-                      <th>{moment(data.end_at).format("DD/MM/YYYY")}</th>
+                      <th>Kì học</th>
+                      <th>{data.semester}</th>
                     </tr>
                   </tbody>
                 </table>

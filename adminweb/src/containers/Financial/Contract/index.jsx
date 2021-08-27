@@ -49,18 +49,19 @@ export default function Budget() {
         setDataContracts(output.results);
       }
     });
-
-    getListWaterElectricalBills(
-      "",
-      `month=${moment(startDate).format("MM")}&year=${moment(startDate).format(
-        "YYYY"
-      )}`,
-      (output) => {
-        if (output) {
-          setDataBill(output.results);
+    if (isSelectStudentModalVisible === false) {
+      getListWaterElectricalBills(
+        "",
+        `month=${moment(startDate).format("MM")}&year=${moment(
+          startDate
+        ).format("YYYY")}`,
+        (output) => {
+          if (output) {
+            setDataBill(output.results);
+          }
         }
-      }
-    );
+      );
+    }
   }, [startDate, isSelectStudentModalVisible]);
   const [peopleInRoom, setPeopleInRoom] = useState();
 
@@ -95,9 +96,10 @@ export default function Budget() {
       sinhvien_paid: selectedPeoplePaid,
     };
     updateWaterElectricalBill(selectedBillId, dataSend, (output) => {
-      console.log(output);
+      if (output.status === "successful") {
+        alert("Thanh toán thành công!");
+      } else alert(output.notification);
     });
-    toast("Đóng tiền thành công!");
     setTimeout(hideModal, 4000);
     setIsSelectStudentModalVisible(false);
   };
@@ -143,40 +145,40 @@ export default function Budget() {
       },
     },
     {
-      name: "startDate",
-      label: "Ngày bắt đầu",
+      name: "school_year",
+      label: "Năm học",
       options: {
         filter: true,
         sort: true,
-        customBodyRender: (value) =>
-          moment(new Date(value)).format("DD/MM/YYYY"),
+        // customBodyRender: (value) =>
+        //   moment(new Date(value)).format("DD/MM/YYYY"),
       },
     },
     {
-      name: "endDate",
-      label: "Ngày kết thúc",
+      name: "semester",
+      label: "Học kì",
       options: {
         filter: true,
         sort: true,
-        customBodyRender: (value) =>
-          moment(new Date(value)).format("DD/MM/YYYY"),
+        // customBodyRender: (value) =>
+        //   moment(new Date(value)).format("DD/MM/YYYY"),
       },
     },
-    {
-      name: "is_expired",
-      label: "Hết hạn",
-      options: {
-        filter: true,
-        sort: true,
-        customBodyRender: (value) => {
-          return value ? (
-            <div style={{ color: "red" }}>Đã hết hạn</div>
-          ) : (
-            <div style={{ color: "green" }}>Chưa hết hạn</div>
-          );
-        },
-      },
-    },
+    // {
+    //   name: "is_expired",
+    //   label: "Hết hạn",
+    //   options: {
+    //     filter: true,
+    //     sort: true,
+    //     customBodyRender: (value) => {
+    //       return value ? (
+    //         <div style={{ color: "red" }}>Đã hết hạn</div>
+    //       ) : (
+    //         <div style={{ color: "green" }}>Chưa hết hạn</div>
+    //       );
+    //     },
+    //   },
+    // },
   ];
   const billColumn = [
     {
@@ -275,9 +277,9 @@ export default function Budget() {
         studentName: `${value.profile.user.last_name} ${value.profile.user.first_name}`,
         studentPhone: value.profile.phone,
         studentClass: `${value.profile.my_class.name} ${value.profile.faculty.name}`,
-        is_expired: value.is_expired,
-        startDate: value.start_at,
-        endDate: value.end_at,
+        // is_expired: value.is_expired,
+        school_year: value.school_year,
+        semester: value.semester,
       };
     });
   };
@@ -449,11 +451,11 @@ export default function Budget() {
                     )}
                   </MuiThemeProvider>
                 </Box>
-                <ReactModal
+                {/* <ReactModal
                   isOpen={isModalVisible}
                   onRequestClose={hideModal}
                   style={customStyles}
-                ></ReactModal>
+                ></ReactModal> */}
               </div>
             </div>
           )}
@@ -461,6 +463,7 @@ export default function Budget() {
             isOpen={isSelectStudentModalVisible}
             onRequestClose={hideModal}
             style={customStyles}
+            ariaHideApp={false}
           >
             <div>
               <div className={"mb-20"}>Lựa chọn người đóng tiền</div>

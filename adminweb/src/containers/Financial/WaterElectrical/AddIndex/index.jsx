@@ -29,7 +29,7 @@ export default function AddIndex(props) {
     createWaterElectricalIndex(dataSend, (output) => {
       if (output) {
         if (output.status === "successful") {
-          alert("Tạo nhật thành công");
+          alert("Tạo mới thành công");
           isUpdate();
           onCancel();
         } else alert(output.notification);
@@ -42,7 +42,7 @@ export default function AddIndex(props) {
         <h2>Nhập thông tin mới</h2>
         <div className="col col-full pd-24">
           <Box display="flex">
-            <Box marginBottom={3} marginRight={3}>
+            <Box width="100%" marginBottom={3} marginRight={3}>
               <TextField
                 name="year"
                 label="Năm"
@@ -57,9 +57,11 @@ export default function AddIndex(props) {
                 variant="outlined"
                 size="small"
                 type="number"
+                style={{ width: "100%" }}
+                inputStyle={{ width: "100%" }}
               />
             </Box>
-            <Box marginBottom={3}>
+            <Box width="100%" marginBottom={3}>
               <TextField
                 name="month"
                 label="Tháng"
@@ -67,6 +69,7 @@ export default function AddIndex(props) {
                   inputProps: {
                     min: 1,
                     year: 12,
+                    max: 12,
                     step: 1,
                   },
                 }}
@@ -75,6 +78,8 @@ export default function AddIndex(props) {
                 variant="outlined"
                 size="small"
                 type="number"
+                style={{ width: "100%" }}
+                inputStyle={{ width: "100%" }}
               />
             </Box>
           </Box>

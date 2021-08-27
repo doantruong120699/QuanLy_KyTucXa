@@ -1,5 +1,5 @@
 const Room = (props) => {
-  const { name, maximum, numberNow, onClick } = props;
+  const { name, maximum, numberNow, onClick, type } = props;
 
   var listStudentIcons = [];
 
@@ -32,7 +32,10 @@ const Room = (props) => {
       onClick={onClick}
     >
       <div className="col col-full justify-content-sb text-20 pd-8">
-        <span className="bold-text">{name}</span>
+        <span
+          className="bold-text"
+          style={{ fontSize: "16px" }}
+        >{`${name} (${type})`}</span>
         <i className="fi-rr-info"></i>
       </div>
       <div>{listStudentIcons}</div>

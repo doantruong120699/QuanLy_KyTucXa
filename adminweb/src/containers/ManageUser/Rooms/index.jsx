@@ -224,6 +224,7 @@ export default function Student() {
                     return (
                       <div key={i} className="col col-5 pd-8">
                         <Room
+                          type={room.typeroom.name}
                           name={room.name}
                           maximum={room.typeroom.number_max}
                           numberNow={room.number_now}
