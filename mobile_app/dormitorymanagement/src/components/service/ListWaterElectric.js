@@ -47,7 +47,6 @@ class Service extends Component {
     await this.fetchApi(this.state.page + 1);
   }
   render() {
-    console.log(this.state.listWaterElectric)
     let totalPages = Math.ceil(this.state.totals / 20);
     return (
       <View style={[styleContainer.container, styleListNvSv.container]}>

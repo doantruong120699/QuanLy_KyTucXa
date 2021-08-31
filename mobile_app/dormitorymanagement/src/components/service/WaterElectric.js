@@ -18,7 +18,6 @@ class WaterElectric extends Component {
   }
   render() {
     const { modalVisible } = this.state;
-    console.log(this.props.item.bill)
     return (
       <View style={[styleContainer.container, styleWaterElectric.container]}>
         <View style={styleWaterElectric.centeredView}>
@@ -56,13 +55,13 @@ class WaterElectric extends Component {
                 </View>
                 <View style={styleWaterElectric.rowItem}>
                   <Text style={styleWaterElectric.title}>Tình trạng: </Text>
-                  <Text style={styleWaterElectric.modalText}>{this.props.item.bill.is_paid ? 'Đã thanh toán' : 'Chưa thanh toán'}</Text>
+                  <Text style={styleWaterElectric.modalText}>{this.props.item.bill?.is_paid ? 'Đã thanh toán' : 'Chưa thanh toán'}</Text>
                 </View>
                 {
-                  this.props.item.bill.sinhvien_paid && (
+                  this.props.item.bill?.sinhvien_paid && (
                     <View style={styleWaterElectric.rowItem}>
                       <Text style={styleWaterElectric.title}>Người đóng: </Text>
-                      <Text style={styleWaterElectric.modalText}>{this.props.item.bill.sinhvien_paid.user.last_name + ' ' + this.props.item.bill.sinhvien_paid.user.first_name}</Text>
+                      <Text style={styleWaterElectric.modalText}>{this.props.item?.bill?.sinhvien_paid?.user.last_name + ' ' + this.props.item.bill.sinhvien_paid.user.first_name}</Text>
                     </View>
                   )
                 }
@@ -82,7 +81,7 @@ class WaterElectric extends Component {
         >
           <View style={styleWaterElectric.viewData}>
             <Text style={styleWaterElectric.data}>{this.props.item.month + "/" + this.props.item.year}</Text>
-            <Text style={styleWaterElectric.data}>{this.props.item.bill.is_paid ? ' Đã thanh toán' : ' Chưa thanh toán'}</Text>
+            <Text style={styleWaterElectric.data}>{this.props.item.bill?.is_paid ? ' Đã thanh toán' : ' Chưa thanh toán'}</Text>
           </View>
         </TouchableOpacity>
       </View>

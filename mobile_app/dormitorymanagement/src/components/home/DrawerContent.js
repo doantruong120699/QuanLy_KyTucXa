@@ -204,7 +204,7 @@ class DrawerContent extends Component {
                 }}
               />
               <DrawerItem
-                style={[this.getStyle('ListWaterElectric'), this.displayCreateNotification()]}
+                style={this.getStyle('ListWaterElectric')}
                 icon={({ color, size }) => (
                   <FontAwesome5
                     color={color}
